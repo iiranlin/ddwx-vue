@@ -2,10 +2,10 @@
 
 ```bash
 # 克隆项目
-git clone https://gitee.com/y_project/RuoYi-Vue
+git clone http://172.30.3.53:8899/gwyc/gwyc_vue.git
 
 # 进入项目目录
-cd ruoyi-ui
+cd Gwyc_Vue
 
 # 安装依赖
 npm install
@@ -17,7 +17,7 @@ npm install --registry=https://registry.npm.taobao.org
 npm run dev
 ```
 
-浏览器访问 http://localhost:80
+浏览器访问 http://localhost:9245
 
 ## 发布
 
