@@ -424,3 +424,15 @@ export function generateUUID(len, radix) {
   return uuid.join('');
 }
 
+/**
+ * @description 数值格式化小数点后两位
+ * @param {*} n
+ * @return string
+ */
+ export const numToFixed2 = (n) => {
+  if (isNaN(n)) {
+    return '0.00'
+  }
+  return Number(n).toFixed(2);
+};
+
