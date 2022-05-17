@@ -43,7 +43,14 @@
     </el-table-column> 
    <el-table-column width="150" label="字典" align="center" prop="fieldFormatDict" >
       <template slot-scope="scope">
-        <treeselect v-if="scope.row.fieldType == 'dict'" v-model="scope.row.fieldFormatDict" :options="commonTreeList" :normalizer="normalizera"  placeholder="请选择字典" />
+        <treeselect
+          v-if="scope.row.fieldType == 'dict'"
+          :appendToBody="true"
+          z-index="9999"
+          v-model="scope.row.fieldFormatDict"
+          :options="commonTreeList"
+          :normalizer="normalizera"
+          placeholder="请选择字典" />
       </template>
     </el-table-column>
     <el-table-column label="启用"  prop="status" align="center" width="80">

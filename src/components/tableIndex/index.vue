@@ -184,6 +184,7 @@ export default {
       buttonRow: [],
       buttonRows: [],
       formData: {},
+      selectionArr: []
     };
   },
   watch: {
@@ -346,6 +347,7 @@ export default {
       }
     },
     handleSelectionChange(selection) {
+      this.selectionArr = selection;
       this.ids = selection.map((item) => item.id);
       let single = selection.length != 1;
       let multiple = !selection.length;
@@ -368,7 +370,7 @@ export default {
           id = [id];
         }
       }
-      this.$emit("handleButton", id || row, buttonCode, row);
+      this.$emit("handleButton", id || row, buttonCode, row, selectionArr);
     },
     // 列表超链接 row行数据 fieldCode 表的字段 linkText 为链接页面的内容
     clickLink(row = {}, fieldCode, linkText) {
