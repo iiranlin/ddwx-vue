@@ -39,6 +39,13 @@ import VueMeta from 'vue-meta'
 import DictData from '@/components/DictData'
 import lottie from 'vue-lottie'
 
+// 通用列表组件
+import tableIndex from "@/components/tableIndex"
+// 通用筛选查询组件
+import formData from "@/components/formData"
+// 通用头部按钮组件
+import buttonTop from "@/components/buttonTop"
+
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
 Vue.prototype.getConfigKey = getConfigKey
@@ -59,6 +66,12 @@ Vue.component('FileUpload', FileUpload)
 Vue.component('ImageUpload', ImageUpload)
 Vue.component('ImagePreview', ImagePreview)
 Vue.component('lottie', lottie);
+
+
+Vue.component('tableIndex', tableIndex)
+Vue.component('formData', formData)
+Vue.component('buttonTop', buttonTop)
+
 Vue.use(directive)
 Vue.use(plugins)
 Vue.use(VueMeta)

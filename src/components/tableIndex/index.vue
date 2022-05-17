@@ -198,35 +198,18 @@ export default {
       handler: function (newFields) {
         this.propertyFields = JSON.parse(JSON.stringify(newFields));
         this.propertyFieldsArr = JSON.parse(JSON.stringify(newFields));
-        // this.$nextTick(() => {
-        //   this.$refs.elTable.doLayout();
-        // })
       },
     },
-    // 'tableData': {
-    //   handler: function (newTableData) {
-    //     this.$nextTick(() => {
-    //       this.$refs.elTable.doLayout();
-    //     })
-    //   }
+    // showIf: {
+    //   handler: function (newShowIf) {
+    //     if (newShowIf) {
+    //       this.$nextTick(() => {
+    //         // this.rowDrop();
+    //         // this.columnDrop();
+    //       });
+    //     }
+    //   },
     // },
-    showIf: {
-      handler: function (newShowIf) {
-        if (newShowIf) {
-          this.$nextTick(() => {
-            // this.rowDrop();
-            // this.columnDrop();
-          });
-        }
-      },
-    },
-    // 'numberShow': {
-    //   handler: function () {
-    //     this.$nextTick(() => {
-    //       this.$refs.elTable.doLayout();
-    //     })
-    //   }
-    // }
   },
   mounted() {
     // this.rowDrop();
@@ -255,7 +238,6 @@ export default {
       } else {
         return false;
       }
-      // isButtonObj && (scope.row[isButtonObj.name] != isButtonObj.val && (item.buttonCode == 'delete' && item.buttonCode == 'update'))
     },
     handleCommand(command, row) {
       this.newButton(command, row);
@@ -300,9 +282,7 @@ export default {
       let fieldFormatObj = null;
       if (row.fieldType == "dict") {
         for (const item of row.fieldFormatArr) {
-          fieldFormatObj = Object.assign({}, fieldFormatObj, {
-            [item.code]: item.name,
-          });
+          fieldFormatObj = Object.assign({}, fieldFormatObj, {[item.code]: item.name});
         }
       }
       let self = this;

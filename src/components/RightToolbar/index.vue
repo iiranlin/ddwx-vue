@@ -17,21 +17,24 @@
         <el-dropdown-menu slot="dropdown">
           <div>
             <el-checkbox style="margin: 0 15px;" :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">列展示</el-checkbox>
+            <el-checkbox style="margin-right: 15px;" v-model="number" @change="numberChange">序号</el-checkbox>
             <el-button size="mini" type="text" @click="clickReset">重置</el-button>
           </div>
           <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
             <draggable v-model="columnsArr" @end="onEnd">
               <transition-group>
-                <el-dropdown-item v-for="(city, index) in columnsArr" :key="city.id">
-                  <i class="el-icon-rank"></i>
-                  <el-checkbox :label="city.id" :key="city.id" style="width: 135px">{{city.fieldName}}</el-checkbox>
-                  <el-tooltip class="item" style="margin-left: 50px" effect="dark" content="固定到左侧" placement="top">
-                    <el-button size="mini" type="text" icon="el-icon-back" :style="city.fixed == 'left'? 'color: #1890ff': 'color: #606266'" @click="leftFixed(city, index)" />
-                  </el-tooltip>
-                  <el-tooltip class="item" style="margin-left: 10px" effect="dark" content="固定到右侧" placement="top">
-                    <el-button size="mini" type="text" icon="el-icon-right" :style="city.fixed == 'right'? 'color: #1890ff': 'color: #606266'" @click="rightFixed(city, index)" />
-                  </el-tooltip>
-                </el-dropdown-item>
+                <template v-for="(city, index) in columnsArr">
+                  <el-dropdown-item :key="city.id" v-if="city.isHide == 0">
+                    <i class="el-icon-rank"></i>
+                    <el-checkbox :label="city.id" :key="city.id" style="width: 135px">{{city.fieldName}}</el-checkbox>
+                    <el-tooltip class="item" style="margin-left: 50px" effect="dark" content="固定到左侧" placement="top">
+                      <el-button size="mini" type="text" icon="el-icon-back" :class="city.fixed == 'left'?'dropdown_button':'dropdown_button_default'" @click="leftFixed(city, index)" />
+                    </el-tooltip>
+                    <el-tooltip class="item" style="margin-left: 10px" effect="dark" content="固定到右侧" placement="top">
+                      <el-button size="mini" type="text" icon="el-icon-right" :class="city.fixed == 'right'?'dropdown_button':'dropdown_button_default'" @click="rightFixed(city, index)" />
+                    </el-tooltip>
+                  </el-dropdown-item>
+                </template>
               </transition-group>
             </draggable>
           </el-checkbox-group>
@@ -66,7 +69,8 @@ export default {
       checkAll: false,
       checkedCities: [],
       isIndeterminate: true,
-      columnsArr: []
+      columnsArr: [],
+      number: false
     };
   },
   props: {
@@ -84,7 +88,7 @@ export default {
         this.columnsArr = JSON.parse(JSON.stringify(newColumns));
         let columnsArr = [];
         newColumns.forEach( item => {
-          if(item.isHide === 0){
+          if(!item.isHides){
             columnsArr.push(item.id)
           }
         });
@@ -129,6 +133,9 @@ export default {
     onEnd () {
       this.$emit('handleCheckAllChange', this.columnsArr);
     },
+    numberChange (val) {
+      this.$emit('numberChange', val);
+    },
     handleCheckAllChange(val) {
       this.checkedCities = val ? this.columnsArr.map( (v) => {
         return v.id
@@ -136,9 +143,9 @@ export default {
       this.isIndeterminate = false;
       this.columnsArr.forEach( item => {
         if(val){
-          item.isHide = 0
+          item.isHides = false
         }else{
-          item.isHide = 1
+          item.isHides = true
         }
       });
       this.$emit('handleCheckAllChange', this.columnsArr);
@@ -148,10 +155,10 @@ export default {
       this.checkAll = checkedCount === this.columnsArr.length;
       this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnsArr.length;
       this.columnsArr.forEach( (item) => {
-        item.isHide = 1
+        item.isHides = true
         value.forEach( (valueItem) => {
           if(valueItem == item.id){
-            item.isHide = 0
+            item.isHides = false
           }
         })
       })
@@ -180,6 +187,14 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.dropdown_button_default{
+  color: #606266;
+}
+.dropdown_button{
+  ::v-deep i{
+    font-weight: 700 !important;
+  }
+}
 ::v-deep .el-transfer__button {
   border-radius: 50%;
   padding: 12px;

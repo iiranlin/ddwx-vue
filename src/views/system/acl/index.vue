@@ -165,7 +165,6 @@ export default {
       this.arrChangeAllObj = {};
       this.arrRadioAllObj = {};
       this.arrAclList = [];
-      console.log(data)
       if(data.id){
         if(this.activeName == '1'){
           this.roleDataRuleTree();

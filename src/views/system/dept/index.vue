@@ -36,6 +36,7 @@
             @queryTable="handleQuery"
             @handleCheckAllChange="handleCheckAllChange"
             @clickReset="clickReset"
+            @numberChange="numberChange"
           ></right-toolbar>
         </el-row>
         <form-data
@@ -49,6 +50,8 @@
           ref="tableIndex"
           style="margin-top:-8px"
           :loading="loading"
+          :tableIndexs="tableIndex"
+          :numberShow="numberShow"
           :tableData="dataList"
           :property="property"
           @handleSelectionChange="handleSelectionChange"
@@ -73,15 +76,13 @@
 
 <script>
 import { deptListPage, deptTree, deptDeleteBatch } from "@/api/system/dept";
-import { menuProperty } from "@/api/system/menu";
 import operate from "./components/operate";
 import selectWareHouse from "./components/selectWarehouse";
-import tableIndex from "@/components/tableIndex";
-import formData from "@/components/formData";
-import buttonTop from "@/components/buttonTop";
+import indexMixin from "@/views/mixins";
 export default {
   name: "dept",
-  components: { operate, tableIndex, formData, buttonTop, selectWareHouse },
+  mixins: [indexMixin],
+  components: { operate, selectWareHouse },
   data() {
     return {
       // 遮罩层
@@ -94,6 +95,8 @@ export default {
       multiple: true,
       // 显示搜索条件
       showSearch: true,
+      // 表格序号是否展示
+      numberShow: false,
       // 表格数据
       dataList: [],
       // 弹出层标题
@@ -119,12 +122,21 @@ export default {
     };
   },
   created() {
+    this.menuProperty();
     this.deptTree();
     this.getList();
-    this.menuProperty();
   },
   mounted() {},
   methods: {
+    menuProperty() {
+      const id = this.$route.meta.id;
+      this.$store.dispatch('menuProperty', id).then( (data) => {
+        this.property = data;
+      });
+    },
+    numberChange (val) {
+      this.numberShow = val;
+    },
     // newButton(buttonCode) {
     //   if (buttonCode === "bindStoryhouse") {
     //     this.checkWarehouseState();
@@ -133,7 +145,6 @@ export default {
     //   }
     // },
     newButton (buttonCode) {
-      console.log(buttonCode)
       this.$refs.tableIndex.newButton(buttonCode)
     },
     handleButton(id, buttonCode) {
@@ -162,13 +173,13 @@ export default {
       this.$refs.tableIndex.init(columns);
     },
     //选择框回调
-    selectChange(type, value) {
-      if (type === "createTime") {
-        this.dateRange = value;
-      } else {
-        this.formData[type] = value;
+    selectChange(row) {
+      let {formData, isWatch} = row;
+      if(!isWatch){
+        this.handleQuery(formData);
+      }else{
+        this.formData = Object.assign({}, this.formData, formData);
       }
-      this.handleQuery();
     },
     deptTree() {
       deptTree().then(({ data }) => {
@@ -180,43 +191,17 @@ export default {
       this.formData.parentId = data.id;
       this.handleQuery();
     },
-    /** 重置按钮操作 */
-    resetQuery() {
-      this.resetForm("queryForm");
-      for (let key in this.formData) {
-        this.formData[key] = null;
-      }
-      this.handleQuery();
-    },
     emitAblFilter(listQuery) {
       this.listQuery = Object.assign({}, this.listQuery, listQuery);
       this.handleQuery();
     },
     handleQuery(row = {}) {
       this.formData = Object.assign({}, this.formData, row);
-      // this.menuProperty();
       this.getList();
-    },
-    menuProperty() {
-      let id = this.$route.meta.id;
-      menuProperty(id).then(({ data }) => {
-        data.search.forEach((item) => {
-          if (item.fieldType == "dict") {
-            item.fieldFormat = JSON.parse(item.fieldFormat);
-          }
-        });
-        this.property = data;
-      });
     },
     getList() {
       this.loading = true;
-      let formData = {}
-      for(let key in this.formData){
-        if(key!='createTime'){
-          formData[key] = this.formData[key]
-        }
-      }
-      deptListPage(Object.assign({}, this.listQuery, formData)).then(
+      deptListPage(Object.assign({}, this.listQuery, this.formData)).then(
         ({ data }) => {
           this.dataList = data.list;
           this.total = data.total;
@@ -262,10 +247,3 @@ export default {
   },
 };
 </script>
-<style lang="scss" scoped>
-// .cume-button{
-//   border:none;
-//   background: none !important;
-//   font-size: 13px;
-// }
-</style>
