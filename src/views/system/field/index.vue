@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container_tree">
     <el-row :gutter="20" class="container_h">
       <!--菜单数据-->
       <el-col :span="4" :xs="24" class="container_flex_overflow">
@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import {menuProperty, menuTree} from '@/api/system/menu';
+import {menuTree} from '@/api/system/menu';
 import {menuFieldPage, menuFieldDeleteBatch} from '@/api/system/menu-field';
 import operate from "./components/operate";
 import indexMixin from '@/views/mixins';
@@ -126,22 +126,13 @@ export default {
   created() {
     // 获得菜单树
     this.getMenuTree();
-    let id = this.$route.meta.id;
-    this.$store.dispatch('menuProperty', id).then((data) => {
-      this.property = data;
-    });
+    this.menuProperty();
     this.getList();
   },
   methods: {
     menuProperty() {
-      let id = this.$route.meta.id;
-      menuProperty(id).then(({ data }) => {
-        data.search.forEach((item) => {
-          if (item.fieldType == "dict") {
-            item.fieldFormat = JSON.parse(item.fieldFormat);
-          }
-          // this.formData[item.fieldCode] = ''
-        });
+      const id = this.$route.meta.id;
+      this.$store.dispatch('menuProperty', id).then( (data) => {
         this.property = data;
       });
     },
@@ -233,19 +224,9 @@ export default {
       this.$refs.operate.init('create');
     },
     handleUpdate (id) {
-      // let id = '';
-      // if(row){
-      //   id = row.id;
-      // }else{
-      //   id = this.ids[0];
-      // }
       this.$refs.operate.init('update', id);
     },
     handleDelete (id) {
-      // let ids = row.id || this.ids;
-      // if(!(ids instanceof Array)){
-      //   ids = [ids];
-      // }
       this.$modal.confirm('是否确认删除字段?').then(function() {
         return menuFieldDeleteBatch({ids:id});
       }).then(() => {

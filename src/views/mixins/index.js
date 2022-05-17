@@ -26,19 +26,19 @@ export default {
                 }
             };
         },
-        // fieldFormat (val, row) {
-        //     for(let item of row){
-        //         if(val == item.code){
-        //             return item.name
-        //         }
-        //     }
-        // },
-        fieldFormat (val, type) {
-            // let typeObj = JSON.stringify(type);
-            if(type){
-                return JSON.parse(type)[val]
+        fieldFormat (val, row) {
+            for(let item of row){
+                if(val == item.code){
+                    return item.name
+                }
             }
-        }
+        },
+        // fieldFormat (val, type) {
+        //     // let typeObj = JSON.stringify(type);
+        //     if(type){
+        //         return JSON.parse(type)[val]
+        //     }
+        // }
     },
     computed: {
     },

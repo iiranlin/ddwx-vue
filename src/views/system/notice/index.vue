@@ -73,14 +73,10 @@ import {
 import indexMixin from "@/views/mixins";
 import operate from "./components/operate";
 import publishLog from "./components/publishLog.vue";
-import { menuProperty } from "@/api/system/menu";
-import buttonTop from "@/components/buttonTop";
-import formData from "@/components/formData";
-import tableIndex from "@/components/tableIndex";
 export default {
   name: "notice",
   mixins: [indexMixin],
-  components: { operate, publishLog, buttonTop, formData, tableIndex },
+  components: { operate, publishLog},
   data() {
     return {
       // 遮罩层
@@ -119,13 +115,8 @@ export default {
   methods: {
     //查询菜单数据
     menuProperty() {
-      let id = this.$route.meta.id;
-      menuProperty(id).then(({ data }) => {
-        data.search.forEach((item) => {
-          if (item.fieldType == "dict") {
-            item.fieldFormat = JSON.parse(item.fieldFormat);
-          }
-        });
+      const id = this.$route.meta.id;
+      this.$store.dispatch('menuProperty', id).then( (data) => {
         this.property = data;
       });
     },

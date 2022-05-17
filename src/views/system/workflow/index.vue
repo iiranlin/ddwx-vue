@@ -89,8 +89,8 @@ export default {
     let id = this.$route.meta.id;
     this.$store.dispatch('menuProperty', id).then( (data) => {
       this.property = data;
+      this.getList();
     });
-    this.getList();
   },
   methods: {
     numberChange(val) {

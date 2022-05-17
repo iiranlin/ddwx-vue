@@ -70,13 +70,9 @@
 import { menuProperty } from '@/api/system/menu'
 import {listUnit, getUnit, delUnit, addUnit, updateUnit} from "@/api/system/unit";
 import indexMixin from '@/views/mixins';
-import tableIndex from "@/components/tableIndex";
-import formData from "@/components/formData";
-import buttonTop from "@/components/buttonTop";
 
 export default {
   mixins: [indexMixin],
-  components: {tableIndex, formData, buttonTop},
   name: "Unit",
   dicts: ['status'],
   data() {
@@ -127,19 +123,13 @@ export default {
     };
   },
   created() {
+    this.menuProperty();
     this.getList();
-    this.menuProperty()
   },
   methods: {
     menuProperty() {
-      let id = this.$route.meta.id;
-      menuProperty(id).then(({ data }) => {
-        data.search.forEach((item) => {
-          if (item.fieldType == "dict") {
-            item.fieldFormat = JSON.parse(item.fieldFormat);
-          }
-          // this.formData[item.fieldCode] = ''
-        });
+      const id = this.$route.meta.id;
+      this.$store.dispatch('menuProperty', id).then( (data) => {
         this.property = data;
       });
     },

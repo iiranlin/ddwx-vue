@@ -27,17 +27,14 @@
 </template>
 
 <script>
-import {menuPage, menuDeleteBatch, menuProperty} from '@/api/system/menu';
+import {menuPage, menuDeleteBatch} from '@/api/system/menu';
 import operate from "./components/operate";
 import {table_label} from "./components/table-label";
 import indexMixin from '@/views/mixins';
-import tableIndex from "@/components/tableIndex";
-import formData from "@/components/formData";
-import buttonTop from "@/components/buttonTop";
 export default {
   name: "Menu",
   mixins: [indexMixin],
-  components: { operate, tableIndex, formData, buttonTop },
+  components: { operate },
   data() {
     return {
       // 遮罩层
@@ -104,14 +101,8 @@ export default {
   },
   methods: {
     menuProperty() {
-      let id = this.$route.meta.id;
-      menuProperty(id).then(({ data }) => {
-        data.search.forEach((item) => {
-          if (item.fieldType == "dict") {
-            item.fieldFormat = JSON.parse(item.fieldFormat);
-          }
-          // this.formData[item.fieldCode] = ''
-        });
+      const id = this.$route.meta.id;
+      this.$store.dispatch('menuProperty', id).then( (data) => {
         this.property = data;
       });
     },
@@ -142,23 +133,6 @@ export default {
       this.menuProperty();
       this.handleQuery();
     },
-    renderHeader(h, {column, $index}, index) {
-        return (
-            <span>
-                问题分类
-                <el-popover placement='bottom' width='200' height='200' trigger="click" v-model={this.visible}>
-                    <span slot="reference">
-                        <i class="el-icon-search" style={this.formData.menuName ? {'color' : 'red'} : {'color': 'blue'}}></i>
-                    </span>
-                    <el-input size='small' v-model={this.formData.menuName} placeholder='请输入内容'></el-input>
-                    <div class='el-table-filter__bottom'>
-                        <button class={this.formData.menuName ? '' : 'is-disabled'} on-click={this.handleQuery}>筛选</button>
-                        <button on-click={this.clearSearch}>重置</button>
-                    </div>
-                </el-popover>
-            </span>
-        );
-    },
     clearSearch () {
       this.formData.menuName = '';
       this.getList();
@@ -166,24 +140,6 @@ export default {
     handleQuery (row) {
       this.formData = Object.assign({},this.formData,row)
       this.getList();
-    },
-    // 更多操作触发
-    handleCommand(command, row) {
-      switch (command) {
-        case "handleResetPwd":
-          this.handleResetPwd(row);
-          break;
-        case "handleAuthRole":
-          this.handleAuthRole(row);
-          break;
-        default:
-          break;
-      }
-    },
-    /** 重置按钮操作 */
-    resetQuery() {
-      this.resetForm("queryForm");
-      this.handleQuery();
     },
     emitAblFilter () {
       this.dateRange = [];
@@ -213,32 +169,10 @@ export default {
     handleCreate () {
       this.$refs.operate.init('create');
     },
-    operate(type,row){
-      switch(type){
-        case "update":
-          this.handleUpdate(row)
-          break;
-        case "delete":
-          this.handleDelete(row)
-          break;
-        default:
-          break;
-      }
-    },
     handleUpdate (id) {
-      // let id = '';
-      // if(row){
-      //   id = row.id;
-      // }else{
-      //   id = this.ids[0];
-      // }
       this.$refs.operate.init('update', id);
     },
     handleDelete (id) {
-      // let ids = row.id || this.ids;
-      // if(!(ids instanceof Array)){
-      //   ids = [ids];
-      // }
       this.$modal.confirm('是否确认删除菜单?').then(function() {
         return menuDeleteBatch({ids:id});
       }).then(() => {

@@ -52,12 +52,8 @@
           :property="property"
           :showMoreButton="true"
           pageName="userPage"
-          :selectable="true"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
-          @handleCommand="handleCommand"
-          @handleStopGrant="handleStopGrant"
-          @handleRecovery="handleRecovery"
           @selectChange="selectChange"
           @emitAblFilter="emitAblFilter" 
         />
@@ -81,16 +77,12 @@ import {deptTree} from '@/api/system/dept';
 import roleDrawer from "./components/roleDrawer";
 import operate from "./components/operate";
 import indexMixin from '@/views/mixins';
-import { menuProperty } from '@/api/system/menu';
-import tableIndex from "@/components/tableIndex";
-import formData from "@/components/formData";
-import buttonTop from "@/components/buttonTop";
 
 
 export default {
   name: "user",
   mixins: [indexMixin],
-  components: {roleDrawer,tableIndex, formData, buttonTop , operate},
+  components: {roleDrawer, operate},
   data() {
     return {
       // 遮罩层
@@ -129,7 +121,7 @@ export default {
       },
     }
   },
-    created() {
+  created() {
     this.deptTree();
     this.menuProperty();
     this.getList();
@@ -142,17 +134,17 @@ export default {
         this.$refs.tableIndex.newButton(buttonCode);
       }
     },
-    handleButton(id, buttonCode) {
+    handleButton(row, buttonCode) {
       if (buttonCode === 'update') {
-        this.handleUpdate(id)
+        this.handleUpdate(row)
       } else if (buttonCode === 'delete') {
-        this.handleDelete(id)
+        this.handleDelete(row)
       } else if (buttonCode === 'create') {
         this.handleCreate()
       } else if (buttonCode === 'resetPwd') {
-        this.handleResetPwd(id)
+        this.handleResetPwd(row)
       } else if (buttonCode === 'authRole') {
-        this.handleAuthRole(id)
+        this.handleAuthRole(row)
       }
     },
     handleCheckAllChange(columns) {
@@ -171,37 +163,22 @@ export default {
         this.deptOptions = data;
       })
     },
-
-           // 节点单击事件
+    // 节点单击事件
     handleNodeClick(data) {
       this.formData.deptId = data.id;
       this.handleQuery();
     },
-    // resetQuery() {
-    //   this.resetForm("queryForm");
-    //   for(let key in this.formData){
-    //     this.formData[key] =  null
-    //   }
-    //   this.handleQuery();
-    // },
     emitAblFilter(listQuery) {
       this.listQuery = Object.assign({}, this.listQuery, listQuery);
       this.handleQuery();
     },
     handleQuery(row = {}) {
       this.formData = Object.assign({}, this.formData, row);
-      // this.menuProperty();
       this.getList();
     },
     menuProperty() {
-      let id = this.$route.meta.id;
-      menuProperty(id).then(({ data }) => {
-        data.search.forEach((item) => {
-          if (item.fieldType == "dict") {
-            item.fieldFormat = JSON.parse(item.fieldFormat);
-          }
-          // this.formData[item.fieldCode] = ''
-        });
+      const id = this.$route.meta.id;
+      this.$store.dispatch('menuProperty', id).then( (data) => {
         this.property = data;
       });
     },
@@ -240,48 +217,6 @@ export default {
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
     },
-    // handleCreate() {
-    //   this.$router.push({name:'userCreate',query:{deptId:this.formData.deptId}});
-    // },
-    // handleUpdate(id) {
-    //   // let id = '';
-    //   // // let selectionData = []
-    //   // if (row) {
-    //   //   id = row.id;
-    //   // } else {
-    //   //   id = this.ids[0];
-    //   // }
-    //   // this.$refs.operate.init('update', id);
-    //   this.$router.push({name:'userCreate',query:{id}});
-    // },
-        /** 重置按钮操作 */
-    resetQuery() {
-      this.resetForm("queryForm");
-      this.formData.deptId = '';
-      this.handleQuery();
-    },
-        // 更多操作触发
-    handleCommand(command, row) {
-      switch (command) {
-        case "handleResetPwd":
-          this.handleResetPwd(row);
-          break;
-        case "bindRole":
-          this.handleAuthRole(row);
-          break;
-        default:
-          break;
-      }
-    },
-    //  handleDelete(ids) {
-    //   this.$modal.confirm('是否确认离职?').then(function () {
-    //     return userDeleteBatch({ids});
-    //   }).then(() => {
-    //     this.getList();
-    //     this.$modal.msgSuccess("操作成功");
-    //   }).catch(() => {
-    //   });
-    // },
     handleAuthRole(row) {
       this.$refs.roleDrawer.init(row, 'user');
     },
@@ -299,129 +234,25 @@ export default {
       }).catch(() => {
       })
     },
-    handleStopGrant(ids){
-      if(this.selectionData[0].cardGrantStatus === '0'){
-        this.updateGrantStatus(this.selectionData[0].id,'1');
-      }else{
-        this.$modal.msgError("当前为停发状态,正常状态可操作停发");
-      } 
-    },
-    handleRecovery(ids){
-      if(this.selectionData[0].cardGrantStatus === '1'){
-        this.updateGrantStatus(this.selectionData[0].id,'0');
-      }else{
-         this.$modal.msgError("当前为正常状态,停发状态可操作恢复");
-      } 
-    },
-    updateGrantStatus(id,status){
-      updateGrantStatus({id:id,cardGrantStatus:status}).then((res)=>{
-        this.$modal.msgSuccess(res.message);
-        this.getList();
-      })
-    },
-    //    renderHeader (h, {column, $index}, index) {
-    //   return (
-    //     <span>
-    //     {column.label}
-    //     </span>
-    //   )
-    // },
-    //渲染**的tableheader
-    // renderSpecNameHeader(createElement, { column, $index }, fieldType, fieldFormat) {
-    //   let fieldFormatObj = null;
-    //   if(fieldType == "dict"){
-    //     fieldFormatObj = JSON.parse(fieldFormat)
-    //   }
-    //   let self = this;
-    //   //该列的绑定数据
-    //   // console.log(column.label);
-    //   //列号
-    //   // console.log($index);
-    //   return createElement(
-    //     "div",
-    //     {
-    //       style: "display:inline-flex;"
-    //     },
-    //     [
-    //       createElement("div", {
-    //         domProps: {
-    //           innerHTML: column.label
-    //         }
-    //       }),
-    //       createElement(SelectHeader, {
-    //         style: "cursor: pointer;margin-left: 5px;",
-    //         // 组件 prop
-    //         props: {
-    //           type: column.property,
-    //           fieldType: fieldType,
-    //           fieldFormat: fieldFormatObj,
-    //           columnLabel: column.label
-    //         },
-    //         // 事件监听器在 `on` 属性内，
-    //         // 但不再支持如 `v-on:keyup.enter` 这样的修饰器。
-    //         // 需要在处理函数中手动检查 keyCode。
-    //         on: {
-    //           selectChange: self.selectChange
-    //           // click: this.clickHandler
-    //         },
-    //         // 仅用于组件，用于监听原生事件，而不是组件内部使用
-    //         // `vm.$emit` 触发的事件。
-    //         nativeOn: {
-    //           // click: this.nativeClickHandler
-    //         }
-    //       })
-    //     ]
-    //   );
-    // },
-     //选择框回调
-    // selectChange(data) {
-    //   let type = data["type"];
-    //   let value = data["value"];
-    //   if(type === 'createTime'){
-    //     this.dateRange = value;
+    // handleStopGrant(ids){
+    //   if(this.selectionData[0].cardGrantStatus === '0'){
+    //     this.updateGrantStatus(this.selectionData[0].id,'1');
     //   }else{
-    //     this.formData[type] = value;
-    //   }
-    //   this.handleQuery();
+    //     this.$modal.msgError("当前为停发状态,正常状态可操作停发");
+    //   } 
     // },
-    //   tableRowClassName({row,rowIndex}){
-    //   row.index=rowIndex+1
+    // handleRecovery(ids){
+    //   if(this.selectionData[0].cardGrantStatus === '1'){
+    //     this.updateGrantStatus(this.selectionData[0].id,'0');
+    //   }else{
+    //      this.$modal.msgError("当前为正常状态,停发状态可操作恢复");
+    //   } 
     // },
-
-    
-
-
-    
-    // handleSelectionChange (selection) {
-    //   this.selectionData = selection
-    //   this.ids = selection.map(item => item.id)
-    //   this.single = selection.length!=1
-    //   this.multiple = !selection.length
-    // },
-
-    
-    // newButton (buttonCode, row) {
-    //   if (buttonCode == 'update') {
-    //     this.handleUpdate(row || '');
-    //   }else if (buttonCode === 'delete') {
-    //     this.handleDelete(row || '');
-    //   }else if (buttonCode === 'create') {
-    //     this.handleCreate();
-    //   }else if(buttonCode === 'downLoadModel'){
-    //     this.handleDownLoad()
-    //   }else if(buttonCode === 'stopGrant'){
-    //       if(this.selectionData[0].cardGrantStatus === '0'){
-    //         this.updateGrantStatus(this.selectionData[0].id,'1');
-    //       }else{
-    //          this.$modal.msgError("当前为停发状态");
-    //       } 
-    //   }else if(buttonCode === 'recovery'){
-    //      if(this.selectionData[0].cardGrantStatus === '1'){
-    //         this.updateGrantStatus(this.selectionData[0].id,'0');
-    //       }else{
-    //          this.$modal.msgError("当前为正常状态");
-    //       } 
-    //   }
+    // updateGrantStatus(id,status){
+    //   updateGrantStatus({id:id,cardGrantStatus:status}).then((res)=>{
+    //     this.$modal.msgSuccess(res.message);
+    //     this.getList();
+    //   })
     // },
   }
 }

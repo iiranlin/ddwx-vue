@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container_tree">
     <el-row :gutter="20" class="container_h">
       <!--菜单数据-->
       <el-col :span="4" :xs="24" class="container_flex_overflow">
@@ -47,7 +47,7 @@
 
 <script>
 import {menuButtonPage,menuButtonDeleteBatch} from '@/api/system/menu-button';
-import { menuTree ,menuProperty} from '@/api/system/menu';
+import { menuTree } from '@/api/system/menu';
 import operate from "./components/operate";
 import indexMixin from '@/views/mixins';
 import tableIndex from "@/components/tableIndex";
@@ -121,14 +121,8 @@ export default {
   },
   methods: {
     menuProperty() {
-      let id = this.$route.meta.id;
-      menuProperty(id).then(({ data }) => {
-        data.search.forEach((item) => {
-          if (item.fieldType == "dict") {
-            item.fieldFormat = JSON.parse(item.fieldFormat);
-          }
-          // this.formData[item.fieldCode] = ''
-        });
+      const id = this.$route.meta.id;
+      this.$store.dispatch('menuProperty', id).then( (data) => {
         this.property = data;
       });
     },

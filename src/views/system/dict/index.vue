@@ -58,7 +58,6 @@
 
 <script>
 import {commonPage,commonTree,commonDeleteBatch} from '@/api/system/dict/common'
-import { menuProperty } from '@/api/system/menu'
 import operate from "./components/operate";
 import indexMixin from '@/views/mixins';
 import tableIndex from "@/components/tableIndex";
@@ -158,18 +157,10 @@ export default {
       this.getList();
     },
     menuProperty () {
-      let id = this.$route.meta.id;
-      menuProperty(id).then( ({data}) => {
-        data.search.forEach((item) => {
-          if(item.fieldType == "dict"){
-            item.fieldFormat = JSON.parse(item.fieldFormat)
-          }
-        })
+      const id = this.$route.meta.id;
+      this.$store.dispatch('menuProperty', id).then( (data) => {
         this.property = data;
-        // this.$nextTick( () => {
-        //   this.$refs.elTable.doLayout();
-        // })
-      })
+      });
     },
     getList () {
       this.loading = true;

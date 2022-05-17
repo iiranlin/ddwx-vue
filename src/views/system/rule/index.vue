@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container container_flex">
     <el-row :gutter="10" class="mb8 container_flex_button">
       <el-col :span="1.5" v-for="item in property.buttonTop" :key="item.id">
         <button-top :item="item" :multiple="multiple" :single="single" @newButton="newButton"></button-top>
@@ -145,17 +145,14 @@ import {
   updateRule,
 } from "@/api/system/rule";
 import { menuFieldPage } from "@/api/system/menu-field";
-import { menuTree ,menuProperty } from "@/api/system/menu";
+import { menuTree } from "@/api/system/menu";
 import indexMixin from "@/views/mixins";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import { hump2Underline } from "@/utils/index";
 import Sortable from 'sortablejs';
-import tableIndex from "@/components/tableIndex";
-import formData from "@/components/formData";
-import buttonTop from "@/components/buttonTop";
 export default {
-  components: { Treeselect, tableIndex, formData, buttonTop},
+  components: { Treeselect },
   mixins: [indexMixin],
   name: "Rule",
   dicts: ["status"],
@@ -227,19 +224,12 @@ export default {
   },
   methods: {
     menuProperty() {
-      let id = this.$route.meta.id;
-      menuProperty(id).then(({ data }) => {
-        data.search.forEach((item) => {
-          if (item.fieldType == "dict") {
-            item.fieldFormat = JSON.parse(item.fieldFormat);
-          }
-          // this.formData[item.fieldCode] = ''
-        });
+      const id = this.$route.meta.id;
+      this.$store.dispatch('menuProperty', id).then( (data) => {
         this.property = data;
       });
     },
     newButton(buttonCode) {
-      console.log(buttonCode)
         this.$refs.tableIndex.newButton(buttonCode);
     },
     handleButton(id, buttonCode) {
