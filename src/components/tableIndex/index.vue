@@ -370,7 +370,7 @@ export default {
           id = [id];
         }
       }
-      this.$emit("handleButton", id || row, buttonCode, row, selectionArr);
+      this.$emit("handleButton", id || row, buttonCode, row, this.selectionArr);
     },
     // 列表超链接 row行数据 fieldCode 表的字段 linkText 为链接页面的内容
     clickLink(row = {}, fieldCode, linkText) {
