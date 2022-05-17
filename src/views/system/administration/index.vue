@@ -63,7 +63,6 @@ import buttonTop from "@/components/buttonTop"
 import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
 import operate from "./components/operate"
-import {menuProperty} from "@/api/system/menu"
 import {gcjcDivisionListPage,
         gcjcDivisionDeleteBatch} from "@/api/system/dict/administration"
 export default {
@@ -102,20 +101,16 @@ export default {
         }
     },
     created(){
-        this.menuProperty();
+        let id = this.$route.meta.id;
+        this.$store.dispatch('menuProperty', id).then( (data) => {
+            data.search.forEach((item) => {
+                item.fieldFormat = JSON.parse(JSON.stringify(item.fieldFormat));
+            })
+            this.property = data;
+        });
         this.getList();
     },
     methods:{
-        //查询菜单数据
-        async menuProperty(){
-            let id = this.$route.meta.id;
-            await menuProperty(id).then(({data})=>{
-               data.search.forEach((item) => {
-                   item.fieldFormat = JSON.parse(item.fieldFormat);
-               })
-               this.property = data;
-            })
-        },
         //获取分页数据
         async getList(){
             this.loading = true;
@@ -164,13 +159,13 @@ export default {
             this.handleQuery();
         },
         //表格内部搜索条件回调
-        selectChange(type,value){
-            if(type === "createTime"){
-                this.dateRange = value;
+        selectChange(row){
+            let {formData, isWatch} = row;
+            if(!isWatch){
+                this.handleQuery(formData);
             }else{
-                this.formData[type] = value;
+                this.formData = Object.assign({}, this.formData, formData);
             }
-            this.handleQuery();
         },
         //表格内部排序
         emitAblFilter(){
