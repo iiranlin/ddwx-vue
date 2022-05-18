@@ -4,7 +4,7 @@ let VUE_APP_BASE_PREFIX = process.env.VUE_APP_AUTH_SERVER;
 // 查询菜单列表
 export function menuPage(params) {
   return request({
-    url: `${VUE_APP_BASE_PREFIX}/menu/listPage`,
+    url: `${VUE_APP_BASE_PREFIX}/menu/list`,
     method: 'get',
     params
   })
