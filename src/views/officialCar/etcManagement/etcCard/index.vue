@@ -82,6 +82,7 @@ import buttonTop from "@/components/buttonTop"
 import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
 import indexMixin from "@/views/mixins"
+import { getEtcCardPageList } from "@/api/etc";
 
 export default {
   name: 'RefuelingRecord',
@@ -151,6 +152,12 @@ export default {
     async getList() {
       this.loading = true;
       try {
+        const params = {
+         ...this.listQuery,
+         ...this.formData
+        }
+        const res = await getEtcCardPageList(params);
+        console.log("🚀 ~ file: index.vue ~ line 155 ~ getList ~ res", res)
         this.dataList = data.list;
         this.total = data.total;
         this.loading = false;
