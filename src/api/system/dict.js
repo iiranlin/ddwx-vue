@@ -50,7 +50,7 @@ export function commonTree(query) {
 
 export function getListByParentId(id) {
   return request({
-    url: `${VUE_APP_BASE_PREFIX}/dict/common/getListByParent/` + id,
+    url: `${VUE_APP_BASE_PREFIX}/dict/getListByParentId/${id}`,
     method: 'get',
   })
 }

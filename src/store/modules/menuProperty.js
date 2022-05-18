@@ -1,5 +1,5 @@
 import { menuProperty } from '@/api/system/menu'
-import { getListByParentCode } from '@/api/system/dict'
+import { getListByParentId } from '@/api/system/dict'
 const menu = {
     state: {
         menuPropertys: {},
@@ -17,12 +17,12 @@ const menu = {
                 menuProperty(id).then( async ({data}) => {
                     for(let item of data.search){
                         if(item.fieldType == "dict"){
-                            item.fieldFormatArr = await getListByParentIds(item.id);
+                            item.fieldFormatArr = await getListByParentIds(item.fieldFormatDict);
                         }
                     }
                     for(let val of data.fields){
                         if(val.fieldType == "dict"){
-                            val.fieldFormatArr = await getListByParentIds(val.id);
+                            val.fieldFormatArr = await getListByParentIds(val.fieldFormatDict);
                         }
                     }
                     commit('MENU_PROPERTY', data);
@@ -37,7 +37,7 @@ const menu = {
 
 function getListByParentIds (id) {
     return new Promise( resolve => {
-      getListByParentCode(id).then(({data}) => {
+        getListByParentId(id).then(({data}) => {
             resolve(data)
         })
     })
