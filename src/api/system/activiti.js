@@ -17,11 +17,11 @@ export function modelEditUrl(params) {
     })
 }
 
-// 分配权限
-export function aclAssign(data) {
+// 新建工作流
+export function modelNewModel(params) {
     return request({
-        url: `${VUE_APP_BASE_PREFIX}/acl/assign`,
-        method: 'post',
-        data
+        url: `${VUE_APP_BASE_PREFIX}/activiti/model/newModel`,
+        method: 'get',
+        params
     })
 }

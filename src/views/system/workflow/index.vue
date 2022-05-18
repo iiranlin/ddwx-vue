@@ -23,21 +23,33 @@
       :limit.sync="listQuery.pageSize"
       @pagination="getList"
     />
+    
+    <el-dialog title="选择类型" :visible.sync="openDataScope" width="600px" append-to-body>
+      <el-form ref="elForm" :model="form" :rules="rules" label-width="85px">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="类型:" prop="key">
+              <el-input v-model="form.key" placeholder="请输入类型" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitDataScope">确 定</el-button>
+        <el-button @click="openDataScope = false">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import {modelListPage, modelEditUrl} from "@/api/system/activiti";
+import {modelListPage, modelNewModel, modelEditUrl} from "@/api/system/activiti";
 import indexMixin from '@/views/mixins';
-import tableIndex from "@/components/tableIndex";
-import formData from "@/components/formData";
-import buttonTop from "@/components/buttonTop";
+import { getCookie } from '@/utils/auth'
 
 export default {
+  name: "workflow",
   mixins: [indexMixin],
-  components: {tableIndex, formData, buttonTop},
-  name: "Unit",
-  dicts: ['status'],
   data() {
     return {
       // 遮罩层
@@ -58,19 +70,6 @@ export default {
       open: false,
       // 查询参数
       formData: {},
-      // 单位实体
-      unitEntity: {
-        id: null,
-        unitCode: null,
-        unitName: null,
-        shortName: null,
-        major: null,
-        status: 0,
-        isDelete: null,
-        seq: null,
-        describe: null,
-        unitLevel: null
-      },
       // 表单校验
       rules: {
         unitCode: [
@@ -83,16 +82,24 @@ export default {
       //列表显示字段
       property: {},
       numberShow: false,
+      openDataScope: false,
+      form:{
+        key: ''
+      },
+      sUnitCode: getCookie('unitCode'),
     };
   },
   created() {
-    let id = this.$route.meta.id;
-    this.$store.dispatch('menuProperty', id).then( (data) => {
-      this.property = data;
-      this.getList();
-    });
+    this.menuProperty();
+    this.getList();
   },
   methods: {
+    menuProperty () {
+      let id = this.$route.meta.id;
+      this.$store.dispatch('menuProperty', id).then( (data) => {
+        this.property = data;
+      });
+    },
     numberChange(val) {
       this.numberShow = val;
     },
@@ -139,23 +146,29 @@ export default {
       this.single = single
       this.multiple = multiple
     },
-    /** 新增按钮操作 */
-    handleCreate() {
-      modelEditUrl().then( ({message}) => {
-        console.log(message)
-      })
-    },
     /** 修改按钮操作 */
     handleUpdate(id) {
     },
     handleButton(id, buttonCode) {
-      console.log(buttonCode)
       if (buttonCode === 'update') {
         this.handleUpdate(id)
       } else if (buttonCode === 'create') {
-        this.handleCreate()
+        this.openDataScope = true;
       }
     },
+    submitDataScope () {
+      modelNewModel(this.form).then( ({message}) => {
+        this.openWidow(message + "&sUnitCode=" + this.sUnitCode + '&ips=' + window.location.href);
+      })
+    },
+    openWidow(Url) {
+        let width = window.screen.width;
+        let height = window.screen.height - 100;
+        let top = parseInt((screen.availHeight - height - 100) / 2);
+        let left = parseInt((screen.availWidth - width - 15) / 2)
+        window.open(Url, '', 'toolbar=0,location=0,maximize=1,directories=0,status=1,menubar=0,scrollbars=0,resizable=1,top=' + top
+            + ',left=' + left + ',width=' + width + ',height=' + height);
+    }
   }
 };
 </script>

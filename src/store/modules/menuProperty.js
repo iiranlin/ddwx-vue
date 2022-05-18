@@ -17,12 +17,12 @@ const menu = {
                 menuProperty(id).then( async ({data}) => {
                     for(let item of data.search){
                         if(item.fieldType == "dict"){
-                            item.fieldFormatArr = await getListByParentIds(item.fieldFormatDict);
+                            item.fieldFormatArr = await getListByParentIds(item.id);
                         }
                     }
                     for(let val of data.fields){
                         if(val.fieldType == "dict"){
-                            val.fieldFormatArr = await getListByParentIds(val.fieldFormatDict);
+                            val.fieldFormatArr = await getListByParentIds(val.id);
                         }
                     }
                     commit('MENU_PROPERTY', data);

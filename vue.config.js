@@ -35,7 +35,7 @@ module.exports = {
     overlay: {
       warnings: false,
       errors: true
-    }
+    },
     // proxy: {
     //   // detail: https://cli.vuejs.org/config/#devserver-proxy
     //   [process.env.VUE_APP_BASE_API]: {
@@ -46,7 +46,7 @@ module.exports = {
     //     }
     //   }
     // },
-    // disableHostCheck: true
+    disableHostCheck: true
   },
   css: {
     loaderOptions: {
