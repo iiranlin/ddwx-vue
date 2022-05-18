@@ -1,5 +1,5 @@
 import { menuProperty } from '@/api/system/menu'
-import { getListByParentId } from '@/api/system/dict'
+import { getListByParentCode } from '@/api/system/dict'
 const menu = {
     state: {
         menuPropertys: {},
@@ -37,7 +37,7 @@ const menu = {
 
 function getListByParentIds (id) {
     return new Promise( resolve => {
-        getListByParentId(id).then(({data}) => {
+      getListByParentCode(id).then(({data}) => {
             resolve(data)
         })
     })

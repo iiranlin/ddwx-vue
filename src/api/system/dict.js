@@ -57,7 +57,7 @@ export function getListByParentId(id) {
 
 export function getListByParentCode(code) {
   return request({
-    url: `${VUE_APP_BASE_PREFIX}/dict/common/getListByParentCode/${code}`,
+    url: `${VUE_APP_BASE_PREFIX}/dict/getListByParentCode/${code}`,
     method: 'get',
   })
 }
