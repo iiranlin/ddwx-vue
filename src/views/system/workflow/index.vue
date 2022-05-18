@@ -10,11 +10,15 @@
       ></right-toolbar>
     </el-row>
     <form-data :showSearch="showSearch" :searchArr="property.search || []" @handleQuery="handleQuery"/>
-    <table-index ref="tableIndex" :loading="loading" :tableData="dataList" :property="property" :numberShow="numberShow"
-                 @handleSelectionChange="handleSelectionChange"
-                 @handleButton="handleButton"
-                 @selectChange="selectChange"
-                 @emitAblFilter="emitAblFilter"
+    <table-index ref="tableIndex" :loading="loading" :menuName="menuName"
+      :tableData="dataList"
+      :property="property"
+      :numberShow="numberShow"
+      @handleSelectionChange="handleSelectionChange"
+      @handleButton="handleButton"
+      @selectChange="selectChange"
+      @emitAblFilter="emitAblFilter"
+      @changeSwitch="changeSwitch"
     />
     <pagination
       v-show="total>0"
@@ -43,9 +47,9 @@
 </template>
 
 <script>
-import {modelListPage, modelNewModel, modelEditUrl} from "@/api/system/activiti";
+import {modelListPage, modelNewModel, modelEditUrl, modelUpdateFlag} from "@/api/system/activiti";
 import indexMixin from '@/views/mixins';
-import { getCookie } from '@/utils/auth'
+import { getCookie, getToken } from '@/utils/auth'
 
 export default {
   name: "workflow",
@@ -87,11 +91,22 @@ export default {
         key: ''
       },
       sUnitCode: getCookie('unitCode'),
+      TokenKey: getToken('TokenKey'),
+      //菜单名称
+      menuName: ''
     };
   },
   created() {
+    this.menuName = this.$route.meta.title;
     this.menuProperty();
     this.getList();
+    window.addEventListener("message", (e) => {
+        if (e.data.type === 'end') {
+            this.listQuery.pageNum = 1;
+            this.openDataScope = false;
+            this.handleQuery();
+        }
+    })
   },
   methods: {
     menuProperty () {
@@ -147,18 +162,30 @@ export default {
       this.multiple = multiple
     },
     /** 修改按钮操作 */
-    handleUpdate(id) {
+    handleUpdate(row) {
+      modelEditUrl().then(({data}) => {
+        this.openWidow(`${data}/editor?IP=${data}&modelId=${row.modelId}&sUnitCode=${this.sUnitCode}&ips=${window.location.href}&token=${this.TokenKey}`);
+      })
     },
-    handleButton(id, buttonCode) {
+    handleButton(id, buttonCode, row, selectionArr) {
       if (buttonCode === 'update') {
-        this.handleUpdate(id)
+        if(Object.keys(row).length == 0){
+          this.handleUpdate(selectionArr[0]);
+        }else{
+          this.handleUpdate(row);
+        }
       } else if (buttonCode === 'create') {
         this.openDataScope = true;
       }
     },
     submitDataScope () {
       modelNewModel(this.form).then( ({message}) => {
-        this.openWidow(message + "&sUnitCode=" + this.sUnitCode + '&ips=' + window.location.href);
+        this.openWidow(`${message}&sUnitCode=${this.sUnitCode}&ips=${window.location.href}&token=${this.TokenKey}`);
+      })
+    },
+    changeSwitch (row) {
+      modelUpdateFlag({flag: row.flag, id: row.modelId}).then( ({message}) => {
+        this.$modal.msgSuccess(message);
       })
     },
     openWidow(Url) {
@@ -168,7 +195,7 @@ export default {
         let left = parseInt((screen.availWidth - width - 15) / 2)
         window.open(Url, '', 'toolbar=0,location=0,maximize=1,directories=0,status=1,menubar=0,scrollbars=0,resizable=1,top=' + top
             + ',left=' + left + ',width=' + width + ',height=' + height);
-    }
+    },
   }
 };
 </script>

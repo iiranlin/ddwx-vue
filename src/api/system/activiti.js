@@ -25,3 +25,12 @@ export function modelNewModel(params) {
         params
     })
 }
+
+// 修改工作流模型启用状态
+export function modelUpdateFlag(params) {
+    return request({
+        url: `${VUE_APP_BASE_PREFIX}/activiti/model/updateFlag`,
+        method: 'get',
+        params
+    })
+}
