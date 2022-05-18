@@ -27,6 +27,11 @@
               @newButton="newButton"
               class="cume-button"
             ></button-top>
+          <el-button
+            plain
+            size="mini"
+            class="custom_button"
+          ><svg-icon icon-class="iconPark-seal" class="icon"></svg-icon>审批</el-button>
           </el-col>
           <right-toolbar
             ref="rightToolbar"

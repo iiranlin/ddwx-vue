@@ -9,13 +9,3 @@ export function gcywVehicleRequestListPage(params) {
     params
   })
 }
-
-// 新增部门
-// export function deptCreate(data) {
-//   return request({
-//     url: `${VUE_APP_BASE_PREFIX}/dept/create`,
-//     method: 'post',
-//     data
-//   })
-// }
-
