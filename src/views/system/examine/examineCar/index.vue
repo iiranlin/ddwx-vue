@@ -69,12 +69,14 @@
         />
       </el-col>
     </el-row>
-    <operate ref="operate" @deptSuccess="deptSuccess" :deptOptions="deptOptions"/>
+    <operate ref="operate" @carSuccess="carSuccess"/>
   </div>
 </template>
 
 <script>
-import { deptListPage, deptTree, deptDeleteBatch } from "@/api/system/dept";
+import { deptTree, deptDeleteBatch } from "@/api/system/dept";
+import { gcywVehicleRequestListPage } from "@/api/system/gcywVehicleRequest";
+
 import operate from "./components/operate";
 import indexMixin from "@/views/mixins";
 export default {
@@ -135,37 +137,10 @@ export default {
     numberChange (val) {
       this.numberShow = val;
     },
-    // newButton(buttonCode) {
-    //   if (buttonCode === "bindStoryhouse") {
-    //     this.checkWarehouseState();
-    //   } else {
-    //     this.$refs.tableIndex.newButton(buttonCode);
-    //   }
-    // },
     newButton (buttonCode) {
       this.$refs.tableIndex.newButton(buttonCode)
     },
     handleButton(id, buttonCode) {
-      if (buttonCode === 'update') {
-        this.handleUpdate(id)
-      } else if (buttonCode === 'delete') {
-        this.handleDelete(id)
-      } else if (buttonCode === 'create') {
-        this.handleCreate()
-      }
-    },
-    //检查是否属于同一仓库
-    checkWarehouseState() { 
-      if(this.selectionData.length>1){
-        let storehouseCode = this.selectionData[0].storehouseCode;
-        for (let i = 1; i < this.selectionData.length; i++) {
-          if(storehouseCode!==this.selectionData[i].storehouseCode){
-            this.$modal.msgWarning("所选部门绑定不同仓库，无法同时修改")
-            return
-          }
-        }
-      }
-      this.$refs.warehouse.init(this.selectionData);
     },
     handleCheckAllChange(columns) {
       this.$refs.tableIndex.init(columns);
@@ -178,11 +153,6 @@ export default {
       }else{
         this.formData = Object.assign({}, this.formData, formData);
       }
-    },
-    deptTree() {
-      deptTree().then(({ data }) => {
-        this.deptOptions = data;
-      });
     },
     // 节点单击事件
     handleNodeClick(data) {
@@ -197,9 +167,14 @@ export default {
       this.formData = Object.assign({}, this.formData, row);
       this.getList();
     },
+    deptTree() {
+      deptTree().then(({ data }) => {
+        this.deptOptions = data;
+      });
+    },
     getList() {
       this.loading = true;
-      deptListPage(Object.assign({}, this.listQuery, this.formData)).then(
+      gcywVehicleRequestListPage(Object.assign({}, this.listQuery, this.formData)).then(
         ({ data }) => {
           this.dataList = data.list;
           this.total = data.total;
@@ -212,35 +187,13 @@ export default {
       this.multiple = multiple;
       this.selectionData = selection;
     },
-    handleCreate() {
-      this.$refs.operate.init("create", this.formData.parentId);
-    },
-    handleUpdate(id) {
-      this.$refs.operate.init("update", id);
-    },
-    handleDelete(ids) {
-      this.$modal
-        .confirm("是否确认删除?")
-        .then(function () {
-          return deptDeleteBatch({ ids });
-        })
-        .then(() => {
-          this.deptTree();
-          this.getList();
-          this.$modal.msgSuccess("删除成功");
-        })
-        .catch(() => {});
-    },
-    deptSuccess() {
+    carSuccess() {
       this.handleQuery();
       this.deptTree();
     },
     clickReset() {
       this.menuProperty();
       this.handleQuery();
-    },
-    warehouseSuccess() {
-      this.getList();
     },
   },
 };
