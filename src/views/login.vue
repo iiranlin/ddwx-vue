@@ -29,17 +29,17 @@
         :rules="loginRules"
         class="login-form"
       >
-        <el-form-item prop="unitCode">
+        <el-form-item prop="unitId">
           <el-select
-            v-model="loginForm.unitCode"
+            v-model="loginForm.unitId"
             placeholder="请选择单位"
             style="width: 100%"
           >
             <el-option
               v-for="item in unitList"
-              :key="item.unitCode"
+              :key="item.id"
               :label="item.unitName"
-              :value="item.unitCode"
+              :value="item.id"
               style="width: 100%; text-align: center"
             >
             </el-option>
@@ -182,7 +182,7 @@ export default {
       loginForm: {
         username: "",
         password: "",
-        unitCode: "",
+        unitId: "",
         checkCode: "",
         checkKey: "",
         rememberMe: true,
@@ -195,7 +195,7 @@ export default {
       },
       loginW: 1416,
       loginRules: {
-        unitCode: [{ required: true, trigger: "blur", message: "请选择单位" }],
+        unitId: [{ required: true, trigger: "blur", message: "请选择单位" }],
         username: [
           { required: true, trigger: "blur", message: "请输入您的账号" },
         ],
@@ -228,11 +228,11 @@ export default {
     },
   },
   created() {
-    const unitCode = getCookie("unitCode");
+    const unitId = getCookie("unitId");
     const username = getCookie("username");
     const password = getCookie("password");
     this.loginForm = {
-      unitCode: unitCode === undefined ? this.loginForm.unitCode : unitCode,
+      unitId: unitId === undefined ? this.loginForm.unitId : unitId,
       username: username === undefined ? this.loginForm.username : username,
       password: password === undefined ? this.loginForm.password : password,
       rememberMe: true,
@@ -270,11 +270,11 @@ export default {
           if (this.loginForm.rememberMe) {
             setCookie("username", this.loginForm.username);
             setCookie("password", this.loginForm.password);
-            setCookie("unitCode", this.loginForm.unitCode);
+            setCookie("unitId", this.loginForm.unitId);
           } else {
             removeCookie("username");
             removeCookie("password");
-            removeCookie("unitCode");
+            removeCookie("unitId");
           }
           this.$store
             .dispatch("Login", this.loginForm)
