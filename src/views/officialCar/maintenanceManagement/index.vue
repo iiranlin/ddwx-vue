@@ -61,7 +61,6 @@
 import buttonTop from "@/components/buttonTop"
 import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
-import {menuProperty} from "@/api/system/menu"
 import {tempRestrictionListPage,
         tempRestrictionAddFR,
         tempRestrictionEnableFR,
@@ -102,16 +101,20 @@ export default {
         }
     },
     created(){
-        let id = this.$route.meta.id;
-        this.$store.dispatch('menuProperty', id).then( (data) => {
-            data.search.forEach((item) => {
-                item.fieldFormat = JSON.parse(JSON.stringify(item.fieldFormat));
-            })
-            this.property = data;
-        });
+        this.menuProperty();
         this.getList();
     },
     methods:{
+        //获取菜单数据
+        menuProperty(){
+            let id = this.$route.meta.id;
+            this.$store.dispatch('menuProperty', id).then( (data) => {
+                data.search.forEach((item) => {
+                    item.fieldFormat = JSON.parse(JSON.stringify(item.fieldFormat));
+                })
+                this.property = data;
+            });
+        },
         //获取分页数据
         async getList(){
             this.loading = true;

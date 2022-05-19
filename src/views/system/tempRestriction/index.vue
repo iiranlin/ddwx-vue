@@ -64,11 +64,8 @@ import buttonTop from "@/components/buttonTop"
 import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
 import operate from "./components/operate"
-import {menuProperty} from "@/api/system/menu"
 import {tempRestrictionListPage,
-        tempRestrictionAddFR,
-        tempRestrictionEnableFR,
-        tempRestrictionUpdateFR} from "@/api/system/dict/restriction"
+        tempRestrictionEnableTR} from "@/api/system/dict/restriction"
 export default {
     name:"tempRestriction",
     components:{buttonTop,formData,tableIndex,operate},
@@ -91,10 +88,6 @@ export default {
             property:{},
             //查询参数
             formData:{},
-            //已选中条目
-            selectionData:[],
-            //已选中条目的id
-            ids:[],
             //数据总数
             total:0,
             //分页参数
@@ -105,20 +98,23 @@ export default {
         }
     },
     created(){
-        let id = this.$route.meta.id;
-        this.$store.dispatch('menuProperty', id).then( (data) => {
-            data.search.forEach((item) => {
-                item.fieldFormat = JSON.parse(JSON.stringify(item.fieldFormat));
-            })
-            this.property = data;
-        });
+        this.menuProperty();
         this.getList();
     },
     methods:{
+        //获取菜单数据
+        menuProperty(){
+            let id = this.$route.meta.id;
+            this.$store.dispatch('menuProperty', id).then( (data) => {
+                data.search.forEach((item) => {
+                    item.fieldFormat = JSON.parse(JSON.stringify(item.fieldFormat));
+                })
+                this.property = data;
+            });
+        },
         //获取分页数据
         async getList(){
             this.loading = true;
-            console.log(this.formData)
             await tempRestrictionListPage(Object.assign({}, this.listQuery,this.formData)).then(({data})=>{
                 this.dataList = data.list;
                 this.total = data.total;
@@ -137,12 +133,13 @@ export default {
                 this.$refs.operate.init("create","");
             }else if(buttonCode==="delete"){
                 this.$modal.confirm("是否删除所选信息?").then(()=>{
-                    let id= "";
-                    id = row.divisionId || this.ids;
-                    if (!(id instanceof Array)) {
-                        id = [id];
+                    let deletes = [];
+                    for (let i = 0; i < ids.length; i++) {
+                        let object = {};
+                        this.$set(object, 'id', ids[i]);
+                        deletes.push(object);
                     }
-                    gcjcDivisionDeleteBatch({ids:id}).then(({message}) => {
+                    tempRestrictionEnableTR(deletes).then(({message}) => {
                         this.$modal.msgSuccess(message);
                         this.getList();
                     }).catch((err) => {
@@ -150,7 +147,7 @@ export default {
                     })
                 })
             }else if(buttonCode==='update'){
-                this.$refs.operate.init("update",row.divisionId);
+                this.$refs.operate.init("update",row);
             }
         },
         //顶部列字段展示
@@ -176,11 +173,9 @@ export default {
             this.getList();
         },
         //多选获取行数据
-        handleSelectionChange(ids,single,multiple,selection){
+        handleSelectionChange(ids,single,multiple){
             this.single = single;
             this.multiple = multiple;
-            this.selectionData = selection;
-            this.ids = selection.map(item => item.divisionId)
         },
         //新建或修改成功回调
         operateSuccess(){

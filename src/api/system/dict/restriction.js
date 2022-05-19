@@ -47,27 +47,27 @@ export function tempRestrictionListPage(params) {
 }
 
 //车辆临时限行-增加
-export function tempRestrictionAddFR(data) {
+export function tempRestrictionAddTR(data) {
   return request({
-    url: `${VUE_APP_BASE_prefix}/tempRestriction/addFR`,
+    url: `${VUE_APP_BASE_prefix}/tempRestriction/addTR`,
     method: 'post',
     data
   })
 }
 
 //车辆临时限行-删除
-export function tempRestrictionEnableFR(data) {
+export function tempRestrictionEnableTR(data) {
   return request({
-    url: `${VUE_APP_BASE_prefix}/tempRestriction/enableFR`,
+    url: `${VUE_APP_BASE_prefix}/tempRestriction/enableTR`,
     method: 'post',
     data
   })
 }
 
 //车辆临时限行-修改
-export function tempRestrictionUpdateFR(data) {
+export function tempRestrictionUpdateTR(data) {
   return request({
-    url: `${VUE_APP_BASE_prefix}/tempRestriction/updateFR`,
+    url: `${VUE_APP_BASE_prefix}/tempRestriction/updateTR`,
     method: 'post',
     data
   })
