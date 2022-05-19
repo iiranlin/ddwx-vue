@@ -365,7 +365,7 @@ export default {
       this.ids = selection.map((item) => item.id);
       let single = selection.length != 1;
       let multiple = !selection.length;
-      this.$emit("handleSelectionChange", this.ids, single, multiple);
+      this.$emit("handleSelectionChange", this.ids, single, multiple,selection);
     },
     emitAblFilter() {
       this.$emit("emitAblFilter", this.listQuery);
