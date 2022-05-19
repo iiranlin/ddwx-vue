@@ -94,9 +94,6 @@
   </div>
 </template>
 <script>
-import buttonTop from "@/components/buttonTop"
-import formData from "@/components/formData"
-import tableIndex from "@/components/tableIndex"
 import operate from "./components/operate"
 import distribute from "./components/distribute"
 import indexMixin from "@/views/mixins"
@@ -106,9 +103,6 @@ export default {
   name: "fuelCardManagement",
   mixins: [indexMixin],
   components: {
-    buttonTop,
-    formData,
-    tableIndex,
     operate,
     distribute
   },
