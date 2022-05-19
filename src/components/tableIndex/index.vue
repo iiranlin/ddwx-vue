@@ -50,7 +50,7 @@
             : renderHeader
         "
       >
-        <template slot-scope="{ row }">
+        <template slot-scope="scope">
           <span
             v-if="
               propertyFieldsArr[index].fieldType != null &&
@@ -58,14 +58,23 @@
             "
             >{{
               parseTime(
-                row[propertyFieldsArr[index].fieldCode],
+                scope.row[propertyFieldsArr[index].fieldCode],
                 propertyFieldsArr[index].fieldFormatDate
               )
             }}</span
           >
+          <span v-else-if="propertyFieldsArr[index].menuName == menuName && propertyFieldsArr[index].fieldType === 'dict'">
+            <el-switch
+              v-model="scope.row[propertyFieldsArr[index].fieldCode]"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              active-value="1"
+              inactive-value="0" @change="changeSwitch(scope.row)">
+            </el-switch>
+          </span>
           <span v-else-if="propertyFieldsArr[index].fieldType === 'dict'">
             {{
-              row[propertyFieldsArr[index].fieldCode]
+              scope.row[propertyFieldsArr[index].fieldCode]
                 | fieldFormat(propertyFieldsArr[index].fieldFormatArr)
             }}
           </span>
@@ -73,11 +82,11 @@
             <el-link
               class="underline ellipsis"
               type="primary"
-              @click="clickLink(row, item.fieldCode, item.link)"
-              >{{ row[propertyFieldsArr[index].fieldCode] }}</el-link
+              @click="clickLink(scope.row, item.fieldCode, item.link)"
+              >{{ scope.row[propertyFieldsArr[index].fieldCode] }}</el-link
             >
           </span>
-          <span v-else>{{ row[propertyFieldsArr[index].fieldCode] }}</span>
+          <span v-else>{{ scope.row[propertyFieldsArr[index].fieldCode] }}</span>
         </template>
       </el-table-column>
     </template>
@@ -174,6 +183,11 @@ export default {
       type: Function,
       default: () => true,
     },
+    //菜单名称
+    menuName: {
+      type: String,
+      default: "",
+    }
   },
   data() {
     return {
@@ -376,6 +390,9 @@ export default {
     clickLink(row = {}, fieldCode, linkText) {
       this.$emit("clickLink", row, fieldCode, linkText);
     },
+    changeSwitch (row) {
+      this.$emit("changeSwitch", row);
+    }
   },
   beforeUpdate() {
     this.$nextTick(() => {
