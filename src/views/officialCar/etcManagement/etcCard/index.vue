@@ -78,20 +78,14 @@
 
 <script>
 
-import buttonTop from "@/components/buttonTop"
-import formData from "@/components/formData"
-import tableIndex from "@/components/tableIndex"
 import indexMixin from "@/views/mixins"
 import { getEtcCardPageList } from "@/api/etc";
 
 export default {
-  name: 'RefuelingRecord',
+  name: 'etcCard',
   mixins: [indexMixin],
-
   components: {
-    buttonTop,
-    formData,
-    tableIndex,
+
   },
   filters: {
 
