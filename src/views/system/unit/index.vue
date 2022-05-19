@@ -67,7 +67,6 @@
 </template>
 
 <script>
-import { menuProperty } from '@/api/system/menu'
 import {listUnit, getUnit, delUnit, addUnit, updateUnit} from "@/api/system/unit";
 import indexMixin from '@/views/mixins';
 

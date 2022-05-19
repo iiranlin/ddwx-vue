@@ -1,9 +1,17 @@
 import request from '@/utils/request'
 let VUE_APP_BASE_PREFIX = process.env.VUE_APP_AUTH_SERVER;
-// 工作流列表
+// 工作流列表分页
 export function modelListPage(params) {
     return request({
         url: `${VUE_APP_BASE_PREFIX}/activiti/model/listPage`,
+        method: 'get',
+        params
+    })
+}
+// 工作流列表
+export function modelList(params) {
+    return request({
+        url: `${VUE_APP_BASE_PREFIX}/activiti/model/list`,
         method: 'get',
         params
     })
@@ -32,5 +40,15 @@ export function modelUpdateFlag(params) {
         url: `${VUE_APP_BASE_PREFIX}/activiti/model/updateFlag`,
         method: 'get',
         params
+    })
+}
+
+
+// 下一级审批人列表
+export function activitiAssigneeList(data) {
+    return request({
+        url: `${VUE_APP_BASE_PREFIX}/activiti/assigneeList`,
+        method: 'post',
+        data
     })
 }

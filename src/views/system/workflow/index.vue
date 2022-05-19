@@ -64,6 +64,8 @@ export default {
       multiple: true,
       // 显示搜索条件
       showSearch: true,
+      //菜单名称
+      menuName: '',
       // 总条数
       total: 0,
       // 单位表格数据
@@ -92,8 +94,6 @@ export default {
       },
       sUnitCode: getCookie('unitCode'),
       TokenKey: getToken('TokenKey'),
-      //菜单名称
-      menuName: ''
     };
   },
   created() {

@@ -68,8 +68,8 @@
               v-model="scope.row[propertyFieldsArr[index].fieldCode]"
               active-color="#13ce66"
               inactive-color="#ff4949"
-              active-value="1"
-              inactive-value="0" @change="changeSwitch(scope.row)">
+              active-value="0"
+              inactive-value="1" @change="changeSwitch(scope.row)">
             </el-switch>
           </span>
           <span v-else-if="propertyFieldsArr[index].fieldType === 'dict'">
