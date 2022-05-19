@@ -73,25 +73,29 @@
         />
       </el-col>
     </el-row>
+    <!--新增、修改弹出框-->
+    <operate
+      ref="operate"
+      :row-id="rowId"
+      :button-code="buttonCode"
+      :operate-dialog-flag.sync="operateDialogFlag"
+      @operateSuccess="operateSuccess"
+    ></operate>
+
   </div>
 </template>
 
 <script>
 
-import buttonTop from "@/components/buttonTop"
-import formData from "@/components/formData"
-import tableIndex from "@/components/tableIndex"
+import operate from "./components/operate"
 import indexMixin from "@/views/mixins"
 import { getEtcCardPageList } from "@/api/etc";
 
 export default {
-  name: 'RefuelingRecord',
+  name: 'etcCard',
   mixins: [indexMixin],
-
   components: {
-    buttonTop,
-    formData,
-    tableIndex,
+    operate,
   },
   filters: {
 
@@ -104,7 +108,7 @@ export default {
       //遮罩层
       loading: false,
       //非单个禁用
-      single: true,
+      single: false,
       //非多个禁用
       multiple: true,
       //显示搜索条件
@@ -126,6 +130,11 @@ export default {
         pageNum: 1,
         pageSize: 10
       },
+      // 子组件弹出框是否展示
+      operateDialogFlag: false,
+      // 按钮类型 增删更新
+      buttonCode: '',
+      rowId: '',
     };
   },
   computed: {
@@ -153,11 +162,11 @@ export default {
       this.loading = true;
       try {
         const params = {
-         ...this.listQuery,
-         ...this.formData
+          ...this.listQuery,
+          ...this.formData
         }
-        const res = await getEtcCardPageList(params);
-        console.log("🚀 ~ file: index.vue ~ line 155 ~ getList ~ res", res)
+        const { data = {} } = await getEtcCardPageList(params);
+        console.log("🚀 ~ file: index.vue ~ line 155 ~ getList ~ res", data)
         this.dataList = data.list;
         this.total = data.total;
         this.loading = false;
@@ -177,11 +186,11 @@ export default {
       console.log("🚀 ~ file: index.vue ~ line 185 ~ handleButton ~ ids", ids)
       this.rowId = ids;
       this.buttonCode = buttonCode
-      // if (buttonCode === 'create') {
-      //   this.rowId = ''
-      //   this.operateDialogFlag = true
-      //   return;
-      // }
+      if (buttonCode === 'create') {
+        this.rowId = ''
+        this.operateDialogFlag = true
+        return;
+      }
       // if (buttonCode === 'update') {
       //   console.log('ids', ids);
       //   this.operateDialogFlag = true
