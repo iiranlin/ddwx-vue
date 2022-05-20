@@ -8,3 +8,18 @@ export function rentPage(params, roleId) {
         params
     })
   }
+
+
+/**
+ * @function getVehicleInfoSelect
+ * @description 车辆-下拉框
+ * @param params.unitCode { String } 单位
+ * @return void
+ */
+ export function getVehicleInfoSelect(params = {}) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/vehicleInfo/listAll`,
+    method: "get",
+    params,
+  });
+}

@@ -191,11 +191,11 @@ export default {
         this.operateDialogFlag = true
         return;
       }
-      // if (buttonCode === 'update') {
-      //   console.log('ids', ids);
-      //   this.operateDialogFlag = true
-      //   return;
-      // }
+      if (buttonCode === 'update') {
+        console.log('ids', ids);
+        this.operateDialogFlag = true
+        return;
+      }
       // if (buttonCode === 'distribute') {
       //   this.distributeDialogFlag = true
       //   return;
