@@ -180,7 +180,7 @@ export function getListByParentDriverLicenseType(params) {
 // 司机类型
 export function getListByParentDriverType(params) {
   return request({
-    url: `${VUE_APP_BASE_prefix}/dict/common/getListByParent/DRIVER_TYPE`,
+    url: `${VUE_APP_BASE_prefix}/dict/common/getListByParentCode/DRIVER_TYPE`,
     method: 'get',
     params
   })
