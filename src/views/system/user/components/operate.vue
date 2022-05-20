@@ -90,6 +90,7 @@ import { deptTree } from '@/api/system/dept'
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import {listPost} from "@/api/system/post";
+import md5 from "js-md5";
 export default {
   components: { Treeselect },
   data() {
@@ -203,7 +204,8 @@ export default {
       this.$refs["elForm"].validate(valid => {
         if(valid){
           this.loading = true;
-          userCreate(this.form).then(({message}) => {
+          let form = Object.assign({}, this.form, {password: md5(this.form.password)});
+          userCreate(form).then(({message}) => {
             this.$modal.msgSuccess(message);
             this.openDataScope = false;
             this.loading = false;
@@ -216,7 +218,8 @@ export default {
       this.$refs["elForm"].validate(valid => {
         if(valid){
           this.loading = true;
-          userModify(Object.assign({}, this.form, {id: this.id})).then(({message}) => {
+          let form = Object.assign({}, this.form, {id: this.id,password: md5(this.form.password)});
+          userModify(form).then(({message}) => {
             this.$modal.msgSuccess(message);
             this.openDataScope = false;
             this.loading = false;

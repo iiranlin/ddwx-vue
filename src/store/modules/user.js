@@ -1,6 +1,6 @@
 import { login, logout, info } from '@/api/login'
 
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, setToken, removeToken, setCookie } from '@/utils/auth'
 import md5 from "js-md5";
 
 const user = {
@@ -60,6 +60,8 @@ const user = {
                             //   commit('SET_ROLES', ['ROLE_DEFAULT'])
                             // }
                         commit('SET_NAME', user.username)
+                        
+                        setCookie("unitCode", user.unitCode);
                             // commit('SET_AVATAR', avatar)
                         resolve(res)
                     }

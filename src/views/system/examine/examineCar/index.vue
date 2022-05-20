@@ -45,8 +45,8 @@
       @pagination="getList"
       style="margin-bottom: 35px;"
     />
-    <operate ref="operate" @carSuccess="carSuccess"/>
     <workflow ref="workflow" @carSuccess="carSuccess"/>
+    <operate ref="operate" @carSuccess="carSuccess"/>
   </div>
 </template>
 
@@ -112,8 +112,23 @@ export default {
     },
     handleButton(id, buttonCode, row, selectionArr) {
       if(buttonCode === 'examine'){
-        this.$refs.workflow.init(selectionArr[0]);
-        // this.$refs.operate.init(selectionArr[0]);
+        if(selectionArr[0].status == 1 || selectionArr[0].status == 2){
+          if(selectionArr[0].workflowId){
+            if(selectionArr[0].procInstId){
+              if(selectionArr[0].endTimeMe){
+                this.$modal.msgWarning('你不是审批人！');
+              }else{
+                this.$refs.operate.init(selectionArr[0]);
+              }
+            }else{
+              this.$modal.msgWarning('你不是审批人！');
+            }
+          }else{
+            this.$refs.workflow.init(selectionArr[0]);
+          }
+        }else{
+          this.$modal.msgWarning('该单据不能审批！');
+        }
       }
     },
     handleCheckAllChange(columns) {

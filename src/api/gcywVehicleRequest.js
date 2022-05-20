@@ -17,3 +17,20 @@ export function activitiStart(data) {
     data
   })
 }
+
+//审批通过
+export function activitiComplete(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywVehicleRequest/activiti/complete`,
+    method: 'post',
+    data
+  })
+}
+//审批拒绝
+export function activitiReject(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywVehicleRequest/activiti/reject`,
+    method: 'post',
+    data
+  })
+}

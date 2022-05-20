@@ -164,7 +164,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       modelEditUrl().then(({data}) => {
-        this.openWidow(`${data}/editor?IP=${data}&modelId=${row.modelId}&sUnitCode=${this.sUnitCode}&ips=${window.location.href}&token=${this.TokenKey}`);
+        this.openWidow(`${data}/editor?tenantId=gwyc&IP=${data}&modelId=${row.modelId}&sUnitCode=${this.sUnitCode}&ips=${window.location.href}&token=${this.TokenKey}`);
       })
     },
     handleButton(id, buttonCode, row, selectionArr) {
@@ -176,6 +176,7 @@ export default {
         }
       } else if (buttonCode === 'create') {
         this.openDataScope = true;
+        this.$refs.elForm.resetFields();
       }
     },
     submitDataScope () {
