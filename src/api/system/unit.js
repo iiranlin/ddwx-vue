@@ -51,3 +51,17 @@ export function allUnit() {
     method: 'get'
   })
 }
+
+
+/**
+ * @function getAllAvailableUnit
+ * @description 获取 当前用户有权限的单位
+ * @return void
+ */
+ export function getAllAvailableUnit(params = {}) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/system/unit/getAvailableUnit`,
+    method: "get",
+    params,
+  });
+}

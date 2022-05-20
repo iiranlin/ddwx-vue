@@ -60,3 +60,18 @@ let VUE_APP_BASE_PREFIX = process.env.VUE_APP_AUTH_SERVER;
   });
 }
 
+
+/**
+ * @function getAllETCCard
+ * @description 获取etc卡 分页列表
+ * @param params.unitCode { String } 单位
+ * @param params.isMcard { Sting } "ETC类型 是否母卡 0-是 1-否",
+ * @return void
+ */
+ export function getAllETCCard(params = {}) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/gcjcEtcCard/listAll`,
+    method: "get",
+    params,
+  });
+}
