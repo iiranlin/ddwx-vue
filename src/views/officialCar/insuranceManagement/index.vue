@@ -55,22 +55,19 @@
                 />
             </el-col>
         </el-row>
-        <!--弹出框-->
-        <operate ref="operate" @operateSuccess="operateSuccess"></operate>
     </div>
 </template>
 <script>
 import buttonTop from "@/components/buttonTop"
 import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
-import operate from "./components/operate"
 import {tempRestrictionListPage,
         tempRestrictionAddFR,
         tempRestrictionEnableFR,
         tempRestrictionUpdateFR} from "@/api/system/dict/restriction"
 export default {
     name:"insuranceManagement",
-    components:{buttonTop,formData,tableIndex,operate},
+    components:{buttonTop,formData,tableIndex},
 
     data() {
         return {
@@ -137,7 +134,7 @@ export default {
         //页面按钮点击事件
         handleButton(ids,buttonCode,row){
             if(buttonCode==='create'){
-                this.$refs.operate.init("create","");
+                this.$router.push({name:"insuranceCreate"})
             }else if(buttonCode==="delete"){
                 this.$modal.confirm("是否删除所选信息?").then(()=>{
                     let id= "";
@@ -184,10 +181,6 @@ export default {
             this.multiple = multiple;
             this.selectionData = selection;
             this.ids = selection.map(item => item.divisionId)
-        },
-        //新建或修改成功回调
-        operateSuccess(){
-            this.handleQuery();
         },
         //刷新列表数据
         handleQuery(row = {}){

@@ -191,7 +191,6 @@ export default {
         },
         //回显界面数据
         echoView(row){
-            console.log(row)
             this.form = Object.assign(this.form, row);
 
             this.restrictionTime.push(this.parseTime(row.startDate,"{y}-{m}-{d}"));
