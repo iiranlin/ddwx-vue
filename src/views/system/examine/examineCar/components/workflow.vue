@@ -50,7 +50,7 @@ export default {
             deptOptions: undefined,
             ids: [],
             form: {
-                id: ''
+                id: null
             },
             rules: {
 
