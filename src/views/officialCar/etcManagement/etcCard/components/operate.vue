@@ -57,7 +57,7 @@
             >
               <el-option
                 v-for="item in carNumberOptions"
-                :key="item.assetsNumber"
+                :key="item.carId"
                 :label="item.carNumber"
                 :value="item.carNumber"
               >
@@ -70,6 +70,7 @@
             label="ETC类型"
             prop="isMcard"
           >
+            <!-- 0 主卡  1 副卡 -->
             <el-select
               v-model="form.isMcard"
               placeholder="请选择ETC类型"
@@ -88,20 +89,18 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="24">
+        <!-- ETC类型 为主卡时  不展示主卡号， 为副卡时才展示  即 form.isMcard 为 1 时 展示该项-->
+        <el-col
+          :span="24"
+          v-if="form.isMcard === '1'"
+        >
           <el-form-item
             label="主卡号"
             prop="mCardNumber"
           >
-            <el-input
-              v-if="form.isMcard === '1'"
-              v-model="form.mCardNumber"
-              placeholder="请输入卡号"
-              clearable
-              size="small"
-            ></el-input>
+          <!-- ETC类型 为副卡时 必须选择主卡号 即 form.isMcard 为 0 时 展示该项  -->
             <el-select
-              v-else
+              v-if="form.isMcard === '1'"
               v-model="form.mCardNumber"
               placeholder="请选择主卡号"
               clearable
@@ -111,11 +110,18 @@
               <el-option
                 v-for="item in mCardNumberOptions"
                 :key="item.id"
-                :label="item.mcardNumber"
-                :value="item.mcardNumber"
+                :label="item.cardNumber"
+                :value="item.cardNumber"
               >
               </el-option>
             </el-select>
+            <!-- <el-input
+              v-else
+              v-model="form.mCardNumber"
+              placeholder="请输入卡号"
+              clearable
+              size="small"
+            ></el-input> -->
           </el-form-item>
         </el-col>
         <el-col :span="24">
@@ -127,7 +133,6 @@
               v-model="form.cardNumber"
               placeholder="请输入卡号"
               clearable
-              :required="form.isMcard === '0'"
               size="small"
             ></el-input>
           </el-form-item>
@@ -176,10 +181,16 @@
 <script>
 
 import { getAllAvailableUnit } from "@/api/system/unit"
-import { createETCCard, getAllETCCard } from "@/api/etc"
+import {
+  createETCCard,
+  updateETCCard,
+  getETCCardDetail,
+  getAllETCMainCard,
+} from "@/api/etc"
 import { getVehicleInfoSelect } from "@/api/car"
 import { ETC_CARD_DICT } from "@/views/officialCar/etcManagement/constants/index"
 import getDict from "@/views/mixins/getDict"
+import _ from "lodash"
 
 export default {
   name: '',
@@ -221,7 +232,7 @@ export default {
         unitCode: '',
         // 车牌号 所属车辆
         carNumber: '',
-        // 是否主卡 母卡 ETC类型
+        // 是否主卡 母卡 ETC类型 0——是（主卡） 1——否（副卡）
         isMcard: '',
         // 主卡号 母卡号
         mCardNumber: '',
@@ -247,7 +258,7 @@ export default {
           { required: true, message: "主卡号不能为空", trigger: "change" }
         ],
         cardNumber: [
-          // { required: true, message: "卡号不能为空", trigger: "blur" }
+          { required: true, message: "卡号不能为空", trigger: "blur" }
         ],
         enabled: [
           { required: true, message: "是否有效不能为空", trigger: "change" }
@@ -261,7 +272,8 @@ export default {
       selectOptions: {
         isMcard: [],
         enabled: [],
-      }
+      },
+      currentETCInfo: {},
     }
   },
   computed: {
@@ -272,7 +284,7 @@ export default {
       handler(val) {
         if (val) {
           this.openDataScope = true;
-          this.init(this.buttonCode)
+          this.init(this.buttonCode, this.rowId)
         }
       }
     },
@@ -289,6 +301,7 @@ export default {
   methods: {
     //初始化
     init(type, id) {
+      console.log("🚀 ~ file: operate.vue ~ line 297 ~ init ~ id", id)
       this.type = type;
       this.id = id;
       this.$nextTick(async () => {
@@ -298,7 +311,7 @@ export default {
           this.title = "新建ETC"
         } else if (type === "update") {
           this.title = "修改ETC"
-          this.getFleetDetail();
+          this.getETCDetail(this.id);
         }
       })
     },
@@ -314,17 +327,28 @@ export default {
         this.loading = false;
       })
     },
-    //获取车队详细信息
-    async getFleetDetail() {
-      // this.loading = true;
-      // await gcjcFleetDetail(this.id).then(({ data }) => {
-      //   this.loading = false;
-      //   this.form = Object.assign(this.form, data);
-      // }).catch((err) => {
-      //   this.loading = false;
-      // }).finally(() => {
-      //   this.loading = false;
-      // })
+    // 根据id获取ETC详情
+    async getETCDetail(id = '') {
+      const loading = this.$loading({
+        lock: true,
+        text: "加载中...",
+      });
+      try {
+        const { data = {} } = await getETCCardDetail(id);
+        this.currentETCInfo = data;
+        await this.getCarSelectOptions(data.unitCode);
+        // 当为副卡时  获取主卡号
+        if (data.isMcard === '1') {
+          await this.getAllMotherETCCard()
+        }
+        for (const item in this.form) {
+          this.form[item] = data[item]
+        }
+      } catch (e) {
+        throw new Error(e.message || "获取ETC详情失败");
+      } finally {
+        loading.close();
+      }
     },
     //新建
     handleCreate() {
@@ -333,7 +357,7 @@ export default {
           this.loading = true;
           const params = {
             ...this.form,
-            vinNumber: selectCarInfo.vinNumber,
+            vinNumber: this.selectCarInfo.vinNumber,
           }
           await createETCCard(Object.assign(params)).then(({ message }) => {
             this.loading = false;
@@ -350,15 +374,24 @@ export default {
     handleUpdate() {
       this.$refs.elForm.validate(async (valid) => {
         if (valid) {
-          this.loading = true;
-          await gcjcFleetModify(Object.assign({}, this.form)).then(({ message }) => {
-            this.loading = false;
+          const params = {
+            ...this.currentETCInfo,
+            ...this.form
+          }
+          const loading = this.$loading({
+            lock: true,
+            text: "加载中...",
+          });
+          try {
+            const { message } = await updateETCCard(params);
             this.$modal.msgSuccess(message);
             this.openDataScope = false;
-            this.$emit('operateSuccess')
-          }).catch((err) => {
-            this.loading = false;
-          })
+            this.$emit('operateSuccess');
+          } catch (e) {
+            throw new Error(e.message);
+          } finally {
+            loading.close();
+          }
         }
       })
     },
@@ -379,15 +412,14 @@ export default {
         this.selectOptions[item] = res
       }
     },
-    // 获取所有的主卡 固定参数 ETC类型 是否母卡 0-是 1-否
+    // 获取所有的主卡
     async getAllMotherETCCard() {
       const loading = this.$loading({
         lock: true,
         text: "加载中...",
       });
       try {
-        const params = { isMcard: '0' }
-        const { data = [] } = await getAllETCCard(params);
+        const { data = [] } = await getAllETCMainCard();
         console.log('获取所有的主卡', data);
         this.mCardNumberOptions = data;
       } catch (e) {
@@ -396,30 +428,43 @@ export default {
         loading.close();
       }
     },
-    // ETC类型发生变化是
+    // ETC类型发生变化是 0——主卡 1——副卡
     async ETCTypeChange(val) {
-      if (val !== '0') {
+      console.log("🚀 ~ file: operate.vue ~ line 436 ~ ETCTypeChange ~ val", val)
+      if (val !== '1') {
+        this.form.mCardNumber = null;
         return;
       }
       this.getAllMotherETCCard()
     },
     // 单位发生变化时
     async unitCodeChange(val) {
+      this.form.carNumber = null;
+      this.$nextTick(() => {
+        this.$refs.elForm.clearValidate('carNumber')
+      })
       this.getCarSelectOptions(val)
     },
     // 获取车辆下拉选择框
     async getCarSelectOptions(unitCode = '') {
       if (!unitCode) {
+        this.carNumberOptions = [];
         return;
       }
       const loading = this.$loading({
         lock: true,
         text: "加载中...",
       });
-      const params = { unitCode }
+
+      const params = {
+        // TODO 调试阶段先不传采参数获取
+        // unitCode
+      }
       try {
-        const { data = [] } = await getVehicleInfoSelect(params)
-        this.carNumberOptions = data;
+        const { data = [] } = await getVehicleInfoSelect(params);
+        // TODO 调试阶段用了去重函数
+        this.carNumberOptions = _.uniqBy(data, 'carId');
+        console.log("🚀 ~ file: operate.vue ~ line 433 ~ getCarSelectOptions ~ this.carNumberOptions", this.carNumberOptions)
       } catch (e) {
         throw new Error(e.message || "获取车辆下拉选择框失败");
       } finally {
