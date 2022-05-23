@@ -372,13 +372,13 @@ export default {
     },
     newButton(buttonCode, row = {}) {
       let id = "";
-      if (["update", "detail"].includes(buttonCode)) {
+      if (["update", "detail",].includes(buttonCode)) {
         if (row.id) {
           id = row.id;
         } else {
           id = this.ids[0];
         }
-      } else if (buttonCode === "delete") {
+      } else if (['delete', 'stop', 'distribute', 'enable'].includes(buttonCode)) {
         id = row.id || this.ids;
         if (!(id instanceof Array)) {
           id = [id];

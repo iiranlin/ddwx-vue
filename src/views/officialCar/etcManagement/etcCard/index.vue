@@ -87,9 +87,9 @@
 
 <script>
 
-import operate from "./components/operate"
 import indexMixin from "@/views/mixins"
-import { getEtcCardPageList } from "@/api/etc";
+import { getEtcCardPageList, switchETCEnabled } from "@/api/etc";
+import operate from "./components/operate"
 
 export default {
   name: 'etcCard',
@@ -181,7 +181,7 @@ export default {
       this.$refs.tableIndex.newButton(buttonCode, row);
     },
     //页面按钮点击事件
-    handleButton(ids, buttonCode) {
+    async handleButton(ids, buttonCode) {
       console.log("🚀 ~ file: index.vue ~ line 185 ~ handleButton ~ buttonCode", buttonCode)
       console.log("🚀 ~ file: index.vue ~ line 185 ~ handleButton ~ ids", ids)
       this.rowId = ids;
@@ -206,18 +206,14 @@ export default {
       //   })
       //   return;
       // }
-      // if (buttonCode === 'stop') {
-      //   this.$modal.confirm("是否停用所选信息?").then(() => {
-      //     this.$message.error('停用待开发')
-      //   })
-      //   return;
-      // }
-      // if (buttonCode === 'enable') {
-      //   this.$modal.confirm("是否启用所选信息?").then(() => {
-      //     this.$message.error('启用待开发')
-      //   })
-      //   return;
-      // }
+      if (['stop', 'enable'].includes(buttonCode)) {
+        const params = {
+          ids,
+          enabled: 'Y'
+        }
+        await this.editEtcStatus(params, buttonCode = '')
+        return;
+      }
     },
     //顶部列字段展示
     handleCheckAllChange(columns) {
@@ -243,7 +239,7 @@ export default {
     },
     //多选获取行数据
     handleSelectionChange(ids, single, multiple, selection) {
-      this.single = single;
+      // this.single = single;
       this.multiple = multiple;
       this.selectionData = selection;
     },
@@ -258,6 +254,33 @@ export default {
     },
     tableRowClassName({ row, rowIndex }) {
       row.index = rowIndex + 1;
+    },
+    // 批量启用停用ETC
+    async editEtcStatus(params = {}, buttonCode = '') {
+      const loading = this.$loading({
+        lock: true,
+        text: "加载中...",
+      });
+      try {
+        await this.$confirm(`是否${buttonCode === 'stop' ? '停用' : '启用'}用所选信息?`, "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+          center: true,
+        });
+        const { message = '操作成功！' } = await switchETCEnabled(params);
+        this.$message.success(message)
+        this.handleQuery();
+      } catch (e) {
+        console.log('e', e);
+        if (e === "cancel") {
+          this.$message.info("已取消");
+        } else {
+          throw new Error(e.message || "请求失败");
+        }
+      } finally {
+        loading.close();
+      }
     }
   },
 };
