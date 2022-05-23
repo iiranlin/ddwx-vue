@@ -57,6 +57,7 @@ export default {
     init (row) {
       this.row = row;
       this.openDataScope = true;
+      if(this.$refs.elForm) this.$refs.elForm.resetFields();
     },
     operateAdopt () {
       this.$refs.elForm.validate(async (valid) => {

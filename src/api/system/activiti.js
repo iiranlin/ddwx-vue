@@ -52,3 +52,40 @@ export function activitiAssigneeList(data) {
         data
     })
 }
+
+
+// 公车租赁审批列表-分页
+export function activitiListPage(params) {
+    return request({
+        url: `${VUE_APP_BASE_PREFIX}/vehicleInfo/activiti/listPage`,
+        method: 'get',
+        params
+    })
+  }
+
+
+//发起审批
+export function activitiStart(data) {
+    return request({
+      url: `${VUE_APP_BASE_PREFIX}/vehicleInfo/activiti/start`,
+      method: 'post',
+      data
+    })
+}
+  
+//审批通过
+export function activitiComplete(data) {
+    return request({
+        url: `${VUE_APP_BASE_PREFIX}/vehicleInfo/activiti/complete`,
+        method: 'post',
+        data
+    })
+}
+//审批拒绝
+export function activitiReject(data) {
+    return request({
+        url: `${VUE_APP_BASE_PREFIX}/vehicleInfo/activiti/reject`,
+        method: 'post',
+        data
+    })
+}

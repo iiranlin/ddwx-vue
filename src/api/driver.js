@@ -171,7 +171,7 @@ export function gcjcFleetList(params) {
 // 驾照类型
 export function getListByParentDriverLicenseType(params) {
   return request({
-    url: `${VUE_APP_BASE_prefix}/dict/common/getListByParent/DRIVER_LICENSE_TYPE`,
+    url: `${VUE_APP_BASE_prefix}/dict/common/getListByParentCode/DRIVER_LICENSE_TYPE`,
     method: 'get',
     params
   })
@@ -189,7 +189,7 @@ export function getListByParentDriverType(params) {
 // 健康状态
 export function getListByParentHealthState(params) {
   return request({
-    url: `${VUE_APP_BASE_prefix}/dict/common/getListByParent/HEALTH_STATE`,
+    url: `${VUE_APP_BASE_prefix}/dict/common/getListByParentCode/HEALTH_STATE`,
     method: 'get',
     params
   })
@@ -198,7 +198,7 @@ export function getListByParentHealthState(params) {
 // 健康码状态
 export function getListByParentHealthCode(params) {
   return request({
-    url: `${VUE_APP_BASE_prefix}/dict/common/getListByParent/HEALTH_CODE`,
+    url: `${VUE_APP_BASE_prefix}/dict/common/getListByParentCode/HEALTH_CODE`,
     method: 'get',
     params
   })
@@ -207,7 +207,7 @@ export function getListByParentHealthCode(params) {
 // 疫苗接种
 export function getListByParentVaccinationState(params) {
   return request({
-    url: `${VUE_APP_BASE_prefix}/dict/common/getListByParent/VACCINATION_STATE`,
+    url: `${VUE_APP_BASE_prefix}/dict/common/getListByParentCode/VACCINATION_STATE`,
     method: 'get',
     params
   })
