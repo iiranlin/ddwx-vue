@@ -171,7 +171,7 @@ export function gcjcFleetList(params) {
 // 驾照类型
 export function getListByParentDriverLicenseType(params) {
   return request({
-    url: `${VUE_APP_BASE_prefix}/dict/common/getListByParent/DRIVER_LICENSE_TYPE`,
+    url: `${VUE_APP_BASE_prefix}/dict/common/getListByParentCode/DRIVER_LICENSE_TYPE`,
     method: 'get',
     params
   })

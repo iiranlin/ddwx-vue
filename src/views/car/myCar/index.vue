@@ -1,80 +1,58 @@
 <template>
-<div class="app-container_tree">
-    <el-row :gutter="20" class="container_h" >
-      <!--部门数据-->
-      <el-col :span="4" :xs="24" class="container_flex_overflow">
-        <div class="head-container">
-          <el-tree
-            class="drawer-tree"
-            :indent="0"
-            :data="deptOptions"
-            :props="defaultProps"
-            :expand-on-click-node="false"
-            ref="tree"
-            :highlight-current="true"
-            @node-click="handleNodeClick"
-          />
-        </div>
-      </el-col>
+<div class="app-container container_flex">
       <!--用户数据-->
-      <el-col :span="20" :xs="24" class="container_flex">
-        <el-row :gutter="24" class="container_flex-right_tree" >
-          <el-col :span="1.5" v-for="item in property.buttonTop" :key="item.id" style="margin-top:2px;padding:0px;">
-            <button-top
-              :item="item"
-              :multiple="multiple"
-              :single="single"
-              @newButton="newButton"
-              class="cume-button"
-            ></button-top>
-          </el-col>
-          <right-toolbar
-            ref="rightToolbar"
-            style="margin-top:4px; padding-right:20px"
-            :showSearch.sync="showSearch"
-            :columns="property.fields"
-            @queryTable="handleQuery"
-            @handleCheckAllChange="handleCheckAllChange"
-            @clickReset="clickReset"
-            @numberChange="numberChange"
-          ></right-toolbar>
-        </el-row>
-        <form-data
-          :formData="formData"
-          :showSearch="showSearch"
-          :searchArr="property.search || []"
-          @handleQuery="handleQuery"
-          style="margin-top:-12px;margin-bottom: 6px;"
-        />
-        <table-index
-          ref="tableIndex"
-          style="margin-top:-8px"
-          :loading="loading"
-          :tableIndexs="tableIndex"
-          :numberShow="numberShow"
-          :tableData="dataList"
-          :property="property"
-          @handleSelectionChange="handleSelectionChange"
-          @handleButton="handleButton"
-          @selectChange="selectChange"
-          @emitAblFilter="emitAblFilter"
-        />
-        <pagination
-          v-show="total > 0"
-          :total="total"
-          :page.sync="listQuery.pageNum"
-          :limit.sync="listQuery.pageSize"
-          @pagination="getList"
-          style="margin-bottom: 40px;"
-        />
+    <el-row :gutter="24" class="mb8 container_flex_button" >
+      <el-col :span="1.5" v-for="item in property.buttonTop" :key="item.id">
+        <button-top
+          :item="item"
+          :multiple="multiple"
+          :single="single"
+          @newButton="newButton"
+          class="cume-button"
+        ></button-top>
       </el-col>
+      <right-toolbar
+        ref="rightToolbar"
+        style="margin-top:4px; padding-right:20px"
+        :showSearch.sync="showSearch"
+        :columns="property.fields"
+        @queryTable="handleQuery"
+        @handleCheckAllChange="handleCheckAllChange"
+        @clickReset="clickReset"
+        @numberChange="numberChange"
+      ></right-toolbar>
     </el-row>
+    <form-data
+      :formData="formData"
+      :showSearch="showSearch"
+      :searchArr="property.search || []"
+      @handleQuery="handleQuery"
+    />
+    <table-index
+      ref="tableIndex"
+      :loading="loading"
+      :tableIndexs="tableIndex"
+      :numberShow="numberShow"
+      :tableData="dataList"
+      :property="property"
+      @handleSelectionChange="handleSelectionChange"
+      @handleButton="handleButton"
+      @selectChange="selectChange"
+      @emitAblFilter="emitAblFilter"
+    />
+    <pagination
+      v-show="total > 0"
+      :total="total"
+      :page.sync="listQuery.pageNum"
+      :limit.sync="listQuery.pageSize"
+      @pagination="getList"
+      style="margin-bottom: 30px;"
+    />
     <operate ref="operate" @carSuccess="carSuccess"/>
   </div>
 </template>
 
 <script>
-import { deptTree } from "@/api/system/dept";
 import { gcywVehicleRequestListVehiclePage } from "@/api/gcywVehicleRequest";
 
 import operate from "./components/operate";
@@ -101,15 +79,9 @@ export default {
       dataList: [],
       // 弹出层标题
       title: "",
-      // 部门树选项
-      deptOptions: undefined,
       //列表显示字段
       property: {},
       selectionData: [],
-      defaultProps: {
-        children: "children",
-        label: "deptName",
-      },
       // 查询参数
       formData: {
         parentId: "",
@@ -123,7 +95,6 @@ export default {
   },
   created() {
     this.menuProperty();
-    this.deptTree();
     this.getList();
   },
   mounted() {},
@@ -159,11 +130,6 @@ export default {
         this.formData = Object.assign({}, this.formData, formData);
       }
     },
-    // 节点单击事件
-    handleNodeClick(data) {
-      this.formData.parentId = data.id;
-      this.handleQuery();
-    },
     emitAblFilter(listQuery) {
       this.listQuery = Object.assign({}, this.listQuery, listQuery);
       this.handleQuery();
@@ -171,11 +137,6 @@ export default {
     handleQuery(row = {}) {
       this.formData = Object.assign({}, this.formData, row);
       this.getList();
-    },
-    deptTree() {
-      deptTree().then(({ data }) => {
-        this.deptOptions = data;
-      });
     },
     getList() {
       this.loading = true;
@@ -194,7 +155,6 @@ export default {
     },
     carSuccess() {
       this.handleQuery();
-      this.deptTree();
     },
     clickReset() {
       this.menuProperty();

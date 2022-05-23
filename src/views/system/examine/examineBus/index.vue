@@ -1,86 +1,65 @@
 <template>
-<div class="app-container_tree">
-    <el-row :gutter="20" class="container_h" >
-      <!--部门数据-->
-      <el-col :span="4" :xs="24" class="container_flex_overflow">
-        <div class="head-container">
-          <el-tree
-            class="drawer-tree"
-            :indent="0"
-            :data="deptOptions"
-            :props="defaultProps"
-            :expand-on-click-node="false"
-            ref="tree"
-            :highlight-current="true"
-            @node-click="handleNodeClick"
-          />
-        </div>
+  <div class="app-container container_flex">
+    <el-row :gutter="10" class="mb8 container_flex_button" >
+      <el-col :span="1.5" v-for="item in property.buttonTop" :key="item.id">
+        <button-top
+          :item="item"
+          :multiple="multiple"
+          :single="single"
+          @newButton="newButton"
+        ></button-top>
       </el-col>
-      <!--用户数据-->
-      <el-col :span="20" :xs="24" class="container_flex">
-        <el-row :gutter="24" class="container_flex-right_tree" >
-          <el-col :span="1.5" v-for="item in property.buttonTop" :key="item.id" style="margin-top:2px;padding:0px;">
-            <button-top
-              :item="item"
-              :multiple="multiple"
-              :single="single"
-              @newButton="newButton"
-              class="cume-button"
-            ></button-top>
-          </el-col>
-          <right-toolbar
-            ref="rightToolbar"
-            style="margin-top:4px; padding-right:20px"
-            :showSearch.sync="showSearch"
-            :columns="property.fields"
-            @queryTable="handleQuery"
-            @handleCheckAllChange="handleCheckAllChange"
-            @clickReset="clickReset"
-            @numberChange="numberChange"
-          ></right-toolbar>
-        </el-row>
-        <form-data
-          :formData="formData"
-          :showSearch="showSearch"
-          :searchArr="property.search || []"
-          @handleQuery="handleQuery"
-          style="margin-top:-12px;margin-bottom: 6px;"
-        />
-        <table-index
-          ref="tableIndex"
-          style="margin-top:-8px"
-          :loading="loading"
-          :tableIndexs="tableIndex"
-          :numberShow="numberShow"
-          :tableData="dataList"
-          :property="property"
-          @handleSelectionChange="handleSelectionChange"
-          @handleButton="handleButton"
-          @selectChange="selectChange"
-          @emitAblFilter="emitAblFilter"
-        />
-        <pagination
-          v-show="total > 0"
-          :total="total"
-          :page.sync="listQuery.pageNum"
-          :limit.sync="listQuery.pageSize"
-          @pagination="getList"
-          style="margin-bottom: 40px;"
-        />
-      </el-col>
+      <right-toolbar
+        style="margin-top:4px; padding-right:20px"
+        :showSearch.sync="showSearch"
+        :columns="property.fields"
+        @queryTable="handleQuery"
+        @handleCheckAllChange="handleCheckAllChange"
+        @clickReset="clickReset"
+        @numberChange="numberChange"
+      ></right-toolbar>
     </el-row>
-    <operate ref="operate" @deptSuccess="deptSuccess" :deptOptions="deptOptions"/>
+    <form-data
+      :formData="formData"
+      :showSearch="showSearch"
+      :searchArr="property.search || []"
+      @handleQuery="handleQuery"
+    />
+    <table-index
+      ref="tableIndex"
+      :loading="loading"
+      :tableIndexs="tableIndex"
+      :numberShow="numberShow"
+      :tableData="dataList"
+      :property="property"
+      @handleSelectionChange="handleSelectionChange"
+      @handleButton="handleButton"
+      @selectChange="selectChange"
+      @emitAblFilter="emitAblFilter"
+    />
+    <pagination
+      v-show="total > 0"
+      :total="total"
+      :page.sync="listQuery.pageNum"
+      :limit.sync="listQuery.pageSize"
+      @pagination="getList"
+      style="margin-bottom: 35px;"
+    />
+    <workflow ref="workflow" @carSuccess="carSuccess"/>
+    <operate ref="operate" @carSuccess="carSuccess"/>
   </div>
 </template>
 
 <script>
-import { deptListPage, deptTree, deptDeleteBatch } from "@/api/system/dept";
+import { activitiListPage } from "@/api/system/activiti";
+
 import operate from "./components/operate";
+import workflow from "./components/workflow";
 import indexMixin from "@/views/mixins";
 export default {
-  name: "dept",
+  name: "examineCar",
   mixins: [indexMixin],
-  components: { operate },
+  components: { operate, workflow },
   data() {
     return {
       // 遮罩层
@@ -99,29 +78,16 @@ export default {
       dataList: [],
       // 弹出层标题
       title: "",
-      // 部门树选项
-      deptOptions: undefined,
       //列表显示字段
       property: {},
       selectionData: [],
-      defaultProps: {
-        children: "children",
-        label: "deptName",
-      },
       // 查询参数
-      formData: {
-        parentId: "",
-      },
+      formData: {},
       total: 0,
-      listQuery: {
-        pageNum: 1,
-        pageSize: 30,
-      },
     };
   },
   created() {
     this.menuProperty();
-    this.deptTree();
     this.getList();
   },
   mounted() {},
@@ -135,37 +101,29 @@ export default {
     numberChange (val) {
       this.numberShow = val;
     },
-    // newButton(buttonCode) {
-    //   if (buttonCode === "bindStoryhouse") {
-    //     this.checkWarehouseState();
-    //   } else {
-    //     this.$refs.tableIndex.newButton(buttonCode);
-    //   }
-    // },
     newButton (buttonCode) {
       this.$refs.tableIndex.newButton(buttonCode)
     },
-    handleButton(id, buttonCode) {
-      if (buttonCode === 'update') {
-        this.handleUpdate(id)
-      } else if (buttonCode === 'delete') {
-        this.handleDelete(id)
-      } else if (buttonCode === 'create') {
-        this.handleCreate()
-      }
-    },
-    //检查是否属于同一仓库
-    checkWarehouseState() { 
-      if(this.selectionData.length>1){
-        let storehouseCode = this.selectionData[0].storehouseCode;
-        for (let i = 1; i < this.selectionData.length; i++) {
-          if(storehouseCode!==this.selectionData[i].storehouseCode){
-            this.$modal.msgWarning("所选部门绑定不同仓库，无法同时修改")
-            return
+    handleButton(id, buttonCode, row, selectionArr) {
+      if(buttonCode === 'examine'){
+        if(selectionArr[0].status == 1 || selectionArr[0].status == 2){
+          if(selectionArr[0].workflowId){
+            if(selectionArr[0].procInstId){
+              if(selectionArr[0].endTimeMe){
+                this.$modal.msgWarning('你不是审批人！');
+              }else{
+                this.$refs.operate.init(selectionArr[0]);
+              }
+            }else{
+              this.$modal.msgWarning('你不是审批人！');
+            }
+          }else{
+            this.$refs.workflow.init(selectionArr[0]);
           }
+        }else{
+          this.$modal.msgWarning('该单据不能审批！');
         }
       }
-      this.$refs.warehouse.init(this.selectionData);
     },
     handleCheckAllChange(columns) {
       this.$refs.tableIndex.init(columns);
@@ -179,16 +137,6 @@ export default {
         this.formData = Object.assign({}, this.formData, formData);
       }
     },
-    deptTree() {
-      deptTree().then(({ data }) => {
-        this.deptOptions = data;
-      });
-    },
-    // 节点单击事件
-    handleNodeClick(data) {
-      this.formData.parentId = data.id;
-      this.handleQuery();
-    },
     emitAblFilter(listQuery) {
       this.listQuery = Object.assign({}, this.listQuery, listQuery);
       this.handleQuery();
@@ -199,7 +147,7 @@ export default {
     },
     getList() {
       this.loading = true;
-      deptListPage(Object.assign({}, this.listQuery, this.formData)).then(
+      activitiListPage(Object.assign({}, this.listQuery, this.formData)).then(
         ({ data }) => {
           this.dataList = data.list;
           this.total = data.total;
@@ -212,35 +160,12 @@ export default {
       this.multiple = multiple;
       this.selectionData = selection;
     },
-    handleCreate() {
-      this.$refs.operate.init("create", this.formData.parentId);
-    },
-    handleUpdate(id) {
-      this.$refs.operate.init("update", id);
-    },
-    handleDelete(ids) {
-      this.$modal
-        .confirm("是否确认删除?")
-        .then(function () {
-          return deptDeleteBatch({ ids });
-        })
-        .then(() => {
-          this.deptTree();
-          this.getList();
-          this.$modal.msgSuccess("删除成功");
-        })
-        .catch(() => {});
-    },
-    deptSuccess() {
+    carSuccess() {
       this.handleQuery();
-      this.deptTree();
     },
     clickReset() {
       this.menuProperty();
       this.handleQuery();
-    },
-    warehouseSuccess() {
-      this.getList();
     },
   },
 };
