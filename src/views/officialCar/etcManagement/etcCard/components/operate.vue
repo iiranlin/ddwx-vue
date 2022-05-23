@@ -317,14 +317,14 @@ export default {
     },
     //获取单位列表
     async getUnitDictList() {
-      this.loading = true;
+      // this.loading = true;
       await getAllAvailableUnit().then(({ data }) => {
-        this.loading = false;
+        // this.loading = false;
         this.unitData = data;
       }).catch((err) => {
-        this.loading = false;
+        // this.loading = false;
       }).finally(() => {
-        this.loading = false;
+        // this.loading = false;
       })
     },
     // 根据id获取ETC详情
@@ -378,10 +378,10 @@ export default {
             ...this.currentETCInfo,
             ...this.form
           }
-          const loading = this.$loading({
-            lock: true,
-            text: "加载中...",
-          });
+          // const loading = this.$loading({
+          //   lock: false,
+          //   text: "加载中...",
+          // });
           try {
             const { message } = await updateETCCard(params);
             this.$modal.msgSuccess(message);
@@ -390,7 +390,7 @@ export default {
           } catch (e) {
             throw new Error(e.message);
           } finally {
-            loading.close();
+            // loading.close();
           }
         }
       })
@@ -406,18 +406,16 @@ export default {
     // 设置当前页面的通用字典下拉数据
     async handleETCCardDict(nameArr = []) {
       for (const item of nameArr) {
-        console.log('item', item);
         const res = await this.getOperateDictList(ETC_CARD_DICT[item].id);
-        console.log("🚀 ~ file: operate.vue ~ line 358 ~ handleETCCardDict ~ res", res)
         this.selectOptions[item] = res
       }
     },
     // 获取所有的主卡
     async getAllMotherETCCard() {
-      const loading = this.$loading({
-        lock: true,
-        text: "加载中...",
-      });
+      // const loading = this.$loading({
+      //   lock: false,
+      //   text: "加载中...",
+      // });
       try {
         const { data = [] } = await getAllETCMainCard();
         console.log('获取所有的主卡', data);
@@ -425,7 +423,7 @@ export default {
       } catch (e) {
         throw new Error(e.message || "获取所有的主卡失败");
       } finally {
-        loading.close();
+        // loading.close();
       }
     },
     // ETC类型发生变化是 0——主卡 1——副卡
@@ -451,10 +449,10 @@ export default {
         this.carNumberOptions = [];
         return;
       }
-      const loading = this.$loading({
-        lock: true,
-        text: "加载中...",
-      });
+      // const loading = this.$loading({
+      //   lock: false,
+      //   text: "加载中...",
+      // });
 
       const params = {
         // TODO 调试阶段先不传采参数获取
@@ -468,7 +466,7 @@ export default {
       } catch (e) {
         throw new Error(e.message || "获取车辆下拉选择框失败");
       } finally {
-        loading.close();
+        // loading.close();
       }
     },
     // 选择车辆发生变化时

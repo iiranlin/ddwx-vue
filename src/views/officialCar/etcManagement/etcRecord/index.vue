@@ -73,18 +73,27 @@
         />
       </el-col>
     </el-row>
+    <operate
+      ref="operate"
+      :row-id="rowId"
+      :button-code="buttonCode"
+      :operate-dialog-flag.sync="operateDialogFlag"
+      @operateSuccess="operateSuccess"
+    ></operate>
   </div>
 </template>
 
 <script>
 
 import indexMixin from "@/views/mixins"
+import { getETCRecordPageList } from "@/api/etcRecord.js";
+import operate from "./components/operate"
 
 export default {
   name: 'etcRecord',
   mixins: [indexMixin],
   components: {
-
+    operate,
   },
   filters: {
 
@@ -119,6 +128,11 @@ export default {
         pageNum: 1,
         pageSize: 10
       },
+      // 子组件弹出框是否展示
+      operateDialogFlag: false,
+      // 按钮类型 增删更新
+      buttonCode: '',
+      rowId: '',
     };
   },
   computed: {
@@ -143,13 +157,16 @@ export default {
     },
     //获取分页数据
     async getList() {
-      this.loading = true;
       try {
+        const params = {
+          ...this.listQuery,
+          ...this.formData
+        }
+        const { data = {} } = await getETCRecordPageList(params);
+        console.log("🚀 ~ file: index.vue ~ line 155 ~ getList ~ res", data)
         this.dataList = data.list;
         this.total = data.total;
-        this.loading = false;
       } catch (e) {
-
       } finally {
         this.loading = false;
       }
@@ -164,11 +181,11 @@ export default {
       console.log("🚀 ~ file: index.vue ~ line 185 ~ handleButton ~ ids", ids)
       this.rowId = ids;
       this.buttonCode = buttonCode
-      // if (buttonCode === 'create') {
-      //   this.rowId = ''
-      //   this.operateDialogFlag = true
-      //   return;
-      // }
+      if (buttonCode === 'create') {
+        this.rowId = ''
+        this.operateDialogFlag = true
+        return;
+      }
       // if (buttonCode === 'update') {
       //   console.log('ids', ids);
       //   this.operateDialogFlag = true
@@ -221,7 +238,7 @@ export default {
     },
     //多选获取行数据
     handleSelectionChange(ids, single, multiple, selection) {
-      this.single = single;
+      // this.single = single;
       this.multiple = multiple;
       this.selectionData = selection;
     },

@@ -39,7 +39,7 @@ export function createETCCard(params = {}) {
 
 /**
  * @function updateETCCard
- * @description 新建 新增 ETC卡
+ * @description 更新 ETC卡
  * @param params.id { Sting } id
  * @param params.balance { Number } 余额
  * @param params.cardNumber { Sting } 卡号,
@@ -102,7 +102,7 @@ export function getETCCardDetail(id = '') {
 /**
  * @function switchETCEnabled
  * @description 批量  启用/停用 ETC卡
- * @param params.ids { Array } id
+ * @param params.ids { Array } [id1, id2, id3, ...idn]
  * @param params.enabled { String } Y启用,N停用
  * @return void
  */
@@ -111,5 +111,19 @@ export function getETCCardDetail(id = '') {
     url: `${VUE_APP_BASE_PREFIX}/gcjcEtcCard/switchEnabled`,
     method: "post",
     data: params,
+  });
+}
+
+
+/**
+ * @function getETCCardByCarNumber
+ * @description 根据车牌号获取ETC
+ * @param carNumber { String } 车牌号
+ * @return void
+ */
+ export function getETCCardByCarNumber(carNumber = '') {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}gcjcEtcCard/${carNumber}/list`,
+    method: "post",
   });
 }
