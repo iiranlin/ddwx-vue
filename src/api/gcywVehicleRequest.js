@@ -34,3 +34,13 @@ export function activitiReject(data) {
     data
   })
 }
+
+//我的用车单-提交
+export function addVehicleRequest(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywVehicleRequest/addVehicleRequest`,
+    method: 'post',
+    data
+  })
+}
+

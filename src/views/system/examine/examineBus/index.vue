@@ -1,6 +1,6 @@
 <template>
   <div class="app-container container_flex">
-    <el-row :gutter="10" class="mb8 container_flex_button" >
+    <el-row :gutter="24" class="mb8 container_flex_button" >
       <el-col :span="1.5" v-for="item in property.buttonTop" :key="item.id">
         <button-top
           :item="item"
