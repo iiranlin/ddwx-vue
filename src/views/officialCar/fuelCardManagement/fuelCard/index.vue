@@ -97,7 +97,10 @@
 import operate from "./components/operate"
 import distribute from "./components/distribute"
 import indexMixin from "@/views/mixins"
-import { gcjcFleetListPage, gcjcFleetDeleteBatch } from "@/api/driver"
+import {
+  getFuelCardListPage,
+  switchFuelEnabled,
+} from "@/api/fuelCardManagement/fuelCard"
 
 export default {
   name: "fuelCardManagement",
@@ -112,7 +115,7 @@ export default {
       //遮罩层
       loading: false,
       //非单个禁用
-      single: true,
+      single: false,
       //非多个禁用
       multiple: true,
       //显示搜索条件
@@ -160,8 +163,7 @@ export default {
     //获取分页数据
     async getList() {
       this.loading = true;
-
-      await gcjcFleetListPage(Object.assign({}, this.listQuery, this.formData)).then(({ data }) => {
+      await getFuelCardListPage(Object.assign({}, this.listQuery, this.formData)).then(({ data }) => {
         this.dataList = data.list;
         this.total = data.total;
         this.loading = false;
@@ -175,7 +177,7 @@ export default {
       this.$refs.tableIndex.newButton(buttonCode, row);
     },
     //页面按钮点击事件
-    handleButton(ids, buttonCode) {
+    async handleButton(ids, buttonCode) {
       console.log("🚀 ~ file: index.vue ~ line 185 ~ handleButton ~ buttonCode", buttonCode)
       console.log("🚀 ~ file: index.vue ~ line 185 ~ handleButton ~ ids", ids)
       this.rowId = ids;
@@ -186,7 +188,6 @@ export default {
         return;
       }
       if (buttonCode === 'update') {
-        console.log('ids', ids);
         this.operateDialogFlag = true
         return;
       }
@@ -194,21 +195,18 @@ export default {
         this.distributeDialogFlag = true
         return;
       }
+      if (['stop', 'enable'].includes(buttonCode)) {
+        const params = {
+          ids,
+          enabled: 'Y'
+        }
+        buttonCode === 'stop' ? params.enabled = 'N' : params.enabled = 'Y'
+        await this.editFuelStatus(params, buttonCode = '')
+        return;
+      }
       if (buttonCode === 'delete') {
         this.$modal.confirm("是否删除所选信息?").then(() => {
           this.$message.error('删除待开发')
-        })
-        return;
-      }
-      if (buttonCode === 'stop') {
-        this.$modal.confirm("是否停用所选信息?").then(() => {
-          this.$message.error('停用待开发')
-        })
-        return;
-      }
-      if (buttonCode === 'enable') {
-        this.$modal.confirm("是否启用所选信息?").then(() => {
-          this.$message.error('启用待开发')
         })
         return;
       }
@@ -237,7 +235,7 @@ export default {
     },
     //多选获取行数据
     handleSelectionChange(ids, single, multiple, selection) {
-      this.single = single;
+      // this.single = single;
       this.multiple = multiple;
       this.selectionData = selection;
     },
@@ -252,6 +250,33 @@ export default {
     },
     tableRowClassName({ row, rowIndex }) {
       row.index = rowIndex + 1;
+    },
+    // 批量启用停用加油卡
+    async editFuelStatus(params = {}, buttonCode = '') {
+      const loading = this.$loading({
+        lock: true,
+        text: "加载中...",
+      });
+      try {
+        await this.$confirm(`是否${buttonCode === 'stop' ? '停用' : '启用'}用所选信息?`, "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+          center: true,
+        });
+        const { message = '操作成功！' } = await switchFuelEnabled(params);
+        this.$message.success(message)
+        this.handleQuery();
+      } catch (e) {
+        console.log('e', e);
+        if (e === "cancel") {
+          this.$message.info("已取消");
+        } else {
+          throw new Error(e.message || "请求失败");
+        }
+      } finally {
+        loading.close();
+      }
     }
   }
 }

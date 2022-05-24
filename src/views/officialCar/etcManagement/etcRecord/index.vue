@@ -86,7 +86,7 @@
 <script>
 
 import indexMixin from "@/views/mixins"
-import { getETCRecordPageList } from "@/api/etcRecord.js";
+import { getETCRecordPageList } from "@/api/etcRecord";
 import operate from "./components/operate"
 
 export default {
@@ -177,8 +177,6 @@ export default {
     },
     //页面按钮点击事件
     handleButton(ids, buttonCode) {
-      console.log("🚀 ~ file: index.vue ~ line 185 ~ handleButton ~ buttonCode", buttonCode)
-      console.log("🚀 ~ file: index.vue ~ line 185 ~ handleButton ~ ids", ids)
       this.rowId = ids;
       this.buttonCode = buttonCode
       if (buttonCode === 'create') {
@@ -186,11 +184,10 @@ export default {
         this.operateDialogFlag = true
         return;
       }
-      // if (buttonCode === 'update') {
-      //   console.log('ids', ids);
-      //   this.operateDialogFlag = true
-      //   return;
-      // }
+      if (buttonCode === 'update') {
+        this.operateDialogFlag = true
+        return;
+      }
       // if (buttonCode === 'distribute') {
       //   this.distributeDialogFlag = true
       //   return;
