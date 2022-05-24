@@ -47,28 +47,13 @@
             label="卡号"
             prop="cardNumber"
           >
-            <!-- {
-      "id": "1528649574971404288",
-      "unitCode": "11",
-      "cardNumber": "1001002",
-      "isMcard": "1",
-      "carNumber": "京CP7939",
-      "vinNumber": "GZ0000000628",
-      "incomeMoney": 0,
-      "outcomeMoney": 0,
-      "balance": 0,
-      "creator": "ADMIN",
-      "createTime": 1653293434000,
-      "modifyTime": 1653294898000,
-      "enabled": "Y",
-      "mCardNumber": "1001"
-    } -->
             <el-select
               v-model="form.cardNumber"
               placeholder="请选择所卡号"
               clearable
               size="small"
               style="width:100%"
+              @change="cardNumberChange"
             >
               <el-option
                 v-for="item in cardNumberOptions"
@@ -136,6 +121,7 @@
               placeholder="请输入交易金额"
               clearable
               size="small"
+              @change="transFeeChange"
             ></el-input>
           </el-form-item>
         </el-col>
@@ -152,7 +138,7 @@
               size="small"
               style="width:100%"
               value-format="yyyy-MM-dd HH:mm:ss"
-              :default-time="['08:00:00']"
+              default-time="08:00:00"
             >
             </el-date-picker>
           </el-form-item>
@@ -183,7 +169,7 @@
               size="small"
               style="width:100%"
               value-format="yyyy-MM-dd HH:mm:ss"
-              :default-time="['08:00:00']"
+              default-time="08:00:00"
             >
             </el-date-picker>
           </el-form-item>
@@ -232,7 +218,6 @@ import {
   createETCCardRecord,
   updateETCCardRecord,
 } from "@/api/etcRecord"
-import { getVehicleInfoSelect } from "@/api/car"
 import { ETC_CARD_RECORD_DICT } from "@/views/officialCar/etcManagement/constants/index"
 import getDict from "@/views/mixins/getDict"
 import _ from "lodash"
@@ -332,7 +317,7 @@ export default {
       },
       // 卡号下拉选择框数据
       cardNumberOptions: [],
-      selectCarInfo: {},
+      selectCardInfo: {},
       selectOptions: {
         incomeOrExp: [],
         expType: [],
@@ -375,9 +360,9 @@ export default {
         await this.getUnitDictList();
         await this.handleETCCardDict(Object.keys(this.selectOptions));
         if (type === "create") {
-          this.title = "新建ETC"
+          this.title = "新建ETC交易记录"
         } else if (type === "update") {
-          this.title = "修改ETC"
+          this.title = "修改ETC交易记录"
           // this.getETCDetail(this.id);
         }
       })
@@ -395,36 +380,31 @@ export default {
       })
     },
     // 根据id获取ETC详情
-    // async getETCDetail(id = '') {
-    //   const loading = this.$loading({
-    //     lock: true,
-    //     text: "加载中...",
-    //   });
-    //   try {
-    //     const { data = {} } = await getETCCardDetail(id);
-    //     this.currentETCInfo = data;
-    //     await this.getCarSelectOptions(data.unitCode);
-    //     // 当为副卡时  获取主卡号
-    //     if (data.isMcard === '1') {
-    //       await this.getAllMotherETCCard()
-    //     }
-    //     for (const item in this.form) {
-    //       this.form[item] = data[item]
-    //     }
-    //   } catch (e) {
-    //     throw new Error(e.message || "获取ETC详情失败");
-    //   } finally {
-    //     loading.close();
-    //   }
-    // },
+    async getETCDetail(id = '') {
+      const loading = this.$loading({
+        lock: true,
+        text: "加载中...",
+      });
+      try {
+        const { data = {} } = await getETCCardDetail(id);
+        this.currentETCInfo = data;
+        for (const item in this.form) {
+          this.form[item] = data[item]
+        }
+        await this.getAllETCCardData(data.unitCode);
+        await this.cardNumberChange(data.cardNumber)
+      } catch (e) {
+        throw new Error(e.message || "获取ETC详情失败");
+      } finally {
+        loading.close();
+      }
+    },
     //新建
     handleCreate() {
       this.$refs.elForm.validate(async (valid) => {
         if (valid) {
-          this.loading = true;
           const params = {
             ...this.form,
-            vinNumber: this.selectCarInfo.vinNumber,
           }
           const loading = this.$loading({
             lock: true,
@@ -448,7 +428,7 @@ export default {
       this.$refs.elForm.validate(async (valid) => {
         if (valid) {
           const params = {
-            ...this.currentETCInfo,
+            id: this.currentETCInfo.id,
             ...this.form
           }
           const loading = this.$loading({
@@ -476,7 +456,7 @@ export default {
     handleDialogClose() {
       this.$refs.elForm.resetFields();
     },
-    // 设置当前页面的通用字典下拉数据
+    // 获取当前页面的通用字典下拉数据
     async handleETCCardDict(nameArr = []) {
       for (const item of nameArr) {
         const res = await this.getOperateDictList(ETC_CARD_RECORD_DICT[item].id);
@@ -503,8 +483,29 @@ export default {
       })
       this.getAllETCCardData(val)
     },
+    // 卡片发生变化时
+    cardNumberChange(v) {
+      if (!v) {
+        this.selectCardInfo = {};
+        this.form.balance = '';
+        return;
+      }
+      this.selectCardInfo = this.cardNumberOptions.find(item => item.cardNumber === v) ?? [];
+      this.form.balance = this.selectCardInfo.balance ?? 0;
+    },
+    // 交易金额发生变化
+    transFeeChange(val) {
+      return;
+      // if () {
+
+      // }
+      // if (!val || val === 0) {
+      //   this.form.balance
+      // }
+      // this.form.balance = this.selectCardInfo.balance - val ?? 0
+    },
   },
 }
 </script>
 <style scoped>
-</style>>
+</style>

@@ -53,7 +53,6 @@
               clearable
               size="small"
               style="width:100%"
-              @change="carNumberChange"
             >
               <el-option
                 v-for="item in carNumberOptions"
@@ -98,7 +97,7 @@
             label="主卡号"
             prop="mCardNumber"
           >
-          <!-- ETC类型 为副卡时 必须选择主卡号 即 form.isMcard 为 0 时 展示该项  -->
+            <!-- ETC类型 为副卡时 必须选择主卡号 即 form.isMcard 为 0 时 展示该项  -->
             <el-select
               v-if="form.isMcard === '1'"
               v-model="form.mCardNumber"
@@ -268,7 +267,6 @@ export default {
       mCardNumberOptions: [],
       // 车辆下拉选择框数据
       carNumberOptions: [],
-      selectCarInfo: {},
       selectOptions: {
         isMcard: [],
         enabled: [],
@@ -336,13 +334,13 @@ export default {
       try {
         const { data = {} } = await getETCCardDetail(id);
         this.currentETCInfo = data;
+        for (const item in this.form) {
+          this.form[item] = data[item]
+        }
         await this.getCarSelectOptions(data.unitCode);
         // 当为副卡时  获取主卡号
         if (data.isMcard === '1') {
           await this.getAllMotherETCCard()
-        }
-        for (const item in this.form) {
-          this.form[item] = data[item]
         }
       } catch (e) {
         throw new Error(e.message || "获取ETC详情失败");
@@ -354,18 +352,20 @@ export default {
     handleCreate() {
       this.$refs.elForm.validate(async (valid) => {
         if (valid) {
-          this.loading = true;
+          const loading = this.$loading({
+            lock: true,
+            text: "加载中...",
+          });
           const params = {
             ...this.form,
-            vinNumber: this.selectCarInfo.vinNumber,
           }
           await createETCCard(Object.assign(params)).then(({ message }) => {
-            this.loading = false;
             this.$modal.msgSuccess(message);
             this.openDataScope = false;
             this.$emit('operateSuccess')
           }).catch((err) => {
-            this.loading = false;
+          }).finally(() => {
+            loading.close();
           })
         }
       })
@@ -375,7 +375,7 @@ export default {
       this.$refs.elForm.validate(async (valid) => {
         if (valid) {
           const params = {
-            ...this.currentETCInfo,
+            id: this.currentETCInfo.id,
             ...this.form
           }
           // const loading = this.$loading({
@@ -403,7 +403,7 @@ export default {
     handleDialogClose() {
       this.$refs.elForm.resetFields();
     },
-    // 设置当前页面的通用字典下拉数据
+    // 获取当前页面的通用字典下拉数据
     async handleETCCardDict(nameArr = []) {
       for (const item of nameArr) {
         const res = await this.getOperateDictList(ETC_CARD_DICT[item].id);
@@ -469,19 +469,6 @@ export default {
         // loading.close();
       }
     },
-    // 选择车辆发生变化时
-    carNumberChange(v) {
-      if (!v) {
-        this.selectCarInfo = {};
-        return;
-      }
-      this.carNumberOptions.forEach(item => {
-        if (item.carNumber === v) {
-          this.selectCarInfo = item;
-          console.log('v', v, 'this.selectCarInfo', this.selectCarInfo);
-        }
-      })
-    }
   },
 }
 </script>

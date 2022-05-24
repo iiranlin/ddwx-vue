@@ -211,6 +211,7 @@ export default {
           ids,
           enabled: 'Y'
         }
+        buttonCode === 'stop' ? params.enabled = 'N' : params.enabled = 'Y'
         await this.editEtcStatus(params, buttonCode = '')
         return;
       }

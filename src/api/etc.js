@@ -123,7 +123,7 @@ export function getETCCardDetail(id = '') {
  */
  export function getETCCardByCarNumber(carNumber = '') {
   return request({
-    url: `${VUE_APP_BASE_PREFIX}gcjcEtcCard/${carNumber}/list`,
+    url: `${VUE_APP_BASE_PREFIX}/gcjcEtcCard/${carNumber}/list`,
     method: "post",
   });
 }

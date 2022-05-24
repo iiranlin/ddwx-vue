@@ -72,12 +72,12 @@
           <el-col :span="24">
             <el-form-item
               label="分配金额"
-              prop="money"
+              prop="assignMoney"
             >
               <el-input
-                v-model="form.money"
+                v-model="form.assignMoney"
                 placeholder="请输入分配金额"
-                @change="inputNumberChange(form.money, 'money')"
+                @change="inputNumberChange(form.assignMoney, 'assignMoney')"
                 clearable
               >
               </el-input>
@@ -106,6 +106,7 @@
 <script>
 
 import { numToFixed2 } from '@/utils/index'
+import { getFuelCardDetail, getAllFuelChildrenCard } from '@/api/fuelCardManagement/fuelCard'
 export default {
   // 油卡分配
   name: 'Distribute',
@@ -129,6 +130,15 @@ export default {
     }
   },
   data() {
+    const checkAssignMoney = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('分配金额不能为空'));
+      }
+      console.log('value > this.form.balance', value > this.form.balance);
+      if (value > this.form.balance) {
+        return callback(new Error('分配金额不得高于主卡余额'));
+      }
+    };
     return {
       //遮罩层
       loading: false,
@@ -149,7 +159,7 @@ export default {
         // 分配副卡 卡号
         cardNumber: '',
         // 分配金额
-        money: '',
+        assignMoney: '',
 
       },
       //单位数据
@@ -165,8 +175,9 @@ export default {
         cardNumber: [
           { required: true, message: "请选择分配副卡", trigger: "change" },
         ],
-        money: [
+        assignMoney: [
           { required: true, message: "分配金额不能为空", trigger: "change" },
+          { validator: checkAssignMoney, trigger: "change" },
         ]
       },
     };
@@ -179,7 +190,7 @@ export default {
       handler(val) {
         if (val) {
           this.openDataScope = true;
-          this.init(this.buttonCode)
+          this.init(this.buttonCode, this.rowId)
         }
       }
     },
@@ -202,10 +213,64 @@ export default {
       this.id = id;
       this.$nextTick(() => {
         this.title = "分配金额"
+        this.getCardDetail(id);
+        this.getFuelChildrenCard();
       })
     },
-    confirmButton() {
-      this.$message.error('确定按钮')
+    // 根据id获取加油卡详情
+    async getCardDetail(id = '') {
+      console.log("🚀 ~ file: operate.vue ~ line 328 ~ getCardDetail ~ id", id)
+      const loading = this.$loading({
+        lock: true,
+        text: "加载中...",
+      });
+      try {
+        const { data = {} } = await getFuelCardDetail(id);
+        this.currentFuelInfo = data;
+        this.form.mCardNumber = data.cardNumber;
+        this.form.balance = data.balance;
+      } catch (e) {
+        throw new Error(e.message || "获取加油卡详情失败");
+      } finally {
+        loading.close();
+      }
+    },
+    // 获取所有未分配的副卡
+    async getFuelChildrenCard(id = '') {
+      const loading = this.$loading({
+        lock: true,
+        text: "加载中...",
+      });
+      try {
+        const { data = [] } = await getAllFuelChildrenCard();
+        console.log("🚀 ~ file: distribute.vue ~ line 236 ~ getFuelChildrenCard ~ data", data)
+      } catch (e) {
+        throw new Error(e.message || "获取加油卡详情失败");
+      } finally {
+        loading.close();
+      }
+    },
+    async confirmButton() {
+      this.$refs.elForm.validate(async (valid) => {
+        if (valid) {
+          const loading = this.$loading({
+            lock: true,
+            text: "加载中...",
+          });
+          const params = {
+            ...this.form,
+          }
+          try {
+            await distributeChildFuelCard(params)
+            this.$modal.msgSuccess(message);
+            this.openDataScope = false;
+            this.$emit('operateSuccess')
+          } catch (e) {
+          } finally {
+            loading.close();
+          }
+        }
+      })
     },
     //关闭dialog回调
     handleDialogClose() {
