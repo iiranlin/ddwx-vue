@@ -65,6 +65,7 @@ import {tempRestrictionListPage,
         tempRestrictionAddFR,
         tempRestrictionEnableFR,
         tempRestrictionUpdateFR} from "@/api/system/dict/restriction"
+import {gcywInsuranceRecordListPage} from "@/api/driver"
 export default {
     name:"insuranceManagement",
     components:{buttonTop,formData,tableIndex},
@@ -100,7 +101,7 @@ export default {
             }
         }
     },
-    created(){
+    activated(){
         this.menuProperty();
         this.getList();
     },
@@ -119,7 +120,7 @@ export default {
         async getList(){
             this.loading = true;
             console.log(this.formData)
-            await tempRestrictionListPage(Object.assign({}, this.listQuery,this.formData)).then(({data})=>{
+            await gcywInsuranceRecordListPage(Object.assign({}, this.listQuery,this.formData)).then(({data})=>{
                 this.dataList = data.list;
                 this.total = data.total;
                 this.loading = false;

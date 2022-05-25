@@ -356,3 +356,21 @@ export function vehicleInfoUpdGVC(data) {
     data
   })
 }
+//车辆保险列表-分页
+export function gcywInsuranceRecordListPage(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywInsuranceRecord/listPage`,
+    method: 'get',
+    params
+  })
+}
+
+
+//车辆档案-分页(unitCode)
+export function vehicleInfoListPage(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/vehicleInfo/listPage`,
+    method: 'get',
+    params
+  })
+}
