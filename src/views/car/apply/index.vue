@@ -9,8 +9,8 @@
         </template>
         <el-calendar v-model="calendarVal">
           <div slot="dateCell" slot-scope="{data}" @click="calendarClick(data)">
-            <p :class="data.isSelected ? 'is-selected' : ''">
-              {{ data.day.split('-').slice(1).join('-') }} {{ data.isSelected ? '✔️' : ''}}
+            <p :class="data.isSelected || formData.usageDate == data.day ? 'is-selected' : ''">
+              {{ data.day.split('-').slice(1).join('-') }} {{ data.isSelected || formData.usageDate == data.day ? '✔️' : ''}}
             </p>
             <div v-for="item in dateList" :key="item.assignTime">
               <p class="calendar-p-span" v-if="item.assignTime.indexOf(data.day) != -1">
@@ -108,14 +108,14 @@
           <el-row>
             <el-col :span="24">
               <el-form-item label="出发地点:" prop="fromAddr">
-                <form-address @addressSuccess="addressSuccessOut" />
+                <form-address ref="formAddress1" :name="'出发地'" @addressSuccess="addressSuccessOut" />
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="24">
               <el-form-item label="前往地点:" prop="toAddr">
-                <form-address @addressSuccess="addressSuccessTo" />
+                <form-address ref="formAddress2" :name="'目的地'" @addressSuccess="addressSuccessTo" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -175,7 +175,7 @@ export default {
       if(value.indexOf('null') == -1 && value){
         return callback();
       }else{
-        return callback(new Error('请选择出发地点'));
+        return callback(new Error('请选择前往地点'));
       }
     }
     return {
@@ -253,6 +253,31 @@ export default {
     for(const item of this.dictionariesCode){
       this.getOperateDict(item);
     }
+    this.$nextTick( () => {
+      if(this.$route.query.row){
+        let row = JSON.parse(this.$route.query.row);
+        this.formData = {
+          reasonCode: row.reasonCode,
+          demandCode: row.demandCode,
+          longDistanceTag: 0,
+          usagePersons: row.usagePersons,
+          userName: row.userName,
+          phone: row.phone,
+          usageDate: row.usageDate,
+          usageTime: row.usageTime,
+          timeLength: row.timeLength,
+          fromAddr: row.fromAddr,
+          fromAreaId: row.fromAreaId,
+          toAddr: row.toAddr,
+          toAreaIdd: row.toAreaIdd,
+          hopeBrand: row.hopeBrand,
+          remark: row.remark,
+          source: 1,
+        }
+        this.$refs.formAddress1.init(row.fromAddr);
+        this.$refs.formAddress2.init(row.toAddr);
+      }
+    })
   },
   methods: {
     async getOperateDict (code) {
@@ -268,14 +293,14 @@ export default {
       })
     },
     addressSuccessOut (row) {
-      let {province, city, area, address} = row;
-      this.formData.fromAreaId = `${province && province.divisionId},${city && city.divisionId},${area && area.divisionId}`;
-      this.formData.fromAddr = `${province && province.divisionName}/${city && city.divisionName}/${area && area.divisionName} ${address}`;
+      let {id, name} = row;
+      this.formData.fromAreaId = id;
+      this.formData.fromAddr = name;
     },
     addressSuccessTo (row) {
-      let {province, city, area, address} = row;
-      this.formData.toAreaIdd = `${province && province.divisionId},${city && city.divisionId},${area && area.divisionId}`;
-      this.formData.toAddr = `${province && province.divisionName}/${city && city.divisionName}/${area && area.divisionName} ${address}`;
+      let {id, name} = row;
+      this.formData.toAreaIdd = id;
+      this.formData.toAddr = name;
     },
     addRequest () {
       this.$refs.elForm.validate( (valid) => {
