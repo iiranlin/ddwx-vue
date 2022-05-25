@@ -1,219 +1,203 @@
 <template>
-  <div class="app-container_list">
-    <el-row :gutter="20" class="container_h">
-
-      <!--用户数据-->
-      <el-col :span="24" :xs="24" class="container_flex">
-        <el-row :gutter="24" class="container_flex-right_list">
-          <el-col :span="1.5"  v-for="item in property.buttonTop" :key="item.id" style="margin-top:2px;padding:0px;">
-           <button-top
-              :item="item"
-              :multiple="multiple"
-              :single="single"
-              @newButton="newButton"
-              class="cume-button"
-            ></button-top>
+    <div class="app-container_list">
+        <el-row :gutter="20" class="container_h">
+            <el-col :span="24" :xs="24" class="container_flex">
+                <!--顶部按钮-->
+                <el-row :gutter="24" class="container_flex-right_list">
+                  <el-col :span="1.5" v-for="item in property.buttonTop" :key="item.id" style="margin-top:2px;padding:0px;">
+                      <button-top
+                        :item="item"
+                        :multiple="multiple"
+                        :single="single"
+                        @newButton="newButton"
+                        class="cume-button">
+                      </button-top>
+                  </el-col>
+                  <right-toolbar
+                     ref="rightToolbar"
+                     style="margin-top:4px;padding-right:20px"
+                     :showSearch.sync="showSearch"
+                     :columns="property.fields"
+                     @queryTable="handleQuery"
+                     @handleCheckAllChange="handleCheckAllChange"
+                     @clickReset="clickReset">
+                   </right-toolbar>
+                </el-row>
+                <!--搜索条件按钮-->
+                <form-data
+                    :formDta="formData"
+                    :showSearch="showSearch"
+                    :searchArr="property.search || []"
+                    @handleQuery="handleQuery"
+                    style="margin-top:-12px;margin-bottom:6px">
+                </form-data>
+                <!--表格数据-->
+                <table-index
+                    ref="tableIndex"
+                    style="margin-top:-8px"
+                    :loading="loading"
+                    :tableData="dataList"
+                    :property="property"
+                    @handleSelectionChange="handleSelectionChange"
+                    @handleButton="handleButton"
+                    @selectChange="selectChange"
+                    @emitAblFilter="emitAblFilter">
+                </table-index>
+                <!--分页器-->
+                <pagination
+                    v-show="total > 0"
+                    :total="total"
+                    :page.sync="listQuery.pageNum"
+                    :limit.sync="listQuery.pageSize"
+                    @pagination="getList"
+                    style="margin-bottom:40px"
+                />
             </el-col>
-            <right-toolbar
-            ref="rightToolbar"
-            style="margin-top:4px; padding-right:20px"
-            :showSearch.sync="showSearch"
-            :columns="property.fields"
-            @queryTable="handleQuery"
-            @handleCheckAllChange="handleCheckAllChange"
-            @clickReset="clickReset"
-          ></right-toolbar>
-          </el-row>  
-          <form-data
-          :formData="formData"
-          :showSearch="showSearch"
-          :searchArr="property.search || []"
-          @handleQuery="handleQuery"
-          style="margin-top:-12px;margin-bottom: 6px;"
-        />
-          <table-index
-        ref="tableIndex"
-        style="margin-top:-8px"
-        pageName="commonDict"
-        :loading="loading"
-        :tableData="dataList"
-        :property="property"
-        @handleSelectionChange="handleSelectionChange"
-        @handleButton="handleButton"
-        @selectChange="selectChange"
-        @emitAblFilter="emitAblFilter" 
-      />
-        <pagination
-          v-show="pageInfo.total>0"
-          :total="pageInfo.total"
-          :page.sync="pageInfo.pageNum"
-          :limit.sync="pageInfo.pageSize"
-          @pagination="getList"
-        />
-      </el-col>
-    </el-row>
-    <operate ref="operate" @operateSuccess="operateSuccess" :deptOptions="deptOptions" />
-  </div>
+        </el-row>
+    </div>
 </template>
-
 <script>
-import {rentPage} from '@/api/car'
-import { menuProperty } from '@/api/system/menu'
-import operate from "./components/operate";
-import indexMixin from '@/views/mixins';
-import tableIndex from "@/components/tableIndex";
-import formData from "@/components/formData";
-import buttonTop from "@/components/buttonTop";
+import buttonTop from "@/components/buttonTop"
+import formData from "@/components/formData"
+import tableIndex from "@/components/tableIndex"
+import{vehicleInfoRentPage,vehicleInfoRemoveGVC} from "@/api/driver"
+
 export default {
-  name: "dept",
-  mixins: [indexMixin],
-  components: { operate,tableIndex, formData, buttonTop },
-  data() {
-    return {
-      // 遮罩层
-      loading: false,
-      // 选中数组
-      ids: [],
-      // 非单个禁用
-      single: true,
-      // 非多个禁用
-      multiple: true,
-      // 显示搜索条件
-      showSearch: true,
-      // 用户表格数据
-      dataList: [],
-      property:{},
-      // 弹出层标题
-      title: "",
-      // 部门树选项
-      deptOptions: undefined,
-      // 日期范围
-      dateRange: [],
-      defaultProps: {
-        children: "children",
-        label: "deptName"
-      },
-      // 查询参数
-      formData: {
-        // name: '',
-        // status: '',
-        // parentId: '',
-        // startTime: '',
-        // endTime: '',
-        
-      },
-      pageInfo: {
-        total: 0,
-        pageNum: 1,
-        pageSize: 30,
-      },
-      statusArr: [
-        {
-          value: "0",
-          label: "正常"
-        },
-        {
-          value: "1",
-          label: "停用"
-        },
-      ],
-    };
-  },
-  watch: {
-  },
-  created() {
-    this.menuProperty();
-    this.getList();
-  },
-  methods: {
-    newButton(buttonCode) {
-      this.$refs.tableIndex.newButton(buttonCode);
+    name:"lease",
+    components:{buttonTop,formData,tableIndex},
+
+    data() {
+        return {
+            //遮罩层
+            loading:false,
+            //非单个禁用
+            single:true,
+            //非多个禁用
+            multiple:true,
+            //显示搜索条件
+            showSearch:true,
+            //表格数据
+            dataList:[],
+            //日期范围
+            dateRange:[],
+            //列表显示字段
+            property:{},
+            //查询参数
+            formData:{},
+            //已选中条目
+            selectionData:[],
+            //已选中条目的id
+            ids:[],
+            //数据总数
+            total:0,
+            //分页参数
+            listQuery:{
+                pageNum:1,
+                pageSize:10
+            }
+        }
     },
-     handleButton(row, buttonCode) {
-      if (buttonCode === 'update') {
-        this.handleUpdate(row)
-      } else if (buttonCode === 'delete') {
-        this.handleDelete(row)
-      } else if (buttonCode === 'create') {
-        this.handleCreate()
-      }
-    },
-    handleCheckAllChange(columns) {
-      this.$refs.tableIndex.init(columns);
-    },
-    selectChange(type, value) {
-      if (type === "createTime") {
-        this.dateRange = value;
-      } else {
-        this.formData[type] = value;
-      }
-      this.handleQuery();
-    },
-    emitAblFilter(listQuery) {
-      this.listQuery = Object.assign({}, this.listQuery, listQuery);
-      this.handleQuery();
-    },
-    handleQuery(row = {}) {
-      this.formData = Object.assign({}, this.formData, row);
-      this.getList();
-    },
-    menuProperty () {
-      let id = this.$route.meta.id;
-      menuProperty(id).then( ({data}) => {
-        data.search.forEach((item) => {
-          if(item.fieldType == "dict"){
-            item.fieldFormat = JSON.parse(item.fieldFormat)
-          }
-        })
-        this.property = data;
-      })
-    },
-    getList () {
-      this.loading = true;
-      rentPage(Object.assign({}, this.pageInfo, this.formData)).then( ({data}) => {
-        this.dataList = data.list;
-        this.pageInfo.total = data.total;
-        this.loading = false;
-      })
-    },
-    commonTree () {
-      commonTree().then( ({data}) => {
-        this.deptOptions = data;
-      })
-    },
-    handleSelectionChange(ids, single, multiple, selection) {
-      this.single = single;
-      this.multiple = multiple;
-      this.selectionData = selection;
-    },
-    clickReset() {
-      this.menuProperty();
-      this.handleQuery();
-    },
-    handleCreate () {
-      this.commonTree()
-      this.$refs.operate.init('create', this.formData.parentId);
-    },
-    handleUpdate (id) {
-      this.commonTree()
-      this.$refs.operate.init('update', id);
-    },
-    handleDelete (ids) {
-      this.$modal.confirm('是否确认删除字典?').then(function() {
-        return commonDeleteBatch({ids});
-      }).then(() => {
+    activated(){
+        this.menuProperty();
         this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
     },
-    operateSuccess () {
-      this.handleQuery();
+    methods:{
+        //获取菜单数据
+        menuProperty(){
+            let id = this.$route.meta.id;
+            this.$store.dispatch('menuProperty', id).then( (data) => {
+                data.search.forEach((item) => {
+                    item.fieldFormat = JSON.parse(JSON.stringify(item.fieldFormat));
+                })
+                this.property = data;
+            });
+        },
+        //获取分页数据
+        async getList(){
+            this.loading = true;
+
+            await vehicleInfoRentPage(Object.assign({}, this.listQuery,this.formData)).then(({data})=>{
+                this.dataList = data.list;
+                this.total = data.total;
+                this.loading = false;
+            }).catch((err) => {
+                this.loading = false;
+            })
+        },
+        //顶部按钮点击
+        newButton(buttonCode,row){
+            this.$refs.tableIndex.newButton(buttonCode,row);
+        },
+        //页面按钮点击事件
+        handleButton(ids,buttonCode,row){
+            if(buttonCode==='create'){
+                this.$router.push({name:'leaseCreate'});
+            }else if(buttonCode==="delete"){
+                this.$modal.confirm("是否删除所选信息?").then(()=>{
+                    let id= "";
+                    id = row.carId || this.ids;
+                    if (!(id instanceof Array)) {
+                        id = [id];
+                    }
+                    let carIds = [];
+                    for (let i = 0; i < id.length; i++) {
+                        let obj = {};
+                        this.$set(obj, 'carId', id[i]);
+                        carIds.push(obj)
+                    }
+                    vehicleInfoRemoveGVC(carIds).then(({message}) => {
+                        this.$modal.msgSuccess(message);
+                        this.getList();
+                    }).catch((err) => {
+
+                    })
+                })
+            }else if(buttonCode==='update'){
+                this.$router.push({name:'leaseEdit',params:{row:row}});
+            }
+        },
+        //顶部列字段展示
+        handleCheckAllChange(columns){
+           this.$refs.tableIndex.init(columns);
+        },
+        //顶部重置按钮
+        clickReset(){
+            this.menuProperty();
+            this.handleQuery();
+        },
+        //表格内部搜索条件回调
+        selectChange(row){
+            let {formData, isWatch} = row;
+            if(!isWatch){
+                this.handleQuery(formData);
+            }else{
+                this.formData = Object.assign({}, this.formData, formData);
+            }
+        },
+        //表格内部排序
+        emitAblFilter(){
+            this.getList();
+        },
+        //多选获取行数据
+        handleSelectionChange(ids,single,multiple,selection){
+            this.single = single;
+            this.multiple = multiple;
+            this.selectionData = selection;
+            this.ids = selection.map(item => item.carId)
+        },
+        //刷新列表数据
+        handleQuery(row = {}){
+            this.formData = Object.assign({}, this.formData,row);
+            this.getList();
+        },
+        tableRowClassName({row,rowIndex}){
+            row.index = rowIndex + 1;
+        }
     }
-  }
-};
+}
 </script>
 <style lang="css" scoped>
-::v-deep.el-table tbody tr.current-row>td{
-      background-color: #B8D9FD !important;
+    ::v-deep.el-table tbody tr.current-row > td {
+        background-color: #b8d9fd !important;
     }
 </style>

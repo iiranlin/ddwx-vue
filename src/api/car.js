@@ -23,3 +23,23 @@ export function rentPage(params, roleId) {
     params,
   });
 }
+
+
+//调度工作台-分页
+export function gcywVehicleRequestDispatchList(params) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/gcywVehicleRequest/dispatchList`,
+    method: 'get',
+    params
+  })
+}
+
+
+//用车单日志列表
+export function gcywVehicleRequestLogList(params) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/gcywVehicleRequestLog/list`,
+    method: 'get',
+    params
+  })
+}
