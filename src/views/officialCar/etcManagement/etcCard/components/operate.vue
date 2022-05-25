@@ -299,7 +299,6 @@ export default {
   methods: {
     //初始化
     init(type, id) {
-      console.log("🚀 ~ file: operate.vue ~ line 297 ~ init ~ id", id)
       this.type = type;
       this.id = id;
       this.$nextTick(async () => {
@@ -418,7 +417,6 @@ export default {
       // });
       try {
         const { data = [] } = await getAllETCMainCard();
-        console.log('获取所有的主卡', data);
         this.mCardNumberOptions = data;
       } catch (e) {
         throw new Error(e.message || "获取所有的主卡失败");
@@ -428,7 +426,6 @@ export default {
     },
     // ETC类型发生变化是 0——主卡 1——副卡
     async ETCTypeChange(val) {
-      console.log("🚀 ~ file: operate.vue ~ line 436 ~ ETCTypeChange ~ val", val)
       if (val !== '1') {
         this.form.mCardNumber = null;
         return;
@@ -449,20 +446,13 @@ export default {
         this.carNumberOptions = [];
         return;
       }
-      // const loading = this.$loading({
-      //   lock: false,
-      //   text: "加载中...",
-      // });
-
       const params = {
-        // TODO 调试阶段先不传采参数获取
-        // unitCode
+        unitCode,
       }
       try {
         const { data = [] } = await getVehicleInfoSelect(params);
         // TODO 调试阶段用了去重函数
         this.carNumberOptions = _.uniqBy(data, 'carId');
-        console.log("🚀 ~ file: operate.vue ~ line 433 ~ getCarSelectOptions ~ this.carNumberOptions", this.carNumberOptions)
       } catch (e) {
         throw new Error(e.message || "获取车辆下拉选择框失败");
       } finally {

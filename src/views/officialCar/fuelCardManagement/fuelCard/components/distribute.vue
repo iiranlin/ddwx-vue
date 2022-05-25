@@ -59,13 +59,13 @@
                 size="small"
                 style="width:100%"
               >
-                <!-- <el-option
-                v-for="item in unitData"
-                :key="item.value"
-                :label="item.unitName"
-                :value="item.unitCode"
-              >
-              </el-option> -->
+                <el-option
+                  v-for="item in cardNumberOptions"
+                  :key="item.id"
+                  :label="item.cardNumber"
+                  :value="item.cardNumber"
+                >
+                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -106,7 +106,11 @@
 <script>
 
 import { numToFixed2 } from '@/utils/index'
-import { getFuelCardDetail, getAllFuelChildrenCard } from '@/api/fuelCardManagement/fuelCard'
+import {
+  getFuelCardDetail,
+  getAllFuelChildrenCard,
+  distributeChildFuelCard,
+} from '@/api/fuelCardManagement/fuelCard'
 export default {
   // 油卡分配
   name: 'Distribute',
@@ -134,10 +138,10 @@ export default {
       if (!value) {
         return callback(new Error('分配金额不能为空'));
       }
-      console.log('value > this.form.balance', value > this.form.balance);
       if (value > this.form.balance) {
         return callback(new Error('分配金额不得高于主卡余额'));
       }
+      callback()
     };
     return {
       //遮罩层
@@ -180,6 +184,7 @@ export default {
           { validator: checkAssignMoney, trigger: "change" },
         ]
       },
+      cardNumberOptions: [],
     };
   },
   computed: {
@@ -219,7 +224,6 @@ export default {
     },
     // 根据id获取加油卡详情
     async getCardDetail(id = '') {
-      console.log("🚀 ~ file: operate.vue ~ line 328 ~ getCardDetail ~ id", id)
       const loading = this.$loading({
         lock: true,
         text: "加载中...",
@@ -243,7 +247,7 @@ export default {
       });
       try {
         const { data = [] } = await getAllFuelChildrenCard();
-        console.log("🚀 ~ file: distribute.vue ~ line 236 ~ getFuelChildrenCard ~ data", data)
+        this.cardNumberOptions = (data ?? []) || [];
       } catch (e) {
         throw new Error(e.message || "获取加油卡详情失败");
       } finally {

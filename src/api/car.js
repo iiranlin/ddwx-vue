@@ -24,6 +24,22 @@ export function rentPage(params, roleId) {
   });
 }
 
+/**
+ * @function searchCarSelectInfo
+ * @description ETC/加油卡-车牌号模糊查询
+ * @param params.carNumber  { String } 车牌号
+ * @param params.cardType  { String } 查询类型  etc/fuel
+ * @return void
+ */
+ export function searchCarSelectInfo(params = {}) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/vehicleInfo/card/list`,
+    method: "get",
+    params,
+  });
+}
+
+
 
 //调度工作台-分页
 export function gcywVehicleRequestDispatchList(params) {

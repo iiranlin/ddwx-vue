@@ -21,22 +21,26 @@
       >
         <el-col :span="24">
           <el-form-item
-            label="所属单位"
-            prop="unitCode"
+            label="所属车辆"
+            prop="carNumber"
           >
             <el-select
-              v-model="form.unitCode"
-              placeholder="请选择所属单位"
+              v-model="form.carNumber"
+              filterable
+              remote
+              :remote-method="remoteMethod"
+              :loading="selectLoading"
+              placeholder="请选择所属车辆"
               clearable
               size="small"
               style="width:100%"
-              @change="unitCodeChange"
+              @change="carNumberChange"
             >
               <el-option
-                v-for="item in unitData"
-                :key="item.value"
-                :label="item.unitName"
-                :value="item.unitCode"
+                v-for="item in carNumberOptions"
+                :key="item.carNumber"
+                :label="item.carNumber"
+                :value="item.carNumber"
               >
               </el-option>
             </el-select>
@@ -89,7 +93,10 @@
           </el-form-item>
         </el-col>
         <!-- 消费类型  0为过桥过路费 1为停车费 -->
-        <el-col :span="24">
+        <el-col
+          :span="24"
+          v-if="calcIncomeOrExpIsY"
+        >
           <el-form-item
             label="消费类型"
             prop="expType"
@@ -121,7 +128,7 @@
               placeholder="请输入交易金额"
               clearable
               size="small"
-              @change="transFeeChange"
+              @change="inputNumberChange(form.transFee, 'transFee')"
             ></el-input>
           </el-form-item>
         </el-col>
@@ -210,14 +217,15 @@
 
 <script>
 
-import { getAllAvailableUnit } from "@/api/system/unit"
+import { numToFixed2 } from '@/utils/index'
 import {
-  getAllETCCard,
+  getETCCardByCarNumber,
 } from "@/api/etc"
 import {
   createETCCardRecord,
   updateETCCardRecord,
 } from "@/api/etcRecord"
+import { searchCarSelectInfo } from "@/api/car";
 import { ETC_CARD_RECORD_DICT } from "@/views/officialCar/etcManagement/constants/index"
 import getDict from "@/views/mixins/getDict"
 import _ from "lodash"
@@ -249,7 +257,7 @@ export default {
       //遮罩层
       loading: false,
       //标题
-      title: "",
+      title: "新建ETC交易记录",
       //类型
       type: "",
       //数据id
@@ -258,8 +266,8 @@ export default {
       openDataScope: false,
       //表单数据
       form: {
-        // 所属单位
-        unitCode: '',
+        // 所属车辆
+        carNumber: '',
         // 卡号
         cardNumber: '',
         // 交易类型
@@ -277,12 +285,10 @@ export default {
         // 摘要
         remark: '',
       },
-      //单位数据
-      unitData: [],
       //表单校验
       rules: {
-        unitCode: [
-          { required: true, message: "所属单位不能为空", trigger: "change" }
+        carNumber: [
+          { required: true, message: "所属车辆不能为空", trigger: "change" }
         ],
         // 卡号
         cardNumber: [
@@ -315,6 +321,10 @@ export default {
         // 摘要
         remark: '',
       },
+      // 下拉搜索框的loading
+      selectLoading: false,
+      // 模糊搜索的车辆数据 车辆下拉框数据
+      carNumberOptions: [],
       // 卡号下拉选择框数据
       cardNumberOptions: [],
       selectCardInfo: {},
@@ -326,14 +336,14 @@ export default {
     }
   },
   computed: {
-
+    // 交易类型为充值是  返回false  隐藏消费类型
+    calcIncomeOrExpIsY() {
+      return this.form.incomeOrExp === 'Y' ? false : true
+    }
   },
   watch: {
     operateDialogFlag: {
       handler(val) {
-        this.$nextTick(() => {
-          console.log('elForm111', this.$refs.elForm);
-        })
         if (val) {
           this.openDataScope = true;
           this.init(this.buttonCode, this.rowId)
@@ -353,30 +363,17 @@ export default {
   methods: {
     //初始化
     init(type, id) {
-      console.log("🚀 ~ file: operate.vue ~ line 297 ~ init ~ id", id)
       this.type = type;
       this.id = id;
       this.$nextTick(async () => {
-        await this.getUnitDictList();
-        await this.handleETCCardDict(Object.keys(this.selectOptions));
         if (type === "create") {
           this.title = "新建ETC交易记录"
         } else if (type === "update") {
           this.title = "修改ETC交易记录"
           // this.getETCDetail(this.id);
         }
-      })
-    },
-    //获取单位列表
-    async getUnitDictList() {
-      // this.loading = true;
-      await getAllAvailableUnit().then(({ data }) => {
-        // this.loading = false;
-        this.unitData = data;
-      }).catch((err) => {
-        // this.loading = false;
-      }).finally(() => {
-        // this.loading = false;
+        await this.remoteMethod('');
+        await this.handleETCCardDict(Object.keys(this.selectOptions));
       })
     },
     // 根据id获取ETC详情
@@ -391,7 +388,7 @@ export default {
         for (const item in this.form) {
           this.form[item] = data[item]
         }
-        await this.getAllETCCardData(data.unitCode);
+        await this.getAllETCCardByCarNumber(data.unitCode);
         await this.cardNumberChange(data.cardNumber)
       } catch (e) {
         throw new Error(e.message || "获取ETC详情失败");
@@ -463,11 +460,14 @@ export default {
         this.selectOptions[item] = res
       }
     },
-    // 获取所有的ETC卡
-    async getAllETCCardData() {
+    // 根据车牌 取所ETC卡
+    async getAllETCCardByCarNumber(cardNumber) {
       try {
-        const { data = [] } = await getAllETCCard();
-        console.log('获取所有的ETC卡', data);
+        if (!cardNumber) {
+          this.cardNumberOptions = [];
+          return;
+        }
+        const { data = [] } = await getETCCardByCarNumber(cardNumber);
         this.cardNumberOptions = data;
       } catch (e) {
         throw new Error(e.message || "获取所有的ETC卡");
@@ -475,13 +475,13 @@ export default {
         // loading.close();
       }
     },
-    // 单位发生变化时 获取卡片
-    async unitCodeChange(val) {
+    // 所属车辆发生变化时 获取卡片
+    async carNumberChange(val) {
       this.form.cardNumber = null;
       this.$nextTick(() => {
         this.$refs.elForm.clearValidate('cardNumber')
       })
-      this.getAllETCCardData(val)
+      this.getAllETCCardByCarNumber(val)
     },
     // 卡片发生变化时
     cardNumberChange(v) {
@@ -493,17 +493,30 @@ export default {
       this.selectCardInfo = this.cardNumberOptions.find(item => item.cardNumber === v) ?? [];
       this.form.balance = this.selectCardInfo.balance ?? 0;
     },
-    // 交易金额发生变化
-    transFeeChange(val) {
-      return;
-      // if () {
-
+    // 模糊搜索车牌号码
+    async remoteMethod(carNumber) {
+      // if (!carNumber) {
+      //   this.carNumberOptions = [];
+      //   return;
       // }
-      // if (!val || val === 0) {
-      //   this.form.balance
-      // }
-      // this.form.balance = this.selectCardInfo.balance - val ?? 0
+      const params = {
+        carNumber,
+        cardType: 'etc',
+      }
+      this.selectLoading = true;
+      try {
+        const { data = [] } = await searchCarSelectInfo(params);
+        this.carNumberOptions = (data ?? []) || [];
+      } catch (e) {
+        throw new Error(e.message || "获取车辆下拉选择框失败");
+      } finally {
+        this.selectLoading = false;
+      }
     },
+    // 处理输入的数字
+    inputNumberChange(val, label) {
+      this.form[label] = numToFixed2(val);
+    }
   },
 }
 </script>
