@@ -321,5 +321,38 @@ export function gcjcDriverClassModify(data) {
   })
 }
 
+//车辆租赁-分页
+export function vehicleInfoRentPage(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/vehicleInfo/rentPage`,
+    method: 'get',
+    params
+  })
+}
 
+//车辆信息-增加
+export function vehicleInfoAddGVC(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/vehicleInfo/addGVC`,
+    method: 'post',
+    data
+  })
+}
 
+//车辆信息-删除
+export function vehicleInfoRemoveGVC(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/vehicleInfo/removeGVC`,
+    method: 'post',
+    data
+  })
+}
+
+//车辆信息-修改
+export function vehicleInfoUpdGVC(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/vehicleInfo/updGVC`,
+    method: 'post',
+    data
+  })
+}
