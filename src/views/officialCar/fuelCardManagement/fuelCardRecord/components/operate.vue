@@ -19,27 +19,32 @@
         :span="24"
         :gutter="20"
       >
-        <el-form-item
-          label="所属车辆"
-          prop="carNumber"
-        >
-          <el-select
-            v-model="form.carNumber"
-            placeholder="请选择所属车辆"
-            clearable
-            size="small"
-            style="width:100%"
-            @change="carNumberChange"
+        <el-col :span="24">
+          <el-form-item
+            label="所属车辆"
+            prop="carNumber"
           >
-            <el-option
-              v-for="item in carNumberOptions"
-              :key="item.carId"
-              :label="item.carNumber"
-              :value="item.carNumber"
+            <el-select
+              v-model="form.carNumber"
+              filterable
+              remote
+              :remote-method="remoteMethod"
+              :loading="selectLoading"
+              placeholder="请选择所属车辆"
+              clearable
+              size="small"
+              style="width:100%"
+              @change="carNumberChange"
             >
-            </el-option>
-          </el-select>
-        </el-form-item>
+              <el-option
+                v-for="item in carNumberOptions"
+                :key="item.carNumber"
+                :label="item.carNumber"
+                :value="item.carNumber"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
         </el-col>
         <el-col :span="24">
           <el-form-item
@@ -167,7 +172,7 @@
             <el-date-picker
               v-model="form.bookTime"
               type="datetime"
-              placeholder="选择交易时间"
+              placeholder="选择记账时间"
               clearable
               size="small"
               style="width:100%"
@@ -246,7 +251,7 @@
 <script>
 
 import { numToFixed2 } from '@/utils/index'
-import { getVehicleInfoSelect } from "@/api/car"
+import { searchCarSelectInfo } from "@/api/car"
 import {
   getFuelCardByCarNumber,
 } from "@/api/fuelCardManagement/fuelCard"
@@ -362,12 +367,14 @@ export default {
         // 摘要
         remark: '',
       },
+      // 下拉搜索框的loading
+      selectLoading: false,
+      // 车辆下拉选择框数据
+      carNumberOptions: [],
       // 卡号下拉选择框数据
       cardNumberOptions: [],
       // 选中卡号信息
       selectCardInfo: {},
-      // 车辆下拉选择框数据
-      carNumberOptions: [],
       selectOptions: {
         incomeOrExp: [],
         gasGrade: [],
@@ -383,9 +390,6 @@ export default {
   watch: {
     operateDialogFlag: {
       handler(val) {
-        this.$nextTick(() => {
-          console.log('elForm111', this.$refs.elForm);
-        })
         if (val) {
           this.openDataScope = true;
           this.init(this.buttonCode, this.rowId)
@@ -405,7 +409,6 @@ export default {
   methods: {
     //初始化
     init(type, id) {
-      console.log("🚀 ~ file: operate.vue ~ line 297 ~ init ~ id", id)
       this.type = type;
       this.id = id;
       this.$nextTick(async () => {
@@ -416,8 +419,8 @@ export default {
         //   this.title = "修改ETC交易记录"
         //   // this.getETCDetail(this.id);
         // }
-        await this.getCarSelectOptions();
         await this.handleSystemCardDict(Object.keys(this.selectOptions));
+        await this.remoteMethod('')
       })
     },
     // 获取当前页面的通用字典下拉数据
@@ -427,29 +430,24 @@ export default {
         this.selectOptions[item] = res
       }
     },
-    // 获取车辆下拉选择框
-    async getCarSelectOptions() {
+    // 模糊搜索车牌号码
+    async remoteMethod(carNumber) {
+      // if (!carNumber) {
+      //   this.carNumberOptions = [];
+      //   return;
+      // }
+      const params = {
+        carNumber,
+        cardType: 'fuel',
+      }
+      this.selectLoading = true;
       try {
-        const { data = [] } = await getVehicleInfoSelect();
-        // TODO 调试阶段用了去重函数
-        this.carNumberOptions = _.uniqBy(data, 'carId');
-        console.log("🚀 ~ file: operate.vue ~ line 433 ~ getCarSelectOptions ~ this.carNumberOptions", this.carNumberOptions)
+        const { data = [] } = await searchCarSelectInfo(params);
+        this.carNumberOptions = (data ?? []) || [];
       } catch (e) {
         throw new Error(e.message || "获取车辆下拉选择框失败");
       } finally {
-        // loading.close();
-      }
-    },
-    // 根据车牌号码获取油卡
-    async getFuelCard(cardNumber = '') {
-      try {
-        const { data = [] } = await getFuelCardByCarNumber(cardNumber);
-        console.log('获取所有的加油卡', data);
-        this.cardNumberOptions = data;
-      } catch (e) {
-        throw new Error(e.message || "获取所有的加油卡失败");
-      } finally {
-        // loading.close();
+        this.selectLoading = false;
       }
     },
     // 车辆发生变化时  获取卡号
@@ -460,15 +458,30 @@ export default {
       })
       this.getFuelCard(val)
     },
+    // 根据车牌号码获取油卡
+    async getFuelCard(cardNumber = '') {
+      if (!cardNumber) {
+        this.cardNumberOptions = [];
+        return;
+      }
+      try {
+        const { data = [] } = await getFuelCardByCarNumber(cardNumber);
+        this.cardNumberOptions = data;
+      } catch (e) {
+        throw new Error(e.message || "获取所有的加油卡失败");
+      } finally {
+        // loading.close();
+      }
+    },
     // 卡号变化时
     cardNumberChange(v) {
       if (!v) {
         this.selectCardInfo = {},
-        this.form.balance = '';
+          this.form.balance = '';
         return;
       }
       this.selectCardInfo = this.cardNumberOptions.find(item => item.cardNumber === v) ?? [];
-      this.form.balance = selectCardInfo.balance ?? 0;
+      this.form.balance = this.selectCardInfo.balance ?? 0;
     },
     //新建
     handleCreate() {

@@ -157,7 +157,6 @@ export default {
     async menuProperty() {
       let id = this.$route.meta.id;
       const res = await this.$store.dispatch('menuProperty', id);
-      console.log('res', res);
       this.property = res;
     },
     //获取分页数据
@@ -178,8 +177,6 @@ export default {
     },
     //页面按钮点击事件
     async handleButton(ids, buttonCode) {
-      console.log("🚀 ~ file: index.vue ~ line 185 ~ handleButton ~ buttonCode", buttonCode)
-      console.log("🚀 ~ file: index.vue ~ line 185 ~ handleButton ~ ids", ids)
       this.rowId = ids;
       this.buttonCode = buttonCode
       if (buttonCode === 'create') {
@@ -268,7 +265,6 @@ export default {
         this.$message.success(message)
         this.handleQuery();
       } catch (e) {
-        console.log('e', e);
         if (e === "cancel") {
           this.$message.info("已取消");
         } else {

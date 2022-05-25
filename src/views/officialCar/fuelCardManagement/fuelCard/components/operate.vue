@@ -3,7 +3,6 @@
     :title="title"
     :visible.sync="openDataScope"
     width="600px"
-    append-to-body
     center
     @close="handleDialogClose"
   >
@@ -299,14 +298,24 @@ export default {
       this.type = type;
       this.id = id;
       this.$nextTick(async () => {
-        if (type === "create") {
-          this.title = "新建油卡"
-        } else if (type === "update") {
-          this.title = "修改油卡"
-          this.getCardDetail(this.id);
+        const loading = this.$loading({
+          lock: true,
+          text: "加载中...",
+        });
+        try {
+          if (type === "create") {
+            this.title = "新建油卡"
+          } else if (type === "update") {
+            this.title = "修改油卡"
+            this.getCardDetail(this.id);
+          }
+          await this.getUnitDictList();
+          await this.handleSystemDict(Object.keys(this.selectOptions));
+        } catch (e) {
+
+        } finally {
+          loading.close();
         }
-        await this.getUnitDictList();
-        await this.handleSystemDict(Object.keys(this.selectOptions));
       })
     },
     //获取单位列表
@@ -319,11 +328,6 @@ export default {
     },
     // 根据id获取加油卡详情
     async getCardDetail(id = '') {
-      console.log("🚀 ~ file: operate.vue ~ line 328 ~ getCardDetail ~ id", id)
-      const loading = this.$loading({
-        lock: true,
-        text: "加载中...",
-      });
       try {
         const { data = {} } = await getFuelCardDetail(id);
         this.currentFuelInfo = data;
@@ -337,8 +341,6 @@ export default {
         }
       } catch (e) {
         throw new Error(e.message || "获取加油卡详情失败");
-      } finally {
-        loading.close();
       }
     },
     // 获取当前页面的通用字典下拉数据
@@ -364,7 +366,6 @@ export default {
       // });
       try {
         const { data = [] } = await getAllFuelMainCard();
-        console.log('获取所有的主卡', data);
         this.mCardNumberOptions = data;
       } catch (e) {
         throw new Error(e.message || "获取所有的主卡失败");
@@ -396,7 +397,7 @@ export default {
     },
     //编辑
     handleUpdate() {
-       this.$refs.elForm.validate(async (valid) => {
+      this.$refs.elForm.validate(async (valid) => {
         if (valid) {
           const params = {
             id: this.currentFuelInfo.id,
@@ -445,16 +446,13 @@ export default {
       //   lock: false,
       //   text: "加载中...",
       // });
-
       const params = {
-        // TODO 调试阶段先不传采参数获取
-        // unitCode
+        unitCode,
       }
       try {
         const { data = [] } = await getVehicleInfoSelect(params);
         // TODO 调试阶段用了去重函数
         this.carNumberOptions = _.uniqBy(data, 'carId');
-        console.log("🚀 ~ file: operate.vue ~ line 433 ~ getCarSelectOptions ~ this.carNumberOptions", this.carNumberOptions)
       } catch (e) {
         throw new Error(e.message || "获取车辆下拉选择框失败");
       } finally {

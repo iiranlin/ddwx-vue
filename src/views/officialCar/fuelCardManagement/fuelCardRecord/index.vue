@@ -152,7 +152,6 @@ export default {
     async menuProperty() {
       let id = this.$route.meta.id;
       const res = await this.$store.dispatch('menuProperty', id);
-      console.log('res', res);
       this.property = res;
     },
     //获取分页数据
@@ -163,7 +162,6 @@ export default {
           ...this.formData
         }
         const { data = {} } = await getFuelRecordPageList(params);
-        console.log("🚀 ~ file: index.vue ~ line 155 ~ getList ~ res", data)
         this.dataList = data.list;
         this.total = data.total;
       } catch (e) {
@@ -177,8 +175,6 @@ export default {
     },
     //页面按钮点击事件
     handleButton(ids, buttonCode) {
-      console.log("🚀 ~ file: index.vue ~ line 185 ~ handleButton ~ buttonCode", buttonCode)
-      console.log("🚀 ~ file: index.vue ~ line 185 ~ handleButton ~ ids", ids)
       this.rowId = ids;
       this.buttonCode = buttonCode
       if (buttonCode === 'create') {
@@ -187,7 +183,6 @@ export default {
         return;
       }
       // if (buttonCode === 'update') {
-      //   console.log('ids', ids);
       //   this.operateDialogFlag = true
       //   return;
       // }
