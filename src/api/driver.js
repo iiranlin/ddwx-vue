@@ -356,7 +356,7 @@ export function vehicleInfoUpdGVC(data) {
     data
   })
 }
-//车辆保险列表-分页
+//车辆保险-列表分页
 export function gcywInsuranceRecordListPage(params) {
   return request({
     url: `${VUE_APP_BASE_prefix}/gcywInsuranceRecord/listPage`,
@@ -365,6 +365,23 @@ export function gcywInsuranceRecordListPage(params) {
   })
 }
 
+//车辆保险-增加
+export function gcywInsuranceRecordCreate(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywInsuranceRecord/create`,
+    method: 'post',
+    data
+  })
+}
+
+//往来单位-下拉框
+export function gcywComeUnitListAll(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywComeUnit/listAll`,
+    method: 'get',
+    params
+  })
+}
 
 //车辆档案-分页(unitCode)
 export function vehicleInfoListPage(params) {
@@ -374,3 +391,22 @@ export function vehicleInfoListPage(params) {
     params
   })
 }
+
+//车辆档案-获取车辆图片
+export function vehicleInfoGetVehicleFile(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/vehicleInfo/getVehicleFile`,
+    method: 'get',
+    params
+  })
+}
+
+//车辆档案-获取图片
+export function minioGetPic(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/minio/getPic`,
+    method: 'get',
+    params
+  })
+}
+

@@ -54,17 +54,20 @@
                 />
             </el-col>
         </el-row>
+        <!--图片弹出框-->
+        <operate ref="operate"></operate>
     </div>
 </template>
 <script>
 import buttonTop from "@/components/buttonTop"
 import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
-import{vehicleInfoListPage} from "@/api/driver"
+import operate from "./components/operate"
+import{vehicleInfoListPage,minioGetPic,vehicleInfoGetVehicleFile} from "@/api/driver"
 
 export default {
     name:"vehicleFile",
-    components:{buttonTop,formData,tableIndex},
+    components:{buttonTop,formData,tableIndex,operate},
 
     data() {
         return {
@@ -86,6 +89,8 @@ export default {
             formData:{},
             //已选中条目
             selectionData:[],
+            //图片名称数据
+            fileNames:[],
             //数据总数
             total:0,
             //分页参数
@@ -132,20 +137,20 @@ export default {
             this.$refs.tableIndex.newButton(buttonCode,row);
         },
         //页面按钮点击事件
-        handleButton(ids,buttonCode){
-            if(buttonCode==='create'){
-                this.$refs.operate.init("create","");
-            }else if(buttonCode==="delete"){
-                // this.$modal.confirm("是否删除所选信息?").then(()=>{
-                //     gcjcClassDeleteBatch({ids}).then(({message}) => {
-                //         this.$modal.msgSuccess(message);
-                //         this.getList();
-                //     }).catch((err) => {
-
-                //     })
-                // })
-            }else if(buttonCode==='update'){
-                this.$refs.operate.init("update",ids);
+        handleButton(ids,buttonCode,row){
+            if(buttonCode==='export'){
+                alert("导出")
+            }else if(buttonCode==='detail'){
+                this.$router.push({name:"vehicleFileDetail",query: {row: JSON.stringify(row)}})
+            }else if(buttonCode==='image'){
+                vehicleInfoGetVehicleFile({vinNumber:row.vinNumber}).then(({data}) => {
+                    this.fileNames = data;
+                    if(this.fileNames.length===0){
+                        this.$modal.msgWarning('暂无图片信息!');
+                    }else{
+                        this.$refs.operate.init(this.fileNames);
+                    }
+                })
             }
         },
         //顶部列字段展示
