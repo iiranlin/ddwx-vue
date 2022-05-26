@@ -44,3 +44,21 @@ export function addVehicleRequest(data) {
   })
 }
 
+//我的用车取消
+export function cancelVehicleRequest(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywVehicleRequest/cancelVehicleRequest`,
+    method: 'post',
+    data
+  })
+}
+
+//我的用车确认
+export function confirmVehicleRequest(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywVehicleRequest/confirmVehicleRequest`,
+    method: 'post',
+    data
+  })
+}
+

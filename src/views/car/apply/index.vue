@@ -7,21 +7,7 @@
           <span class="title-right">可用车辆</span>
           <span class="title-span">下表数量说明：黑色字体为车辆数量；蓝色字体为已预约车辆数量；绿色字体为已受理车辆数量；橙色字体为可用车辆数量。</span>
         </template>
-        <el-calendar v-model="calendarVal">
-          <div slot="dateCell" slot-scope="{data}" @click="calendarClick(data)">
-            <p :class="data.isSelected || formData.usageDate == data.day ? 'is-selected' : ''">
-              {{ data.day.split('-').slice(1).join('-') }} {{ data.isSelected || formData.usageDate == data.day ? '✔️' : ''}}
-            </p>
-            <div v-for="item in dateList" :key="item.assignTime">
-              <p class="calendar-p-span" v-if="item.assignTime.indexOf(data.day) != -1">
-                <span>{{item.tasscount}} 辆</span>
-                <span>{{item.nasscount}} 辆</span>
-                <span>{{item.sasscount}} 辆</span>
-                <span>{{item.tasscount - item.nasscount - item.sasscount}} 辆</span>
-              </p>
-            </div>
-          </div>
-        </el-calendar>
+        <form-calendar :dateList="dateList" :assignTimey="assignTimey" :assignTimer="assignTimer" :usageDate="formData.usageDate" @calendarClick="calendarClick"/>
       </el-collapse-item>
       <el-collapse-item name="2">
         <template slot="title">
@@ -158,11 +144,12 @@
 import { vehicleInfoGetAssignCount } from "@/api/vehicleInfo";
 import { addVehicleRequest } from "@/api/gcywVehicleRequest";
 import formAddress from "./components/formAddress";
+import formCalendar from "./components/formCalendar";
 import getDict from "@/views/mixins/getDict"
 export default {
   name: "apply",
   mixins: [getDict],
-  components: { formAddress },
+  components: { formAddress, formCalendar },
   data() {
     var checkfromAddr = (rule, value, callback) => {
       if(value.indexOf('null') == -1 && value){
@@ -181,7 +168,8 @@ export default {
     return {
       loading: false,
       dateList: [],
-      calendarVal: null,
+      assignTimey: '2022-05-23',
+      assignTimer: '2022-05-29',
       activeNames: ['1'],
       dictionariesCode: [1016, 10018, 1018],
       dictionariesObj: {},
@@ -284,13 +272,43 @@ export default {
       const res = await this.getOperateDictList(code);
       this.dictionariesObj[code] = res;
     },
-    calendarClick (val) {
-      this.formData.usageDate = val.day;
+    weekCheckingIn(assignTime, type){
+      this.weekChecking_inloading = true
+      var now = new Date(assignTime);
+      var nowTime = now.getTime() ;
+      var day = now.getDay()|| 7;// 不加 || 7.周末会变成下周一
+      var oneDayTime = 24*60*60*1000 ;
+      var MondayTime = nowTime - (day-1)*oneDayTime ;//显示周一
+      var SundayTime =  nowTime + (7-day)*oneDayTime ;//显示周日
+      //调用方法
+      if(type == '周一'){
+        return this.formatDate(new Date(MondayTime));
+      }else if(type == '周日'){
+        return this.formatDate(new Date(SundayTime));
+      }
+    },
+    //格式化日期：yyyy-MM-dd
+    formatDate(date) {
+      var myyear = date.getFullYear();
+      var mymonth = date.getMonth() + 1;
+      var myweekday = date.getDate();
+      if (mymonth < 10) {
+        mymonth = "0" + mymonth;
+      }
+      if (myweekday < 10) {
+        myweekday = "0" + myweekday;
+      }
+      return (myyear + "-" + mymonth + "-" + myweekday);
     },
     vehicleInfoGetAssignCount () {
       vehicleInfoGetAssignCount().then(({data}) => {
         this.dateList = data;
+        this.assignTimey = this.weekCheckingIn(data[0].assignTime, '周一');
+        this.assignTimer = this.weekCheckingIn(data[data.length - 1].assignTime, '周日');
       })
+    },
+    calendarClick (val) {
+      this.formData.usageDate = val;
     },
     addressSuccessOut (row) {
       let {id, name} = row;
@@ -339,23 +357,6 @@ export default {
       color: #e77676;
       font-style: oblique;
       font-size: 12px;
-    }
-    .calendar-p-span{
-      span{
-        padding-left: 5px;
-        &:nth-child(1){
-          color: #26413c;
-        }
-        &:nth-child(2){
-          color: #6292ff;
-        }
-        &:nth-child(3){
-          color: #4da32d;
-        }
-        &:nth-child(4){
-          color: #d57b48;
-        }
-      }
     }
     .dialog-footer{
       margin-top: 20px;

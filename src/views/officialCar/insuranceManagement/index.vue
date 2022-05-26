@@ -61,10 +61,6 @@
 import buttonTop from "@/components/buttonTop"
 import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
-import {tempRestrictionListPage,
-        tempRestrictionAddFR,
-        tempRestrictionEnableFR,
-        tempRestrictionUpdateFR} from "@/api/system/dict/restriction"
 import {gcywInsuranceRecordListPage} from "@/api/driver"
 export default {
     name:"insuranceManagement",
@@ -136,22 +132,6 @@ export default {
         handleButton(ids,buttonCode,row){
             if(buttonCode==='create'){
                 this.$router.push({name:"insuranceCreate"})
-            }else if(buttonCode==="delete"){
-                this.$modal.confirm("是否删除所选信息?").then(()=>{
-                    let id= "";
-                    id = row.divisionId || this.ids;
-                    if (!(id instanceof Array)) {
-                        id = [id];
-                    }
-                    gcjcDivisionDeleteBatch({ids:id}).then(({message}) => {
-                        this.$modal.msgSuccess(message);
-                        this.getList();
-                    }).catch((err) => {
-
-                    })
-                })
-            }else if(buttonCode==='update'){
-                this.$refs.operate.init("update",row.divisionId);
             }
         },
         //顶部列字段展示
@@ -181,7 +161,7 @@ export default {
             this.single = single;
             this.multiple = multiple;
             this.selectionData = selection;
-            this.ids = selection.map(item => item.divisionId)
+            this.ids = selection.map(item => item.id)
         },
         //刷新列表数据
         handleQuery(row = {}){

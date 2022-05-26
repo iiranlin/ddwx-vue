@@ -39,6 +39,7 @@
       @handleButton="handleButton"
       @selectChange="selectChange"
       @emitAblFilter="emitAblFilter"
+      @clickLink="clickLink"
     />
     <pagination
       v-show="total > 0"
@@ -48,19 +49,15 @@
       @pagination="getList"
       style="margin-bottom: 30px;"
     />
-    <operate ref="operate" @carSuccess="carSuccess"/>
   </div>
 </template>
 
 <script>
-import { gcywVehicleRequestListVehiclePage } from "@/api/gcywVehicleRequest";
-
-import operate from "./components/operate";
+import { gcywVehicleRequestListVehiclePage, cancelVehicleRequest, confirmVehicleRequest } from "@/api/gcywVehicleRequest";
 import indexMixin from "@/views/mixins";
 export default {
   name: "myCar",
   mixins: [indexMixin],
-  components: { operate },
   data() {
     return {
       // 遮罩层
@@ -115,8 +112,33 @@ export default {
       if(buttonCode === 'car'){
         this.$router.push({name:'apply'});
       }else if(buttonCode === 'againCar'){
-        this.$router.push({name:'apply',query: {row: JSON.stringify(row)}});
+        let rowObj = null;
+        if(Object.keys(row).length == 0){
+          rowObj = selectionArr[0];
+        }else{
+          rowObj = row;
+        }
+        this.$router.push({name:'apply',query: {row: JSON.stringify(rowObj)}});
+      }else if(buttonCode === 'cancel'){
+        this.vehicleRequest(id, 'cancelVehicleRequest', '是否取消？');
+      }else if(buttonCode === 'confirm'){
+        this.vehicleRequest(id, 'confirmVehicleRequest', '是否确认？');
       }
+    },
+    vehicleRequest (id, url, title) {
+      let ids = id.map(item => {
+        return {id: item};
+      });
+      this.$modal.confirm(title).then(() => {
+        if(url == 'cancelVehicleRequest'){
+          return cancelVehicleRequest(ids);
+        }else{
+          return confirmVehicleRequest(ids);
+        }
+      }).then(({message}) => {
+        this.$modal.msgSuccess(message);
+        this.handleQuery();
+      }).catch(() => {});
     },
     handleCheckAllChange(columns) {
       this.$refs.tableIndex.init(columns);
@@ -153,13 +175,13 @@ export default {
       this.multiple = multiple;
       this.selectionData = selection;
     },
-    carSuccess() {
-      this.handleQuery();
-    },
     clickReset() {
       this.menuProperty();
       this.handleQuery();
     },
+    clickLink (row, fieldCode, linkText) {
+      this.$router.push({name:'carDetail',params: {id: row.id}});
+    }
   },
 };
 </script>

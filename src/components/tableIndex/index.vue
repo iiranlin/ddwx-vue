@@ -378,7 +378,7 @@ export default {
         } else {
           id = this.ids[0];
         }
-      } else if (['delete', 'stop', 'distribute', 'enable'].includes(buttonCode)) {
+      } else if (['delete', 'stop', 'distribute', 'enable', 'cancel', 'confirm'].includes(buttonCode)) {
         id = row.id || this.ids;
         if (!(id instanceof Array)) {
           id = [id];

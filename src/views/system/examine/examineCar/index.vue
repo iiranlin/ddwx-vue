@@ -112,19 +112,25 @@ export default {
     },
     handleButton(id, buttonCode, row, selectionArr) {
       if(buttonCode === 'examine'){
-        if(selectionArr[0].status == 1 || selectionArr[0].status == 2){
-          if(selectionArr[0].workflowId){
-            if(selectionArr[0].procInstId){
-              if(selectionArr[0].endTimeMe){
+        let rowObj = null;
+        if(Object.keys(row).length == 0){
+          rowObj = selectionArr[0];
+        }else{
+          rowObj = row;
+        }
+        if(rowObj.status == 1 || rowObj.status == 2){
+          if(rowObj.workflowId){
+            if(rowObj.procInstId){
+              if(rowObj.endTimeMe){
                 this.$modal.msgWarning('你不是审批人！');
               }else{
-                this.$refs.operate.init(selectionArr[0]);
+                this.$refs.operate.init(rowObj);
               }
             }else{
               this.$modal.msgWarning('你不是审批人！');
             }
           }else{
-            this.$refs.workflow.init(selectionArr[0]);
+            this.$refs.workflow.init(rowObj);
           }
         }else{
           this.$modal.msgWarning('该单据不能审批！');

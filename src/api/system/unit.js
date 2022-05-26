@@ -56,7 +56,6 @@ export function allUnit() {
 /**
  * @function getAllAvailableUnit
  * @description 获取 当前用户有权限的单位
- * @return void
  */
  export function getAllAvailableUnit(params = {}) {
   return request({

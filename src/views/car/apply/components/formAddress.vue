@@ -4,7 +4,7 @@
       <el-col :span="5">
         <el-select
           v-model="formData.province"
-          placeholder="请选择"
+          placeholder="请选择省"
           value-key="divisionId"
           clearable
           filterable
@@ -19,7 +19,7 @@
       <el-col :span="5">
         <el-select
           v-model="formData.city"
-          placeholder="请选择"
+          placeholder="请选择市"
           value-key="divisionId"
           clearable
           filterable
@@ -34,7 +34,7 @@
       <el-col :span="5">
         <el-select
           v-model="formData.area"
-          placeholder="请选择"
+          placeholder="请选择区"
           value-key="divisionId"
           clearable
           filterable
@@ -83,7 +83,7 @@
 <script>
 import { gcjcDivisionList } from "@/api/system/dict/administration";
 import { gcjcCommonAddressListAll, gcjcCommonAddressSaveorupdate } from "@/api/gcjcCommonAddress";
-import getDict from "@/views/mixins/getDict"
+import getDict from "@/views/mixins/getDict";
 export default {
   mixins: [getDict],
   props: {
@@ -221,8 +221,8 @@ export default {
       let {province, city, area, address} = this.formData;
       if(province && city && area && address){
         let obj = {
-          defualtTag: 1,
-          deleteTag: 0,
+          defualtTag: 1, //默认：1
+          deleteTag: 0, //保存：0;删除：1
           addressType: this.addressType,
           provinceId: province.divisionId,
           cityId: city.divisionId,
