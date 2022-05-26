@@ -208,20 +208,20 @@ aside {
   padding-left:0px !important;
   .container_flex-right{
     height:37px;
-    background: #fbfbfb; 
+    background: #fbfbfb;
     position: relative;
     top: -18px; border-bottom:1px solid #ccc
   }
   .container_flex-right_tree{
     height:37px;
-    background: #fbfbfb; 
+    background: #fbfbfb;
     position: relative;
     margin: -2px -20px 0px 0px !important;
     top: -18px; border-bottom:1px solid #ccc
   }
   .container_flex-right_list{
     height:37px;
-    background: #fbfbfb; 
+    background: #fbfbfb;
     position: relative;
     margin: -2px -24px 0px -12px !important;
     top: -18px; border-bottom:1px solid #ccc
@@ -239,7 +239,7 @@ aside {
 			background-color: #ecedf0;
 			padding:0;
 			border-color: #dcddde;
-      
+
 		}
     tr:hover{
       // background-color: transparent !important;
@@ -260,7 +260,7 @@ aside {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding-left:0px !important; 
+  padding-left:0px !important;
   margin-left: -14px !important;
   overflow-y: auto;
   border-right: 1px solid #ccc;
@@ -268,4 +268,19 @@ aside {
 }
 .container_h{
   height: 100%;
+}
+
+// 按钮底部居中区域
+.footer-area-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.title-right{
+  display: inline-block;
+  font-weight: 600;
+  font-size: 15px;
+  margin-right: 30px;
 }

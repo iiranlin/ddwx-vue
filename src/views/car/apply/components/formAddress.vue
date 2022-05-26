@@ -9,9 +9,9 @@
           clearable
           filterable
         >
-          <el-option v-for="item in provinceList" 
-            :key="item.divisionId" 
-            :label="item.divisionName" 
+          <el-option v-for="item in provinceList"
+            :key="item.divisionId"
+            :label="item.divisionName"
             :value="item">
           </el-option>
         </el-select>
@@ -24,9 +24,9 @@
           clearable
           filterable
         >
-          <el-option v-for="item in cityList" 
-            :key="item.divisionId" 
-            :label="item.divisionName" 
+          <el-option v-for="item in cityList"
+            :key="item.divisionId"
+            :label="item.divisionName"
             :value="item">
           </el-option>
         </el-select>
@@ -39,9 +39,9 @@
           clearable
           filterable
         >
-          <el-option v-for="item in areaList" 
-            :key="item.divisionId" 
-            :label="item.divisionName" 
+          <el-option v-for="item in areaList"
+            :key="item.divisionId"
+            :label="item.divisionName"
             :value="item">
           </el-option>
         </el-select>
@@ -73,7 +73,7 @@
           </el-dropdown>
         </div>
       </el-col>
-      <el-col :span="4">
+      <el-col :span="3">
         <el-button type="text" class="text-underline" @click="gcjcCommonAddressSaveorupdate">设为常用地址</el-button>
       </el-col>
     </el-row>
