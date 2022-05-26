@@ -115,7 +115,7 @@ export default {
       if(buttonCode === 'car'){
         this.$router.push({name:'apply'});
       }else if(buttonCode === 'againCar'){
-
+        this.$router.push({name:'apply',query: {row: JSON.stringify(row)}});
       }
     },
     handleCheckAllChange(columns) {

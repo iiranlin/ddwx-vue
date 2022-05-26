@@ -53,6 +53,16 @@
           placeholder="请选择字典" />
       </template>
     </el-table-column>
+    <el-table-column width="150" label="请求地址" align="center" prop="enumUrl" >
+      <template slot-scope="scope">
+          <el-input
+            v-if="scope.row.fieldType == 'enum'"
+            v-model="scope.row.enumUrl"
+            maxlength="200"
+            placeholder="请输入请求地址"
+          />
+      </template>
+    </el-table-column>
     <el-table-column label="启用"  prop="status" align="center" width="80">
       <template slot-scope="{row}">
         <el-checkbox v-model="row.status" :true-label="0" :false-label="1"></el-checkbox>
@@ -167,6 +177,7 @@ export default {
         {code: "date_{y}-{m}",label: '日期(年-月)'},
         {code: 'date_{y}-{m}-{d}',label: '日期(年-月-日)'},
         {code: 'date_{y}-{m}-{d} {h}:{i}:{s}',label: '日期(年-月-日 时-分-秒)'},
+        {code: "enum",label: '枚举'},
         {code: "dict",label: '字典'},
       ],
       index:""
@@ -256,6 +267,7 @@ export default {
           "menuName": "",
           "seq": 0,
           "status": 0,
+          "enumUrl":"",
         };
         objdata.ids = generateUUID();
         objdata.fieldCode= camelCase(e[index].columnName);
@@ -283,6 +295,7 @@ export default {
           "menuName": "",
           "seq": 0,
           "status": 0,
+          "enumUrl":"",
         };
         objdata.ids = generateUUID();
         this.tableData.push(objdata)
