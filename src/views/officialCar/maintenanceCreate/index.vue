@@ -1,352 +1,475 @@
-<template >
-  <div class="app-container">
+<template>
+  <div class="app-container" v-loading="loading">
     <el-row :gutter="20">
-        <el-col :span="1.5">
-            <el-button type="primary" size="mini" @click="handleSave">保存</el-button>
-        </el-col>
+      <el-col :span="1.5">
+        <el-button type="primary" size="mini" @click="handleSave">保存</el-button>
+      </el-col>
     </el-row>
     <el-row :gutter="20">
-        <el-form :model="form" :rules="rules" ref="elform" label-width="120px" style="width:90%">
+      <el-form :model="form" :rules="rules" ref="elform" label-width="120px" style="width:90%">
         <!--维保信息-->
         <el-row :gutter="20">
-            <el-col style="margin: 15px 10px">
-                <i class="el-icon-caret-right title-icon"></i><span>维保信息</span>
-            </el-col>
+          <el-col style="margin: 15px 10px">
+            <i class="el-icon-caret-right title-icon"></i><span>维保信息</span>
+          </el-col>
         </el-row>
         <el-row>
-            <el-col :span="24" :xs="24">
-                <el-col :span="8">
-                    <el-form-item label="使用单位：" prop="userUnit">
-                        <el-select v-model="form.userUnit" filterable style="width:100%" :loading="loading" placeholder="请选择使用单位" size="mini">
-                            <el-option
-                                v-for="item in userUnitOptions"
-                                :key="item.id"
-                                :label="item.label"
-                                :value="item.value">
-                            </el-option>              
-                        </el-select>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="车牌号：" prop="licenseNumber">
-                        <el-input v-model="form.licenseNumber" size="mini" placeholder="请输入车牌号"></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="维保类型：" prop="maintenanceType">
-                        <el-select v-model="form.maintenanceType" filterable style="width:100%" :loading="loading" placeholder="请选择维保类型" size="mini">
-                            <el-option
-                                v-for="item in maintenanceTypeOptions"
-                                :key="item.id"
-                                :label="item.label"
-                                :value="item.value">
-                            </el-option>              
-                        </el-select>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="驾驶员：" prop="driver">
-                        <el-input v-model="form.driver" size="mini" placeholder="请输入驾驶员"></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="店铺：" prop="shop">
-                        <el-select v-model="form.shop"  size="mini" style="width:100%" filterable placeholder="请选择店铺"> 
-                            <el-option
-                               v-for="item in shopOptions" 
-                               :key="item.value" 
-                               :label="item.label" 
-                               :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="其他店铺：" prop="otherShop">
-                        <el-input v-model="form.otherShop" size="mini" placeholder="请填写不在定点的店铺"></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="维保日期：" prop="maintenanceDate">
-                        <el-date-picker
-                           style="width:100%"
-                           value-format="yyyy-MM-dd"
-                           :picker-options="{firstDayOfWeek:1}"
-                           v-model="form.maintenanceDate"
-                           type="date"
-                           placeholder="请选择维保日期"
-                           size="mini">
-                        </el-date-picker>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="维保里程：" prop="maintenanceMileage">
-                        <el-input v-model="form.maintenanceMileage" size="mini" placeholder="请输入维保里程" clearable></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="维保地点：" prop="maintenancePlace">
-                        <el-input v-model="form.maintenancePlace" size="mini" placeholder="请输入维保地点" clearable></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="总费用：" prop="allPrice">
-                        <el-input v-model="form.allPrice" size="mini" placeholder="请输入总费用" clearable></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="材料费：" prop="materialPrice">
-                        <el-input v-model="form.materialPrice" size="mini" placeholder="请输入材料费" clearable></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="工时费：" prop="workHourPrice">
-                        <el-input v-model="form.workHourPrice" size="mini" placeholder="请输入工时费" clearable></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="其他费：" prop="otherPrice">
-                        <el-input v-model="form.otherPrice" size="mini" placeholder="请输入其他费" clearable></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="下次维保里程：" prop="nextMaintenanceMileage">
-                        <el-input v-model="form.nextMaintenanceMileage" size="mini" placeholder="请输入下次维保里程" clearable></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="下次维保日期：" prop="nextMaintenanceDate">
-                        <el-date-picker
-                           style="width:100%"
-                           value-format="yyyy-MM-dd"
-                           :picker-options="{firstDayOfWeek:1}"
-                           v-model="form.nextMaintenanceDate"
-                           type="date"
-                           placeholder="请选择下次维保日期"
-                           size="mini">
-                        </el-date-picker>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="24">
-                    <el-form-item label="维保项目描述：" prop="maintenanceDes">
-                        <el-input type="textarea" :rows="3" maxlength="200" v-model="form.maintenanceDes" size="mini"></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="24">
-                    <el-form-item label="备注：" prop="remark">
-                        <el-input type="textarea" :rows="3" maxlength="200" v-model="form.remark" size="mini"></el-input>
-                    </el-form-item>
-                </el-col>
+          <el-col :span="24" :xs="24">
+            <el-col :span="8">
+              <el-form-item label="使用单位：" prop="unitCode">
+                <el-select v-model="form.unitCode" filterable style="width:100%" :loading="loading"
+                           placeholder="请选择使用单位" size="mini"
+                >
+                  <el-option
+                    v-for="item in userUnitOptions"
+                    :key="item.id"
+                    :label="item.unitName"
+                    :value="item.unitCode"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
             </el-col>
-        </el-row>
-        </el-form>
-        <!--维保明细-->
-        <el-row :gutter="20">
-            <el-col style="width:90%;margin: 15px 10px;">
-                <i class="el-icon-caret-right title-icon"></i><span>维保明细</span>
-                <i class="el-icon-plus title-icon" style="float:right;margin-right:10px;" @click="handleAddClick()"></i>
+            <el-col :span="8">
+              <el-form-item label="车牌号：" prop="carNumber">
+                <el-input v-model="form.carNumber" size="mini" placeholder="请输入车牌号"></el-input>
+              </el-form-item>
             </el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="24" :xs="24" style="width:90%;padding: 0px 0px 40px 40px">
-                <el-table ref="eltable" max-height="300px" :data="maintenanceData" stripe border>
-                    <el-table-column label="维保项目" align="center">
-                        <template slot-scope="scope">
-                            <el-select v-model="value" placeholder="请选择维保项目">
-                              <el-option v-for="item in maintenanceTypeOptions" 
-                                v-model="maintenanceData[scope.$index].maintenanceProject"
-                                :key="item.value" 
-                                :label="item.label" 
-                                :value="item.value">
-                              </el-option>
-                            </el-select>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="材料数量" align="center">
-                        <template slot-scope="scope">
-                              <el-input v-model="maintenanceData[scope.$index].materialNumber"></el-input>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="材料费" align="center">
-                        <template slot-scope="scope">
-                              <el-input v-model="maintenanceData[scope.$index].materialPrice"></el-input>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="工时（小时）" align="center">
-                        <template slot-scope="scope">
-                              <el-input v-model="maintenanceData[scope.$index].workHour"></el-input>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="工时费" align="center">
-                        <template slot-scope="scope">
-                              <el-input v-model="maintenanceData[scope.$index].workHourPrice"></el-input>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="其他费" align="center">
-                        <template slot-scope="scope">
-                              <el-input v-model="maintenanceData[scope.$index].otherPrice"></el-input>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="操作" align="center">
-                        <template slot-scope="scope">
-                            <a href="javascript:void(0)" @click="handleDeleteClick(scope.$index)" style="color:#1890ff;">删除</a>
-                        </template>
-                    </el-table-column>
-                </el-table>
+            <el-col :span="8">
+              <el-form-item label="维保类型：" prop="maintainType">
+                <el-select v-model="form.maintainType" filterable style="width:100%" :loading="loading"
+                           placeholder="请选择维保类型" size="mini"
+                >
+                  <el-option
+                    v-for="item in maintenanceTypeOptions"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.code"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
             </el-col>
+            <el-col :span="8">
+              <el-form-item label="驾驶员：" prop="driver">
+                <el-input v-model="form.driver" size="mini" placeholder="请输入驾驶员"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="店铺：" prop="maintainShopId">
+                <el-select v-model="form.maintainShopId" size="mini" style="width:100%" filterable placeholder="请选择店铺">
+                  <el-option
+                    v-for="item in shopOptions"
+                    :key="item.value"
+                    :label="item.unitName"
+                    :value="item.id"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="其他店铺：" prop="maintainShop">
+                <el-input v-model="form.maintainShop" size="mini" placeholder="请填写不在定点的店铺"
+                          :disabled="form.maintainShopId!=='-1'"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="维保日期：" prop="maintainDate">
+                <el-date-picker
+                  style="width:100%"
+                  value-format="yyyy-MM-dd"
+                  :picker-options="{firstDayOfWeek:1}"
+                  v-model="form.maintainDate"
+                  type="date"
+                  placeholder="请选择维保日期"
+                  size="mini"
+                >
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="维保里程：" prop="maintainMiles">
+                <el-input v-model="form.maintainMiles" size="mini" placeholder="请输入维保里程" clearable
+                          @change="inputNumberChange('maintainMiles')"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="维保地点：" prop="maintainAddress">
+                <el-input v-model="form.maintainAddress" size="mini" placeholder="请输入维保地点" clearable></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="总费用：" prop="totalCost">
+                <el-input v-model="form.totalCost" size="mini" placeholder="自动计算" clearable disabled></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="材料费：" prop="materialCost">
+                <el-input v-model="form.materialCost" size="mini" placeholder="自动计算" clearable disabled></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="工时费：" prop="hourlyCost">
+                <el-input v-model="form.hourlyCost" size="mini" placeholder="自动计算" clearable disabled></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="其他费：" prop="otherCost">
+                <el-input v-model="form.otherCost" size="mini" placeholder="自动计算" clearable disabled></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="下次维保里程：" prop="nextMaintainMiles">
+                <el-input v-model="form.nextMaintainMiles" size="mini" placeholder="请输入下次维保里程" clearable
+                          :disabled="form.maintainType!=='1'" @change="inputNumberChange('nextMaintainMiles')"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="下次维保日期：" prop="nextMaintainDate">
+                <el-date-picker
+                  style="width:100%"
+                  value-format="yyyy-MM-dd"
+                  :picker-options="{firstDayOfWeek:1}"
+                  v-model="form.nextMaintainDate"
+                  type="date"
+                  placeholder="请选择下次维保日期"
+                  size="mini"
+                  :disabled="form.maintainType!=='1'"
+                >
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="维保项目描述：" prop="sdesc">
+                <el-input type="textarea" :rows="3" maxlength="200" v-model="form.sdesc" size="mini"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="备注：" prop="remark">
+                <el-input type="textarea" :rows="3" maxlength="200" v-model="form.remark" size="mini"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-col>
         </el-row>
+      </el-form>
+      <!--维保明细-->
+      <el-row :gutter="20">
+        <el-col style="width:90%;margin: 15px 10px;">
+          <i class="el-icon-caret-right title-icon"></i><span>维保明细</span>
+          <i class="el-icon-plus title-icon" style="float:right;margin-right:10px;" @click="handleAddClick()"></i>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="24" :xs="24" style="width:90%;padding: 0 0 40px 40px">
+          <el-table ref="eltable" max-height="300px" :data="maintenanceData" stripe border>
+            <el-table-column label="维保项目" align="center">
+              <template slot-scope="scope">
+                <el-select v-model="maintenanceData[scope.$index].itemName" placeholder="请选择维保项目"
+                           @change="getItemId(scope.$index,maintenanceData[scope.$index].itemName)"
+                >
+                  <el-option v-for="item in maintenanceItemOptions"
+                             :key="item.id"
+                             :label="item.name"
+                             :value="item.name"
+                  >
+                  </el-option>
+                </el-select>
+              </template>
+            </el-table-column>
+            <el-table-column label="材料数量" align="center">
+              <template slot-scope="scope">
+                <el-input v-model="maintenanceData[scope.$index].materialNum"
+                          @change="maintenanceDataInputNumberChange(scope.$index,'materialNum')"
+                ></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column label="材料费" align="center">
+              <template slot-scope="scope">
+                <el-input v-model="maintenanceData[scope.$index].materialCost"
+                          @change="maintenanceDataInputNumberChange(scope.$index,'materialCost')"
+                ></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column label="工时（小时）" align="center">
+              <template slot-scope="scope">
+                <el-input v-model="maintenanceData[scope.$index].hourlyNum"
+                          @change="maintenanceDataInputNumberChange(scope.$index,'hourlyNum')"
+                ></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column label="工时费" align="center">
+              <template slot-scope="scope">
+                <el-input v-model="maintenanceData[scope.$index].hourlyCost"
+                          @change="maintenanceDataInputNumberChange(scope.$index,'hourlyCost')"
+                ></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column label="其他费" align="center">
+              <template slot-scope="scope">
+                <el-input v-model="maintenanceData[scope.$index].otherCost"
+                          @change="maintenanceDataInputNumberChange(scope.$index,'otherCost')"
+                ></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" align="center">
+              <template slot-scope="scope">
+                <a href="javascript:void(0)" @click="handleDeleteClick(scope.$index)" style="color:#1890ff;">删除</a>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-col>
+      </el-row>
     </el-row>
   </div>
 </template>
 <script>
-import { userListAllForDept2List,
-         gcjcDriverCreate } from "@/api/driver"
+import { getAllAvailableUnit } from '@/api/system/unit'
+import { MAINTENANCE_DICT } from '@/views/officialCar/maintenanceCreate/constants'
+import { getListByParentId } from '@/api/system/dict'
+import { getComeUnitList } from '@/api/comeUnit'
+import { calSum, numToFixed2 } from '@/utils'
+import { addMaintenanceRecord } from '@/api/maintenanceRecord'
+
 export default {
-  name: "maintenanceCreate",
+  name: 'maintenanceCreate',
   data() {
     return {
-        //loading框
-        loading:false,
-        //使用单位数据
-        userUnitOptions:[],
-        //维保类型数据
-        maintenanceTypeOptions:[],
-        //店铺数据
-        shopOptions:[],
-        //维保明细数据
-        maintenanceData:[],
-        //维保明细对象
-        maintenance:{
-            maintenanceProject:"",
-            materialNumber:"",
-            materialPrice:"",
-            workHour:"",
-            workHourPrice:"",
-            otherPrice:""
-        },
-        value:"",
-        //表单数据
-        form:{
-            userUnit:"",    //使用单位     
-            licenseNumber:"",    //车牌号
-            maintenanceType:"",    //维保类型
-            driver:"",  //驾驶员
-            shop:"",         //店铺
-            otherShop:"",    //其他店铺
-            maintenanceDate:"",       //维保日期
-            maintenanceMileage:"",     //维保里程
-            maintenancePlace:"",  //维保地点
-            allPrice:"",    //总费用
-            materialPrice:"",  //材料费
-            workHourPrice:"",      //工时费
-            otherPrice:"",     //其他费
-            nextMaintenanceMileage:"",    //下次维保里程
-            nextMaintenanceDate:"",     //下次维保日期
-            maintenanceDes:"",   //维保项目描述
-            remark:"",   //备注
-        },
-        rules:{
-            userUnit:[
-                {required:true,message:"使用单位不能为空",trigger:"change"}
-            ],
-            licenseNumber:[
-                {required:true,message:"车牌号不能为空",trigger:"blur"}
-            ],
-            maintenanceType:[
-                {required:true,message:"维保类型不能为空",trigger:"change"}
-            ],
-            driver:[
-                {required:true,message:"驾驶员不能为空",trigger:"change"}
-            ],
-            shop:[
-                {required:true,message:"店铺不能为空",trigger:"change"}
-            ],
-            otherShop:[
-                {required:true,message:"其他店铺不能为空",trigger:"blur"}
-            ],
-            maintenanceDate:[
-                {required:true,message:"维保日期不能为空",trigger:"change"}
-            ],
-            maintenanceMileage:[
-                {required:true,message:"维保里程不能为空",trigger:"blur"}
-            ],
-            maintenancePlace:[
-                {required:true,message:"维保地点不能为空",trigger:"blur"}
-            ],
-            allPrice:[
-                {required:true,message:"总费用不能为空",trigger:"blur"}
-            ],
-        }
-    };
+      //loading框
+      loading: false,
+      //使用单位数据
+      userUnitOptions: [],
+      //维保类型数据
+      maintenanceTypeOptions: [],
+      //维保项目
+      maintenanceItemOptions: [],
+      //店铺数据
+      shopOptions: [],
+      //维保明细数据
+      maintenanceData: [],
+      //维保明细对象
+      maintenance: {
+        itemId: '',
+        itemName: '',
+        materialNum: '',
+        materialCost: '',
+        hourlyNum: '',
+        hourlyCost: '',
+        otherCost: ''
+      },
+      //表单数据
+      form: {
+        unitCode: '',    //使用单位
+        carNumber: '',    //车牌号
+        vinNumber: '',
+        driver: '',  //驾驶员
+        creator: '',
+        createTime: '',
+        sdesc: '',//维保项目描述
+        remark: '',  //备注
+        maintainType: '',    //维保类型
+        maintainDate: '',       //保养日期
+        maintainMiles: '', //保养里程
+        totalCost: '', //总费用
+        materialCost: '',  //材料费
+        hourlyCost: '',      //工时费
+        otherCost: '',     //其他费
+        maintainShopId: '',         //店铺ID
+        maintainShop: '',    //其他店铺
+        maintainAddress: '',  //维保地点
+        nextMaintainDate: '',    //下次维保日期
+        nextMaintainMiles: '',    //下次维保里程
+        items: []
+      },
+      rules: {
+        unitCode: [
+          { required: true, message: '使用单位不能为空', trigger: 'change' }
+        ],
+        carNumber: [
+          { required: true, message: '车牌号不能为空', trigger: 'blur' }
+        ],
+        maintainType: [
+          { required: true, message: '维保类型不能为空', trigger: 'change' }
+        ],
+        driver: [
+          { required: true, message: '驾驶员不能为空', trigger: 'change' }
+        ],
+        maintainShopId: [
+          { required: true, message: '店铺不能为空', trigger: 'change' }
+        ],
+        maintainDate: { required: true, message: '维保日期不能为空', trigger: 'change' },
+        maintainMiles: [
+          { required: true, message: '维保里程不能为空', trigger: 'blur' }
+        ],
+        maintainAddress: [
+          { required: true, message: '维保地点不能为空', trigger: 'blur' }
+        ],
+        totalCost: [
+          { required: true, message: '总费用不能为空', trigger: 'blur' }
+        ]
+      }
+    }
   },
   computed: {
     visitedViews() {
       return this.$store.state.tagsView.visitedViews
     }
   },
-  activated(){
-      this.$refs.elform.resetFields();
-      this.licenseTypeSelection = [];
+  filters: {
+    // 保留位数
+    fixDecimal(num, fixed) {
+      return num.toFixed(fixed)
+    }
+  },
+  watch: {
+    // 监听店铺选择
+    'form.maintainShopId'(newVal) {
+      if (newVal === '-1') {
+        this.rules.maintainShop = { required: true, message: '其他店铺不能为空', trigger: 'blur' }
+      } else {
+        this.form.maintainShop = ''
+        this.rules.maintainShop = {}
+      }
+      this.$refs.elform.clearValidate('maintainShop')
+    },
+    // 如果维保类型为维修,清除下次维保里程和日期
+    'form.maintainType'(newVal) {
+      if (newVal === '2') {
+        this.form.nextMaintainDate = ''
+        this.form.nextMaintainMiles = ''
+      }
+    },
+    // 监听维保项目变化进行加总
+    maintenanceData: {
+      handler(val) {
+        let totalMaterialCost = 0, totalHourlyCost = 0, totalOtherCost = 0
+        val.forEach(item => {
+          totalMaterialCost = calSum(totalMaterialCost, item.materialCost)
+          totalHourlyCost = calSum(totalHourlyCost, item.hourlyCost)
+          totalOtherCost = calSum(totalOtherCost, item.otherCost)
+        })
+        this.form.materialCost = totalMaterialCost
+        this.form.hourlyCost = totalHourlyCost
+        this.form.otherCost = totalOtherCost
+        this.form.totalCost = calSum(calSum(totalMaterialCost, totalHourlyCost), totalOtherCost)
+      },
+      deep: true
+    }
+  },
+  activated() {
+    this.initMaintenanceCreate()
+    this.$refs.elform.resetFields()
+    this.licenseTypeSelection = []
   },
   methods: {
-    //员工编号查询
-    async remoteMethod(query){
-        if(!!query){
-            this.loading = true;
-            await userListAllForDept2List(Object.assign({}, {userCode:query})).then(({data}) => {
-                this.loading = false;
-                this.userOptions = data;
-            }).catch((err) => {
-                this.loading = false;
-            })
-        }else{
-            this.userOptions = [];
+    // 获取保养项目id
+    getItemId(index, value) {
+      this.maintenanceItemOptions.forEach(item => {
+        if (item.name === value) {
+          this.maintenanceData[index].itemId = item.id
         }
+      })
     },
     //添加维保明细数据
-    handleAddClick(){
-        this.maintenanceData.push(Object.assign({}, this.maintenance));
+    handleAddClick() {
+      this.maintenanceData.push(Object.assign({}, this.maintenance))
     },
     //删除维保明细数据
-    handleDeleteClick(index){
-        this.maintenanceData.splice(index,1);
+    handleDeleteClick(index) {
+      this.maintenanceData.splice(index, 1)
     },
     //保存数据
     handleSave() {
-        console.log(this.maintenanceData);
-        this.$refs.elform.validate(async (result) => {
-            if (result) {
-                this.loading = true;
-                await gcjcDriverCreate(Object.assign({}, this.form)).then(({message}) => {
-                    this.loading = false;
-                    this.$modal.msgSuccess(message);
-                    this.closeCurrentPage();
-                }).catch((err) => {
-                    this.loading = false;
-                })
+      if (this.maintenanceData.length === 0) {
+        this.$message.warning('请填写保养项目')
+      } else {
+        this.$refs.elform.validate((result) => {
+          if (result) {
+            let form = Object.assign({}, this.form)
+            // 处理维保商店名称
+            let maintainShopId = this.form.maintainShopId
+            if (maintainShopId !== '-1') {
+              this.shopOptions.forEach(item => {
+                if (item.id === maintainShopId) {
+                  form.maintainShop = item.unitName
+                }
+              })
             }
+            form.items = this.maintenanceData
+            this.loading = true
+            addMaintenanceRecord(form).then(({ message }) => {
+              this.loading = false
+              this.$modal.msgSuccess(message)
+              this.closeCurrentPage()
+            }).catch(() => {
+              this.loading = false
+            })
+          }
         })
+      }
+
+    },
+    // 处理输入的数字
+    maintenanceDataInputNumberChange(index, label) {
+      this.maintenanceData[index][label] = numToFixed2(this.maintenanceData[index][label])
+    },
+    inputNumberChange(label) {
+      this.form[label] = numToFixed2(this.form[label])
     },
     //关闭当前页面
-    closeCurrentPage(){
-        this.visitedViews.forEach((item) => {
-            if(item.name == this.$route.name){
-                this.$tab.closePage(item).then(({visitedViews}) => {
-                    this.$router.push({name:"driverFile"})
-                })
-            }
+    closeCurrentPage() {
+      this.visitedViews.forEach((item) => {
+        if (item.name === this.$route.name) {
+          this.$tab.closePage(item).then(({ visitedViews }) => {
+            this.$router.push({ name: 'maintenanceManagement' })
+          })
+        }
+      })
+    },
+    // 页面初始化调用
+    initMaintenanceCreate() {
+      // 获取可用单位
+      getAllAvailableUnit().then(res => {
+        this.userUnitOptions = res.data
+      })
+      // 获取维保类型
+      getListByParentId(MAINTENANCE_DICT.maintenanceTypeOptions.id).then(res => {
+        this.maintenanceTypeOptions = res.data
+      })
+      // 获取维保项目
+      getListByParentId(MAINTENANCE_DICT.maintenanceItemOptions.id).then(res => {
+        this.maintenanceItemOptions = res.data
+      })
+      // 获取维保店铺
+      getListByParentId(MAINTENANCE_DICT.comeUnitCategory.id).then(res => {
+        let comeUnitCategory = res.data
+        comeUnitCategory.forEach(item => {
+          if (item.name.indexOf('维保') !== -1) {
+            getComeUnitList({ unitCategory: item.code }).then(res => {
+              let shopOptions = res.data
+              shopOptions.push({ unitName: '其他', id: '-1' })
+              this.shopOptions = shopOptions
+            })
+          }
         })
+      })
+
     }
   }
-};
+}
 </script>
 <style scoped>
 .app-container {
-    padding: 10px 15px;
-    overflow: auto;
+  padding: 10px 15px;
+  overflow: auto;
 }
+
 .title-icon {
-    color: rgb(64, 158, 255);
-    margin-right: 5px;
+  color: rgb(64, 158, 255);
+  margin-right: 5px;
 }
 </style>

@@ -4,7 +4,7 @@ import { parseTime } from './ruoyi'
  * 表格时间格式化
  */
 export function formatDate(cellValue) {
-  if (cellValue == null || cellValue == "") return "";
+  if (cellValue == null || cellValue == '') return ''
   var date = new Date(cellValue)
   var year = date.getFullYear()
   var month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
@@ -86,8 +86,9 @@ export function byteLength(str) {
   let s = str.length
   for (var i = str.length - 1; i >= 0; i--) {
     const code = str.charCodeAt(i)
-    if (code > 0x7f && code <= 0x7ff) s++
-    else if (code > 0x7ff && code <= 0xffff) s += 2
+    if (code > 0x7f && code <= 0x7ff) {
+      s++
+    } else if (code > 0x7ff && code <= 0xffff) s += 2
     if (code >= 0xDC00 && code <= 0xDFFF) i--
   }
   return s
@@ -400,28 +401,28 @@ export function isNumberStr(str) {
  * @returns {string} 生成结果
  */
 export function generateUUID(len, radix) {
-  let chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
-  let uuid = [], i;
-  radix = radix || chars.length;
+  let chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('')
+  let uuid = [], i
+  radix = radix || chars.length
   if (len) {
     // Compact form
-    for (i = 0; i < len; i++) uuid[i] = chars[0 | Math.random()*radix];
+    for (i = 0; i < len; i++) uuid[i] = chars[0 | Math.random() * radix]
   } else {
     // rfc4122, version 4 form
-    let r;
+    let r
     // rfc4122 requires these characters
-    uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
-    uuid[14] = '4';
+    uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-'
+    uuid[14] = '4'
     // Fill in random data.  At i==19 set the high bits of clock sequence as
     // per rfc4122, sec. 4.1.5
     for (i = 0; i < 36; i++) {
       if (!uuid[i]) {
-        r = 0 | Math.random()*16;
-        uuid[i] = chars[(i === 19) ? (r & 0x3) | 0x8 : r];
+        r = 0 | Math.random() * 16
+        uuid[i] = chars[(i === 19) ? (r & 0x3) | 0x8 : r]
       }
     }
   }
-  return uuid.join('');
+  return uuid.join('')
 }
 
 /**
@@ -429,10 +430,32 @@ export function generateUUID(len, radix) {
  * @param {*} n
  * @return string
  */
- export const numToFixed2 = (n) => {
+export const numToFixed2 = (n) => {
   if (isNaN(n)) {
     return '0.00'
   }
-  return Number(n).toFixed(2);
-};
+  return Number(n).toFixed(2)
+}
+
+/**
+ * 计算两个数字的和
+ * @param num1 数字1,可以小数
+ * @param num2 数字2,可以小数
+ * @returns {number} 求和结果
+ */
+export function calSum(num1, num2) {
+  let r1, r2, m
+  try {
+    r1 = num1.toString().split('.')[1].length
+  } catch (e) {
+    r1 = 0
+  }
+  try {
+    r2 = num2.toString().split('.')[1].length
+  } catch (e) {
+    r2 = 0
+  }
+  m = Math.pow(10, Math.max(r1, r2))
+  return Math.round(num1 * m + num2 * m) / m
+}
 
