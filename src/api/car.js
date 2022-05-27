@@ -59,3 +59,19 @@ export function gcywVehicleRequestLogList(params) {
     params
   })
 }
+
+/**
+ * @function getAllAvailableCar
+ * @description 选择车辆 根据unitCode和部门id（deptId）
+ * @param params.unitCode { String } 单位编码
+ * @param params.deptId { Sting } 部门id
+ * @param params.cardNumber { Sting } "卡号",
+ * @return void
+ */
+export function getAllAvailableCar(params ={}) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/vehicleInfo/getAvailableCar`,
+    method: 'get',
+    params
+  })
+}

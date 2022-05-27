@@ -79,7 +79,7 @@
 <script>
 
 import indexMixin from "@/views/mixins"
-import { gcywVehicleRequestDispatchList } from "@/api/etc";
+import { gcywVehicleRequestDispatchList } from "@/api/car";
 export default {
   name: 'supplementDrivingRecord',
   mixins: [indexMixin],
@@ -128,9 +128,9 @@ export default {
   },
   async created() {
     await this.menuProperty();
+    this.getList()
   },
   mounted() {
-    this.getList()
   },
   methods: {
     //查询菜单数据
