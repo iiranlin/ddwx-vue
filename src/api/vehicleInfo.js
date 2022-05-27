@@ -9,3 +9,21 @@ export function vehicleInfoGetAssignCount(params) {
     params
   })
 }
+
+//选择车辆
+export function vehicleInfoGetAvailableCar(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/vehicleInfo/getAvailableCar`,
+    method: 'get',
+    params
+  })
+}
+
+//判断车辆是否限行
+export function vehicleInfoIsRestriction(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/vehicleInfo/isRestriction`,
+    method: 'get',
+    params
+  })
+}

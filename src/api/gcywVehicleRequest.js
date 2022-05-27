@@ -62,3 +62,20 @@ export function confirmVehicleRequest(data) {
   })
 }
 
+//调度工作台-分页
+export function gcywVehicleRequestDispatchList(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywVehicleRequest/dispatchList`,
+    method: 'get',
+    params
+  })
+}
+
+//调度工作台-派车、人工派车
+export function saveOrderDispatch(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywVehicleRequest/saveOrderDispatch`,
+    method: 'post',
+    data
+  })
+}
