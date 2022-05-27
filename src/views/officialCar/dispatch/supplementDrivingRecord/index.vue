@@ -84,7 +84,6 @@ export default {
   name: 'supplementDrivingRecord',
   mixins: [indexMixin],
   components: {
-    operate,
   },
   filters: {
 
@@ -146,7 +145,10 @@ export default {
       try {
         const params = {
           ...this.listQuery,
-          ...this.formData
+          ...this.formData,
+          // 固定参数
+          status: '6',
+          createType: '2',
         }
         const { data = {} } = await gcywVehicleRequestDispatchList(params);
         this.dataList = data.list;
