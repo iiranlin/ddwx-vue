@@ -25,3 +25,14 @@ export function getMaintenanceRecordByPage(params) {
     params
   })
 }
+
+/**
+ * 根据id获取详情
+ * @param id
+ */
+export function getMaintenanceDetailById(id) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/maintenanceRecord/${id}/detail`,
+    method: 'get'
+  })
+}

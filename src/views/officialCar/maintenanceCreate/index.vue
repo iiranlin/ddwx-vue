@@ -2,7 +2,7 @@
   <div class="app-container" v-loading="loading">
     <el-row :gutter="20">
       <el-col :span="1.5">
-        <el-button type="primary" size="mini" @click="handleSave">保存</el-button>
+        <el-button type="primary" size="mini" @click="handleButton">{{ status ? '保存' : '返回' }}</el-button>
       </el-col>
     </el-row>
     <el-row :gutter="20">
@@ -17,9 +17,7 @@
           <el-col :span="24" :xs="24">
             <el-col :span="8">
               <el-form-item label="使用单位：" prop="unitCode">
-                <el-select v-model="form.unitCode" filterable style="width:100%" :loading="loading"
-                           placeholder="请选择使用单位" size="mini"
-                >
+                <el-select v-model="form.unitCode" filterable style="width:100%" placeholder="请选择使用单位" size="mini" v-if="status">
                   <el-option
                     v-for="item in userUnitOptions"
                     :key="item.id"
@@ -28,17 +26,29 @@
                   >
                   </el-option>
                 </el-select>
+                <span v-else>{{ form.unitName }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="车牌号：" prop="carNumber">
-                <el-input v-model="form.carNumber" size="mini" placeholder="请输入车牌号"></el-input>
+                <el-select v-model="form.carNumber" size="mini" :placeholder="carNumberPlaceHolder" style="width:100%" filterable
+                           v-if="status"
+                >
+                  <el-option
+                    v-for="item in carList"
+                    :key="item.id"
+                    :label="item.carNumber"
+                    :value="item.carNumber"
+                  >
+                  </el-option>
+                </el-select>
+                <span v-else>{{ form.carNumber }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="维保类型：" prop="maintainType">
                 <el-select v-model="form.maintainType" filterable style="width:100%" :loading="loading"
-                           placeholder="请选择维保类型" size="mini"
+                           placeholder="请选择维保类型" size="mini" v-if="status"
                 >
                   <el-option
                     v-for="item in maintenanceTypeOptions"
@@ -48,16 +58,18 @@
                   >
                   </el-option>
                 </el-select>
+                <span v-else>{{ form.maintainType }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="驾驶员：" prop="driver">
-                <el-input v-model="form.driver" size="mini" placeholder="请输入驾驶员"></el-input>
+                <el-input v-model="form.driver" size="mini" placeholder="请输入驾驶员" v-if="status"></el-input>
+                <span v-else>{{ form.driver }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="店铺：" prop="maintainShopId">
-                <el-select v-model="form.maintainShopId" size="mini" style="width:100%" filterable placeholder="请选择店铺">
+                <el-select v-model="form.maintainShopId" size="mini" style="width:100%" filterable placeholder="请选择店铺" v-if="status">
                   <el-option
                     v-for="item in shopOptions"
                     :key="item.value"
@@ -66,13 +78,16 @@
                   >
                   </el-option>
                 </el-select>
+                <span v-if="!status && form.maintainShopId!=='-1'">{{ form.maintainShop }}</span>
+                <span v-if="!status && form.maintainShopId==='-1'">其他</span>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="其他店铺：" prop="maintainShop">
                 <el-input v-model="form.maintainShop" size="mini" placeholder="请填写不在定点的店铺"
-                          :disabled="form.maintainShopId!=='-1'"
+                          :disabled="form.maintainShopId!=='-1'" v-if="status"
                 ></el-input>
+                <span v-if="!status && form.maintainShopId==='-1'">{{ form.maintainShop }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -85,47 +100,56 @@
                   type="date"
                   placeholder="请选择维保日期"
                   size="mini"
+                  v-if="status"
                 >
                 </el-date-picker>
+                <span v-else>{{ form.maintainDate }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="维保里程：" prop="maintainMiles">
                 <el-input v-model="form.maintainMiles" size="mini" placeholder="请输入维保里程" clearable
-                          @change="inputNumberChange('maintainMiles')"
+                          @change="inputNumberChange('maintainMiles')" v-if="status"
                 ></el-input>
+                <span v-else>{{ form.maintainMiles }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="维保地点：" prop="maintainAddress">
-                <el-input v-model="form.maintainAddress" size="mini" placeholder="请输入维保地点" clearable></el-input>
+                <el-input v-model="form.maintainAddress" size="mini" placeholder="请输入维保地点" clearable v-if="status"></el-input>
+                <span v-else>{{ form.maintainAddress }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="总费用：" prop="totalCost">
-                <el-input v-model="form.totalCost" size="mini" placeholder="自动计算" clearable disabled></el-input>
+                <el-input v-model="form.totalCost" size="mini" placeholder="自动计算" clearable disabled v-if="status"></el-input>
+                <span v-else>{{ form.totalCost }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="材料费：" prop="materialCost">
-                <el-input v-model="form.materialCost" size="mini" placeholder="自动计算" clearable disabled></el-input>
+                <el-input v-model="form.materialCost" size="mini" placeholder="自动计算" clearable disabled v-if="status"></el-input>
+                <span v-else>{{ form.materialCost }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="工时费：" prop="hourlyCost">
-                <el-input v-model="form.hourlyCost" size="mini" placeholder="自动计算" clearable disabled></el-input>
+                <el-input v-model="form.hourlyCost" size="mini" placeholder="自动计算" clearable disabled v-if="status"></el-input>
+                <span v-else>{{ form.hourlyCost }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="其他费：" prop="otherCost">
-                <el-input v-model="form.otherCost" size="mini" placeholder="自动计算" clearable disabled></el-input>
+                <el-input v-model="form.otherCost" size="mini" placeholder="自动计算" clearable disabled v-if="status"></el-input>
+                <span v-else>{{ form.otherCost }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="下次维保里程：" prop="nextMaintainMiles">
                 <el-input v-model="form.nextMaintainMiles" size="mini" placeholder="请输入下次维保里程" clearable
-                          :disabled="form.maintainType!=='1'" @change="inputNumberChange('nextMaintainMiles')"
+                          :disabled="form.maintainType!=='1'" @change="inputNumberChange('nextMaintainMiles')" v-if="status"
                 ></el-input>
+                <span v-if="!status && form.maintainType==='1'">{{ form.nextMaintainMiles }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -139,19 +163,23 @@
                   placeholder="请选择下次维保日期"
                   size="mini"
                   :disabled="form.maintainType!=='1'"
+                  v-if="status"
                 >
                 </el-date-picker>
+                <span v-if="!status && form.maintainType==='1'">{{ form.nextMaintainDate }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="24">
               <el-form-item label="维保项目描述：" prop="sdesc">
-                <el-input type="textarea" :rows="3" maxlength="200" v-model="form.sdesc" size="mini"
+                <el-input type="textarea" :rows="3" maxlength="200" v-model="form.sdesc" size="mini" v-if="status"
                 ></el-input>
+                <span v-else>{{ form.sdesc }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="24">
               <el-form-item label="备注：" prop="remark">
-                <el-input type="textarea" :rows="3" maxlength="200" v-model="form.remark" size="mini"></el-input>
+                <el-input type="textarea" :rows="3" maxlength="200" v-model="form.remark" size="mini" v-if="status"></el-input>
+                <span v-else>{{ form.remark }}</span>
               </el-form-item>
             </el-col>
           </el-col>
@@ -161,7 +189,7 @@
       <el-row :gutter="20">
         <el-col style="width:90%;margin: 15px 10px;">
           <i class="el-icon-caret-right title-icon"></i><span>维保明细</span>
-          <i class="el-icon-plus title-icon" style="float:right;margin-right:10px;" @click="handleAddClick()"></i>
+          <i class="el-icon-plus title-icon" style="float:right;margin-right:10px;" @click="handleAddClick()" v-if="status"></i>
         </el-col>
       </el-row>
       <el-row>
@@ -171,6 +199,7 @@
               <template slot-scope="scope">
                 <el-select v-model="maintenanceData[scope.$index].itemName" placeholder="请选择维保项目"
                            @change="getItemId(scope.$index,maintenanceData[scope.$index].itemName)"
+                           v-if="status"
                 >
                   <el-option v-for="item in maintenanceItemOptions"
                              :key="item.id"
@@ -179,44 +208,50 @@
                   >
                   </el-option>
                 </el-select>
+                <span v-else>{{ maintenanceData[scope.$index].itemName }}</span>
               </template>
             </el-table-column>
             <el-table-column label="材料数量" align="center">
               <template slot-scope="scope">
                 <el-input v-model="maintenanceData[scope.$index].materialNum"
-                          @change="maintenanceDataInputNumberChange(scope.$index,'materialNum')"
+                          @change="maintenanceDataInputNumberChange(scope.$index,'materialNum')" v-if="status"
                 ></el-input>
+                <span v-else>{{ maintenanceData[scope.$index].materialNum }}</span>
               </template>
             </el-table-column>
             <el-table-column label="材料费" align="center">
               <template slot-scope="scope">
                 <el-input v-model="maintenanceData[scope.$index].materialCost"
-                          @change="maintenanceDataInputNumberChange(scope.$index,'materialCost')"
+                          @change="maintenanceDataInputNumberChange(scope.$index,'materialCost')" v-if="status"
                 ></el-input>
+                <span v-else>{{ maintenanceData[scope.$index].materialCost }}</span>
               </template>
             </el-table-column>
             <el-table-column label="工时（小时）" align="center">
               <template slot-scope="scope">
                 <el-input v-model="maintenanceData[scope.$index].hourlyNum"
-                          @change="maintenanceDataInputNumberChange(scope.$index,'hourlyNum')"
+                          @change="maintenanceDataInputNumberChange(scope.$index,'hourlyNum')" v-if="status"
                 ></el-input>
+                <span v-else>{{ maintenanceData[scope.$index].hourlyNum }}</span>
               </template>
             </el-table-column>
             <el-table-column label="工时费" align="center">
               <template slot-scope="scope">
                 <el-input v-model="maintenanceData[scope.$index].hourlyCost"
-                          @change="maintenanceDataInputNumberChange(scope.$index,'hourlyCost')"
+                          @change="maintenanceDataInputNumberChange(scope.$index,'hourlyCost')" v-if="status"
                 ></el-input>
+                <span v-else>{{ maintenanceData[scope.$index].hourlyCost }}</span>
               </template>
             </el-table-column>
             <el-table-column label="其他费" align="center">
               <template slot-scope="scope">
                 <el-input v-model="maintenanceData[scope.$index].otherCost"
-                          @change="maintenanceDataInputNumberChange(scope.$index,'otherCost')"
+                          @change="maintenanceDataInputNumberChange(scope.$index,'otherCost')" v-if="status"
                 ></el-input>
+                <span v-else>{{ maintenanceData[scope.$index].otherCost }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="操作" align="center">
+            <el-table-column label="操作" align="center" v-if="status">
               <template slot-scope="scope">
                 <a href="javascript:void(0)" @click="handleDeleteClick(scope.$index)" style="color:#1890ff;">删除</a>
               </template>
@@ -233,14 +268,19 @@ import { MAINTENANCE_DICT } from '@/views/officialCar/maintenanceCreate/constant
 import { getListByParentId } from '@/api/system/dict'
 import { getComeUnitList } from '@/api/comeUnit'
 import { calSum, numToFixed2 } from '@/utils'
-import { addMaintenanceRecord } from '@/api/maintenanceRecord'
+import { addMaintenanceRecord, getMaintenanceDetailById } from '@/api/maintenanceRecord'
+import { getVehicleListAll } from '@/api/vehicleInfo'
 
 export default {
   name: 'maintenanceCreate',
   data() {
     return {
+      // 当前状态,create新增true,detail详情false
+      status: true,
       //loading框
       loading: false,
+      // 根据使用单位获取的车辆数据
+      carList: [],
       //使用单位数据
       userUnitOptions: [],
       //维保类型数据
@@ -261,8 +301,10 @@ export default {
         hourlyCost: '',
         otherCost: ''
       },
+      carNumberPlaceHolder: '请先选择使用单位',
       //表单数据
       form: {
+        unitName: '',
         unitCode: '',    //使用单位
         carNumber: '',    //车牌号
         vinNumber: '',
@@ -328,13 +370,15 @@ export default {
   watch: {
     // 监听店铺选择
     'form.maintainShopId'(newVal) {
-      if (newVal === '-1') {
-        this.rules.maintainShop = { required: true, message: '其他店铺不能为空', trigger: 'blur' }
-      } else {
-        this.form.maintainShop = ''
-        this.rules.maintainShop = {}
+      if (this.status) {
+        if (newVal === '-1') {
+          this.rules.maintainShop = { required: true, message: '其他店铺不能为空', trigger: 'blur' }
+        } else {
+          this.form.maintainShop = ''
+          this.rules.maintainShop = {}
+        }
+        this.$refs.elform.clearValidate('maintainShop')
       }
-      this.$refs.elform.clearValidate('maintainShop')
     },
     // 如果维保类型为维修,清除下次维保里程和日期
     'form.maintainType'(newVal) {
@@ -358,12 +402,34 @@ export default {
         this.form.totalCost = calSum(calSum(totalMaterialCost, totalHourlyCost), totalOtherCost)
       },
       deep: true
+    },
+    // 监听单位选择,根据单位获取车牌号列表
+    'form.unitCode'(newVal) {
+      if (newVal === '') {
+        this.carNumberPlaceHolder = '请先选择使用单位'
+      } else {
+        this.carNumberPlaceHolder = '请选择车牌号'
+        getVehicleListAll({ unitCode: this.form.unitCode }).then(res => {
+          this.carList = res.data
+        })
+      }
     }
   },
-  activated() {
+  mounted() {
+    let id = this.$route.query.id
+    if (id) {
+      this.status = false
+      getMaintenanceDetailById(id).then(res => {
+        let data = res.data
+        Object.keys(this.form).forEach(key => {
+          this.form[key] = data[key]
+        })
+        this.maintenanceData = data.items
+      })
+    } else {
+      this.status = true
+    }
     this.initMaintenanceCreate()
-    this.$refs.elform.resetFields()
-    this.licenseTypeSelection = []
   },
   methods: {
     // 获取保养项目id
@@ -383,35 +449,38 @@ export default {
       this.maintenanceData.splice(index, 1)
     },
     //保存数据
-    handleSave() {
-      if (this.maintenanceData.length === 0) {
-        this.$message.warning('请填写保养项目')
-      } else {
-        this.$refs.elform.validate((result) => {
-          if (result) {
-            let form = Object.assign({}, this.form)
-            // 处理维保商店名称
-            let maintainShopId = this.form.maintainShopId
-            if (maintainShopId !== '-1') {
-              this.shopOptions.forEach(item => {
-                if (item.id === maintainShopId) {
-                  form.maintainShop = item.unitName
-                }
+    handleButton() {
+      if (this.status) {
+        if (this.maintenanceData.length === 0) {
+          this.$message.warning('请填写保养项目')
+        } else {
+          this.$refs.elform.validate((result) => {
+            if (result) {
+              let form = Object.assign({}, this.form)
+              // 处理维保商店名称
+              let maintainShopId = this.form.maintainShopId
+              if (maintainShopId !== '-1') {
+                this.shopOptions.forEach(item => {
+                  if (item.id === maintainShopId) {
+                    form.maintainShop = item.unitName
+                  }
+                })
+              }
+              form.items = this.maintenanceData
+              this.loading = true
+              addMaintenanceRecord(form).then(({ message }) => {
+                this.loading = false
+                this.$modal.msgSuccess(message)
+                this.closeCurrentPage()
+              }).catch(() => {
+                this.loading = false
               })
             }
-            form.items = this.maintenanceData
-            this.loading = true
-            addMaintenanceRecord(form).then(({ message }) => {
-              this.loading = false
-              this.$modal.msgSuccess(message)
-              this.closeCurrentPage()
-            }).catch(() => {
-              this.loading = false
-            })
-          }
-        })
+          })
+        }
+      } else {
+        this.closeCurrentPage()
       }
-
     },
     // 处理输入的数字
     maintenanceDataInputNumberChange(index, label) {

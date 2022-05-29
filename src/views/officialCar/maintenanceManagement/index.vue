@@ -65,12 +65,6 @@
 import buttonTop from '@/components/buttonTop'
 import formData from '@/components/formData'
 import tableIndex from '@/components/tableIndex'
-import {
-  tempRestrictionListPage,
-  tempRestrictionAddFR,
-  tempRestrictionEnableFR,
-  tempRestrictionUpdateFR
-} from '@/api/system/dict/restriction'
 import { getMaintenanceRecordByPage } from '@/api/maintenanceRecord'
 
 export default {
@@ -126,7 +120,6 @@ export default {
     //获取分页数据
     async getList() {
       this.loading = true
-      console.log(this.formData)
       await getMaintenanceRecordByPage(Object.assign({}, this.listQuery, this.formData)).then(({ data }) => {
         this.dataList = data.list
         this.total = data.total
@@ -143,8 +136,8 @@ export default {
     handleButton(ids, buttonCode, row) {
       if (buttonCode === 'create') {
         this.$router.push({ name: 'maintenanceCreate' })
-      } else if (buttonCode === 'update') {
-
+      } else if (buttonCode === 'detail') {
+        this.$router.push({ name: 'maintenanceCreate', query: { id: ids } })
       }
     },
     //顶部列字段展示

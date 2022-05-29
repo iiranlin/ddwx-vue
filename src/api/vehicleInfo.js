@@ -27,3 +27,12 @@ export function vehicleInfoIsRestriction(params) {
     params
   })
 }
+
+// 根据查询条件获取车辆下拉框
+export function getVehicleListAll(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/vehicleInfo/listAll`,
+    method: 'get',
+    params
+  })
+}
