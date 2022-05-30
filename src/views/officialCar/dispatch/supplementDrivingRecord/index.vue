@@ -60,6 +60,7 @@
           @handleButton="handleButton"
           @selectChange="selectChange"
           @emitAblFilter="emitAblFilter"
+          @clickLink="clickLink"
         >
         </table-index>
         <!--分页器-->
@@ -147,7 +148,6 @@ export default {
           ...this.listQuery,
           ...this.formData,
           // 固定参数
-          status: '6',
           createType: '2',
         }
         const { data = {} } = await gcywVehicleRequestDispatchList(params);
@@ -169,6 +169,7 @@ export default {
       this.buttonCode = buttonCode
       if (buttonCode === 'create') {
         // 新建
+        this.$router.push({ name: 'editDrivingRecord' });
         return;
       }
     },
@@ -215,6 +216,9 @@ export default {
     tableRowClassName({ row, rowIndex }) {
       row.index = rowIndex + 1;
     },
+    clickLink(row, _fieldCode, linkText) {
+      this.$router.push({ name: linkText, params: { id: row.id } });
+    }
   },
 };
 </script>

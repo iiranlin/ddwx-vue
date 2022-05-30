@@ -141,8 +141,8 @@
                 prop="longDistanceTag"
               >
                 <el-radio-group v-model="formData.longDistanceTag">
-                  <el-radio :label="1">是</el-radio>
-                  <el-radio :label="0">否</el-radio>
+                  <el-radio :label="'1'">是</el-radio>
+                  <el-radio :label="'0'">否</el-radio>
                 </el-radio-group>
               </el-form-item>
             </el-col>
@@ -239,21 +239,14 @@
                 label="出发时间"
                 prop="usageTime"
               >
-                <el-date-picker
+                <el-time-picker
                   v-model="formData.usageTime"
-                  type="datetime"
+                  size="small"
+                  format="HH:mm"
+                  value-format="HH:mm"
                   placeholder="选择出发时间"
                   clearable
-                  size="small"
-                  value-format="yyyy-MM-dd HH:mm:ss"
-                  default-time="08:00:00"
-                >
-                </el-date-picker>
-                <!-- <el-input
-                  v-model="formData.usageTime"
-                  maxlength="200"
-                  placeholder="请输入出发时间"
-                /> -->
+                />
               </el-form-item>
             </el-col>
             <el-col
@@ -354,7 +347,7 @@
             </span>
           </template>
           <div
-            v-for="(item, index) in formData.newCarInfo"
+            v-for="(item, index) in formData.reqAssignments"
             :key="`uniqueId${item.uniqueId}`"
           >
             <div class="divider-line" />
@@ -368,7 +361,7 @@
                   @click="deleteCar(index)"
                 >
                   <i class="el-icon-delete" />
-                  删除
+                  删 除
                 </el-button>
               </el-col>
             </el-row>
@@ -381,19 +374,21 @@
               >
                 <el-form-item
                   label="指派司机"
-                  :prop="`newCarInfo.${index}.driverId`"
+                  :prop="`reqAssignments.${index}.driverId`"
                 >
                   <el-select
                     v-model="item.driverId"
                     placeholder="请选择指派司机"
                     clearable
-                    @change="driverChange(item.driverId, item, index)"
+                    filterable
+                    @change="driverChange(item.driverId, item.uniqueId, index)"
                   >
+                    <!-- driverId 传递的参数是 driverCode -->
                     <el-option
-                      v-for="item in driverData"
-                      :key="item.driverCode"
-                      :label="item.driver"
-                      :value="item.driverCode"
+                      v-for="dataItem in driverData"
+                      :key="dataItem.driverCode"
+                      :label="dataItem.driver"
+                      :value="dataItem.driverCode"
                     >
                     </el-option>
                   </el-select>
@@ -407,20 +402,20 @@
               >
                 <el-form-item
                   label="指派车辆"
-                  :prop="`newCarInfo.${index}.carNumber`"
+                  :prop="`reqAssignments.${index}.carNumber`"
                 >
                   <el-select
                     v-model="item.carNumber"
                     placeholder="请选择指派车辆"
                     clearable
-                    value-key="carNumber"
-                    @change="carNumberChange(item.carNumber, item, index)"
+                    filterable
+                    @change="carNumberChange(item.carNumber, item.uniqueId, index)"
                   >
                     <el-option
-                      v-for="item in carNumberOptions"
-                      :key="item.carId"
-                      :label="item.carNumber"
-                      :value="item"
+                      v-for="dataItem in carNumberOptions"
+                      :key="dataItem.carId"
+                      :label="dataItem.carNumber"
+                      :value="dataItem.carNumber"
                     >
                     </el-option>
                   </el-select>
@@ -434,15 +429,17 @@
               >
                 <el-form-item
                   label="出场里程"
-                  :prop="`newCarInfo.${index}.beginMiles`"
+                  :prop="`reqAssignments.${index}.beginMiles`"
                 >
                   <el-input
                     v-model="item.beginMiles"
                     readonly
+                    disabled
                     maxlength="200"
-                    placeholder="请输入出场里程"
-                  />
-                  </el-select>
+                    placeholder=""
+                  >
+                    <span slot="append">千米</span>
+                  </el-input>
                 </el-form-item>
               </el-col>
               <el-col
@@ -453,14 +450,15 @@
               >
                 <el-form-item
                   label="还车里程"
-                  :prop="`newCarInfo.${index}.endMiles`"
+                  :prop="`reqAssignments.${index}.endMiles`"
                 >
                   <el-input
                     v-model="item.endMiles"
                     maxlength="200"
                     placeholder="请输入还车里程"
-                  />
-                  </el-select>
+                  >
+                    <span slot="append">千米</span>
+                  </el-input>
                 </el-form-item>
               </el-col>
               <el-col
@@ -471,15 +469,15 @@
               >
                 <el-form-item
                   label="保养时间"
-                  :prop="`newCarInfo.${index}.maintainDate`"
+                  :prop="`reqAssignments.${index}.maintainDate`"
                 >
                   <el-input
                     v-model="item.maintainDate"
                     readonly
+                    disabled
                     maxlength="200"
-                    placeholder="请输入保养时间"
+                    placeholder=""
                   />
-                  </el-select>
                 </el-form-item>
               </el-col>
               <el-col
@@ -490,14 +488,16 @@
               >
                 <el-form-item
                   label="保养里程"
-                  :prop="`newCarInfo.${index}.maintainMiles`"
+                  :prop="`reqAssignments.${index}.maintainMiles`"
                 >
                   <el-input
                     v-model="item.maintainMiles"
-                    maxlength="200"
-                    placeholder="请输入保养里程"
-                  />
-                  </el-select>
+                    readonly
+                    disabled
+                    placeholder=""
+                  >
+                    <span slot="append">千米</span>
+                  </el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -511,7 +511,7 @@
         :loading="loading"
         @click="addRequest"
       >确 定</el-button>
-      <el-button @click="closePush">关 闭</el-button>
+      <el-button @click="closePush">取 消</el-button>
     </div>
   </div>
 </template>
@@ -522,7 +522,7 @@ import { getAllAvailableDept } from "@/api/dept"
 import { gcjcDriverClassList } from "@/api/driver"
 import { getAllAvailableCar } from "@/api/car"
 import { vehicleInfoGetAssignCount } from "@/api/vehicleInfo";
-import { addVehicleRequest } from "@/api/gcywVehicleRequest";
+import { saveOrderDispatch } from "@/api/gcywVehicleRequest";
 import formAddress from "@/views/car/apply/components/formAddress";
 import getDict from "@/views/mixins/getDict"
 export default {
@@ -562,16 +562,17 @@ export default {
       carNumberOptions: [],
       formData: {
         // 用车单位
-        unitCode: '11',
+        unitCode: '',
+        unitName: '',
         // 用车部门
         deptId: '',
-        reasonCode: '',
-        demandCode: '',
-        longDistanceTag: 0,
-        usagePersons: '',
+        reasonCode: '1',
+        demandCode: '1001801',
+        longDistanceTag: '0',
+        usagePersons: '1',
         userName: '',
         phone: '',
-        usageDate: '2022-05-27',
+        usageDate: '',
         usageTime: '',
         timeLength: '',
         fromAddr: '',
@@ -580,8 +581,9 @@ export default {
         toAreaIdd: '',
         hopeBrand: '',
         remark: '',
+        // 来源 1-PC 2-APP
         source: 1,
-        newCarInfo: []
+        reqAssignments: []
       },
       rules: {
         unitCode: [
@@ -623,55 +625,14 @@ export default {
         toAddr: [
           { required: isValidate, validator: checktoAddr, trigger: "change" }
         ],
-        hopeBrand: [
-          { required: isValidate, message: "请选择期望车型", trigger: "change" }
-        ],
-        newCarInfo: []
+        // hopeBrand: [
+        //   { required: isValidate, message: "请选择期望车型", trigger: "change" }
+        // ],
+        reqAssignments: []
       },
       // 唯一key
       uniqueId: 1,
-      addCarInfoExample: [
-        {
-          label: 'driverId',
-          rule: [
-            { required: isValidate, message: "请选择指派司机", trigger: "change" }
-          ]
-        },
-        {
-          label: 'carNumber',
-          rule: [
-            { required: isValidate, message: "请选择指派车辆", trigger: "change" }
-          ]
-        },
-        {
-          label: 'driverPhone',
-          rule: []
-        },
-        // {
-        //   label: 'beginMiles',
-        //   rule: [
-        //     { required: false, message: "请输入出场里程", trigger: "blur" }
-        //   ]
-        // },
-        {
-          label: 'endMiles',
-          rule: [
-            { required: isValidate, message: "请输入还车里程", trigger: "blur" }
-          ]
-        },
-        // {
-        //   label: 'maintainDate',
-        //   rule: [
-        //     { required: isValidate, message: "请选择保养时间", trigger: "blur" }
-        //   ]
-        // },
-        // {
-        //   label: 'maintainMiles',
-        //   rule: [
-        //     { required: isValidate, message: "请选择保养里程", trigger: "blur" }
-        //   ]
-        // },
-      ],
+      // 每一个车辆信息 表单
       addCarInfoFormExample: {
         uniqueId: '',
         // 司机
@@ -691,6 +652,7 @@ export default {
         // 保养里程
         maintainMiles: '',
       },
+      // 每一个车辆信息 表单 校验规则
       addCarInfoFormRuleExample: {
         driverId: [
           { required: isValidate, message: "请选择指派司机", trigger: "change" }
@@ -702,7 +664,7 @@ export default {
         //   { required: false, message: "请输入出场里程", trigger: "blur" }
         // ],
         endMiles: [
-          { required: false, message: "请输入还车里程", trigger: "blur" }
+          { required: isValidate, message: "请输入还车里程", trigger: "blur" },
         ],
         // maintainDate: [
         //   { required: false, message: "请输入保养时间", trigger: "blur" }
@@ -711,37 +673,8 @@ export default {
         //   { required: isValidate, message: "请输入保养里程", trigger: "blur" }
         // ],
       },
+      // 用车信息的uniqueId的集合
       addCarInfoList: [],
-      // 每个车辆信息例子
-      everyCarFormExample: [
-        {
-          originLabel: 'carNumber',
-        },
-        {
-          originLabel: 'beginMiles',
-        },
-        {
-          originLabel: 'maintainDate',
-        },
-        {
-          originLabel: 'maintainMiles',
-        },
-      ],
-      // 每个司机信息
-      everyDriverFormExample: [
-        {
-          originLabel: 'driver',
-        },
-        {
-          originLabel: 'driverPhone',
-        },
-      ],
-      // 选中的车辆数据
-      selectedCarData: {},
-      // 选中的车辆数据司机数据
-      selectedDriverData: {},
-      // 用车信息
-      useCarData: []
     };
   },
   computed: {
@@ -754,31 +687,6 @@ export default {
     for (const item of this.dictionariesCode) {
       this.getOperateDict(item);
     }
-    this.$nextTick(() => {
-      if (this.$route.query.row) {
-        let row = JSON.parse(this.$route.query.row);
-        this.formData = {
-          reasonCode: row.reasonCode,
-          demandCode: row.demandCode,
-          longDistanceTag: 0,
-          usagePersons: row.usagePersons,
-          userName: row.userName,
-          phone: row.phone,
-          usageDate: row.usageDate,
-          usageTime: row.usageTime,
-          timeLength: row.timeLength,
-          fromAddr: row.fromAddr,
-          fromAreaId: row.fromAreaId,
-          toAddr: row.toAddr,
-          toAreaIdd: row.toAreaIdd,
-          hopeBrand: row.hopeBrand,
-          remark: row.remark,
-          source: 1,
-        }
-        this.$refs.formAddress1.init(row.fromAddr);
-        this.$refs.formAddress2.init(row.toAddr);
-      }
-    })
   },
   async mounted() {
     await this.getUnitDictList();
@@ -787,9 +695,6 @@ export default {
     async getOperateDict(code) {
       const res = await this.getOperateDictList(code);
       this.dictionariesObj[code] = res;
-    },
-    calendarClick(val) {
-      this.formData.usageDate = val.day;
     },
     vehicleInfoGetAssignCount() {
       vehicleInfoGetAssignCount().then(({ data }) => {
@@ -808,32 +713,37 @@ export default {
     },
     // 确定 确 定按钮 新增专用车补录
     addRequest() {
-      this.$refs.elForm.validate((valid) => {
+      if (this.formData.reqAssignments.length <= 0) {
+        this.$message.error('请添加车辆信息')
+        this.addCarButton();
+        return;
+      }
+      this.$refs.elForm.validate(async (valid) => {
         if (valid) {
-          // addVehicleRequest(this.formData).then(({ message }) => {
-          //   this.$modal.msgSuccess(message);
-          //   this.$router.push({ name: 'myCar' });
-          // })
+          const loading = this.$loading({
+            lock: true,
+            text: "加载中...",
+          });
+          try {
+            const params = { ...this.formData, createType: '2' }
+            const res = await saveOrderDispatch(params);
+            console.log('res', res);
+            if (res?.code !== 0) {
+              this.$message.error(res?.message || '操作失败，请稍后重试');
+              return;
+            }
+            this.$message.success(res?.message || '操作成功');
+            this.$router.push({ name: 'supplementDrivingRecord' });
+          } catch (e) {
+
+          } finally {
+            loading.close()
+          }
         }
       })
     },
-    // 处理选中的车辆数据
-    dealSelectedCarData(selectCar) {
-      console.log("🚀 ~ file: index.vue ~ line 780 ~ dealSelectedCarData ~ 处理选中的车辆数据", selectCar);
-      if (selectCar) {
-
-      }
-    },
-    // 处理选中的司机数据
-    dealSelectedDriverData(selectDriver) {
-      console.log("🚀 ~ file: index.vue ~ line 784 ~ dealSelectedCarData ~ 处理选中的司机数据", selectDriver);
-    },
-    // 处理请求的参数
-    dealRequestParams() {
-      console.log('处理请求的参数');
-    },
     closePush() {
-      this.$router.push({ name: 'myCar' });
+      this.$router.push({ name: 'supplementDrivingRecord' });
     },
     calcIconClass(name) {
       return this.activeNames.includes(name) ? `el-icon-caret-bottom` : `el-icon-caret-right`;
@@ -841,48 +751,35 @@ export default {
     // 添加车辆按钮
     addCarButton() {
       // TODO 当获取单位接口正常时  解开注释
-      // if (!this.formData.unitCode) {
-      //   this.$message.warning('请先选择用车单位!');
-      //   this.$refs.unitCodeRef.focus();
-      //   return;
-      // }
+      if (!this.formData.unitCode) {
+        this.$message.warning('请先选择用车单位!');
+        this.$refs.unitCodeRef.focus();
+        return;
+      }
       // TODO 当获取部门接口正常时  解开注释
-      // if (!this.formData.deptId) {
-      //   this.$message.warning('请先选择用车部门');
-      //   this.$refs.deptIdRef.focus();
-      //   return;
-      // }
+      if (!this.formData.deptId) {
+        this.$message.warning('请先选择用车部门');
+        this.$refs.deptIdRef.focus();
+        return;
+      }
       // TODO 当获取日期接口正常时  解开注释
-      // if (!this.formData.usageDate) {
-      //   this.$message.warning('请先选择用车日期');
-      //   this.$refs.usageDateRef.focus();
-      //   return;
-      // }
-      this.formData.newCarInfo.push({
+      if (!this.formData.usageDate) {
+        this.$message.warning('请先选择用车日期');
+        this.$refs.usageDateRef.focus();
+        return;
+      }
+      this.formData.reqAssignments.push({
         ...this.addCarInfoFormExample,
         uniqueId: this.uniqueId,
       });
-      this.rules.newCarInfo.push(this.addCarInfoFormRuleExample)
+      this.rules.reqAssignments.push(this.addCarInfoFormRuleExample)
       this.addCarInfoList.push(this.uniqueId);
       this.uniqueId++
     },
     // 删除车辆
     deleteCar(index) {
-      const currentUniqueId = this.addCarInfoList[index];
-      const currentCarInfo = this.addCarInfoExample.map((item) => {
-        return {
-          originLabel: item.label,
-          label: `${item.label}${currentUniqueId}`,
-          rule: item.rule,
-        }
-      })
-      currentCarInfo.forEach(item => {
-        delete this.formData[item['label']]
-        delete this.rules[item['label']]
-      });
-      // delete this.formData[`driver${currentUniqueId}`]
-      // delete this.formData[`driverPhone${currentUniqueId}`]
-      // delete this.formData[`driverId${currentUniqueId}`]
+      this.formData.reqAssignments.splice(index, 1);
+      this.rules.reqAssignments.splice(index, 1);
       this.addCarInfoList.splice(index, 1)
     },
     // 获取用车单位列表 当前用户有权限的单位
@@ -910,28 +807,42 @@ export default {
     // 用车单位发生变化时
     async unitCodeChange(val) {
       // 清除部门数据
-      this.formData.deptId = '';
-      this.formData.driverId = '';
-      this.formData.carNumber = '';
-      this.$nextTick(() => {
-        this.$refs.elForm.clearValidate(['deptId', 'driverId', 'carNumber'])
-      })
+      this.formData.reqAssignments.forEach(item => {
+        item['driver'] = '';
+        item['driverPhone'] = '';
+        item['driverId'] = '';
+        item['carNumber'] = '';
+        item['beginMiles'] = '';
+        item['endMiles'] = '';
+        item['maintainDate'] = '';
+        item['maintainMiles'] = '';
+      });
+      this.formData.unitName = '';
       if (!val) {
         this.deptData = [];
         this.driverData = [];
         this.carNumberOptions = [];
         return;
       }
+      const selectUnit = (this.unitData.find(item => item.unitCode === val) ?? {}) || {};
+      console.log("🚀 ~ file: index.vue ~ line 826 ~ unitCodeChange ~ selectUnit", selectUnit)
+      this.formData.unitName = selectUnit.unitName ?? '';
       this.getDeptDictList(val);
       this.getAllDriverData();
       this.getAllAvailableCarData();
     },
     // 用车部门发生变化时
     async deptIdChange(val) {
-      this.formData.carNumber = '';
-      this.$nextTick(() => {
-        this.$refs.elForm.clearValidate('carNumber')
-      })
+      this.formData.reqAssignments.forEach(item => {
+        item['carNumber'] = '';
+        item['beginMiles'] = '';
+        item['endMiles'] = '';
+        item['maintainDate'] = '';
+        item['maintainMiles'] = '';
+      });
+      // this.$nextTick(() => {
+      //   this.$refs.elForm.clearValidate('carNumber')
+      // })
       if (!val) {
         this.carNumberOptions = [];
         return;
@@ -940,7 +851,11 @@ export default {
     },
     // 用车时间发生变化时
     async usageDateChange(val) {
-      this.formData.driverId = '';
+      this.formData.reqAssignments.forEach(item => {
+        item['driver'] = '';
+        item['driverPhone'] = '';
+        item['driverId'] = '';
+      });
       if (!val) {
         this.driverData = [];
         return;
@@ -948,21 +863,22 @@ export default {
       this.getAllDriverData()
     },
     // 司机发生变化时
-    driverChange(val, uniqueId, index) {
-      console.log('driverChange---', 'val', val, 'uniqueId', uniqueId, 'index', index);
-      // const curDriver = this.driverData.find(item => item.driverCode === val)
-      // console.log("🚀 ~ file: index.vue ~ line 971 ~ driverChange ~ curDriver", curDriver)
-      // const { driver = '', phone: driverPhone = '' } = curDriver;
-      // this.formData[`driver${uniqueId}`] = driver;
-      // this.formData[`driverPhone${uniqueId}`] = driverPhone;
+    driverChange(driverCode, _uniqueId, index) {
+      // 需要回传司机的 名称 driver  司机的 driverPhone 司机id driverId  是下拉框接口的 driverCode
+      const selectedDriver = (this.driverData?.find(item => item.driverCode === driverCode) ?? {}) || {};
+      this.formData.reqAssignments[index]['driver'] = selectedDriver?.driver ?? '';
+      this.formData.reqAssignments[index]['driverPhone'] = selectedDriver?.phone ?? '';
     },
     // 车辆发生变化时
-    carNumberChange(val, uniqueId, index) {
-      console.log('carNumberChange---', 'val', val, 'uniqueId', uniqueId, 'index', index);
-      this.everyCarFormExample.forEach((item) => {
-        this.formData[`${item.originLabel}${uniqueId}`] = val[item.originLabel]
-        console.log(' `${item.originLabel}${uniqueId}`', this.formData[`${item.originLabel}${uniqueId}`]);
-      })
+    carNumberChange(carNumber, _uniqueId, index) {
+      const selectedCar = (this.carNumberOptions?.find(item => item.carNumber === carNumber) ?? {}) || {};
+      // 需要回传 出场里程 beginMiles  保养时间  maintainDate 保养里程 maintainMiles
+      // 出场里程
+      this.formData.reqAssignments[index]['beginMiles'] = selectedCar?.startMiles ?? '';
+      // 保养时;
+      this.formData.reqAssignments[index]['maintainDate'] = selectedCar?.maintainDate ?? '';
+      // 保养里;
+      this.formData.reqAssignments[index]['maintainMiles'] = selectedCar?.maintainMiles ?? '';
     },
     // 获取指派司机列表
     async getAllDriverData() {
