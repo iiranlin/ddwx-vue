@@ -143,7 +143,7 @@ export default {
   },
   activated(){
         this.$refs.elform.resetFields();
-        this.id = this.$route.params.id || "1"
+        this.id = this.$route.params.id;
         this.getDispatchInfo();
         this.getLogList();
   },

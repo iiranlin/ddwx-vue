@@ -30,7 +30,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="车牌号：" prop="carNumber">
-                        <el-select v-model="form.carNumber" style="width:100%" :loading="loading" placeholder="请选择车牌号" size="mini">
+                        <el-select v-model="form.carNumber" filterable style="width:100%" :loading="loading" placeholder="请选择车牌号" size="mini">
                             <el-option
                                 v-for="item in vehicleInfoOptions"
                                 :key="item.id"
@@ -43,7 +43,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="保险公司：" prop="insrUnitCode">
-                        <el-select v-model="form.insrUnitCode"  style="width:100%" :loading="loading" placeholder="请选择保险公司" size="mini">
+                        <el-select v-model="form.insrUnitCode" style="width:100%" :loading="loading" placeholder="请选择保险公司" size="mini">
                             <el-option
                                 v-for="item in insuranceCompanyOptions"
                                 :key="item.id"
@@ -83,7 +83,7 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                    <el-form-item label="到期日期" prop="dueDate">
+                    <el-form-item label="到期日期：" prop="dueDate">
                         <el-date-picker
                            style="width:100%"
                            value-format="yyyy-MM-dd"
@@ -96,7 +96,7 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                    <el-form-item label="经办人" prop="clerk">
+                    <el-form-item label="经办人：" prop="clerk">
                         <el-input v-model="form.clerk" size="mini" placeholder="请输入经办人" clearable></el-input>
                     </el-form-item>
                 </el-col>
@@ -205,7 +205,6 @@ export default {
         },
         //图片上传参数
         uploadData:{ type: "5" },
-        value:"",
         //表单数据
         form:{
             unitCode:"",    //使用单位
@@ -363,7 +362,20 @@ export default {
         //保存数据
         handleSave() {
             this.$refs.elform.validate(async (result) => {
-                console.log(this.form);
+                for (let i = 0; i < this.form.items.length; i++) {
+                    if(!this.form.items[i].insrType){
+                        this.$modal.msgWarning("请选择险种信息!")
+                        return;
+                    }
+                    if(!this.form.items[i].insrFee){
+                        this.$modal.msgWarning("请填写保费信息!")
+                        return;
+                    }
+                    if(!this.form.items[i].insrPaidAmount){
+                        this.$modal.msgWarning("请填写保额信息!")
+                        return;
+                    }
+                }
                 if (result) {
                     this.loading = true;
                     await gcywInsuranceRecordCreate(Object.assign({}, this.form)).then(({message}) => {

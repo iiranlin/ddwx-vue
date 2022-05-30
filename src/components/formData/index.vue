@@ -40,6 +40,7 @@
           :key="key"
           :label="item.unitName"
           :value="item.unitCode"
+           @click.native="handleUnitChange(item)"
         />
       </el-select>
       <el-date-picker
@@ -72,6 +73,7 @@
         @keyup.enter.native="handleQuery"
       />
     </el-form-item>
+    <slot name='customItem'></slot>
     <el-form-item>
       <el-button
         type="primary"
@@ -137,6 +139,10 @@ export default {
       }
 
       this.$emit("handleQuery", this.formData);
+    },
+    //使用单位选择回调
+    handleUnitChange(value){
+      this.$emit("handleQueryDept", value.unitCode);
     },
     /** 重置按钮操作 */
     resetQuery() {

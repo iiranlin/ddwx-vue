@@ -38,6 +38,7 @@
                     :loading="loading"
                     :tableData="dataList"
                     :property="property"
+                    @clickLink="clickLink"
                     @handleSelectionChange="handleSelectionChange"
                     @handleButton="handleButton"
                     @selectChange="selectChange"
@@ -166,6 +167,16 @@ export default {
             }else if(buttonCode==="return"){
                 this.$refs.returnCar.init(this.selectionData[0].assignmentId);
             }
+        },
+        //页面链接点击
+        clickLink(row, fieldCode, linkText){
+            let name = linkText.substring(linkText.indexOf("/")+1);
+            this.$router.push({
+                name: name,
+                params: {
+                    id:row.id
+                },
+            })
         },
         //顶部列字段展示
         handleCheckAllChange(columns){

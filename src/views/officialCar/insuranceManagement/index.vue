@@ -39,6 +39,7 @@
                     :loading="loading"
                     :tableData="dataList"
                     :property="property"
+                    @clickLink="clickLink"
                     @handleSelectionChange="handleSelectionChange"
                     @handleButton="handleButton"
                     @selectChange="selectChange"
@@ -115,7 +116,6 @@ export default {
         //获取分页数据
         async getList(){
             this.loading = true;
-            console.log(this.formData)
             await gcywInsuranceRecordListPage(Object.assign({}, this.listQuery,this.formData)).then(({data})=>{
                 this.dataList = data.list;
                 this.total = data.total;
@@ -133,6 +133,16 @@ export default {
             if(buttonCode==='create'){
                 this.$router.push({name:"insuranceCreate"})
             }
+        },
+        //页面链接点击
+        clickLink(row, fieldCode, linkText){
+            let name = linkText.substring(linkText.indexOf("/")+1);
+            this.$router.push({
+                name: name,
+                params: {
+                    id:row.id
+                },
+            })
         },
         //顶部列字段展示
         handleCheckAllChange(columns){

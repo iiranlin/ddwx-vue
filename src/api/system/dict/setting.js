@@ -37,4 +37,31 @@ export function systemUnitListAll(params) {
   })
 }
 
+//转派单位管理-分页 gcjcTurnUnit/listPage
+export function gcjcTurnUnitListPage(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcjcTurnUnit/listPage`,
+    method: 'get',
+    params
+  })
+}
+
+//转派单位管理-增加
+export function gcjcTurnUnitAddTU(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcjcTurnUnit/addTU`,
+    method: 'post',
+    data
+  })
+}
+
+//转派单位管理-删除
+export function gcjcTurnUnitDelTU(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcjcTurnUnit/delTU`,
+    method: 'post',
+    data
+  })
+}
+
 

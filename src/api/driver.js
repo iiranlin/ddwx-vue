@@ -374,6 +374,14 @@ export function gcywInsuranceRecordCreate(data) {
   })
 }
 
+//车辆保险-详细信息
+export function gcywInsuranceRecordDetail(id) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywInsuranceRecord/detail/${id}`,
+    method: 'get',
+  })
+}
+
 //往来单位-下拉框
 export function gcywComeUnitListAll(params) {
   return request({
@@ -410,3 +418,11 @@ export function minioGetPic(params) {
   })
 }
 
+//车辆行车记录列表-分页(unitCode)
+export function gcywDrivingRecordListPage(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywDrivingRecord/listPage`,
+    method: 'get',
+    params
+  })
+}
