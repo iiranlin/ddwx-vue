@@ -258,7 +258,7 @@ import {
 import {
   createFuelCardRecord,
 } from "@/api/fuelCardManagement/fuelCardRecord"
-import { FUEL_CARD_RECORD_DICT } from "@/views/officialCar/fuelCardManagement/constants/index"
+import { FUEL_CARD_RECORD_DICT } from "@/views/fee/fuelCardManagement/constants/index"
 import getDict from "@/views/mixins/getDict"
 import _ from "lodash"
 
