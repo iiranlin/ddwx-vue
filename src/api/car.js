@@ -50,6 +50,15 @@ export function gcywVehicleRequestDispatchList(params) {
   })
 }
 
+//用车信息查询-分页
+export function gcywVehicleRequestDispatchListInfo(params) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/gcywVehicleRequest/dispatchListInfo`,
+    method: 'get',
+    params
+  })
+}
+
 
 //用车单日志列表
 export function gcywVehicleRequestLogList(params) {

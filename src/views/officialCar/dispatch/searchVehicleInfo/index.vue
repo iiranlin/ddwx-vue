@@ -30,10 +30,11 @@
                     :searchArr="property.search || []"
                     @handleQuery="handleQuery"
                     @handleQueryDept="handleQueryDept"
+                    @handleResetDept="handleResetDept"
                     style="margin-top:-12px;margin-bottom:6px">
                     <template slot="customItem">
                       <el-form-item label="用车部门" prop="value">
-                        <el-select v-model="formData.deptCode" placeholder="请选择用车部门" style="width:240px" size="small">
+                        <el-select v-model="formData.deptCode" placeholder="请选择用车部门" clearable style="width:240px" size="small">
                           <el-option v-for="item in deptOptions" 
                             :key="item.value" 
                             :label="item.deptName" 
@@ -50,6 +51,7 @@
                     :loading="loading"
                     :tableData="dataList"
                     :property="property"
+                    @clickLink="clickLink"
                     @handleSelectionChange="handleSelectionChange"
                     @handleButton="handleButton"
                     @selectChange="selectChange"
@@ -72,7 +74,7 @@
 import buttonTop from "@/components/buttonTop"
 import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
-import {gcywVehicleRequestDispatchList} from "@/api/car"
+import {gcywVehicleRequestDispatchListInfo} from "@/api/car"
 import {getAllAvailableDept} from "@/api/dept"
 
 export default {
@@ -113,6 +115,7 @@ export default {
         }
     },
     created(){
+        Object.assign(this.$data, this.$options.data());
         this.menuProperty();
         this.getList();
     },
@@ -131,7 +134,7 @@ export default {
         async getList(){
             this.loading = true;
 
-            await gcywVehicleRequestDispatchList(Object.assign({}, this.listQuery,this.formData)).then(({data})=>{
+            await gcywVehicleRequestDispatchListInfo(Object.assign({}, this.listQuery,this.formData)).then(({data})=>{
                 this.dataList = data.list;
                 this.total = data.total;
                 this.loading = false;
@@ -184,6 +187,21 @@ export default {
                 this.deptOptions = data;
             }).catch((err) => {
                 this.loading = false;
+            })
+        },
+        //清空部门数据
+        handleResetDept(){
+            this.formData.deptCode = "";
+            this.deptOptions = [];
+        },
+        //
+        clickLink(row, fieldCode, linkText){
+            let name = linkText.substring(linkText.indexOf("/")+1);
+            this.$router.push({
+                name: name,
+                params: {
+                    id:row.id
+                },
             })
         },
         //刷新列表数据

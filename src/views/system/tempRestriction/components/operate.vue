@@ -62,14 +62,21 @@
                                 v-for="item in lastLetterOptions" 
                                 :key="item.value" 
                                 :label="item.name" 
-                                :value="item.code">
+                                :value="item.code"
+                                @click.native="handleLastLetterChange(item)">
                             </el-option>
                         </el-select>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12" >
-                    <el-form-item label="指定数字：" prop="letterAs">
-                        <el-input v-model="form.letterAs" placeholder="请输入指定数字"></el-input>
+                    <el-form-item label="指定数字：" 
+                        prop="letterAs"
+                        :rules="{
+                            required: !readOnly,
+                            message: '指定数字不能为空',
+                            trigger: 'blur',
+                        }">
+                        <el-input v-model="form.letterAs" placeholder="请输入指定数字" :disabled="readOnly"></el-input>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -93,6 +100,8 @@ export default {
             title:"",
             //类型
             type:"",
+            //是否只读
+            readOnly:false,
             //显示隐藏
             openDataScope:false,
             //el-cascader配置
@@ -161,11 +170,8 @@ export default {
                 ],
                 lastLetter:[
                     {required:true,message:"尾号字母处理规则不能为空",trigger:"change"}
-                ],
-                letterAs:[
-                    {required:true,message:"指定数字不能为空",trigger:"blur"}
                 ]
-            }
+            },
         }
     },
     created(){
@@ -273,6 +279,14 @@ export default {
                 this.loading = false;
             })
         },
+        //尾号字母处理规则回调
+        handleLastLetterChange(value){
+            if(value.name==='从后往前找数字'){
+                this.readOnly = true;
+            }else{
+                this.readOnly = false;
+            }
+        },
         //城市选择回调
         handleCascaderChange(value){
             this.form.provinceId = value[0];
@@ -332,6 +346,7 @@ export default {
         },
         //关闭dialog回调
         handleDialogClose(){
+            this.readOnly = false;
             this.cascaderIds = [];
             this.restrictionTime = [];
             this.ruleResultOptions = [];

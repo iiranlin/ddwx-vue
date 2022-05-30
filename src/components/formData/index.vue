@@ -146,6 +146,8 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      //清空用车信息查询界面-用车部门信息
+      this.$emit("handleResetDept");
       // this.resetForm("queryForm");
       this.dateRange = {};
       for (let key in this.formData) {

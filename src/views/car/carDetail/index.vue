@@ -141,11 +141,12 @@ export default {
         vehicleData:{},
     };
   },
-  activated(){
-        this.$refs.elform.resetFields();
+  created(){
         this.id = this.$route.params.id;
-        this.getDispatchInfo();
-        this.getLogList();
+        if(!!this.id){
+            this.getDispatchInfo();
+            this.getLogList();
+        }
   },
   methods: {
     //获取用车单信息
