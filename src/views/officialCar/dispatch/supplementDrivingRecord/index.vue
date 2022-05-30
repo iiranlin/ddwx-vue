@@ -60,6 +60,7 @@
           @handleButton="handleButton"
           @selectChange="selectChange"
           @emitAblFilter="emitAblFilter"
+          @clickLink="clickLink"
         >
         </table-index>
         <!--分页器-->
@@ -215,6 +216,9 @@ export default {
     tableRowClassName({ row, rowIndex }) {
       row.index = rowIndex + 1;
     },
+    clickLink(row, _fieldCode, linkText) {
+      this.$router.push({ name: linkText, params: { id: row.id } });
+    }
   },
 };
 </script>
