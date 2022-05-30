@@ -428,6 +428,31 @@ export default {
       })
     } else {
       this.status = true
+      this.form = {
+        unitName: '',
+        unitCode: '',    //使用单位
+        carNumber: '',    //车牌号
+        vinNumber: '',
+        driver: '',  //驾驶员
+        creator: '',
+        createTime: '',
+        sdesc: '',//维保项目描述
+        remark: '',  //备注
+        maintainType: '',    //维保类型
+        maintainDate: '',       //保养日期
+        maintainMiles: '', //保养里程
+        totalCost: '', //总费用
+        materialCost: '',  //材料费
+        hourlyCost: '',      //工时费
+        otherCost: '',     //其他费
+        maintainShopId: '',         //店铺ID
+        maintainShop: '',    //其他店铺
+        maintainAddress: '',  //维保地点
+        nextMaintainDate: '',    //下次维保日期
+        nextMaintainMiles: '',    //下次维保里程
+        items: []
+      }
+      this.maintenanceData = []
     }
     this.initMaintenanceCreate()
   },
