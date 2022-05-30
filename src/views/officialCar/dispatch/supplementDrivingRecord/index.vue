@@ -147,7 +147,7 @@ export default {
           ...this.listQuery,
           ...this.formData,
           // 固定参数
-          status: '6',
+          status: '11',
           createType: '2',
         }
         const { data = {} } = await gcywVehicleRequestDispatchList(params);
@@ -169,6 +169,7 @@ export default {
       this.buttonCode = buttonCode
       if (buttonCode === 'create') {
         // 新建
+        this.$router.push({ name: 'editDrivingRecord' });
         return;
       }
     },

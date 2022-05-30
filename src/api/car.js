@@ -62,10 +62,9 @@ export function gcywVehicleRequestLogList(params) {
 
 /**
  * @function getAllAvailableCar
- * @description 选择车辆 根据unitCode和部门id（deptId）
+ * @description 选择车辆 根据unitCode 和部门 id（deptId）
  * @param params.unitCode { String } 单位编码
  * @param params.deptId { Sting } 部门id
- * @param params.cardNumber { Sting } "卡号",
  * @return void
  */
 export function getAllAvailableCar(params ={}) {
