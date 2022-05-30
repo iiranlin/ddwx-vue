@@ -79,3 +79,28 @@ export function saveOrderDispatch(data) {
     data
   })
 }
+
+//改派
+export function reassignment(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywVehicleRequest/reassignment`,
+    method: 'post',
+    data
+  })
+}
+//转派
+export function redispatch(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywVehicleRequest/redispatch`,
+    method: 'post',
+    data
+  })
+}
+//用车信息-编辑
+export function updateVeh(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywVehicleRequest/updateVeh`,
+    method: 'post',
+    data
+  })
+}

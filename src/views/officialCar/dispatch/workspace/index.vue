@@ -49,15 +49,20 @@
       @pagination="getList"
       style="margin-bottom: 30px;"
     />
+    <operate ref="operate" @unitSuccess="handleQuery"/>
+    <edit-assembly ref="editAssembly" @updateSuccess="handleQuery"/>
   </div>
 </template>
 
 <script>
-import { gcywVehicleRequestDispatchList } from "@/api/gcywVehicleRequest";
+import { gcywVehicleRequestDispatchList, cancelVehicleRequest } from "@/api/gcywVehicleRequest";
 import indexMixin from "@/views/mixins";
+import operate from "./components/operate";
+import editAssembly from "./components/editAssembly";
 export default {
   name: "workspace",
   mixins: [indexMixin],
+  components: { operate, editAssembly },
   data() {
     return {
       // 遮罩层
@@ -109,21 +114,53 @@ export default {
       this.$refs.tableIndex.newButton(buttonCode)
     },
     handleButton(id, buttonCode, row, selectionArr) {
-      if(buttonCode === 'sendVehicle'){
-        let rowObj = null;
-        if(Object.keys(row).length == 0){
-          rowObj = selectionArr[0];
-        }else{
-          rowObj = row;
-        }
-        this.$router.push({name:'artificialSend',query: {row: JSON.stringify(rowObj)}});
-      }else if(buttonCode === 'reassignment'){
-        this.$router.push({name:'artificialSend',query: {row: JSON.stringify(rowObj)}});
-      }else if(buttonCode === 'edit'){
-      }else if(buttonCode === 'cancel'){
-      }else if(buttonCode === 'turnSingle'){
-
+      let rowObj = null;
+      if(Object.keys(row).length == 0){
+        rowObj = selectionArr[0];
+      }else{
+        rowObj = row;
       }
+      if(buttonCode === 'sendVehicle'){
+        if(rowObj.status != 11){
+          this.$modal.msgWarning('已派车！');
+          return
+        }
+        this.$router.push({name:'artificialSend',query: {row: JSON.stringify(rowObj), buttonCode: buttonCode}});
+      }else if(buttonCode === 'reassignment'){
+        if(rowObj.status != 5){
+          this.$modal.msgWarning('请先派车！');
+          return
+        }
+        this.$router.push({name:'artificialSend',query: {row: JSON.stringify(rowObj), buttonCode: buttonCode}});
+      }else if(buttonCode === 'edit'){
+        this.$refs.editAssembly.init(rowObj);
+      }else if(buttonCode === 'cancel'){
+        this.vehicleRequest(rowObj, '是否取消？');
+      }else if(buttonCode === 'turnSingle'){
+        this.$refs.operate.init(rowObj);
+      }
+    },
+    vehicleRequest (rowObj, title) {
+      let ids = [];
+      if(this.selectionData.length <= 1){
+        let driverIds = rowObj.reqAssignments.map(item => {
+          return {id: item.id,driverId: item.driverId}
+        });
+        ids = [{id: rowObj.id,reqAssignments: driverIds}]
+      }else{
+        ids = this.selectionData.map(item => {
+          let driverIds = item.reqAssignments.map(items => {
+            return {id: items.id,driverId: items.driverId}
+          });
+          return {id: item.id,reqAssignments: driverIds};
+        });
+      }
+      this.$modal.confirm(title).then(() => {
+          return cancelVehicleRequest(ids);
+      }).then(({message}) => {
+        this.$modal.msgSuccess(message);
+        this.handleQuery();
+      }).catch(() => {});
     },
     handleCheckAllChange(columns) {
       this.$refs.tableIndex.init(columns);

@@ -91,7 +91,7 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="详情地址:" prop="address">
-                <el-input type="textarea" v-model="form.address" maxlength="200" placeholder="请输入备注" />
+                <el-input type="textarea" v-model="form.address" maxlength="200" placeholder="请输入详情地址" />
             </el-form-item>
           </el-col>
         </el-row>

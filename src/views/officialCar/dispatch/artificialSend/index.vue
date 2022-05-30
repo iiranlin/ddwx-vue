@@ -9,7 +9,7 @@
         </template>
         <form-calendar :dateList="dateList" :assignTimey="assignTimey" :assignTimer="assignTimer" :usageDate="formData.usageDate"/>
       </el-collapse-item>
-      <el-form ref="elForm" :inline="true" :model="formData" :rules="rules" label-width="112px">
+      <el-form :inline="true" :model="formData" label-width="112px">
         <el-collapse-item name="2">
           <template slot="title">
             <i class="el-icon-caret-right" :style="activeNames.indexOf('2') != -1?'transform:rotate(90deg)':''"/>
@@ -143,19 +143,19 @@
           </div>
         </el-collapse-item>
       </el-form>
-        <el-collapse-item name="3">
-          <template slot="title">
-            <i class="el-icon-caret-right" :style="activeNames.indexOf('3') != -1?'transform:rotate(90deg)':''"/>
-            <span class="title-right">派车信息</span>
-            <span
-              class="title-right-button"
-              @click.stop.prevent="addCarButton"
-            >
-              <el-button type="text"> <i class="el-icon-plus"></i> 新增车辆</el-button>
-            </span>
-          </template>
-          <form-information ref="formInformation"/>
-        </el-collapse-item>
+      <el-collapse-item name="3">
+        <template slot="title">
+          <i class="el-icon-caret-right" :style="activeNames.indexOf('3') != -1?'transform:rotate(90deg)':''"/>
+          <span class="title-right">派车信息</span>
+          <span
+            class="title-right-button"
+            @click.stop.prevent="addCarButton"
+          >
+            <el-button type="text"> <i class="el-icon-plus"></i> 新增车辆</el-button>
+          </span>
+        </template>
+        <form-information ref="formInformation"/>
+      </el-collapse-item>
     </el-collapse>
     <div class="dialog-footer">
       <el-button type="primary" :loading="loading" @click="addRequest">确 定</el-button>
@@ -166,7 +166,6 @@
 
 <script>
 import { vehicleInfoGetAssignCount } from "@/api/vehicleInfo";
-import { saveOrderDispatch } from "@/api/gcywVehicleRequest";
 import formAddress from "./components/formAddress";
 import formCalendar from "./components/formCalendar";
 import formInformation from "./components/formInformation";
@@ -176,26 +175,12 @@ export default {
   mixins: [getDict],
   components: { formAddress, formCalendar, formInformation },
   data() {
-    var checkfromAddr = (rule, value, callback) => {
-      if(value.indexOf('null') == -1 && value){
-        return callback();
-      }else{
-        return callback(new Error('请选择出发地点'));
-      }
-    }
-    var checktoAddr = (rule, value, callback) => {
-      if(value.indexOf('null') == -1 && value){
-        return callback();
-      }else{
-        return callback(new Error('请选择前往地点'));
-      }
-    }
     return {
       loading: false,
       dateList: [],
       assignTimey: '2022-05-23',
       assignTimer: '2022-05-29',
-      activeNames: ['1'],
+      activeNames: ['3'],
       dictionariesCode: [1016, 10018, 1018],
       dictionariesObj: {},
       addCarInfoList: [],
@@ -217,44 +202,6 @@ export default {
         hopeBrand: '',
         remark: '',
         source: 1,
-      },
-      rules: {
-        reasonCode:[
-            {required:true,message:"请选择用车事由",trigger:"change"}
-        ],
-        demandCode:[
-            {required:true,message:"请选择用车需求",trigger:"change"}
-        ],
-        longDistanceTag:[
-            {required:true,message:"是否长途",trigger:"change"}
-        ],
-        usagePersons:[
-            {required:true,message:"请输入乘坐人数",trigger:"blur"}
-        ],
-        userName:[
-            {required:true,message:"请输入乘车人",trigger:"blur"}
-        ],
-        phone:[
-            {required:true,message:"请输入联系电话",trigger:"blur"}
-        ],
-        usageDate:[
-            {required:true,message:"请选择用车日期",trigger:"blur"}
-        ],
-        usageTime:[
-            {required:true,message:"请输入出发时间",trigger:"blur"}
-        ],
-        timeLength:[
-            {required:true,message:"请输入预计时长",trigger:"blur"}
-        ],
-        fromAddr:[
-            {required:true,validator: checkfromAddr,trigger:"change"}
-        ],
-        toAddr:[
-            {required:true,validator: checktoAddr,trigger:"change"}
-        ],
-        hopeBrand:[
-            {required:true,message:"请选择期望车型",trigger:"change"}
-        ],
       },
     };
   },
@@ -346,32 +293,7 @@ export default {
       this.formData.toAddr = name;
     },
     addRequest () {
-      this.$refs.formInformation.$refs.elForm.validate( (valid) => {
-        if (valid) {
-          let formList = this.$refs.formInformation.formData.list;
-          let obj = {
-            id: this.formData.id,
-            createType: 0,
-            reqAssignments: []
-          }
-          formList.forEach( (item) => {
-            obj.reqAssignments.push({
-              driver: item.driver.driver,
-              driverId: item.driver.driverCode,
-              driverPhone: item.driver.phone,
-              beginMiles: item.car.beginMiles,
-              carNumber: item.car.carNumber,
-              conditionDesc: item.car.conditionDesc,
-              vinNumber: item.car.vinNumber,
-            })
-          })
-          console.log(obj)
-          saveOrderDispatch(obj).then( ({message}) => {
-            this.$modal.msgSuccess(message);
-            this.$router.push({name:'workspace'});
-          })
-        }
-      })
+      this.$refs.formInformation.addRequest();
     },
     closePush () {
       this.$router.push({name:'workspace'});
