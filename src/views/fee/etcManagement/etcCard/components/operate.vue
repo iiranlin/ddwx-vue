@@ -3,6 +3,7 @@
     :title="title"
     :visible.sync="openDataScope"
     width="600px"
+    append-to-body
     center
     @close="handleDialogClose"
   >
@@ -12,6 +13,7 @@
       label-suffix="："
       ref="elForm"
       label-width="100px"
+      v-loading="loading"
     >
       <el-row
         :span="24"
@@ -64,16 +66,17 @@
         </el-col>
         <el-col :span="24">
           <el-form-item
-            label="卡类型"
+            label="ETC类型"
             prop="isMcard"
           >
+            <!-- 0 主卡  1 副卡 -->
             <el-select
               v-model="form.isMcard"
-              placeholder="请选择卡类型"
+              placeholder="请选择ETC类型"
               clearable
               size="small"
               style="width:100%"
-              @change="cardTypeChange"
+              @change="ETCTypeChange"
             >
               <el-option
                 v-for="item in selectOptions.isMcard"
@@ -127,6 +130,7 @@
           >
             <el-input
               v-model="form.cardNumber"
+              placeholder="请输入卡号"
               clearable
               size="small"
             ></el-input>
@@ -174,22 +178,22 @@
 </template>
 
 <script>
+
 import { getAllAvailableUnit } from "@/api/system/unit"
 import {
-  createFuelCard,
-  getAllFuelMainCard,
-  getFuelCardDetail,
-  updateFuelCard,
-} from "@/api/fuelCardManagement/fuelCard"
+  createETCCard,
+  updateETCCard,
+  getETCCardDetail,
+  getAllETCMainCard,
+} from "@/api/etc"
 import { getVehicleInfoSelect } from "@/api/car"
+import { ETC_CARD_DICT } from "@/views/fee/etcManagement/constants/index"
 import getDict from "@/views/mixins/getDict"
-import { ETC_CARD_DICT } from "@/views/officialCar/etcManagement/constants/index"
 import _ from "lodash"
 
 export default {
   name: '',
   mixins: [getDict],
-
   components: {
 
   },
@@ -225,10 +229,10 @@ export default {
       form: {
         // 单位
         unitCode: '',
-        // 是否主卡
-        isMcard: '',
         // 车牌号 所属车辆
         carNumber: '',
+        // 是否主卡 母卡 ETC类型 0——是（主卡） 1——否（副卡）
+        isMcard: '',
         // 主卡号 母卡号
         mCardNumber: '',
         // 卡号
@@ -243,11 +247,11 @@ export default {
         unitCode: [
           { required: true, message: "所属单位不能为空", trigger: "change" }
         ],
-        isMcard: [
-          { required: true, message: "加油卡类型不能为空", trigger: "change" }
-        ],
         carNumber: [
-          { required: true, message: "所处车辆不能为空", trigger: "change" }
+          { required: true, message: "所属车辆不能为空", trigger: ["change", 'blur'] }
+        ],
+        isMcard: [
+          { required: true, message: "ETC类型不能为空", trigger: "change" }
         ],
         mCardNumber: [
           { required: true, message: "主卡号不能为空", trigger: "change" }
@@ -267,7 +271,7 @@ export default {
         isMcard: [],
         enabled: [],
       },
-      currentFuelInfo: {},
+      currentETCInfo: {},
     }
   },
   computed: {
@@ -298,79 +302,49 @@ export default {
       this.type = type;
       this.id = id;
       this.$nextTick(async () => {
-        const loading = this.$loading({
-          lock: true,
-          text: "加载中...",
-        });
-        try {
-          if (type === "create") {
-            this.title = "新建油卡"
-          } else if (type === "update") {
-            this.title = "修改油卡"
-            this.getCardDetail(this.id);
-          }
-          await this.getUnitDictList();
-          await this.handleSystemDict(Object.keys(this.selectOptions));
-        } catch (e) {
-
-        } finally {
-          loading.close();
+        await this.getUnitDictList();
+        await this.handleETCCardDict(Object.keys(this.selectOptions));
+        if (type === "create") {
+          this.title = "新建ETC"
+        } else if (type === "update") {
+          this.title = "修改ETC"
+          this.getETCDetail(this.id);
         }
       })
     },
     //获取单位列表
     async getUnitDictList() {
+      // this.loading = true;
       await getAllAvailableUnit().then(({ data }) => {
+        // this.loading = false;
         this.unitData = data;
       }).catch((err) => {
+        // this.loading = false;
       }).finally(() => {
+        // this.loading = false;
       })
     },
-    // 根据id获取加油卡详情
-    async getCardDetail(id = '') {
+    // 根据id获取ETC详情
+    async getETCDetail(id = '') {
+      const loading = this.$loading({
+        lock: true,
+        text: "加载中...",
+      });
       try {
-        const { data = {} } = await getFuelCardDetail(id);
-        this.currentFuelInfo = data;
+        const { data = {} } = await getETCCardDetail(id);
+        this.currentETCInfo = data;
         for (const item in this.form) {
           this.form[item] = data[item]
         }
         await this.getCarSelectOptions(data.unitCode);
         // 当为副卡时  获取主卡号
         if (data.isMcard === '1') {
-          await this.getAllMotherCard()
+          await this.getAllMotherETCCard()
         }
       } catch (e) {
-        throw new Error(e.message || "获取加油卡详情失败");
-      }
-    },
-    // 获取当前页面的通用字典下拉数据
-    async handleSystemDict(nameArr = []) {
-      for (const item of nameArr) {
-        const res = await this.getOperateDictList(ETC_CARD_DICT[item].id);
-        this.selectOptions[item] = res
-      }
-    },
-    // 加油卡类型发生变化是 0——主卡 1——副卡
-    async cardTypeChange(val) {
-      if (val !== '1') {
-        this.form.mCardNumber = null;
-        return;
-      }
-      this.getAllMotherCard()
-    },
-    // 获取所有的主卡
-    async getAllMotherCard() {
-      // const loading = this.$loading({
-      //   lock: false,
-      //   text: "加载中...",
-      // });
-      try {
-        const { data = [] } = await getAllFuelMainCard();
-        this.mCardNumberOptions = data;
-      } catch (e) {
-        throw new Error(e.message || "获取所有的主卡失败");
+        throw new Error(e.message || "获取ETC详情失败");
       } finally {
-        // loading.close();
+        loading.close();
       }
     },
     //新建
@@ -384,7 +358,7 @@ export default {
           const params = {
             ...this.form,
           }
-          await createFuelCard(Object.assign(params)).then(({ message }) => {
+          await createETCCard(Object.assign(params)).then(({ message }) => {
             this.$modal.msgSuccess(message);
             this.openDataScope = false;
             this.$emit('operateSuccess')
@@ -400,7 +374,7 @@ export default {
       this.$refs.elForm.validate(async (valid) => {
         if (valid) {
           const params = {
-            id: this.currentFuelInfo.id,
+            id: this.currentETCInfo.id,
             ...this.form
           }
           // const loading = this.$loading({
@@ -408,7 +382,7 @@ export default {
           //   text: "加载中...",
           // });
           try {
-            const { message } = await updateFuelCard(params);
+            const { message } = await updateETCCard(params);
             this.$modal.msgSuccess(message);
             this.openDataScope = false;
             this.$emit('operateSuccess');
@@ -428,6 +402,36 @@ export default {
     handleDialogClose() {
       this.$refs.elForm.resetFields();
     },
+    // 获取当前页面的通用字典下拉数据
+    async handleETCCardDict(nameArr = []) {
+      for (const item of nameArr) {
+        const res = await this.getOperateDictList(ETC_CARD_DICT[item].id);
+        this.selectOptions[item] = res
+      }
+    },
+    // 获取所有的主卡
+    async getAllMotherETCCard() {
+      // const loading = this.$loading({
+      //   lock: false,
+      //   text: "加载中...",
+      // });
+      try {
+        const { data = [] } = await getAllETCMainCard();
+        this.mCardNumberOptions = data;
+      } catch (e) {
+        throw new Error(e.message || "获取所有的主卡失败");
+      } finally {
+        // loading.close();
+      }
+    },
+    // ETC类型发生变化是 0——主卡 1——副卡
+    async ETCTypeChange(val) {
+      if (val !== '1') {
+        this.form.mCardNumber = null;
+        return;
+      }
+      this.getAllMotherETCCard()
+    },
     // 单位发生变化时
     async unitCodeChange(val) {
       this.form.carNumber = null;
@@ -442,10 +446,6 @@ export default {
         this.carNumberOptions = [];
         return;
       }
-      // const loading = this.$loading({
-      //   lock: false,
-      //   text: "加载中...",
-      // });
       const params = {
         unitCode,
       }

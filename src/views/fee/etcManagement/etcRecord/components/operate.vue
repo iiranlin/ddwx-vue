@@ -226,7 +226,7 @@ import {
   updateETCCardRecord,
 } from "@/api/etcRecord"
 import { searchCarSelectInfo } from "@/api/car";
-import { ETC_CARD_RECORD_DICT } from "@/views/officialCar/etcManagement/constants/index"
+import { ETC_CARD_RECORD_DICT } from "@/views/fee/etcManagement/constants/index"
 import getDict from "@/views/mixins/getDict"
 import _ from "lodash"
 
