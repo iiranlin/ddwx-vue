@@ -56,13 +56,16 @@ export default {
     }
   },
   created() {
-    // this.gcjcTurnUnitListAll();
   },
   methods: {
     /** 提交按钮（数据权限） */
     init (row) {
       this.row = row;
       this.openDataScope = true;
+      this.$nextTick(() => {
+        if(this.$refs.elForm) this.$refs.elForm.resetFields();
+      })
+      this.gcjcTurnUnitListAll();
     },
     gcjcTurnUnitListAll () {
       gcjcTurnUnitListAll().then(({data}) => {

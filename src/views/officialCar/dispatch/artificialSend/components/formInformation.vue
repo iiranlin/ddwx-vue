@@ -1,12 +1,12 @@
 <template>
     <el-form ref="elForm" label-suffix=":" :inline="true" :model="formData" :rules="rules" label-width="112px">
         <div class="form-row" v-for="(item, index) in formData.list" :key="'id' + index">
-            <template v-if="item.status != 6 && item.restatus != 1">
+            <template>
                 <el-row :gutter="24">
                     <el-col>
                         <div>
                             <span class="title-right">车辆</span>
-                            <el-button :disabled="!(item.status == 1 || item.status == 2 || !item.status) && buttonCode == 'reassignment'" class="delete-color" type="text" @click="deleteCar(index)">
+                            <el-button class="delete-color" type="text" @click="deleteCar(index)">
                                 <i class="el-icon-delete" />删除
                             </el-button>
                         </div>
@@ -89,7 +89,6 @@
 <script>
 import { gcjcDriverClassList } from "@/api/driver";
 import { vehicleInfoGetAvailableCar, vehicleInfoIsRestriction } from "@/api/vehicleInfo";
-import { saveOrderDispatch, reassignment } from "@/api/gcywVehicleRequest";
 export default {
     data() {
         var checkfromDriver = (rule, value, callback) => {
@@ -120,63 +119,26 @@ export default {
                     { required: true, validator: checkfromCar, trigger: "change" }
                 ],
             },
-            row: null,
-            num: 0,
             buttonCode: '',
-        }
-    },
-    watch: {
-        'num': {
-            handler: function (newNum) {
-                if(newNum == 2 && this.buttonCode == 'reassignment'){
-                    this.$nextTick( () => {
-                        let driver = [], car = [];
-                        this.row.reqAssignments.forEach( (item, i) => {
-                            this.driverList.forEach( (items) => {
-                                if(items.driverCode == item.driverId){
-                                    driver.push({item: items, status: item.status, id: item.id,restatus: item.restatus});
-                                }
-                            })
-                            this.vehicleList.forEach( (items) => {
-                                if(items.carNumber == item.carNumber){
-                                    car.push(items);
-                                }
-                            })
-                        })
-                        driver.forEach( (item, i) => {
-                            this.formData.list.push({driver: item.item, car: car[i], status: item.status, id: item.id, restatus: item.restatus, carName: ''});
-                            this.vehicleInfoIsRestriction(car[i].carNumber, i);
-                        })
-                    })
-                }
-            },
+            row: null,
         }
     },
     created() {
-        this.num = 0;
-        if(this.$route.query.row){
-            let row = JSON.parse(this.$route.query.row);
-            let buttonCode = this.$route.query.buttonCode;
-            this.row = row;
-            this.buttonCode = buttonCode;
-            if(this.buttonCode == 'sendVehicle'){
-                this.addCarButton();
-            }
-            this.gcjcDriverClassList(row.reassignUnitCode || row.unitCode || row.deptId, row.usageDate);
-            this.vehicleInfoGetAvailableCar(row.unitCode, row.deptId);
-        }
     },
     methods: {
+        init (row) {
+            this.row = row;
+            this.gcjcDriverClassList(row.unitCode, row.usageDate);
+            this.vehicleInfoGetAvailableCar(row.unitCode, row.deptId);
+        },
         addCarButton () {
             this.formData.list.push({driver: {}, car: {},carName: ''});
         },
         deleteCar(index) {
-            if(this.formData.list[index].id){
-                this.formData.list[index].restatus = 1;
+            if(this.formData.list.length > 1){
+                this.formData.list.splice(index, 1)
             }else{
-                if(this.formData.list.length > 1){
-                    this.formData.list.splice(index, 1)
-                }
+                this.$modal.msgWarning('至少有一条数据！');
             }
         },
         gcjcDriverClassList (unitCode, usageDate) {
@@ -189,7 +151,6 @@ export default {
             }
             gcjcDriverClassList(obj).then(({data}) => {
                 this.driverList = data.list
-                this.num = ++this.num;
             })
         },
         vehicleInfoGetAvailableCar (unitCode, deptId) {
@@ -199,7 +160,6 @@ export default {
             }
             vehicleInfoGetAvailableCar(obj).then(({data}) => {
                 this.vehicleList = data
-                this.num = ++this.num;
             })
         },
         vehicleInfoIsRestriction (carNumber, index) {
@@ -220,55 +180,12 @@ export default {
                 this.formData.list[index].carName = '';
             }
         },
-        addRequest () {
-            this.$refs.elForm.validate( (valid) => {
-                if (valid) {
-                    let formList = this.formData.list;
-                    let obj = {
-                      id: this.row.id,
-                      createType: this.row.createType,
-                      usageDate: this.row.usageDate,
-                      usageTime: this.row.usageTime,
-                      handleUserId: this.row.handleUserId,
-                      handleUserName: this.row.handleUserName,
-                      handleUnit: this.row.handleUnit,
-                      handleUnitCode: this.row.handleUnitCode,
-                      reqAssignments: []
-                    }
-                    formList.forEach( (item) => {
-                      obj.reqAssignments.push({
-                        id: item.id || null,
-                        restatus: item.restatus || null,
-                        driver: item.driver.driver,
-                        driverId: item.driver.driverCode,
-                        driverPhone: item.driver.phone,
-                        beginMiles: item.car.beginMiles,
-                        carNumber: item.car.carNumber,
-                        conditionDesc: item.car.conditionDesc,
-                        vinNumber: item.car.vinNumber,
-                      })
-                    })
-                    if(this.buttonCode == 'sendVehicle'){
-                        saveOrderDispatch(obj).then( ({message}) => {
-                            this.$modal.msgSuccess(message);
-                            this.$router.push({name:'workspace'});
-                        })
-                    }else{
-                        reassignment(obj).then( ({message}) => {
-                            this.$modal.msgSuccess(message);
-                            this.$router.push({name:'workspace'});
-                        })
-                    }
-                }
-            })
-        },
     }
 };
 </script>
 <style lang="scss" scoped>
-
     .el-icon-caret-right{
-      font-size: 20px;
-      color: #{'var(--theme)'};
+        font-size: 20px;
+        color: #{'var(--theme)'};
     }
 </style>

@@ -1,10 +1,10 @@
 <template>
     <el-calendar v-model="calendarVal" :range="[assignTimey, assignTimer]">
-        <div slot="dateCell" slot-scope="{data}">
+        <div slot="dateCell" slot-scope="{data}" @click="calendarClick(data)">
             <div v-for="item in dateList" :key="item.assignTime">
                 <template v-if="item.assignTime.indexOf(data.day) != -1">
-                    <p :class="usageDate == data.day ? 'is-selected' : ''">
-                        {{ data.day.split('-').slice(1).join('-') }} {{usageDate == data.day ? '✔️' : ''}}
+                    <p :class="data.isSelected || usageDate == data.day ? 'is-selected' : ''">
+                        {{ data.day.split('-').slice(1).join('-') }} {{ data.isSelected || usageDate == data.day ? '✔️' : ''}}
                     </p>
                     <p class="calendar-p-span">
                         <span>{{item.tasscount}} 辆</span>

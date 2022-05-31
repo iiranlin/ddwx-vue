@@ -121,39 +121,53 @@ export default {
         rowObj = row;
       }
       if(buttonCode === 'sendVehicle'){
-        if(rowObj.status != 11){
-          this.$modal.msgWarning('已派车！');
+        if(('4').indexOf(rowObj.status) == -1){
+          this.$modal.msgWarning('当前状态不能派车！');
           return
         }
-        this.$router.push({name:'artificialSend',query: {row: JSON.stringify(rowObj), buttonCode: buttonCode}});
+        this.$router.push({name:'dispatchACar',query: {row: JSON.stringify(rowObj), buttonCode: buttonCode}});
       }else if(buttonCode === 'reassignment'){
-        if(rowObj.status != 5){
-          this.$modal.msgWarning('请先派车！');
+        if(('5/7/8').indexOf(rowObj.status) == -1){
+          this.$modal.msgWarning('当前状态不能改派！');
           return
         }
-        this.$router.push({name:'artificialSend',query: {row: JSON.stringify(rowObj), buttonCode: buttonCode}});
+        this.$router.push({name:'dispatchACar',query: {row: JSON.stringify(rowObj), buttonCode: buttonCode}});
       }else if(buttonCode === 'edit'){
         this.$refs.editAssembly.init(rowObj);
       }else if(buttonCode === 'cancel'){
         this.vehicleRequest(rowObj, '是否取消？');
       }else if(buttonCode === 'turnSingle'){
+        if(('4').indexOf(rowObj.status) == -1){
+          this.$modal.msgWarning('当前状态不能转派！');
+          return
+        }
         this.$refs.operate.init(rowObj);
       }
     },
     vehicleRequest (rowObj, title) {
       let ids = [];
+      let type = '';
       if(this.selectionData.length <= 1){
         let driverIds = rowObj.reqAssignments.map(item => {
           return {id: item.id,driverId: item.driverId}
         });
         ids = [{id: rowObj.id,reqAssignments: driverIds}]
+        type = type + '/' + rowObj.status;
       }else{
         ids = this.selectionData.map(item => {
           let driverIds = item.reqAssignments.map(items => {
             return {id: items.id,driverId: items.driverId}
           });
+          type = type + '/' + item.status;
           return {id: item.id,reqAssignments: driverIds};
         });
+      }
+      type = type.split('/');
+      for(let i = 0;i < type.length;i++){
+        if(('4/5/7/8').indexOf(type[i]) == -1){
+          this.$modal.msgWarning('当前状态不能取消！');
+          return
+        }
       }
       this.$modal.confirm(title).then(() => {
           return cancelVehicleRequest(ids);

@@ -175,7 +175,7 @@ export default {
       dateList: [],
       assignTimey: '2022-05-23',
       assignTimer: '2022-05-29',
-      activeNames: ['1'],
+      activeNames: ['1', '2'],
       dictionariesCode: [1016, 10018, 1018],
       dictionariesObj: {},
       formData: {
@@ -366,7 +366,7 @@ export default {
     .dialog-footer{
       margin-top: 20px;
       margin-bottom: 20px;
-      margin-left: 85px;
+      text-align: center;
       .el-button--medium{
         padding: 10px 32px;
       }
