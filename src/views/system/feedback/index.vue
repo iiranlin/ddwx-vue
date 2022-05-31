@@ -63,7 +63,7 @@ import buttonTop from "@/components/buttonTop"
 import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
 import operate from "./components/operate"
-import{gcjcClassListPage} from "@/api/driver"
+import{gcywSuggestionListPage} from "@/api/system/dict/data"
 
 export default {
     name:"feedback",
@@ -117,7 +117,7 @@ export default {
         async getList(){
             this.loading = true;
 
-            await gcjcClassListPage(Object.assign({}, this.listQuery,this.formData)).then(({data})=>{
+            await gcywSuggestionListPage(Object.assign({}, this.listQuery,this.formData)).then(({data})=>{
                 this.dataList = data.list;
                 this.total = data.total;
                 this.loading = false;
@@ -132,7 +132,11 @@ export default {
         //页面按钮点击事件
         handleButton(ids,buttonCode){
             if(buttonCode==='reply'){
-                this.$refs.operate.init();
+                if(!!this.selectionData[0].replyContext){
+                    this.$modal.msgWarning("该条反馈已经回复过了！")
+                    return;
+                }
+                this.$refs.operate.init(this.selectionData[0]);
             }
         },
         //顶部列字段展示
