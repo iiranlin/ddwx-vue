@@ -182,7 +182,6 @@
                       :value="item.code"
                     />
                   </el-select>
-                  </el-select>
                 </el-form-item>
               </el-col>
               <el-col
@@ -516,7 +515,7 @@ export default {
           try {
             const params = { ...this.formData };
             params.contractBegindate = params.contractDate[0];
-            params.contractEnddate = params.contractDate[0];
+            params.contractEnddate = params.contractDate[1];
             params.carTypeName = (this.selectOptions.carTypeCode.find(item => params.carTypeCode === item.carTypeCode)).name
             delete params.contractDate
             const res = await createCarContract(params);
