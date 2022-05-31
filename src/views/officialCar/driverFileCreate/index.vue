@@ -423,7 +423,7 @@ export default {
     async remoteMethod(query){
         if(!!query){
             this.loading = true;
-            await userListAllForDept2List(Object.assign({}, {userCode:query})).then(({data}) => {
+            await userListAllForDept2List(Object.assign({}, {userCode:query,status: 0})).then(({data}) => {
                 this.loading = false;
                 this.userOptions = data;
             }).catch((err) => {
