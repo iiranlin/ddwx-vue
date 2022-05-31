@@ -59,3 +59,21 @@ export function getListByParent(code) {
     method: 'get'
   })
 }
+
+//意见反馈-分页
+export function gcywSuggestionListPage(params) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/gcywSuggestion/listAllPage` ,
+    method: 'get',
+    params
+  })
+}
+
+//意见反馈-修改
+export function gcywSuggestionUpdSuggestion(data) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/gcywSuggestion/updSuggestion` ,
+    method: 'post',
+    data
+  })
+}

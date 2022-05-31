@@ -119,7 +119,7 @@ export default {
         async getList(){
             this.loading = true;
 
-            await vehicleInfoListPage(Object.assign({}, this.listQuery,this.formData)).then(({data})=>{
+            await vehicleInfoListPage(Object.assign({}, this.listQuery,this.formData,{type:"1"})).then(({data})=>{
                 this.dataList = data.list;
                 this.dataList.forEach((item) => {
                     if(!item.overStandardTag){
@@ -138,9 +138,7 @@ export default {
         },
         //页面按钮点击事件
         handleButton(ids,buttonCode,row){
-            if(buttonCode==='export'){
-                alert("导出")
-            }else if(buttonCode==='detail'){
+            if(buttonCode==='detail'){
                 this.$router.push({name:"vehicleFileDetail",query: {row: JSON.stringify(row)}})
             }else if(buttonCode==='image'){
                 vehicleInfoGetVehicleFile({vinNumber:row.vinNumber}).then(({data}) => {

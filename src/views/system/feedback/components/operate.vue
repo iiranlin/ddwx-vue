@@ -1,13 +1,13 @@
 <template>
    <el-dialog :title="title" :visible.sync="openDataScope" width="600px" append-to-body center @close="handleDialogClose()">
-        <h3 style="float:left;margin-right:20px;">意见反馈</h3>
-        <h5 >张三丰 2022-05-05 04：11：29</h5>
-        <h4>意见反馈内容意见反馈内容意见反馈内容意见反馈内容意见反馈内容意见反馈内容意见反馈内容意见反馈内容意见反馈内容</h4>
+        <h3 style="float:left;margin-right:20px;margin-left:20px;">{{feedBackType}}</h3>
+        <h5 >{{form.loginUser}} {{parseTime(form.creaetDate,'{y}-{m}-{d} {h}-{m}-{s}')}}</h5>
+        <h4 style="margin-left:20px;margin-bottom:20px;height:100px">{{form.suggestionContext}}</h4>
         <el-form :model="form" :rules="rules" ref="elform" label-width="80px" v-loading="loading">
                 <el-row :span="24" :gutter="20">
                     <el-col :span="24" >
-                        <el-form-item label="回复：" prop="reply">
-                        <el-input v-model="form.reply" type="textarea" :rows="3" maxlength="300" size="small"></el-input>
+                        <el-form-item label="回复：" prop="replyContext">
+                        <el-input v-model="form.replyContext" type="textarea" :rows="3" maxlength="300" size="small"></el-input>
                     </el-form-item>
                 </el-col>
              </el-row>
@@ -19,7 +19,8 @@
     </el-dialog>
 </template>
 <script>
-import {gcjcClassCreate,gcjcClassDetail,gcjcClassModify} from "@/api/driver"
+import {gcywSuggestionUpdSuggestion} from "@/api/system/dict/data"
+import {getListByParentCode} from '@/api/system/dict'
 export default {
     data() {
         return {
@@ -29,45 +30,53 @@ export default {
             title:"",
             //显示隐藏
             openDataScope:false,
+            //意见反馈分类
+            feedBackType:"",
             //表单数据
             form:{
-                reply:"",
+                replyContext:"",
             },
             //表单校验
             rules:{
-                reply:[
+                replyContext:[
                     {required:true,message:"回复内容不能为空",trigger:"blur"}
                 ]
             }
         }
     },
     created(){
-
+        
     },
     methods:{
         //初始化
-        init(){
+        init(data){
             this.openDataScope = true;
+            this.form = Object.assign({}, data);
             this.$nextTick(() => {
-                this.title = "回复"
+                this.title = "回复";
+                this.getFeedBackType();
             })
         },
-        // //获取班次详细信息
-        // async getClassDetail(){
-        //     this.loading = true;
-        //     await gcjcClassDetail(this.id).then(({data}) => {
-        //         this.loading = false;
-        //         this.form = Object.assign(this.form, data);
-        //     }).catch((err) => {
-        //         this.loading = false;
-        //     })
-        // },
-        //新建
+        //获取意见反馈分类
+        async getFeedBackType(){
+            this.loading = true;
+            await getListByParentCode("10022").then(({data}) => {
+                this.loading = false;
+                data.forEach((item) => {
+                    if(item.code===this.form.suggestion){
+                        this.feedBackType = item.name;
+                    }
+                })
+            }).catch((err) => {
+                this.loading = false;
+            })
+        },
+        //回复
         handleReply(){
            this.$refs.elform.validate(async (valid) => {
                if (valid) {
                    this.loading = true;
-                   await gcjcClassCreate(Object.assign({}, this.form)).then(({message}) => {
+                   await gcywSuggestionUpdSuggestion(Object.assign({}, this.form)).then(({message}) => {
                        this.loading = false;
                        this.$modal.msgSuccess(message);
                        this.openDataScope = false;
@@ -85,6 +94,7 @@ export default {
         //关闭dialog回调
         handleDialogClose(){
             this.$refs.elform.resetFields();
+            this.feedBackType = "";
         }
     }
 }
