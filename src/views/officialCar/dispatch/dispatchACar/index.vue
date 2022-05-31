@@ -180,7 +180,7 @@ export default {
       dateList: [],
       assignTimey: '2022-05-23',
       assignTimer: '2022-05-29',
-      activeNames: ['3'],
+      activeNames: ['1', '2', '3'],
       dictionariesCode: [1016, 10018, 1018],
       dictionariesObj: {},
       addCarInfoList: [],
@@ -340,7 +340,6 @@ export default {
         height: 55px;
         p{
           margin: 0px;
-          margin-top: 5px;
           text-align: center;
         }
       }

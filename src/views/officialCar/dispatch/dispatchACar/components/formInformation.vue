@@ -173,7 +173,6 @@ export default {
         deleteCar(index) {
             let list = this.formData.list, num = 0;
             for(let i = 0;i<list.length;i++){
-                console.log(list[i].restatus)
                 if(list[i].restatus != 1){
                     ++num
                 }

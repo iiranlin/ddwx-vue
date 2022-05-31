@@ -537,7 +537,6 @@ export default {
             height: 55px;
             p{
                 margin: 0px;
-                margin-top: 5px;
                 text-align: center;
             }
         }

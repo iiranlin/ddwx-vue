@@ -51,8 +51,8 @@
             <el-col :span="8">
               <el-form-item label="是否长途:" prop="longDistanceTag">
                 <el-radio-group v-model="formData.longDistanceTag">
-                  <el-radio :label="1">是</el-radio>
-                  <el-radio :label="0">否</el-radio>
+                  <el-radio :label="'1'">是</el-radio>
+                  <el-radio :label="'0'">否</el-radio>
                 </el-radio-group>
               </el-form-item>
             </el-col>
@@ -179,10 +179,10 @@ export default {
       dictionariesCode: [1016, 10018, 1018],
       dictionariesObj: {},
       formData: {
-        reasonCode: '',
-        demandCode: '',
-        longDistanceTag: 0,
-        usagePersons: '',
+        reasonCode: '1',
+        demandCode: '1001801',
+        longDistanceTag: '0',
+        usagePersons: '1',
         userName: '',
         phone: '',
         usageDate: '',
@@ -252,7 +252,7 @@ export default {
         this.formData = {
           reasonCode: row.reasonCode,
           demandCode: row.demandCode,
-          longDistanceTag: 0,
+          longDistanceTag: row.longDistanceTag,
           usagePersons: row.usagePersons,
           userName: row.userName,
           phone: row.phone,
@@ -377,7 +377,6 @@ export default {
         height: 55px;
         p{
           margin: 0px;
-          margin-top: 5px;
           text-align: center;
         }
       }
