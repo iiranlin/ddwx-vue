@@ -683,20 +683,20 @@ export default {
     }
   },
   activated() {
-    for (const item of this.dictionariesCode) {
-      this.getOperateDict(item);
-    }
-    this.vehicleInfoGetAssignCount();
-    this.getUnitDictList();
-  },
-  created() {
-    // this.vehicleInfoGetAssignCount();
     // for (const item of this.dictionariesCode) {
       // this.getOperateDict(item);
     // }
+    // this.vehicleInfoGetAssignCount();
+    // this.getUnitDictList();
   },
-  async mounted() {
-    // await this.getUnitDictList();
+  created() {
+    this.vehicleInfoGetAssignCount();
+    for (const item of this.dictionariesCode) {
+      this.getOperateDict(item);
+    }
+    this.getUnitDictList();
+  },
+  mounted() {
   },
   beforeRouteLeave(_to, from, next) {
     this.$tab.closePage(from);
@@ -738,7 +738,6 @@ export default {
           try {
             const params = { ...this.formData, createType: '2' }
             const res = await saveOrderDispatch(params);
-            console.log('res', res);
             if (res?.code !== 0) {
               this.$message.error(res?.message || '操作失败，请稍后重试');
               return;

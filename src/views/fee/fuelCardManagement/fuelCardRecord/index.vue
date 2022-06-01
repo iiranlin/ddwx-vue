@@ -142,14 +142,14 @@ export default {
 
   },
   activated() {
-    this.menuProperty();
-    this.getList()
+    // this.menuProperty();
+    // this.getList()
   },
-  async created() {
-    // await this.menuProperty();;
+  created() {
+    this.menuProperty();
   },
   mounted() {
-    // this.getList();
+    this.getList();
   },
   methods: {
     //查询菜单数据

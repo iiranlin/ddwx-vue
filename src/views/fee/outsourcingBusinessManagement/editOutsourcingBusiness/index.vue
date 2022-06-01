@@ -493,16 +493,16 @@ export default {
     }
   },
   activated() {
-    this.handleSystemDict(Object.keys(this.selectOptions));
-    this.addCarButton();
-    this.getUnitDictList();
+    // this.handleSystemDict(Object.keys(this.selectOptions));
+    // this.addCarButton();
+    // this.getUnitDictList();
   },
   created() {
-    // this.handleSystemDict(Object.keys(this.selectOptions));
+    this.handleSystemDict(Object.keys(this.selectOptions));
+    this.getUnitDictList();
   },
-  async mounted() {
-    // this.addCarButton();
-    // await this.getUnitDictList();
+  mounted() {
+    this.addCarButton();
   },
   beforeRouteLeave(_to, from, next) {
     this.$refs.elForm.resetFields();
