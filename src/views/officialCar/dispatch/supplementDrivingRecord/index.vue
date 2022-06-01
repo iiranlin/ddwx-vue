@@ -127,9 +127,13 @@ export default {
   watch: {
 
   },
-  async created() {
-    await this.menuProperty();
+  activated() {
+    this.menuProperty();
     this.getList()
+  },
+  async created() {
+    // await this.menuProperty();
+    // this.getList()
   },
   mounted() {
   },

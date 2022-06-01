@@ -131,11 +131,15 @@ export default {
   watch: {
 
   },
+  activated() {
+    this.menuProperty();
+    this.getList()
+  },
   async created() {
-    await this.menuProperty();
+    // await this.menuProperty();
   },
   mounted() {
-    this.getList()
+    // this.getList()
   },
   methods: {
     //查询菜单数据
@@ -216,36 +220,6 @@ export default {
       this.formData = Object.assign({}, this.formData, row);
       this.getList();
     },
-    tableRowClassName({ row, rowIndex }) {
-      row.index = rowIndex + 1;
-    },
-    // 批量启用停用ETC
-    async editEtcStatus(params = {}, buttonCode = '') {
-      const loading = this.$loading({
-        lock: true,
-        text: "加载中...",
-      });
-      try {
-        await this.$confirm(`是否${buttonCode === 'stop' ? '停用' : '启用'}用所选信息?`, "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-          center: true,
-        });
-        const { message = '操作成功！' } = await switchETCEnabled(params);
-        this.$message.success(message)
-        this.handleQuery();
-      } catch (e) {
-        console.log('e', e);
-        if (e === "cancel") {
-          this.$message.info("已取消");
-        } else {
-          throw new Error(e.message || "请求失败");
-        }
-      } finally {
-        loading.close();
-      }
-    }
   },
 };
 </script>

@@ -171,7 +171,7 @@
             <el-date-picker
               v-model="form.bookTime"
               type="datetime"
-              placeholder="选择交易时间"
+              placeholder="选择记账时间"
               clearable
               size="small"
               style="width:100%"
@@ -304,7 +304,7 @@ export default {
         ],
         // 交易金额
         transFee: [
-          { required: true, message: "消费类型不能为空", trigger: "blur" }
+          { required: true, message: "交易金额不能为空", trigger: "blur" }
         ],
         // 交易时间
         transDate: [
