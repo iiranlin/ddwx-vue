@@ -89,17 +89,17 @@
                 </el-col>
                 <el-col :span="7">
                     <el-form-item label="紧急联系人：" prop="emergencyContact">
-                        <el-input v-model="form.emergencyContact" size="mini" clearable></el-input>
+                        <el-input v-model="form.emergencyContact" size="mini" maxlength="20" clearable></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="7">
                     <el-form-item label="紧急联系电话：" prop="emergencyPhone">
-                        <el-input v-model="form.emergencyPhone" size="mini" clearable></el-input>
+                        <el-input v-model="form.emergencyPhone" maxlength="11" size="mini" clearable></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="14">
                     <el-form-item label="备注：" prop="remark">
-                        <el-input type="textarea" :rows="3" maxlength="200" v-model="form.remark" size="mini"></el-input>
+                        <el-input type="textarea" :rows="3" maxlength="100" v-model="form.remark" size="mini"></el-input>
                     </el-form-item>
                 </el-col>
             </el-col>

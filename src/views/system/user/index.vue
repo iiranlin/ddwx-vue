@@ -116,7 +116,7 @@ export default {
       // 表单参数
       formData: {
         username: "",
-        status: "",
+        status: "0",
         deptId: "",
       },
     }
@@ -184,7 +184,7 @@ export default {
     },
     getList () {
       this.loading = true;
-      userPage(Object.assign({}, this.listQuery, this.formData)).then( ({data}) => {
+      userPage(Object.assign({}, this.listQuery, this.formData, {status: "0"})).then( ({data}) => {
         this.userList = data.list;
         this.listQuery.total = data.total;
         this.loading = false;
@@ -210,7 +210,7 @@ export default {
       this.$refs.operate.init('update', id);
     },
     handleDelete (ids) {
-      this.$modal.confirm('是否确认删除角色?').then(function() {
+      this.$modal.confirm('是否确认删除用户?').then(function() {
         return userDeleteBatch({ids});
       }).then(() => {
         this.getList();

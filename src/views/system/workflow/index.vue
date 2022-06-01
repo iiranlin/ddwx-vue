@@ -78,11 +78,8 @@ export default {
       formData: {},
       // 表单校验
       rules: {
-        unitCode: [
-          {required: true, message: '请输入单位编号', trigger: 'blur'},
-        ],
-        unitName: [
-          {required: true, message: '请输入单位名称', trigger: 'change'}
+        key: [
+          {required: true, message: '请输入类型', trigger: 'blur'},
         ],
       },
       //列表显示字段
@@ -180,8 +177,12 @@ export default {
       }
     },
     submitDataScope () {
-      modelNewModel(this.form).then( ({message}) => {
-        this.openWidow(`${message}&sUnitCode=${this.sUnitCode}&ips=${window.location.href}&token=${this.TokenKey}`);
+      this.$refs.elForm.validate( (valid) => {
+        if (valid) {
+          modelNewModel(this.form).then( ({message}) => {
+            this.openWidow(`${message}&sUnitCode=${this.sUnitCode}&ips=${window.location.href}&token=${this.TokenKey}`);
+          })
+        }
       })
     },
     changeSwitch (row) {

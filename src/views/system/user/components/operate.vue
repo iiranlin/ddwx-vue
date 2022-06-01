@@ -1,6 +1,6 @@
 <template>
     <!-- 添加或修改部门对话框 -->
-    <el-dialog :title="title" :visible.sync="openDataScope" width="600px" append-to-body>
+    <el-dialog :title="title" :close-on-click-modal="false" :visible.sync="openDataScope" width="600px" append-to-body>
       <el-form ref="elForm" :model="form" :rules="rules" label-width="85px">
         <el-row>
           <el-col :span="12">
@@ -59,7 +59,7 @@
               <el-input v-model="form.username" placeholder="请输入登录名" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="12" v-if="type != 'update'">
             <el-form-item label="密码:" prop="password">
               <el-input v-model="form.password" placeholder="请输入密码" />
             </el-form-item>
@@ -204,7 +204,7 @@ export default {
       this.$refs["elForm"].validate(valid => {
         if(valid){
           this.loading = true;
-          let form = Object.assign({}, this.form, {password: md5(this.form.password)});
+          let form = Object.assign({}, this.form, {password: this.form.password?md5(this.form.password):this.form.password});
           userCreate(form).then(({message}) => {
             this.$modal.msgSuccess(message);
             this.openDataScope = false;

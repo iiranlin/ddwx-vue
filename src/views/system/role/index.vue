@@ -127,7 +127,6 @@ export default {
       }
     },
     handleButton(id, buttonCode) {
-      console.log(id, buttonCode)
       if (buttonCode === 'update') {
         this.handleUpdate(id)
       } else if (buttonCode === 'delete') {

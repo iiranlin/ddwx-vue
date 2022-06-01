@@ -1,12 +1,12 @@
 <template>
     <!-- 分配角色数据权限对话框 -->
-    <el-dialog :title="title" :visible.sync="openDataScope" width="500px" append-to-body v-loading="loading">
+    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="openDataScope" width="500px" append-to-body v-loading="loading">
       <el-form ref="elForm" :model="form" :rules="rules" label-width="85px">
         <el-form-item label="角色编号:" prop="roleCode">
-          <el-input v-model="form.roleCode" />
+          <el-input v-model="form.roleCode" maxlength="50" />
         </el-form-item>
         <el-form-item label="角色名称:" prop="roleName">
-          <el-input v-model="form.roleName" />
+          <el-input v-model="form.roleName" maxlength="20" />
         </el-form-item>
         <el-form-item label="分组:" prop="groupId">
           <el-select
