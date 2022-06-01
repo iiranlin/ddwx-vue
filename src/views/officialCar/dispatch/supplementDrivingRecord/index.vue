@@ -128,12 +128,12 @@ export default {
 
   },
   activated() {
+    // this.menuProperty();
+    // this.getList()
+  },
+  created() {
     this.menuProperty();
     this.getList()
-  },
-  async created() {
-    // await this.menuProperty();
-    // this.getList()
   },
   mounted() {
   },

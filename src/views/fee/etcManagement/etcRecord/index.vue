@@ -142,21 +142,20 @@ export default {
 
   },
   activated() {
-    this.menuProperty();
-    this.getList()
+    // this.menuProperty();
+    // this.getList()
   },
-  async created() {
-    // await this.menuProperty();
+  created() {
+    this.menuProperty();
   },
   mounted() {
-    // this.getList()
+    this.getList()
   },
   methods: {
     //查询菜单数据
     async menuProperty() {
       let id = this.$route.meta.id;
       const res = await this.$store.dispatch('menuProperty', id);
-      console.log('res', res);
       this.property = res;
     },
     //获取分页数据
@@ -167,7 +166,6 @@ export default {
           ...this.formData
         }
         const { data = {} } = await getETCRecordPageList(params);
-        console.log("🚀 ~ file: index.vue ~ line 155 ~ getList ~ res", data)
         this.dataList = data.list;
         this.total = data.total;
       } catch (e) {

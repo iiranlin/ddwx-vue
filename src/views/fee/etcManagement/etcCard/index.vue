@@ -144,21 +144,20 @@ export default {
 
   },
   activated() {
-    this.menuProperty();
-    this.getList()
+    // this.menuProperty();
+    // this.getList()
   },
-  async created() {
-    // await this.menuProperty();
+  created() {
+    this.menuProperty();
   },
   mounted() {
-    // this.getList()
+    this.getList()
   },
   methods: {
     //查询菜单数据
     async menuProperty() {
       let id = this.$route.meta.id;
       const res = await this.$store.dispatch('menuProperty', id);
-      console.log('res', res);
       this.property = res;
     },
     //获取分页数据
@@ -170,7 +169,6 @@ export default {
           ...this.formData
         }
         const { data = {} } = await getEtcCardPageList(params);
-        console.log("🚀 ~ file: index.vue ~ line 155 ~ getList ~ res", data)
         this.dataList = data.list;
         this.total = data.total;
         this.loading = false;
@@ -186,8 +184,6 @@ export default {
     },
     //页面按钮点击事件
     async handleButton(ids, buttonCode) {
-      console.log("🚀 ~ file: index.vue ~ line 185 ~ handleButton ~ buttonCode", buttonCode)
-      console.log("🚀 ~ file: index.vue ~ line 185 ~ handleButton ~ ids", ids)
       this.rowId = ids;
       this.buttonCode = buttonCode
       if (buttonCode === 'create') {
@@ -196,7 +192,6 @@ export default {
         return;
       }
       if (buttonCode === 'update') {
-        console.log('ids', ids);
         this.operateDialogFlag = true
         return;
       }
@@ -277,7 +272,6 @@ export default {
         this.$message.success(message)
         this.handleQuery();
       } catch (e) {
-        console.log('e', e);
         if (e === "cancel") {
           this.$message.info("已取消");
         } else {
