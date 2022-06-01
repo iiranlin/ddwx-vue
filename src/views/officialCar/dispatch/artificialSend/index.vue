@@ -107,7 +107,7 @@
                         <el-row>
                             <el-col :span="8">
                             <el-form-item label="乘坐人数:" prop="usagePersons">
-                                <el-input v-model="formData.usagePersons" style="width: 217px" maxlength="200" placeholder="请输入乘坐人数" />
+                                <el-input v-model="formData.usagePersons" @input="numberInput($event,'usagePersons')" style="width: 217px" maxlength="200" placeholder="请输入乘坐人数" />
                             </el-form-item>
                             </el-col>
                             <el-col :span="8">
@@ -139,7 +139,9 @@
                             </el-col>
                             <el-col :span="8">
                             <el-form-item label="预计时长:" prop="timeLength">
-                                <el-input v-model="formData.timeLength" style="width: 217px" maxlength="200" placeholder="请输入预计时长" />
+                                <el-input v-model="formData.timeLength" @input="limitInput($event,'timeLength')" style="width: 217px" maxlength="200" placeholder="请输入预计时长">
+                                    <span slot="append">小时</span>
+                                </el-input>
                             </el-form-item>
                             </el-col>
                         </el-row>
@@ -215,6 +217,7 @@ import formAddress from "./components/formAddress";
 import formCalendar from "./components/formCalendar";
 import formInformation from "./components/formInformation";
 import { saveOrderDispatch } from "@/api/gcywVehicleRequest";
+import { limitInput, numberInput } from '@/utils/index'
 export default {
     name: "dispatchACar",
     mixins: [getDict],
@@ -237,6 +240,8 @@ export default {
         return {
             loading: false,
             isRouterAlive: true,
+            limitInput: limitInput,
+            numberInput: numberInput,
             activeNames: ['1', '2', '3', '4'],
             dateList: [],
             assignTimey: '2022-05-23',

@@ -459,3 +459,25 @@ export function calSum(num1, num2) {
   return Math.round(num1 * m + num2 * m) / m
 }
 
+/**
+ * 只能输入两位小数的数字
+ */
+export function limitInput (value, name) {
+  let str = (value && value.split("")) || [];
+  let reg1 = /\d/;
+  let reg2 = /\./;
+  if (str[0] == ".") {
+  this.formData[name] = "";
+    return;
+  }
+  value = str.filter((e) => reg1.test(e) || reg2.test(e)); 
+  let valJoin = value.join("");
+  this.formData[name] = valJoin.match(/^\d*(\.?\d{0,2})/g)[0] || null;
+}
+
+/**
+ * 只能输入数字
+ */
+export function numberInput (value, name) {
+  this.formData[name] = value.replace(/[^\d]/g, '')
+}
