@@ -117,7 +117,7 @@
                             </el-col>
                             <el-col :span="8">
                             <el-form-item label="联系电话:" prop="phone">
-                                <el-input v-model="formData.phone" style="width: 217px" maxlength="200" placeholder="请输入联系电话" />
+                                <el-input v-model="formData.phone" @input="numberInput($event,'phone')" style="width: 217px" maxlength="200" placeholder="请输入联系电话" />
                             </el-form-item>
                             </el-col>
                         </el-row>

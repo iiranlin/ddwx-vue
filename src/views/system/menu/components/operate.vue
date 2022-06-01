@@ -74,7 +74,7 @@
         <el-row>
         </el-row>
         <el-row>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="排序:" prop="seq">
               <el-input-number
                 v-model="form.seq"
@@ -84,7 +84,7 @@
               ></el-input-number>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="是否隐藏:" prop="isHide">
               <el-switch
                 v-model="form.isHide"
@@ -93,11 +93,20 @@
               </el-switch>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="是否启用:" prop="status">
               <el-switch
                 v-model="form.status"
                 :active-value="0" :inactive-value="1"
+                >
+              </el-switch>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="是否页面缓存:" prop="isCache">
+              <el-switch
+                v-model="form.isCache"
+                :active-value="1" :inactive-value="0"
                 >
               </el-switch>
             </el-form-item>
@@ -293,7 +302,8 @@ export default {
         "seq": 0,
         "status": 0,
         "isAcl":0,
-        "datasource":""
+        "datasource":"",
+        'isCache': 1
       },
       // 表单校验
       rules: {

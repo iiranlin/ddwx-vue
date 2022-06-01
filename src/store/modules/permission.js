@@ -97,7 +97,7 @@ export function filterAsyncRoutes(menuList, flag) {
             meta: {
                 title: item.menuName,
                 icon: item.menuIcon || 'system',
-                noCache: true,
+                noCache: item.isCache == 1?false:true,
                 link: null,
                 id: item.id,
             },
