@@ -64,4 +64,20 @@ export function gcjcTurnUnitDelTU(data) {
   })
 }
 
+//获取指定日期范围内的工作日-节假日列表
+export function sysWorkDayListWorkDay(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/sysWorkDay/listWorkDay`,
+    method: 'get',
+    params
+  })
+}
 
+//设置或者取消工作日-节假日
+export function sysWorkDaySetWorkDay(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/sysWorkDay/setWorkDay`,
+    method: 'post',
+    data
+  })
+}
