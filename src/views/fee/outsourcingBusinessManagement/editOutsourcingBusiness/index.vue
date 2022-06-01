@@ -353,9 +353,13 @@
       <el-button
         type="primary"
         :loading="loading"
-        @click="addRequest"
-      >确 定</el-button>
-      <el-button @click="closePush">取 消</el-button>
+        @click="addCarContract"
+      >
+        确 定
+      </el-button>
+      <el-button @click="cancelBtn">
+        取 消
+      </el-button>
     </div>
   </div>
 </template>
@@ -375,10 +379,7 @@ export default {
     const isValidate = true
     return {
       loading: false,
-      calendarVal: null,
       activeNames: ['1', '2'],
-      dictionariesCode: [1016, 10018, 1018],
-      dictionariesObj: {},
       // 使用单位下拉选择框
       unitData: [],
       formData: {
@@ -411,10 +412,10 @@ export default {
         useType: [
           { required: isValidate, message: "请选择车辆用途", trigger: "change" }
         ],
-
         // hopeBrand: [
         //   { required: isValidate, message: "请选择期望车型", trigger: "change" }
         // ],
+        // 线路明细数组
         details: []
       },
       // 唯一key
@@ -477,9 +478,11 @@ export default {
       },
       // 用车信息的uniqueId的集合
       addLineDetailInfoList: [],
-      // 车辆用途
+      // 新建列表中的下拉选择框数据
       selectOptions: {
+        // 车辆用途 合同用途
         useType: [],
+        // 车辆类型
         carTypeCode: [],
       }
     };
@@ -489,12 +492,22 @@ export default {
       return this.$store.state.settings.theme;
     }
   },
-  created() {
+  activated() {
     this.handleSystemDict(Object.keys(this.selectOptions));
+    this.addCarButton();
+    this.getUnitDictList();
+  },
+  created() {
+    // this.handleSystemDict(Object.keys(this.selectOptions));
   },
   async mounted() {
-    this.addCarButton();
-    await this.getUnitDictList();
+    // this.addCarButton();
+    // await this.getUnitDictList();
+  },
+  beforeRouteLeave(_to, from, next) {
+    this.$refs.elForm.resetFields();
+    this.$tab.closePage(from);
+    next();
   },
   methods: {
     // 获取当前页面的通用字典下拉数据
@@ -504,8 +517,8 @@ export default {
         this.selectOptions[item] = res
       }
     },
-    // 确定 确 定按钮 新增专用车补录
-    addRequest() {
+    // 确定 确 定按钮 新增业务外包费用台账管理
+    addCarContract() {
       this.$refs.elForm.validate(async (valid) => {
         if (valid) {
           const loading = this.$loading({
@@ -516,16 +529,15 @@ export default {
             const params = { ...this.formData };
             params.contractBegindate = params.contractDate[0];
             params.contractEnddate = params.contractDate[1];
-            params.carTypeName = (this.selectOptions.carTypeCode.find(item => params.carTypeCode === item.carTypeCode)).name
+            params.carTypeName = (this.selectOptions.carTypeCode.find(item => params.carTypeCode === item.carTypeCode)).name || '';
             delete params.contractDate
             const res = await createCarContract(params);
-            console.log('res', res);
             if (res?.code !== 0) {
               this.$message.error(res?.message || '操作失败，请稍后重试');
               return;
             }
             this.$message.success(res?.message || '操作成功');
-            this.$router.push({ name: 'outsourcingBusiness' });
+            this.$router.push({ name: 'outsourcingBusiness', query: { time: new Date().toString } });
           } catch (e) {
 
           } finally {
@@ -534,9 +546,11 @@ export default {
         }
       })
     },
-    closePush() {
-      this.$router.push({ name: 'supplementDrivingRecord' });
+    // 取消 取 消按钮
+    cancelBtn() {
+      this.$router.push({ name: 'outsourcingBusiness', query: { time: new Date().toString } });
     },
+    // 根据面板是否折叠  来计算左侧三角形的方向
     calcIconClass(name) {
       return this.activeNames.includes(name) ? `el-icon-caret-bottom` : `el-icon-caret-right`;
     },
@@ -566,12 +580,13 @@ export default {
     },
     // 处理输入的数字
     inputNumberChange(val, label, index) {
-      if (index || index === 0) {
+      if (index >= 0) {
+        // 是路线明细里面的数据变动 则更改index对应的表单值
         this.formData.details[index][label] = numToFixed2(val);
         return;
       }
       this.formData[label] = numToFixed2(val);
-    }
+    },
   },
 };
 </script>

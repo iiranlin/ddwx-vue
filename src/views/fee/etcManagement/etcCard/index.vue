@@ -143,11 +143,15 @@ export default {
   watch: {
 
   },
+  activated() {
+    this.menuProperty();
+    this.getList()
+  },
   async created() {
-    await this.menuProperty();
+    // await this.menuProperty();
   },
   mounted() {
-    this.getList()
+    // this.getList()
   },
   methods: {
     //查询菜单数据
