@@ -682,14 +682,25 @@ export default {
       return this.$store.state.settings.theme;
     }
   },
-  created() {
-    this.vehicleInfoGetAssignCount();
+  activated() {
     for (const item of this.dictionariesCode) {
       this.getOperateDict(item);
     }
+    this.vehicleInfoGetAssignCount();
+    this.getUnitDictList();
+  },
+  created() {
+    // this.vehicleInfoGetAssignCount();
+    // for (const item of this.dictionariesCode) {
+      // this.getOperateDict(item);
+    // }
   },
   async mounted() {
-    await this.getUnitDictList();
+    // await this.getUnitDictList();
+  },
+  beforeRouteLeave(_to, from, next) {
+    this.$tab.closePage(from);
+    next();
   },
   methods: {
     async getOperateDict(code) {
