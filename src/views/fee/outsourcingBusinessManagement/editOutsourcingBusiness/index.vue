@@ -529,7 +529,7 @@ export default {
             const params = { ...this.formData };
             params.contractBegindate = params.contractDate[0];
             params.contractEnddate = params.contractDate[1];
-            params.carTypeName = (this.selectOptions.carTypeCode.find(item => params.carTypeCode === item.carTypeCode)).name || '';
+            params.carTypeName = (this.selectOptions.carTypeCode.find(item => params.carTypeCode === item.carTypeCode))?.name || '';
             delete params.contractDate
             const res = await createCarContract(params);
             if (res?.code !== 0) {

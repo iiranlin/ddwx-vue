@@ -836,7 +836,6 @@ export default {
         return;
       }
       const selectUnit = (this.unitData.find(item => item.unitCode === val) ?? {}) || {};
-      console.log("🚀 ~ file: index.vue ~ line 826 ~ unitCodeChange ~ selectUnit", selectUnit)
       this.formData.unitName = selectUnit.unitName ?? '';
       this.getDeptDictList(val);
       this.getAllDriverData();

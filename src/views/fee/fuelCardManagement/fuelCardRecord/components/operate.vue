@@ -480,7 +480,7 @@ export default {
           this.form.balance = '';
         return;
       }
-      this.selectCardInfo = this.cardNumberOptions.find(item => item.cardNumber === v) ?? [];
+      this.selectCardInfo = this.cardNumberOptions.find(item => item.cardNumber === v) ?? {};
       this.form.balance = this.selectCardInfo.balance ?? 0;
     },
     //新建
