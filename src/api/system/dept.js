@@ -1,6 +1,16 @@
 import request from '@/utils/request'
 let VUE_APP_BASE_PREFIX = process.env.VUE_APP_AUTH_SERVER;
 
+
+//部门列表-分页(单位)
+export function deptListPageForUnit(params){
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/dept/listPageForUnit`,
+    method: 'get',
+    params
+  })
+}
+
 // 查询部门列表
 export function deptListPage(params) {
   return request({
