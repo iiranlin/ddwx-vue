@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import { deptListPage, deptTree, deptDeleteBatch } from "@/api/system/dept";
+import { deptListPageForUnit, deptTree, deptDeleteBatch } from "@/api/system/dept";
 import operate from "./components/operate";
 import selectWareHouse from "./components/selectWarehouse";
 import indexMixin from "@/views/mixins";
@@ -157,7 +157,7 @@ export default {
       }
     },
     //检查是否属于同一仓库
-    checkWarehouseState() { 
+    checkWarehouseState() {
       if(this.selectionData.length>1){
         let storehouseCode = this.selectionData[0].storehouseCode;
         for (let i = 1; i < this.selectionData.length; i++) {
@@ -201,7 +201,7 @@ export default {
     },
     getList() {
       this.loading = true;
-      deptListPage(Object.assign({}, this.listQuery, this.formData)).then(
+      deptListPageForUnit(Object.assign({}, this.listQuery, this.formData)).then(
         ({ data }) => {
           this.dataList = data.list;
           this.total = data.total;
