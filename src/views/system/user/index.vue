@@ -222,7 +222,8 @@ export default {
     },
     /** 重置密码按钮操作 */
     handleResetPwd(row) {
-      let confirmMessage = '确定重置[' + row.nickName + ']的密码?'
+      console.log(row)
+      let confirmMessage = '确定重置[' + row.realName + ']的密码?'
       this.$confirm(confirmMessage, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

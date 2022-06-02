@@ -2,18 +2,6 @@
     <div class="app-container_list">
         <el-row :gutter="20" class="container_h" >
             <el-col :span="24" :xs="24" class="container_flex">
-                <!--顶部按钮-->
-                <el-row :gutter="24" class="container_flex-right_list">
-                  <el-col :span="1.5" v-for="item in property.buttonTop" :key="item.id" style="margin-top:2px;padding:0px;">
-                      <button-top
-                        :item="item"
-                        :multiple="multiple"
-                        :single="single"
-                        @newButton="newButton"
-                        class="cume-button">
-                      </button-top>
-                  </el-col>
-                </el-row>
                 <!--搜索区域-->
                 <el-row style="margin:0 0 10px 20px;">
                     <el-col :span="5">
@@ -31,6 +19,7 @@
                     <el-col :span="5">
                         <el-date-picker
                             size="mini"
+                            popper-class="hide_header"
                             v-model="form.month"
                             type="month"
                             format="MM月"
@@ -63,8 +52,8 @@
         </el-row>
         <!--设置菜单-->
          <ul  class="contextmenu" v-show="visible" :style="{left:left+'px',top:top+'px'}">
-            <li @click="handleMenuClick(0)"><i class="el-icon-edit" ></i>设为工作日</li>
-            <li @click="handleMenuClick(1)"><i class="el-icon-bicycle"></i>设为节假日</li>
+            <li @click="handleMenuClick(0)" v-if="setWorkVisible"><i class="el-icon-edit" ></i>设为工作日</li>
+            <li @click="handleMenuClick(1)" v-else><i class="el-icon-bicycle"></i>设为节假日</li>
         </ul>
     </div>
 </template>
@@ -103,6 +92,8 @@ export default {
             settingData:[],
             //是否显示设置菜单
             visible: false,
+            //是否显示设置工作日
+            setWorkVisible:true,
             //位置上
             top: 0,
             //位置左
@@ -242,6 +233,12 @@ export default {
         },
         //打开设置菜单
         openMenu(e,date){
+            //判断显示设置工作日或者节假日
+            if(this.checkStyle(date)){
+                this.setWorkVisible = true;
+            }else{
+                this.setWorkVisible = false;
+            }
             this.currentDate = date;
             const menuMinWidth = 105
             const offsetLeft = this.$el.getBoundingClientRect().left // container margin left
@@ -307,7 +304,7 @@ export default {
     overflow: auto;
 }
 ::v-deep .el-calendar-day{
-    height: 55px;
+    height: 60px;
 }
 ::v-deep .el-calendar-table thead th{
     height: 60px;
@@ -381,5 +378,10 @@ export default {
             background: #eee;
         }
     }
+}
+</style>
+<style >
+.hide_header .el-date-picker__header{
+    display: none !important;
 }
 </style>

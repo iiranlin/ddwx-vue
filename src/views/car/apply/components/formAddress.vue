@@ -48,7 +48,7 @@
       </el-col>
       <el-col :span="5">
         <div style="position: relative">
-          <el-input v-model="formData.address" maxlength="200" placeholder="请输入详情地址" />
+          <el-input v-model="formData.address" maxlength="100" placeholder="请输入详情地址" />
           <el-dropdown class="dropdown-address" trigger="click">
             <div class="avatar-wrapper">
               <i class="address-svg el-icon-location-outline" />

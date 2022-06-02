@@ -65,12 +65,12 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="乘车人:" prop="userName">
-                <el-input v-model="formData.userName" style="width: 217px" maxlength="200" placeholder="请输入乘车人" />
+                <el-input v-model="formData.userName" style="width: 217px" maxlength="40" placeholder="请输入乘车人" />
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="联系电话:" prop="phone">
-                <el-input v-model="formData.phone" @input="numberInput($event,'phone')" style="width: 217px" maxlength="200" placeholder="请输入联系电话" />
+                <el-input v-model="formData.phone" @input="numberInput($event,'phone')" style="width: 217px" maxlength="20" placeholder="请输入联系电话" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -92,7 +92,7 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="预计时长:" prop="timeLength">
-                <el-input v-model="formData.timeLength" @input="limitInput($event,'timeLength')" style="width: 217px" maxlength="200" placeholder="请输入预计时长">
+                <el-input v-model="formData.timeLength" @input="limitInput($event,'timeLength')" style="width: 217px" maxlength="10" placeholder="请输入预计时长">
                   <span slot="append">小时</span>
                 </el-input>
               </el-form-item>

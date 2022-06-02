@@ -28,16 +28,16 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="unitEntity" :rules="rules" label-width="80px">
         <el-form-item label="单位编号" prop="unitCode">
-          <el-input v-model="unitEntity.unitCode" placeholder="请输入单位编号"/>
+          <el-input v-model="unitEntity.unitCode" placeholder="请输入单位编号" maxlength="50"/>
         </el-form-item>
         <el-form-item label="单位名称" prop="unitName">
-          <el-input v-model="unitEntity.unitName" placeholder="请输入单位名称"/>
+          <el-input v-model="unitEntity.unitName" placeholder="请输入单位名称" maxlength="40"/>
         </el-form-item>
         <el-form-item label="单位简称" prop="shortName">
-          <el-input v-model="unitEntity.shortName" placeholder="请输入单位简称"/>
+          <el-input v-model="unitEntity.shortName" placeholder="请输入单位简称" maxlength="40"/>
         </el-form-item>
         <el-form-item label="专业" prop="major">
-          <el-input v-model="unitEntity.major" placeholder="请输入专业"/>
+          <el-input v-model="unitEntity.major" placeholder="请输入专业" maxlength="40"/>
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="unitEntity.status">
@@ -52,10 +52,16 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="排序" prop="seq">
-          <el-input v-model="unitEntity.seq" placeholder="请输入排序"/>
+            <el-input-number
+                v-model="unitEntity.seq"
+                controls-position="right"
+                :min="1"
+                :max="99">
+            </el-input-number>
+          <!-- <el-input-number v-model="unitEntity.seq" placeholder="请输入排序" maxlength="2"/> -->
         </el-form-item>
         <el-form-item label="描述" prop="describe">
-          <el-input v-model="unitEntity.describe" placeholder="请输入描述"/>
+          <el-input v-model="unitEntity.describe" placeholder="请输入描述" maxlength="40"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">

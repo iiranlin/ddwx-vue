@@ -16,8 +16,8 @@
         <el-row>
             <el-col :span="22" :xs="24">
                 <el-col :span="7">
-                    <el-form-item label="员工编号：" prop="userId">
-                        <el-select ref="userSelect" v-model="form.userId" filterable remote :remote-method="remoteMethod" :loading="loading" placeholder="请输入员工编号" size="mini">
+                    <el-form-item label="员工编号：" prop="userCode">
+                        <el-select ref="userSelect" v-model="form.userCode" filterable remote :remote-method="remoteMethod" :loading="loading" placeholder="请输入员工编号" size="mini">
                             <template slot="prefix">
                                 <span style="padding-left: 5px;"><i class="el-icon-search"></i></span>
                             </template>
@@ -37,8 +37,8 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="7">
-                    <el-form-item label="所属部门：" prop="unitName">
-                        <el-input v-model="form.unitName" size="mini" :disabled="true"></el-input>
+                    <el-form-item label="所属部门：" prop="deptName">
+                        <el-input v-model="form.deptName" size="mini" :disabled="true"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="7">
@@ -345,7 +345,7 @@ export default {
             userId:"",    //员工编号     
             username:"",    //姓名
             unitCode:"",    //部门编号
-            unitName:"",  //所属部门
+            deptName:"",  //所属部门
             sex:"",         //性别
             birthday:"",    //出身年月
             phone:"",       //联系电话
@@ -462,8 +462,11 @@ export default {
     handleUserChange(value){
         this.$refs.userSelect.selectedLabel = value.userCode;
         this.form.username = value.realName;
+        this.form.userId = value.id;
         this.form.unitCode = value.unitCode;
         this.form.unitName = value.unitName;
+        this.form.deptCode = value.deptCode;
+        this.form.deptName = value.deptName;
         this.form.sex = value.sex;
         this.form.birthday = value.birthday;
     },
