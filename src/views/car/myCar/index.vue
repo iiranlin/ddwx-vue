@@ -120,12 +120,39 @@ export default {
         }
         this.$router.push({name:'apply',query: {row: JSON.stringify(rowObj)}});
       }else if(buttonCode === 'cancel'){
-        this.vehicleRequest(id, 'cancelVehicleRequest', '是否取消？');
+        this.vehicleRequest(id, row, 'cancelVehicleRequest', '是否取消？');
       }else if(buttonCode === 'confirm'){
-        this.vehicleRequest(id, 'confirmVehicleRequest', '是否确认？');
+        this.vehicleRequest(id, row, 'confirmVehicleRequest', '是否确认？');
       }
     },
-    vehicleRequest (id, url, title) {
+    vehicleRequest (id, row, url, title) {
+      if(Object.keys(row).length == 0){
+        for (const item of this.selectionData) {
+          if(url == 'confirmVehicleRequest'){
+            if(item.status != 10){
+              this.$modal.msgWarning('该状态不能确认');
+              return false;
+            }
+          }else if(url == 'cancelVehicleRequest') {
+            if(item.status >= 9){
+              this.$modal.msgWarning('该状态不能取消');
+              return false;
+            }
+          }
+        }
+      }else{
+        if(url == 'confirmVehicleRequest'){
+          if(row.status != 10){
+            this.$modal.msgWarning('该状态不能确认');
+            return false;
+          }
+        }else if(url == 'cancelVehicleRequest') {
+          if(row.status >= 9){
+            this.$modal.msgWarning('该状态不能取消');
+            return false;
+          }
+        }
+      }
       let ids = id.map(item => {
         return {id: item};
       });
