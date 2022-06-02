@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-let VUE_APP_BASE_prefix = process.env.VUE_APP_AUTH_SERVER; 
+let VUE_APP_BASE_prefix = process.env.VUE_APP_AUTH_SERVER;
 let path = process.env.NODE_ENV === 'development' ?  process.env.VUE_APP_BASE_API: '';
 export const laborCardQueryExport = path + VUE_APP_BASE_prefix +'/laborCard/getQueryFile'
 export const laborGrantQueryFile = path + VUE_APP_BASE_prefix +'/laborGrant/getQueryFile'
@@ -389,14 +389,6 @@ export function tSpCodeGetSpCode(params){
   })
 }
 
-//部门列表-分页(单位)
-export function deptListPageForUnit(params){
-  return request({
-    url: `${VUE_APP_BASE_prefix}/dept/listPageForUnit`,
-    method: 'get',
-    params
-  })
-}
 
 //劳保用品卡片劳保信息
 export function laborCardLaborCards(params){

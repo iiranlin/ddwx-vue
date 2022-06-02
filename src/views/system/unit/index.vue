@@ -73,7 +73,6 @@ import indexMixin from '@/views/mixins';
 export default {
   mixins: [indexMixin],
   name: "Unit",
-  dicts: ['status'],
   data() {
     return {
       // 遮罩层
