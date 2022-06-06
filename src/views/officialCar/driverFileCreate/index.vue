@@ -415,7 +415,6 @@ export default {
     }
   },
   activated(){
-      this.$refs.elform.resetFields();
       this.licenseTypeSelection = [];
   },
   methods: {

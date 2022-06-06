@@ -48,10 +48,10 @@
                         <el-form-item label="联系电话："><span>{{vehicleData.phone}}</span></el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="用车日期："><span>{{parseTime(vehicleData.usageDate)}}</span></el-form-item>
+                        <el-form-item label="用车日期："><span>{{vehicleData.usageDate}}</span></el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="出发时间："><span>{{parseTime(vehicleData.usageTime)}}</span></el-form-item>
+                        <el-form-item label="出发时间："><span>{{vehicleData.usageTime}}</span></el-form-item>
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="预计时长："><span>{{vehicleData.timeLength}}</span></el-form-item>
@@ -63,7 +63,7 @@
                         <el-form-item label="前往地点："><span>{{vehicleData.toAddr}}</span></el-form-item>
                     </el-col>
                     <el-col :span="24">
-                        <el-form-item label="期望车型："><span>{{vehicleData.hopeBrand}}</span></el-form-item>
+                        <el-form-item label="期望车型："><span>{{hopeBrandInfo}}</span></el-form-item>
                     </el-col>
                     <el-col :span="24">
                         <el-form-item label="备注："><span>{{vehicleData.remark}}</span></el-form-item>
@@ -125,6 +125,7 @@
 </template>
 <script>
 import {gcywVehicleRequestDispatchList,gcywVehicleRequestLogList} from "@/api/car"
+import {getListByParentId} from "@/api/system/dict"
 export default {
   name: "carDetail",
   data() {
@@ -139,6 +140,8 @@ export default {
         logData:[],
         //用车单数据
         vehicleData:{},
+        //期望车型数据
+        hopeBrandInfo:"",
     };
   },
   created(){
@@ -155,6 +158,8 @@ export default {
             await gcywVehicleRequestDispatchList(Object.assign({}, {id:this.id})).then(({data}) => {
                 this.vehicleData = data.list[0] || {};
                 this.loading = false;
+                console.log(this.vehicleData)
+                this.getHopeBrandInfo();
             }).catch((err) => {
                 this.loading = false;
             })
@@ -169,6 +174,21 @@ export default {
                 this.loading = false;
             })
     },
+    //获取期望车型字典
+    async getHopeBrandInfo(){
+            this.loading = true;
+            await getListByParentId("1018").then(({data}) => {
+                this.loading = false;
+                data.forEach((item) => {
+                    if(item.code===this.vehicleData.hopeBrand){
+                        this.hopeBrandInfo = item.name;
+                    }
+                })
+                console.log(this.hopeBrandInfo);
+            }).catch((err) => {
+                this.loading = false;
+            })
+    }
   }
 };
 </script>

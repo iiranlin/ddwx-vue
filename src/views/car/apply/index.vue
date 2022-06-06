@@ -333,7 +333,18 @@ export default {
     addRequest () {
       this.$refs.elForm.validate( (valid) => {
         if (valid) {
-          addVehicleRequest(this.formData).then( ({message}) => {
+          let obj = {}
+          this.dictionariesObj['1016'].forEach(item => {
+            if(item.code == this.formData.reasonCode){
+              obj = Object.assign({},this.formData, {reason: item.name});
+            }
+          });
+          this.dictionariesObj['10018'].forEach(item => {
+            if(item.code == this.formData.demandCode){
+              obj = Object.assign({}, obj, {demand: item.name});
+            }
+          });
+          addVehicleRequest(obj).then( ({message}) => {
             this.$modal.msgSuccess(message);
             this.$router.push({name:'myCar'});
           })

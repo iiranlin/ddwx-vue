@@ -204,7 +204,7 @@ export default {
       this.deptTree()
     },
     handleCreate () {
-      this.$refs.operate.init('create');
+      this.$refs.operate.init('create', this.formData.deptId);
     },
     handleUpdate (id) {
       this.$refs.operate.init('update', id);
