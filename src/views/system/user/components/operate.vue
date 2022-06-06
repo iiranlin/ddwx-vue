@@ -171,12 +171,14 @@ export default {
     /** 提交按钮（数据权限） */
     init (type, id) {
         this.type = type;
-        this.id = id;
         this.openDataScope = true;
         this.$nextTick(() => {
             this.$refs.elForm.resetFields();
             if(type === 'update'){
+                this.id = id;
                 this.userDetail(id);
+            }else if(type === 'create'){
+                this.form.deptId = id;
             }
         })
     },

@@ -12,12 +12,12 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="部门编号:" prop="deptCode">
-              <el-input v-model="form.deptCode" placeholder="请输入部门编号" maxlength="200"/>
+              <el-input v-model="form.deptCode" placeholder="请输入部门编号" maxlength="59"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="部门名称:" prop="deptName">
-              <el-input v-model="form.deptName" placeholder="请输入部门名称" maxlength="100"/>
+              <el-input v-model="form.deptName" placeholder="请输入部门名称" maxlength="50"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -116,6 +116,8 @@ export default {
             this.openDataScope = false;
             this.loading = false;
             this.$emit('deptSuccess')
+          }).finally(() => {
+            this.loading = false;
           });
         }
       })
@@ -129,6 +131,8 @@ export default {
             this.openDataScope = false;
             this.loading = false;
             this.$emit('deptSuccess')
+          }).finally(() => {
+            this.loading = false;
           });
         }
       })
