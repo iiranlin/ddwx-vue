@@ -263,6 +263,7 @@
                   v-model="formData.timeLength"
                   maxlength="200"
                   placeholder="请输入预计时长"
+                  @change="inputNumberChange(item.timeLength, 'timeLength', index)"
                 >
                   <span slot="append">小时</span>
                 </el-input>
@@ -436,7 +437,7 @@
                     readonly
                     disabled
                     maxlength="200"
-                    placeholder=""
+                    placeholder="出场里程"
                   >
                     <span slot="append">千米</span>
                   </el-input>
@@ -456,6 +457,7 @@
                     v-model="item.endMiles"
                     maxlength="200"
                     placeholder="请输入还车里程"
+                    @change="inputNumberChange(item.endMiles, 'endMiles', index)"
                   >
                     <span slot="append">千米</span>
                   </el-input>
@@ -525,6 +527,8 @@ import { vehicleInfoGetAssignCount } from "@/api/vehicleInfo";
 import { saveOrderDispatch } from "@/api/gcywVehicleRequest";
 import formAddress from "@/views/car/apply/components/formAddress";
 import getDict from "@/views/mixins/getDict"
+import { numToFixed2 } from '@/utils/index'
+
 export default {
   name: "editDrivingRecord",
   mixins: [getDict],
@@ -550,7 +554,7 @@ export default {
       dateList: [],
       calendarVal: null,
       activeNames: ['1', '2', '3'],
-      dictionariesCode: [1016, 10018, 1018],
+      dictionariesCode: ['1016', '10018', '1018'],
       dictionariesObj: {},
       // 用车单位下拉选择框
       unitData: [],
@@ -684,7 +688,7 @@ export default {
   },
   activated() {
     // for (const item of this.dictionariesCode) {
-      // this.getOperateDict(item);
+    // this.getOperateDict(item);
     // }
     // this.vehicleInfoGetAssignCount();
     // this.getUnitDictList();
@@ -725,7 +729,7 @@ export default {
     // 确定 确 定按钮 新增专用车补录
     addRequest() {
       if (this.formData.reqAssignments.length <= 0) {
-        this.$message.error('请添加车辆信息')
+        // this.$message.error('请添加车辆信息')
         this.addCarButton();
         return;
       }
@@ -736,7 +740,9 @@ export default {
             text: "加载中...",
           });
           try {
-            const params = { ...this.formData, createType: '2' }
+            const params = { ...this.formData, createType: '2' };
+            params.reason = this.dictionariesObj['1016'].find(item => item.code === params.reasonCode)?.name || '';
+            params.demand = this.dictionariesObj['10018'].find(item => item.code === params.demandCode)?.name || '';
             const res = await saveOrderDispatch(params);
             if (res?.code !== 0) {
               this.$message.error(res?.message || '操作失败，请稍后重试');
@@ -925,6 +931,15 @@ export default {
       } finally {
 
       }
+    },
+    // 处理输入的数字
+    inputNumberChange(val, label, index) {
+      if (index >= 0) {
+        // 是路线明细里面的数据变动 则更改index对应的表单值
+        this.formData.reqAssignments[index][label] = numToFixed2(val);
+        return;
+      }
+      this.formData[label] = numToFixed2(val);
     },
   },
 };
