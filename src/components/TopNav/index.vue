@@ -5,20 +5,20 @@
     @select="handleSelect"
   >
     <template v-for="(item, index) in topMenus">
-      <el-menu-item :style="{'--theme': theme}" :index="item.path" :key="index" v-if="index < visibleNumber"
+      <el-menu-item :style="{'--theme': theme}" :index="item.path" :key="index" v-if="index <= visibleNumber"
         ><svg-icon :icon-class="item.meta.icon" />
         {{ item.meta.title }}</el-menu-item
       >
     </template>
 
     <!-- 顶部菜单超出数量折叠 -->
-    <el-submenu :style="{'--theme': theme}" index="more" v-if="topMenus.length > visibleNumber">
+    <el-submenu :style="{'--theme': theme}" index="more" v-if="topMenus.length > visibleNumber + 1">
       <template slot="title">更多菜单</template>
       <template v-for="(item, index) in topMenus">
         <el-menu-item
           :index="item.path"
           :key="index"
-          v-if="index >= visibleNumber"
+          v-if="index > visibleNumber"
           ><svg-icon :icon-class="item.meta.icon" />
           {{ item.meta.title }}</el-menu-item
         >
@@ -36,7 +36,7 @@ export default {
       // 顶部栏初始数
       visibleNumber: 5,
       // 是否为首次加载
-      isFrist: false,
+      isFirst: false,
       // 当前激活菜单的 index
       currentIndex: undefined
     };
@@ -92,8 +92,8 @@ export default {
         const tmpPath = path.substring(1, path.length);
         activePath = "/" + tmpPath.substring(0, tmpPath.indexOf("/"));
       } else if ("/index" == path || "" == path) {
-        if (!this.isFrist) {
-          this.isFrist = true;
+        if (!this.isFirst) {
+          this.isFirst = true;
         } else {
           activePath = "index";
         }
@@ -118,8 +118,9 @@ export default {
   methods: {
     // 根据宽度计算设置显示栏数
     setVisibleNumber() {
-      const width = document.body.getBoundingClientRect().width / 3;
+      const width = document.body.getBoundingClientRect().width / 2;
       this.visibleNumber = parseInt(width / 85);
+      console.log(this.visibleNumber)
     },
     // 默认激活的路由
     defaultRouter() {

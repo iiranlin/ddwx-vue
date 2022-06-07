@@ -3,7 +3,7 @@
 		<transition name="sidebarLogoFade">
 			<router-link key="expand" class="sidebar-logo-link" to="/">
 				<img v-if="logo" src="@/assets/logo/logo.png" class="sidebar-logo">
-				<h1 class="sidebar-title">劳保用品管理系统</h1>
+				<h1 class="sidebar-title">公务用车管理信息系统</h1>
 			</router-link>
 		</transition>
 	</div>
