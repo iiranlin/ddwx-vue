@@ -235,6 +235,7 @@ export default {
                     let obj = {
                         status: this.row.status,
                         id: this.row.id,
+                        phone: this.row.phone,
                         createType: this.row.createType,
                         usageDate: this.row.usageDate,
                         usageTime: this.row.usageTime,
