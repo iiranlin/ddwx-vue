@@ -211,13 +211,13 @@ export default {
     }
   },  
   created() {
-    this.vehicleInfoGetAssignCount();
     for(const item of this.dictionariesCode){
       this.getOperateDict(item);
     }
     this.$nextTick( () => {
       if(this.$route.query.row){
         let row = JSON.parse(this.$route.query.row);
+        this.vehicleInfoGetAssignCount(row);
         this.formData = {
           id: row.id,
           reasonCode: row.reasonCode,
@@ -275,8 +275,9 @@ export default {
       }
       return (myyear + "-" + mymonth + "-" + myweekday);
     },
-    vehicleInfoGetAssignCount () {
-      vehicleInfoGetAssignCount().then(({data}) => {
+    vehicleInfoGetAssignCount (row) {
+      let {unitCode, deptId} = row;
+      vehicleInfoGetAssignCount({unitCode, deptId}).then(({data}) => {
         this.dateList = data;
         this.assignTimey = this.weekCheckingIn(data[0].assignTime, '周一');
         this.assignTimer = this.weekCheckingIn(data[data.length - 1].assignTime, '周日');

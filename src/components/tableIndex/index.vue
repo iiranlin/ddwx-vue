@@ -95,7 +95,7 @@
       fixed="right"
       label="操作"
       align="center"
-      min-width="180"
+      min-width="230"
       class-name="small-padding fixed-width"
       v-if="property.buttonRow && property.buttonRow.length > 0"
     >

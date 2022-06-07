@@ -34,11 +34,11 @@
                     style="margin-top:-12px;margin-bottom:6px">
                     <template slot="customItem">
                       <el-form-item label="用车部门" prop="value">
-                        <el-select v-model="formData.deptCode" placeholder="请选择用车部门" clearable style="width:240px" size="small">
+                        <el-select v-model="formData.deptId" placeholder="请选择用车部门" clearable style="width:240px" size="small">
                           <el-option v-for="item in deptOptions" 
                             :key="item.value" 
                             :label="item.deptName" 
-                            :value="item.deptCode">
+                            :value="item.id">
                           </el-option>
                         </el-select>
                       </el-form-item>
@@ -101,7 +101,7 @@ export default {
             deptOptions:[],
             //查询参数
             formData:{
-                deptCode:"",
+                deptId:"",
             },
             //已选中条目
             selectionData:[],
@@ -180,7 +180,7 @@ export default {
         },
         //查询部门数据
         handleQueryDept(unitCode){
-            this.formData.deptCode ="";
+            this.formData.deptId ="";
             this.loading = true;
             getAllAvailableDept({unitCode:unitCode}).then(({data}) => {
                 this.loading = false;
@@ -191,7 +191,7 @@ export default {
         },
         //清空部门数据
         handleResetDept(){
-            this.formData.deptCode = "";
+            this.formData.deptId = "";
             this.deptOptions = [];
         },
         //

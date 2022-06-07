@@ -473,6 +473,11 @@ export default {
                     this.$modal.msgWarning('请新增车辆');
                     return
                 }
+                this.unitData.forEach(item => {
+                    if(item.unitCode == this.formData.unitCode){
+                        obj = Object.assign({}, obj, {unitName: item.unitName});
+                    }
+                });
                 this.dictionariesObj['1016'].forEach(item => {
                     if(item.code == this.formData.reasonCode){
                         obj = Object.assign({}, obj, {reason: item.name});
