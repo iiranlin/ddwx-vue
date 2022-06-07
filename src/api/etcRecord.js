@@ -1,5 +1,8 @@
-import request from "@/utils/request";
-let VUE_APP_BASE_PREFIX = process.env.VUE_APP_AUTH_SERVER;
+import request from '@/utils/request'
+
+let VUE_APP_BASE_PREFIX = process.env.VUE_APP_AUTH_SERVER
+export const etcRecordTemplateUrl = `${process.env.VUE_APP_BASE_API}/${VUE_APP_BASE_PREFIX}/gcywEtcRecord/template`
+export const etcRecordImportUrl = `${process.env.VUE_APP_BASE_API}/${VUE_APP_BASE_PREFIX}/gcywEtcRecord/import`
 
 /**
  * @function getETCRecordPageList
@@ -12,9 +15,9 @@ let VUE_APP_BASE_PREFIX = process.env.VUE_APP_AUTH_SERVER;
 export function getETCRecordPageList(params = {}) {
   return request({
     url: `${VUE_APP_BASE_PREFIX}/gcywEtcRecord/listPage`,
-    method: "get",
-    params,
-  });
+    method: 'get',
+    params
+  })
 }
 
 /**
@@ -29,12 +32,12 @@ export function getETCRecordPageList(params = {}) {
  * @param params.unitCode { Sting } 单位代码,
  * @return void
  */
- export function createETCCardRecord(params = {}) {
+export function createETCCardRecord(params = {}) {
   return request({
     url: `${VUE_APP_BASE_PREFIX}/gcywEtcRecord/add`,
-    method: "post",
-    data: params,
-  });
+    method: 'post',
+    data: params
+  })
 }
 
 /**
@@ -50,10 +53,10 @@ export function getETCRecordPageList(params = {}) {
  * @param params.unitCode { Sting } 单位代码,
  * @return void
  */
- export function updateETCCardRecord(params = {}) {
+export function updateETCCardRecord(params = {}) {
   return request({
     url: `${VUE_APP_BASE_PREFIX}/gcywEtcRecord/update`,
-    method: "post",
-    data: params,
-  });
+    method: 'post',
+    data: params
+  })
 }
