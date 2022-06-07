@@ -33,13 +33,32 @@ export function getVerificationCode(randomKey) {
   })
 }
 
-export function changePassword(data) {
+/**
+ * 修改初始密码
+ * @param data
+ * @returns {*}
+ */
+export function restInitPwd(data) {
   return request({
     url: `${VUE_APP_BASE_PREFIX}/auth/restPwd`,
     method: 'post',
     data
   })
 }
+
+/**
+ * 登陆后修改密码
+ * @param data
+ * @returns {*}
+ */
+export function changePassword(data) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/auth/changePassword`,
+    method: 'post',
+    data
+  })
+}
+
 export function getList() {
   return request({
     url: `${VUE_APP_BASE_PREFIX}/unitDict/getList`,

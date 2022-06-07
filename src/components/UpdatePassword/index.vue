@@ -10,10 +10,10 @@
         <span>请修改初始密码</span>
       </el-row>
       <el-form :model="passwordForm" status-icon :rules="passwordRules" ref="passwordForm" label-width="100px">
-        <!--<el-form-item label="旧密码:" prop="oldPass">-->
-        <!--  <el-input size="small" style="width: 80%" type="text" clearable v-model.trim="passwordForm.oldPass"-->
-        <!--            autocomplete="off"></el-input>-->
-        <!--</el-form-item>-->
+        <el-form-item label="旧密码:" prop="oldPass" v-if="!pwdInitStatus">
+          <el-input size="small" style="width: 80%" type="text" clearable v-model.trim="passwordForm.oldPass"
+                    autocomplete="off"></el-input>
+        </el-form-item>
         <el-form-item label="新密码:" prop="pass">
           <el-input size="small" style="width: 80%" type="text" clearable v-model.trim="passwordForm.pass"
                     autocomplete="off"></el-input>
@@ -35,7 +35,7 @@
 <script>
 
 import md5 from "js-md5";
-import {changePassword} from "@/api/login";
+import { changePassword, restInitPwd } from '@/api/login'
 import {removeToken} from "@/utils/auth";
 
 export default {
@@ -68,16 +68,16 @@ export default {
       updatePasswordLoading: false,
       visible: false,
       passwordForm: {
-        // oldPass: '',
+        oldPass: '',
         pass: '',
         checkPass: '',
       },
       passwordRules: {
-        // oldPass: [
-        //   {required: true, message: '请输入旧密码', trigger: 'blur'}
-        // ],
+        oldPass: [
+          {required: true, message: '请输入旧密码', trigger: 'blur'}
+        ],
         pass: [
-          // {required: true, validator: validatePass, trigger: 'blur'},
+          {required: true, validator: validatePass, trigger: 'blur'},
           {
             pattern: /^(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9])/,
             message: '密码由大小写字母+特殊字符+数字组成', trigger: 'blur'
@@ -89,15 +89,25 @@ export default {
         ]
       },
       // true表示登陆初始密码检测,false为登录后修改密码
-      initState: true,
+      pwdInitStatus: true,
     }
   },
   watch: {
     visible(newVal) {
       if (!newVal) {
         this.$refs.passwordForm.resetFields()
-        this.$emit('watchVisible', newVal)
+        if (this.pwdInitStatus) {
+          this.$emit('watchVisible', newVal)
+        }
       }
+    },
+    pwdInitStatus(newVal) {
+      newVal ? this.passwordRules.oldPass = [] :
+        this.passwordRules.oldPass = [{
+          required: true,
+          message: '请输入旧密码',
+          trigger: 'blur'
+        }]
     }
   },
   methods: {
@@ -105,32 +115,48 @@ export default {
     updatePassword() {
       this.$refs.passwordForm.validate((valid) => {
         if (valid) {
-          const password = md5(this.passwordForm.pass)
-          changePassword({password}).then(res => {
-            if (res.code === 0) {
-              this.$modal.msgSuccess('重置密码成功,请重新登陆');
-              this.visible = false
-            }
-          })
+          if (this.pwdInitStatus) {
+            // 初始密码修改
+            const password = md5(this.passwordForm.pass)
+            restInitPwd({password, pwdInitStatus: this.pwdInitStatus}).then(res => {
+              if (res.code === 0) {
+                this.$modal.msgSuccess('重置密码成功,请重新登陆');
+                this.visible = false
+              }
+            })
+          } else {
+            changePassword({
+              oldPass: md5(this.passwordForm.oldPass),
+              password: md5(this.passwordForm.pass),
+              pwdInitStatus: this.pwdInitStatus
+            }).then(res => {
+              if (res.code === 0) {
+                this.$modal.msgSuccess('修改密码成功');
+                this.visible = false
+              }
+            })
+          }
         }
       })
     },
     /**关闭修改初始密码对话框*/
     closeUpdatePassword() {
       this.visible = false
-      this.$store.commit('SET_TOKEN', '')
-      this.$store.commit('SET_ROLES', null)
-      this.$store.commit('SET_PERMISSIONS', [])
-      removeToken()
+      if (this.pwdInitStatus) {
+        this.$store.commit('SET_TOKEN', '')
+        this.$store.commit('SET_ROLES', null)
+        this.$store.commit('SET_PERMISSIONS', [])
+        removeToken()
+      }
     },
     /**
      * 重置密码弹窗初始化
      * @param visible 可见,传true
-     * @param initState true表示登陆初始密码检测,false为登录后修改密码
+     * @param pwdInitStatus true表示登陆初始密码检测,false为登录后修改密码
      */
-    initUpdatePassword(visible, initState) {
+    initUpdatePassword(visible, pwdInitStatus) {
       this.visible = visible
-      this.initState = initState
+      this.pwdInitStatus = pwdInitStatus
     }
   }
 }
