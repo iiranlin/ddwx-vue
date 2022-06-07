@@ -28,12 +28,18 @@
       @pagination="getList"
     />
     
-    <el-dialog title="选择类型" :visible.sync="openDataScope" width="600px" append-to-body>
+    <el-dialog title="选择类型" :visible.sync="openDataScope" width="600px" append-to-body center="">
       <el-form ref="elForm" :model="form" :rules="rules" label-width="85px">
         <el-row>
-          <el-col :span="12">
+          <el-col :span="24">
             <el-form-item label="类型:" prop="key">
-              <el-input v-model="form.key" placeholder="请输入类型" />
+              <el-select v-model="form.key" placeholder="请选择类型" style="width:100%" size="small">
+                <el-option v-for="item in typeOptions" 
+                  :key="item.value" 
+                  :label="item.name" 
+                  :value="item.name">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -50,6 +56,7 @@
 import {modelListPage, modelNewModel, modelEditUrl, modelUpdateFlag} from "@/api/system/activiti";
 import indexMixin from '@/views/mixins';
 import { getCookie, getToken } from '@/utils/auth'
+import {getListByParentId} from '@/api/system/dict'
 
 export default {
   name: "workflow",
@@ -70,6 +77,8 @@ export default {
       total: 0,
       // 单位表格数据
       dataList: [],
+      //类型数据
+      typeOptions:[],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -79,7 +88,7 @@ export default {
       // 表单校验
       rules: {
         key: [
-          {required: true, message: '请输入类型', trigger: 'blur'},
+          {required: true, message: '请选择类型', trigger: 'blur'},
         ],
       },
       //列表显示字段
@@ -97,6 +106,7 @@ export default {
     this.menuName = this.$route.meta.title;
     this.menuProperty();
     this.getList();
+    this.getTypeOptions();
     window.addEventListener("message", (e) => {
         if (e.data.type === 'end') {
             this.listQuery.pageNum = 1;
@@ -111,6 +121,16 @@ export default {
       this.$store.dispatch('menuProperty', id).then( (data) => {
         this.property = data;
       });
+    },
+    //获取类型数据
+    async getTypeOptions(){
+        this.loading = true;
+        await getListByParentId("1533721627991707648").then(({data}) => {
+            this.loading = false;
+            this.typeOptions = data;
+        }).catch((err) => {
+            this.loading = false;
+        })
     },
     numberChange(val) {
       this.numberShow = val;
@@ -173,7 +193,8 @@ export default {
         }
       } else if (buttonCode === 'create') {
         this.openDataScope = true;
-        this.$refs.elForm.resetFields();
+        this.form.key = "";
+        // this.$refs.elForm.resetFields();
       }
     },
     submitDataScope () {
@@ -186,8 +207,9 @@ export default {
       })
     },
     changeSwitch (row) {
-      modelUpdateFlag({flag: row.flag, id: row.modelId}).then( ({message}) => {
+      modelUpdateFlag({flag: row.flag, id: row.modelId,key: row.key}).then( ({message}) => {
         this.$modal.msgSuccess(message);
+        this.getList();
       })
     },
     openWidow(Url) {

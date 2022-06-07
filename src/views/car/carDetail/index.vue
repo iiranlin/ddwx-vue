@@ -177,7 +177,7 @@ export default {
     //获取期望车型字典
     async getHopeBrandInfo(){
             this.loading = true;
-            await getListByParentId("1018").then(({data}) => {
+            await getListByParentId("101801").then(({data}) => {
                 this.loading = false;
                 data.forEach((item) => {
                     if(item.code===this.vehicleData.hopeBrand){

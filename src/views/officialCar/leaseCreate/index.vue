@@ -222,15 +222,20 @@
         </el-row>
       </el-form>
     </el-row>
+    <!--弹出框-->
+    <operate ref="operate" @operateSuccess="operateSuccess"></operate>
   </div>
 </template>
 <script>
-import {vehicleInfoAddGVC} from "@/api/driver"
+import {vehicleInfoAddGVC,activitiAssigneeListByType} from "@/api/driver"
 import {getListByParentCode,getListByParentId} from '@/api/system/dict'
 import {deptListPage} from '@/api/system/dept'
 import {systemUnitListAll} from '@/api/system/dict/setting'
+import operate from "./components/operate"
 export default {
   name: "leaseCreate",
+  components:{operate},
+
   data() {
     return {
         //loading框
@@ -279,7 +284,9 @@ export default {
             rentApplydesc:"",   //申请理由及用途
             remark:"",   //备注
             usageFlag:"0",
-            status:"1"
+            status:"1",
+            procDefId:"",
+            assignee:""
         },
         rules:{
             usageUnitCode:[
@@ -445,20 +452,45 @@ export default {
                 this.loading = false;
             })
         },
-        //保存数据
+        //检查工作流
         handleSave() {
             this.$refs.elform.validate(async (result) => {
                 if (result) {
                     this.loading = true;
-                    await vehicleInfoAddGVC(Object.assign({}, this.form)).then(({message}) => {
+                    activitiAssigneeListByType({type:"公车租赁"}).then(({data}) => {
                         this.loading = false;
-                        this.$modal.msgSuccess(message);
-                        this.closeCurrentPage();
+                        if(!data.procDefId){
+                            this.vehicleInfoAdd();
+                        }else if(!!data.procDefId){
+                            this.form.procDefId = data.procDefId;
+                            if(!!data.assignee){
+                                this.form.assignee = data.assignee;
+                                this.vehicleInfoAdd();
+                            }else{
+                                this.$refs.operate.init(data.assigneeList);
+                            }
+                        }
                     }).catch((err) => {
                         this.loading = false;
                     })
-                }
+                } 
             })
+        },
+        //保存数据
+        async vehicleInfoAdd(){
+            this.loading = true;
+            await vehicleInfoAddGVC(Object.assign({}, this.form)).then(({message}) => {
+                this.loading = false;
+                this.$modal.msgSuccess(message);
+                this.closeCurrentPage();
+            }).catch((err) => {
+                this.loading = false;
+            })
+        },
+        //选择审批人后回调
+        operateSuccess(assignee){
+            this.form.assignee = assignee;
+            this.vehicleInfoAdd();
         },
         //关闭当前页面
         closeCurrentPage(){

@@ -7,6 +7,7 @@ const user = {
     state: {
         token: getToken(),
         name: '',
+        unitName:"",
         avatar: '',
         roles: false,
         permissions: []
@@ -18,6 +19,9 @@ const user = {
         },
         SET_NAME: (state, name) => {
             state.name = name
+        },
+        SET_UNIT_NAME: (state, unitName) => {
+            state.unitName = unitName
         },
         SET_AVATAR: (state, avatar) => {
             state.avatar = avatar
@@ -60,6 +64,7 @@ const user = {
                             //   commit('SET_ROLES', ['ROLE_DEFAULT'])
                             // }
                         commit('SET_NAME', user.username)
+                        commit('SET_UNIT_NAME',user.unitName)
                         
                         setCookie("unitCode", user.unitCode);
                             // commit('SET_AVATAR', avatar)
