@@ -9,6 +9,7 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
+          <span style="margin-right:10px;font-size:14px;">{{unitName}}</span>
           <span>{{name}}</span>
           <i class="el-icon-caret-bottom" />
         </div>
@@ -58,6 +59,7 @@ export default {
       'avatar',
       'device',
       'name',
+      'unitName',
     ]),
     ...mapState({
       sideTheme: state => state.settings.sideTheme,
