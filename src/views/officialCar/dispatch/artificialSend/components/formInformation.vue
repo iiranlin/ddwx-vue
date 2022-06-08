@@ -167,7 +167,7 @@ export default {
             let obj = {
                 carNumber: carNumber,
                 cityId: cityId[1],
-                usageDate: this.row.usageDate
+                date: this.row.usageDate
             }
             vehicleInfoIsRestriction(obj).then(({message}) => {
                 this.formData.list[index].carName = message;
