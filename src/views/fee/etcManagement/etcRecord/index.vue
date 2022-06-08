@@ -179,6 +179,7 @@ export default {
     uploadOnSuccess(code, data, message) {
       if (code === 0) {
         this.$modal.msgSuccess('导入成功')
+        this.handleQuery()
       } else {
         this.$modal.msgError(message)
       }
