@@ -70,11 +70,16 @@ export default {
                 actId: this.row.actId,
             };
             activitiAssigneeList(obj).then( ({data}) => {
-                this.deptOptions = data;
-                if(this.deptOptions.length > 0){
-                    this.openWorkflow = true;
-                }else{
+                if(data.assignee){
+                    this.form.id = data.assignee;
                     this.activitiComplete();
+                }else{
+                    if(data.assigneeList.length > 0){
+                        this.deptOptions = data.assigneeList;
+                        this.openWorkflow = true;
+                    }else{
+                        this.activitiComplete();
+                    }
                 }
             })
         },

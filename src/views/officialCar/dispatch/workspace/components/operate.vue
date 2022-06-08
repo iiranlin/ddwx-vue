@@ -13,7 +13,7 @@
                 >
                     <el-option v-for="item in unitList" 
                     :key="item.id" 
-                    :label="item.turnUnitCode" 
+                    :label="item.turnUnitName" 
                     :value="item.id">
                     </el-option>
                 </el-select>

@@ -27,6 +27,7 @@
     />
     <table-index
       ref="tableIndex"
+      :id="'detailId'"
       :loading="loading"
       :tableIndexs="tableIndex"
       :numberShow="numberShow"

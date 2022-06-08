@@ -107,7 +107,7 @@ export default {
             classId:"",
         }
     },
-    activated(){
+    created(){
         Object.assign(this.$data, this.$options.data());
         this.getClassList();
         this.refreshList();
