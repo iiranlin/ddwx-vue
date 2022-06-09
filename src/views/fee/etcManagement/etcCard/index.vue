@@ -1,5 +1,5 @@
 <template>
-  <div class='app-container_list refueling-record'>
+  <div class="app-container_list refueling-record">
     <el-row
       :gutter="20"
       class="container_h"
@@ -87,22 +87,18 @@
 
 <script>
 
-import indexMixin from "@/views/mixins"
-import { getEtcCardPageList, switchETCEnabled } from "@/api/etc";
-import operate from "./components/operate"
+import indexMixin from '@/views/mixins'
+import { getEtcCardPageList, switchETCEnabled } from '@/api/etc'
+import operate from './components/operate'
 
 export default {
   name: 'etcCard',
   mixins: [indexMixin],
   components: {
-    operate,
+    operate
   },
-  filters: {
-
-  },
-  props: {
-
-  },
+  filters: {},
+  props: {},
   data() {
     return {
       //遮罩层
@@ -134,21 +130,17 @@ export default {
       operateDialogFlag: false,
       // 按钮类型 增删更新
       buttonCode: '',
-      rowId: '',
-    };
+      rowId: ''
+    }
   },
-  computed: {
-
-  },
-  watch: {
-
-  },
+  computed: {},
+  watch: {},
   activated() {
     // this.menuProperty();
     // this.getList()
   },
   created() {
-    this.menuProperty();
+    this.menuProperty()
   },
   mounted() {
     this.getList()
@@ -156,44 +148,44 @@ export default {
   methods: {
     //查询菜单数据
     async menuProperty() {
-      let id = this.$route.meta.id;
-      const res = await this.$store.dispatch('menuProperty', id);
-      this.property = res;
+      let id = this.$route.meta.id
+      const res = await this.$store.dispatch('menuProperty', id)
+      this.property = res
     },
     //获取分页数据
     async getList() {
-      this.loading = true;
+      this.loading = true
       try {
         const params = {
           ...this.listQuery,
           ...this.formData
         }
-        const { data = {} } = await getEtcCardPageList(params);
-        this.dataList = data.list;
-        this.total = data.total;
-        this.loading = false;
+        const { data = {} } = await getEtcCardPageList(params)
+        this.dataList = data.list
+        this.total = data.total
+        this.loading = false
       } catch (e) {
 
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
     //顶部按钮点击
     newButton(buttonCode, row) {
-      this.$refs.tableIndex.newButton(buttonCode, row);
+      this.$refs.tableIndex.newButton(buttonCode, row)
     },
     //页面按钮点击事件
     async handleButton(ids, buttonCode) {
-      this.rowId = ids;
+      this.rowId = ids
       this.buttonCode = buttonCode
       if (buttonCode === 'create') {
         this.rowId = ''
         this.operateDialogFlag = true
-        return;
+        return
       }
       if (buttonCode === 'update') {
         this.operateDialogFlag = true
-        return;
+        return
       }
       // if (buttonCode === 'distribute') {
       //   this.distributeDialogFlag = true
@@ -211,78 +203,78 @@ export default {
           enabled: 'Y'
         }
         buttonCode === 'stop' ? params.enabled = 'N' : params.enabled = 'Y'
-        await this.editEtcStatus(params, buttonCode = '')
-        return;
+        await this.editEtcStatus(params, buttonCode)
       }
     },
     //顶部列字段展示
     handleCheckAllChange(columns) {
-      this.$refs.tableIndex.init(columns);
+      this.$refs.tableIndex.init(columns)
     },
     //顶部重置按钮
     clickReset() {
-      this.menuProperty();
-      this.handleQuery();
+      this.menuProperty()
+      this.handleQuery()
     },
     //表格内部搜索条件回调
     selectChange(type, value) {
-      if (type === "createTime") {
-        this.dateRange = value;
+      if (type === 'createTime') {
+        this.dateRange = value
       } else {
-        this.formData[type] = value;
+        this.formData[type] = value
       }
-      this.handleQuery();
+      this.handleQuery()
     },
     //表格内部排序
     emitAblFilter() {
-      this.getList();
+      this.getList()
     },
     //多选获取行数据
     handleSelectionChange(ids, single, multiple, selection) {
       // this.single = single;
-      this.multiple = multiple;
-      this.selectionData = selection;
+      this.multiple = multiple
+      this.selectionData = selection
     },
     //新建或修改成功回调
     operateSuccess() {
-      this.handleQuery();
+      this.handleQuery()
     },
     //刷新列表数据
     handleQuery(row = {}) {
-      this.formData = Object.assign({}, this.formData, row);
-      this.getList();
+      this.formData = Object.assign({}, this.formData, row)
+      this.getList()
     },
     tableRowClassName({ row, rowIndex }) {
-      row.index = rowIndex + 1;
+      row.index = rowIndex + 1
     },
     // 批量启用停用ETC
     async editEtcStatus(params = {}, buttonCode = '') {
       const loading = this.$loading({
         lock: true,
-        text: "加载中...",
-      });
+        text: '加载中...'
+      })
       try {
-        await this.$confirm(`是否${buttonCode === 'stop' ? '停用' : '启用'}用所选信息?`, "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-          center: true,
-        });
-        const { message = '操作成功！' } = await switchETCEnabled(params);
+        console.log(buttonCode)
+        await this.$confirm(`是否${buttonCode === 'stop' ? '停用' : '启用'}用所选信息?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          center: true
+        })
+        const { message = '操作成功！' } = await switchETCEnabled(params)
         this.$message.success(message)
-        this.handleQuery();
+        this.handleQuery()
       } catch (e) {
-        if (e === "cancel") {
-          this.$message.info("已取消");
+        if (e === 'cancel') {
+          this.$message.info('已取消')
         } else {
-          throw new Error(e.message || "请求失败");
+          throw new Error(e.message || '请求失败')
         }
       } finally {
-        loading.close();
+        loading.close()
       }
     }
-  },
-};
+  }
+}
 </script>
 
 <style scoped lang="scss">

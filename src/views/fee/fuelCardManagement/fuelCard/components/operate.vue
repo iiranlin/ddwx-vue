@@ -127,6 +127,7 @@
           >
             <el-input
               v-model="form.cardNumber"
+              maxlength="20"
               clearable
               size="small"
             ></el-input>
