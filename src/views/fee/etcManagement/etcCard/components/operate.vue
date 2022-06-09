@@ -131,6 +131,7 @@
             <el-input
               v-model="form.cardNumber"
               placeholder="请输入卡号"
+              maxlength="20"
               clearable
               size="small"
             ></el-input>

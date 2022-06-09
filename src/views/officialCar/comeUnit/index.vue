@@ -42,6 +42,7 @@
           :loading="loading"
           :tableData="dataList"
           :property="property"
+          :numberShow="true"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
           @selectChange="selectChange"

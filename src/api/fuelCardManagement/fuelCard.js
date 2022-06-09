@@ -91,7 +91,6 @@ export function getFuelCardListPage(params = {}) {
  * @function getFuelCardDetail
  * @description 根据卡id获取详细信息 获取加油卡详情
  * @param id { String } id
- * @return void
  */
  export function getFuelCardDetail(id = '') {
   return request({
@@ -107,7 +106,6 @@ export function getFuelCardListPage(params = {}) {
  * @param params.balance { Number } 余额
  * @param params.cardNumber { Sting } 卡号,
  * @param params.assignMoney { Sting } 分配金额,
- * @return void
  */
  export function distributeChildFuelCard(params = {}) {
   return request({
@@ -119,13 +117,11 @@ export function getFuelCardListPage(params = {}) {
 
 
 /**
- * @function getAllFuelChildrenCard
- * @description  获取未分配副卡
- * @return void
+ * 条件查询: 部分页
  */
- export function getAllFuelChildrenCard(params = {}) {
+ export function getFuelCardListAll(params = {}) {
   return request({
-    url: `${VUE_APP_BASE_PREFIX}/gcjcFuelCard/notAssignedChildCard`,
+    url: `${VUE_APP_BASE_PREFIX}/gcjcFuelCard/listAll`,
     method: "get",
     params,
   });
