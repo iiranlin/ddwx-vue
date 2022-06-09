@@ -160,7 +160,7 @@
               >
                 <el-input
                   v-model="formData.usagePersons"
-                  maxlength="200"
+                  maxlength="3"
                   placeholder="请输入乘坐人数"
                 />
               </el-form-item>
@@ -177,7 +177,7 @@
               >
                 <el-input
                   v-model="formData.userName"
-                  maxlength="200"
+                  maxlength="10"
                   placeholder="请输入乘车人"
                 />
               </el-form-item>
@@ -194,7 +194,8 @@
               >
                 <el-input
                   v-model="formData.phone"
-                  maxlength="200"
+                  @input="numberInput($event,'phone')"
+                  maxlength="20"
                   placeholder="请输入联系电话"
                 />
               </el-form-item>
@@ -261,9 +262,9 @@
               >
                 <el-input
                   v-model="formData.timeLength"
-                  maxlength="10"
+                  maxlength="5"
                   placeholder="请输入预计时长"
-                  @change="inputNumberChange(item.timeLength, 'timeLength', index)"
+                  @change="inputNumberChange(formData.timeLength, 'timeLength')"
                 >
                   <span slot="append">小时</span>
                 </el-input>
@@ -455,7 +456,7 @@
                 >
                   <el-input
                     v-model="item.endMiles"
-                    maxlength="200"
+                    maxlength="8"
                     placeholder="请输入还车里程"
                     @change="inputNumberChange(item.endMiles, 'endMiles', index)"
                   >
@@ -529,6 +530,7 @@ import formAddress from "@/views/car/apply/components/formAddress";
 import getDict from "@/views/mixins/getDict"
 import { numToFixed2 } from '@/utils/index'
 import { getCookie } from '@/utils/auth'
+import { numberInput } from '@/utils/index'
 
 export default {
   name: "editDrivingRecord",
@@ -551,6 +553,7 @@ export default {
     }
     const isValidate = true
     return {
+      numberInput: numberInput,
       loading: false,
       dateList: [],
       calendarVal: null,
