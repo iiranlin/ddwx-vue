@@ -226,7 +226,6 @@
               :autosize="{ minRows: 3, maxRows: 5}"
               size="small"
             ></el-input>
-            </el-select>
           </el-form-item>
         </el-col>
       </el-row>
@@ -251,29 +250,25 @@
 <script>
 
 import { numToFixed2 } from '@/utils/index'
-import { searchCarSelectInfo } from "@/api/car"
+import { searchCarSelectInfo } from '@/api/car'
 import {
-  getFuelCardByCarNumber,
-} from "@/api/fuelCardManagement/fuelCard"
+  getFuelCardByCarNumber
+} from '@/api/fuelCardManagement/fuelCard'
 import {
-  createFuelCardRecord,
-} from "@/api/fuelCardManagement/fuelCardRecord"
-import { FUEL_CARD_RECORD_DICT } from "@/views/fee/fuelCardManagement/constants/index"
-import getDict from "@/views/mixins/getDict"
-import _ from "lodash"
+  createFuelCardRecord
+} from '@/api/fuelCardManagement/fuelCardRecord'
+import { FUEL_CARD_RECORD_DICT } from '@/views/fee/fuelCardManagement/constants/index'
+import getDict from '@/views/mixins/getDict'
+import _ from 'lodash'
 
 export default {
   name: '',
   mixins: [getDict],
-  components: {
-
-  },
-  filters: {
-
-  },
+  components: {},
+  filters: {},
   props: {
     rowId: {
-      default: '',
+      default: ''
     },
     buttonCode: {
       type: String,
@@ -289,11 +284,11 @@ export default {
       //遮罩层
       loading: false,
       //标题
-      title: "新建加油卡交易记录",
+      title: '新建加油卡交易记录',
       //类型
-      type: "",
+      type: '',
       //数据id
-      id: "",
+      id: '',
       //显示隐藏
       openDataScope: false,
       //表单数据
@@ -319,53 +314,53 @@ export default {
         // 单价
         oilPrice: '',
         // 摘要
-        remark: '',
+        remark: ''
       },
       //单位数据
       unitData: [],
       //表单校验
       rules: {
         carNumber: [
-          { required: true, message: "所属车辆不能为空", trigger: "change" }
+          { required: true, message: '所属车辆不能为空', trigger: 'change' }
         ],
         // 卡号
         cardNumber: [
-          { required: true, message: "卡号不能为空", trigger: "change" }
+          { required: true, message: '卡号不能为空', trigger: 'change' }
         ],
         // 交易类型
         incomeOrExp: [
-          { required: true, message: "交易类型不能为空", trigger: "change" }
+          { required: true, message: '交易类型不能为空', trigger: 'change' }
         ],
         // 油品类型  汽油标号 92 95 98
         gasGrade: [
-          { required: true, message: "油品类型不能为空", trigger: "change" }
+          { required: true, message: '油品类型不能为空', trigger: 'change' }
         ],
         // 交易金额
         transFee: [
-          { required: true, message: "交易金额不能为空", trigger: "blur" }
+          { required: true, message: '交易金额不能为空', trigger: 'blur' }
         ],
         // 交易时间
         transDate: [
-          { required: true, message: "交易时间不能为空", trigger: "change" }
+          { required: true, message: '交易时间不能为空', trigger: 'change' }
         ],
         // 余额
         balance: [
-          { required: false, message: "余额不能为空", trigger: "change" }
+          { required: false, message: '余额不能为空', trigger: 'change' }
         ],
         // 记账时间
         bookTime: [
-          { required: true, message: "记账时间不能为空", trigger: "change" }
+          { required: true, message: '记账时间不能为空', trigger: 'change' }
         ],
         // 数量
         oilVolume: [
-          { required: true, message: "数量不能为空", trigger: "blur" }
+          { required: true, message: '数量不能为空', trigger: 'blur' }
         ],
         // 单价
         oilPrice: [
-          { required: true, message: "单价不能为空", trigger: "blur" }
+          { required: true, message: '单价不能为空', trigger: 'blur' }
         ],
         // 摘要
-        remark: '',
+        remark: ''
       },
       // 下拉搜索框的loading
       selectLoading: false,
@@ -377,8 +372,8 @@ export default {
       selectCardInfo: {},
       selectOptions: {
         incomeOrExp: [],
-        gasGrade: [],
-      },
+        gasGrade: []
+      }
     }
   },
   computed: {
@@ -391,7 +386,7 @@ export default {
     operateDialogFlag: {
       handler(val) {
         if (val) {
-          this.openDataScope = true;
+          this.openDataScope = true
           this.init(this.buttonCode, this.rowId)
         }
       }
@@ -409,26 +404,29 @@ export default {
   methods: {
     //初始化
     init(type, id) {
-      this.type = type;
-      this.id = id;
-      this.$nextTick(async () => {
-        if (type === "create") {
-          this.title = "新建加油卡交易记录"
+      this.type = type
+      this.id = id
+      this.$nextTick(async() => {
+        if (type === 'create') {
+          this.title = '新建加油卡交易记录'
         }
         // else if (type === "update") {
         //   this.title = "修改ETC交易记录"
         //   // this.getETCDetail(this.id);
         // }
-        await this.handleSystemCardDict(Object.keys(this.selectOptions));
+        await this.handleSystemCardDict(Object.keys(this.selectOptions))
         await this.remoteMethod('')
       })
     },
     // 获取当前页面的通用字典下拉数据
     async handleSystemCardDict(nameArr = []) {
       for (const item of nameArr) {
-        const res = await this.getOperateDictList(FUEL_CARD_RECORD_DICT[item].id);
+        const res = await this.getOperateDictList(FUEL_CARD_RECORD_DICT[item].id)
         this.selectOptions[item] = res
       }
+      // 去掉'转存'选项
+      let list = this.selectOptions.incomeOrExp
+      this.selectOptions['incomeOrExp'] = list.slice(0, 2)
     },
     // 模糊搜索车牌号码
     async remoteMethod(carNumber) {
@@ -438,21 +436,21 @@ export default {
       // }
       const params = {
         carNumber,
-        cardType: 'fuel',
+        cardType: 'fuel'
       }
-      this.selectLoading = true;
+      this.selectLoading = true
       try {
-        const { data = [] } = await searchCarSelectInfo(params);
-        this.carNumberOptions = (data ?? []) || [];
+        const { data = [] } = await searchCarSelectInfo(params)
+        this.carNumberOptions = (data ?? []) || []
       } catch (e) {
-        throw new Error(e.message || "获取车辆下拉选择框失败");
+        throw new Error(e.message || '获取车辆下拉选择框失败')
       } finally {
-        this.selectLoading = false;
+        this.selectLoading = false
       }
     },
     // 车辆发生变化时  获取卡号
     async carNumberChange(val) {
-      this.form.cardNumber = null;
+      this.form.cardNumber = null
       this.$nextTick(() => {
         this.$refs.elForm.clearValidate('cardNumber')
       })
@@ -461,14 +459,14 @@ export default {
     // 根据车牌号码获取油卡
     async getFuelCard(cardNumber = '') {
       if (!cardNumber) {
-        this.cardNumberOptions = [];
-        return;
+        this.cardNumberOptions = []
+        return
       }
       try {
-        const { data = [] } = await getFuelCardByCarNumber(cardNumber);
-        this.cardNumberOptions = data;
+        const { data = [] } = await getFuelCardByCarNumber(cardNumber)
+        this.cardNumberOptions = data
       } catch (e) {
-        throw new Error(e.message || "获取所有的加油卡失败");
+        throw new Error(e.message || '获取所有的加油卡失败')
       } finally {
         // loading.close();
       }
@@ -477,49 +475,49 @@ export default {
     cardNumberChange(v) {
       if (!v) {
         this.selectCardInfo = {},
-          this.form.balance = '';
-        return;
+          this.form.balance = ''
+        return
       }
-      this.selectCardInfo = this.cardNumberOptions.find(item => item.cardNumber === v) ?? {};
-      this.form.balance = this.selectCardInfo.balance ?? 0;
+      this.selectCardInfo = this.cardNumberOptions.find(item => item.cardNumber === v) ?? {}
+      this.form.balance = this.selectCardInfo.balance ?? 0
     },
     //新建
     handleCreate() {
-      this.$refs.elForm.validate(async (valid) => {
+      this.$refs.elForm.validate(async(valid) => {
         if (valid) {
           const params = {
-            ...this.form,
+            ...this.form
           }
           const loading = this.$loading({
             lock: true,
-            text: "加载中...",
-          });
+            text: '加载中...'
+          })
           try {
-            const { message } = await createFuelCardRecord(params);
-            this.$modal.msgSuccess(message);
-            this.openDataScope = false;
-            this.$emit('operateSuccess');
+            const { message } = await createFuelCardRecord(params)
+            this.$modal.msgSuccess(message)
+            this.openDataScope = false
+            this.$emit('operateSuccess')
           } catch (e) {
-            throw new Error(e.message);
+            throw new Error(e.message)
           } finally {
-            loading.close();
+            loading.close()
           }
         }
       })
     },
     //取消
     handleCancel() {
-      this.openDataScope = false;
+      this.openDataScope = false
     },
     //关闭dialog回调
     handleDialogClose() {
-      this.$refs.elForm.resetFields();
+      this.$refs.elForm.resetFields()
     },
     // 处理输入的数字
     inputNumberChange(val, label) {
-      this.form[label] = numToFixed2(val);
+      this.form[label] = numToFixed2(val)
     }
-  },
+  }
 }
 </script>
 <style scoped>
