@@ -1,6 +1,6 @@
 <template>
     <!-- 添加或修改部门对话框 -->
-    <el-dialog :title="title" :visible.sync="openDataScope" width="500px" append-to-body>
+    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="openDataScope" width="500px" append-to-body>
       <el-form ref="elForm" :model="form" :rules="rules" label-width="85px">
         <el-row :gutter="24">
           <el-col :span="24">
@@ -12,9 +12,9 @@
                     filterable
                 >
                     <el-option v-for="item in unitList" 
-                    :key="item.id" 
+                    :key="item.turnUnitCode" 
                     :label="item.turnUnitName" 
-                    :value="item.id">
+                    :value="item.turnUnitCode">
                     </el-option>
                 </el-select>
             </el-form-item>

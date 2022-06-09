@@ -22,7 +22,7 @@
     />
 
     <!-- 添加或修改数据规则对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="860px" append-to-body>
+    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="open" width="860px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row :gutter="24">
           <el-col :span="12">

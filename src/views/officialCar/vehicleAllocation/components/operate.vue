@@ -1,5 +1,5 @@
 <template>
-    <el-dialog :title="title" :visible.sync="openDataScope" width="800px" append-to-body center @close="handleDialogClose()">
+    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="openDataScope" width="800px" append-to-body center @close="handleDialogClose()">
         <el-row :span="24" :gutter="20">
             <el-table :data="vehicleData" border stripe style="width: 100%" max-height="400px"  v-loading="loading">
                 <el-table-column label="车牌号" prop="carNumber" width="200" align="center"></el-table-column>

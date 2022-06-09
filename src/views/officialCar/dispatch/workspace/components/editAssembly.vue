@@ -1,6 +1,6 @@
 <template>
     <!-- 添加或修改部门对话框 -->
-    <el-dialog :title="title" :visible.sync="openDataScope" width="800px" append-to-body>
+    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="openDataScope" width="800px" append-to-body>
         <el-form ref="elForm" :inline="true" :model="formData" :rules="rules">
             <el-row>
                 <el-col :span="12">
@@ -62,7 +62,7 @@
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="预计时长:" prop="timeLength">
-                        <el-input  v-model="formData.timeLength" style="width: 217px" maxlength="200" placeholder="请输入预计时长" />
+                        <el-input  v-model="formData.timeLength" style="width: 217px" maxlength="10" placeholder="请输入预计时长" />
                     </el-form-item>
                 </el-col>
             </el-row>

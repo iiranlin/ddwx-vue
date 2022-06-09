@@ -56,10 +56,11 @@ export function deptDeleteBatch(data) {
 }
 
 // 查询部门下拉树结构
-export function deptTree() {
+export function deptTree(params) {
   return request({
     url: `${VUE_APP_BASE_PREFIX}/dept/tree`,
-    method: 'get'
+    method: 'get',
+    params
   })
 }
 

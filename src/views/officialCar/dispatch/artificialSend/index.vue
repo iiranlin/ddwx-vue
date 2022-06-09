@@ -29,7 +29,14 @@
                         </el-col>
                         <el-col :xs="24" :sm="12" :md="8" :lg="8">
                             <el-form-item label="用车部门" prop="deptId">
-                                <el-select
+                                <treeselect v-model="formData.deptId"
+                                    :appendToBody="true"
+                                    z-index="9999"
+                                    :options="deptData"
+                                    :normalizer="normalizer"
+                                    @input="deptIdChange"
+                                    placeholder="选择上级部门" />
+                                <!-- <el-select
                                     ref="deptIdRef"
                                     v-model="formData.deptId"
                                     placeholder="请选择用车部门"
@@ -41,7 +48,7 @@
                                         :label="item.deptName"
                                         :value="item.id">
                                     </el-option>
-                                </el-select>
+                                </el-select> -->
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -136,7 +143,7 @@
                         </el-col>
                         <el-col :xs="24" :sm="12" :md="8" :lg="8">
                             <el-form-item label="预计时长:" prop="timeLength">
-                                <el-input v-model="formData.timeLength" @input="limitInput($event,'timeLength')" maxlength="200" placeholder="请输入预计时长">
+                                <el-input v-model="formData.timeLength" @input="limitInput($event,'timeLength')" maxlength="10" placeholder="请输入预计时长">
                                     <span slot="append">小时</span>
                                 </el-input>
                             </el-form-item>
@@ -206,7 +213,7 @@
 <script>
 import { vehicleInfoGetAssignCount } from "@/api/vehicleInfo";
 import { getAllAvailableUnit } from "@/api/system/unit"
-import { getAllAvailableDept } from "@/api/dept"
+import { deptTree } from "@/api/system/dept";
 import getDict from "@/views/mixins/getDict"
 import formAddress from "./components/formAddress";
 import formCalendar from "./components/formCalendar";
@@ -214,10 +221,12 @@ import formInformation from "./components/formInformation";
 import { saveOrderDispatch } from "@/api/gcywVehicleRequest";
 import { limitInput, numberInput } from '@/utils/index'
 import { getCookie } from '@/utils/auth'
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 export default {
     name: "dispatchACar",
     mixins: [getDict],
-    components: { formAddress, formCalendar, formInformation },
+    components: { formAddress, formCalendar, formInformation, Treeselect },
     data() {
         var checkfromAddr = (rule, value, callback) => {
             if(value.indexOf('null') == -1 && value){
@@ -248,7 +257,7 @@ export default {
             deptData: [],
             formData: {
                 unitCode: '',
-                deptId: '',
+                deptId: undefined,
                 reasonCode: '1',
                 demandCode: '1001801',
                 longDistanceTag: '0',
@@ -380,13 +389,31 @@ export default {
             }).finally(() => {
             })
         },
+        /** 转换部门数据结构 */
+        normalizer(node) {
+            if (node.children && !node.children.length) {
+                delete node.children;
+            }
+            return {
+                id: node.id,
+                label: node.deptName,
+                children: node.children
+            };
+        },
         // 获取用车部门列表
         async getDeptDictList(val) {
             try {
+                let valId = '';
+                this.unitData.forEach( (item) => {
+                    if(item.unitCode === val){
+                        valId = item.id;
+                    }
+                })
                 const params = {
-                unitCode: val
+                    unitId: valId
                 }
-                const { data } = await getAllAvailableDept(params);
+                const { data } = await deptTree(params);
+                console.log(data)
                 this.deptData = data;
             } catch (e) {
 
@@ -400,9 +427,9 @@ export default {
         },
         // 用车单位发生变化时
         unitCodeChange(val) {
-            this.formData.deptId = '';
+            this.formData.deptId = undefined;
             this.vehicleInfoGetAssignCount();
-            this.$refs.formInformation.init(this.formData);
+            // this.$refs.formInformation.init(this.formData);
             if (!val) {
                 this.deptData = [];
                 return
@@ -410,8 +437,10 @@ export default {
             this.getDeptDictList(val);
         },
         deptIdChange (val) {
-            this.vehicleInfoGetAssignCount();
-            this.$refs.formInformation.init(this.formData);
+            if(val){
+                this.vehicleInfoGetAssignCount();
+                this.$refs.formInformation.init(this.formData);
+            }
         },
         addressSuccessOut (row) {
             let {id, name} = row;
@@ -433,13 +462,13 @@ export default {
             // TODO 当获取部门接口正常时  解开注释
             if (!this.formData.deptId) {
                 this.$message.warning('请先选择用车部门');
-                this.$refs.deptIdRef.focus();
+                this.$refs.unitCodeRef.focus();
                 return;
             }
             // TODO 当获取日期接口正常时  解开注释
             if (!this.formData.usageDate) {
                 this.$message.warning('请先选择用车日期');
-                this.$refs.deptIdRef.focus();
+                this.$refs.unitCodeRef.focus();
                 return;
             }
             if(!this.formData.toAddr && !this.formData.fromAddr){

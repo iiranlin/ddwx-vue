@@ -1,7 +1,7 @@
 <template>
   <!-- 添加或修改部门对话框 -->
   <el-dialog
-    :title="title"
+    :title="title" :close-on-click-modal="false"
     :visible.sync="openDataScope"
     width="1300px"
     :fullscreen="dialogFull"

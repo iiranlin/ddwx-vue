@@ -96,7 +96,7 @@
               </el-col>
               <el-col :span="8">
                 <el-form-item label="预计时长:" prop="timeLength">
-                  <el-input disabled v-model="formData.timeLength" maxlength="200" placeholder="请输入预计时长" />
+                  <el-input disabled v-model="formData.timeLength" maxlength="10" placeholder="请输入预计时长" />
                 </el-form-item>
               </el-col>
             </el-row>

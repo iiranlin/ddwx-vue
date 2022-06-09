@@ -1,5 +1,5 @@
 <template>
-    <el-dialog :title="title" :visible.sync="openDataScope" width="600px" append-to-body center @close="handleDialogClose()">
+    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="openDataScope" width="600px" append-to-body center @close="handleDialogClose()">
         <el-carousel trigger="click" indicator-position="outside" :autoplay="false">
             <el-carousel-item v-for="(item,index) in filePaths" :key="index">
                 <img :src="item" style="width:100%;height:100%;">

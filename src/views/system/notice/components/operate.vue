@@ -1,6 +1,6 @@
 <template>
     <!-- 分配角色数据权限对话框 -->
-    <el-dialog :title="title" :visible.sync="openDataScope" width="500px" append-to-body v-loading="loading">
+    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="openDataScope" width="500px" append-to-body v-loading="loading">
       <el-form ref="elForm" :model="form" :rules="rules" label-width="85px">
         <el-form-item label="通知标题:" prop="noticeTitle">
           <el-input v-model="form.noticeTitle" />

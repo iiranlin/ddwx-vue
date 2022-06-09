@@ -1,5 +1,6 @@
 <template>
   <el-dialog
+    :close-on-click-modal="false"
     :title="title"
     :visible.sync="openDataScope"
     width="600px"

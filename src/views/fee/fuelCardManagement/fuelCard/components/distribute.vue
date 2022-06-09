@@ -3,6 +3,7 @@
 
     <el-dialog
       :title="title"
+      :close-on-click-modal="false"
       :visible.sync="openDataScope"
       width="600px"
       append-to-body

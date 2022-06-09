@@ -1,6 +1,6 @@
 <template>
     <!-- 添加或修改单位对话框 -->
-    <el-dialog :title="title" :visible.sync="openDataScope" width="500px" append-to-body>
+    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="openDataScope" width="500px" append-to-body>
       <el-form ref="elForm" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="单位编号" prop="unitCode">
           <el-input v-model="form.unitCode" placeholder="请输入单位编号"/>

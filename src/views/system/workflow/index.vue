@@ -28,7 +28,7 @@
       @pagination="getList"
     />
     
-    <el-dialog title="选择类型" :visible.sync="openDataScope" width="600px" append-to-body center="">
+    <el-dialog :close-on-click-modal="false" title="选择类型" :visible.sync="openDataScope" width="600px" append-to-body center="">
       <el-form ref="elForm" :model="form" :rules="rules" label-width="85px">
         <el-row>
           <el-col :span="24">

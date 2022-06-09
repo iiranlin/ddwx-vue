@@ -1,5 +1,5 @@
 <template>
-    <el-dialog :title="title" :visible.sync="openDataScope" width="600px" append-to-body>
+    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="openDataScope" width="600px" append-to-body>
         <el-table ref="elTable" class="container_table" v-loading="loading" height="300px" :data="noticeLogList" @selection-change="handleSelectionChange" @sort-change="sortableColumnChange">
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <!-- <el-table-column label="通知标题" prop="noticeTitle" sortable="custom" align="center" :show-overflow-tooltip="true" width="150" />

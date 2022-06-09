@@ -88,6 +88,9 @@
                         <el-form-item label="出场里程："><span>{{item.beginMiles}}</span></el-form-item>
                     </el-col>
                     <el-col :span="8">
+                        <el-form-item label="还车里程："><span>{{item.endMiles}}</span></el-form-item>
+                    </el-col>
+                    <el-col :span="8">
                         <el-form-item label="下次保养里程："><span>{{item.nextMaintainDate}}</span></el-form-item>
                     </el-col>
                     <el-col :span="8">
@@ -158,7 +161,6 @@ export default {
             await gcywVehicleRequestDispatchList(Object.assign({}, {id:this.id})).then(({data}) => {
                 this.vehicleData = data.list[0] || {};
                 this.loading = false;
-                console.log(this.vehicleData)
                 this.getHopeBrandInfo();
             }).catch((err) => {
                 this.loading = false;
@@ -184,7 +186,6 @@ export default {
                         this.hopeBrandInfo = item.name;
                     }
                 })
-                console.log(this.hopeBrandInfo);
             }).catch((err) => {
                 this.loading = false;
             })

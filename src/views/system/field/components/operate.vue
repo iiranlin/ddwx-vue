@@ -1,6 +1,6 @@
 <template>
     <!-- 添加或修改部门对话框 -->
-    <el-dialog :title="title" :visible.sync="openDataScope" width="700px" append-to-body>
+    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="openDataScope" width="700px" append-to-body>
       <el-form ref="elForm" :model="form" :rules="rules" label-width="105px">
         <el-row>
           <el-col :span="12">

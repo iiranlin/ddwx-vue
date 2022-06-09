@@ -41,7 +41,7 @@
         </el-dropdown-menu>
       </el-dropdown>
     </el-row>
-    <!-- <el-dialog :title="title" :visible.sync="open" append-to-body>
+    <!-- <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="open" append-to-body>
       <el-transfer
         :titles="['显示', '隐藏']"
         v-model="value"

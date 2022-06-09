@@ -1,5 +1,5 @@
 <template>
-   <el-dialog :title="title" :visible.sync="openDataScope" width="600px" append-to-body center @close="handleDialogClose()">
+   <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="openDataScope" width="600px" append-to-body center @close="handleDialogClose()">
         <h3 style="float:left;margin-right:20px;margin-left:20px;">{{feedBackType}}</h3>
         <h5 >{{form.loginUser}} {{parseTime(form.creaetDate,'{y}-{m}-{d} {h}-{m}-{s}')}}</h5>
         <h4 style="margin-left:20px;margin-bottom:20px;height:100px">{{form.suggestionContext}}</h4>

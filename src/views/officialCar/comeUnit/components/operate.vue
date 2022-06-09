@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="title" :visible.sync="openDataScope" width="800px" append-to-body center @close="handleDialogClose">
+  <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="openDataScope" width="800px" append-to-body center @close="handleDialogClose">
     <el-form :model="form" :rules="rules" label-suffix="：" ref="elForm" label-width="120px" v-loading="loading">
       <el-row>
         <el-col :span="12">

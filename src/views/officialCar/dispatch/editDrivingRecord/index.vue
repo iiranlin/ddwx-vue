@@ -261,7 +261,7 @@
               >
                 <el-input
                   v-model="formData.timeLength"
-                  maxlength="200"
+                  maxlength="10"
                   placeholder="请输入预计时长"
                   @change="inputNumberChange(item.timeLength, 'timeLength', index)"
                 >
@@ -528,6 +528,7 @@ import { saveOrderDispatch } from "@/api/gcywVehicleRequest";
 import formAddress from "@/views/car/apply/components/formAddress";
 import getDict from "@/views/mixins/getDict"
 import { numToFixed2 } from '@/utils/index'
+import { getCookie } from '@/utils/auth'
 
 export default {
   name: "editDrivingRecord",
@@ -574,8 +575,8 @@ export default {
         demandCode: '1001801',
         longDistanceTag: '0',
         usagePersons: '1',
-        userName: '',
-        phone: '',
+        userName: getCookie('username'),
+        phone: getCookie('phone'),
         usageDate: '',
         usageTime: '',
         timeLength: '',
