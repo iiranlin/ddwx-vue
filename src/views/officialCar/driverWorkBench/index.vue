@@ -102,7 +102,7 @@ export default {
             }
         }
     },
-    activated(){
+    mounted(){
         this.menuProperty();
         this.getList();
     },

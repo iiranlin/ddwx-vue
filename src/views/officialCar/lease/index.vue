@@ -97,7 +97,7 @@ export default {
             }
         }
     },
-    activated(){
+    created(){
         this.menuProperty();
         this.getList();
     },
@@ -153,6 +153,10 @@ export default {
                     })
                 })
             }else if(buttonCode==='update'){
+                if(row.status===2){
+                    this.$modal.msgWarning("当前条目正在审核中无法进行编辑!");
+                    return;
+                }
                 this.$router.push({name:'leaseEdit',params:{row:row}});
             }
         },

@@ -70,11 +70,16 @@ export default {
                 actId: this.row.actId,
             };
             activitiAssigneeList(obj).then( ({data}) => {
-                this.deptOptions = data;
-                if(this.deptOptions.length > 0){
-                    this.openWorkflow = true;
-                }else{
+                if(data.assignee){
+                    this.form.id = data.assignee;
                     this.activitiComplete();
+                }else{
+                    if(data.assigneeList.length > 0){
+                        this.deptOptions = data.assigneeList;
+                        this.openWorkflow = true;
+                    }else{
+                        this.activitiComplete();
+                    }
                 }
             })
         },
@@ -97,21 +102,24 @@ export default {
                 if(this.row.workflowId){
                     this.activitiComplete();
                 }else{
-                    let obj = {
-                        assignee: this.form.id,
-                        procDefId: this.ids[0] || this.row.procDefId,
-                        businessId: this.row.id
-                    };
-                    activitiStart(obj).then( ({message}) => {
-                        this.$modal.msgSuccess(message);
-                        this.openWorkflow = false;
-                        this.loading = false;
-                        this.$emit('carSuccess');
-                    })
+                    this.activitiStart();
                 }
             }else{
                 this.$modal.msgWarning('请选择人！');
             }
+        },
+        activitiStart() {
+            let obj = {
+                assignee: this.form.id,
+                procDefId: this.ids[0] || this.row.procDefId,
+                businessId: this.row.id
+            };
+            activitiStart(obj).then( ({message}) => {
+                this.$modal.msgSuccess(message);
+                this.openWorkflow = false;
+                this.loading = false;
+                this.$emit('carSuccess');
+            })
         },
         carSuccess () {
             this.openWorkflow = false;

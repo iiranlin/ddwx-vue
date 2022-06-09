@@ -222,143 +222,151 @@
         </el-row>
       </el-form>
     </el-row>
+    <!--弹出框-->
+    <operate ref="operate" @operateSuccess="operateSuccess"></operate>
   </div>
 </template>
 <script>
-import {vehicleInfoUpdGVC} from "@/api/driver"
+import {vehicleInfoUpdGVC,activitiAssigneeListByType} from "@/api/driver"
 import {getListByParentCode,getListByParentId} from '@/api/system/dict'
 import {deptListPage} from '@/api/system/dept'
 import {systemUnitListAll} from '@/api/system/dict/setting'
-export default {
-  name: "leaseEdit",
-  data() {
-    return {
-        //loading框
-        loading:false,
-        //回显数据
-        echoData:{},
-        //单位信息
-        unitOptions:[],
-        //部门信息
-        departmentOptions:[],
-        //租赁类型信息：
-        vehiclePropertiesOptions:[],
-        //车辆类型Ⅰ信息
-        vehicleTypeOneOptions:[],
-        //车辆类型Ⅱ信息
-        vehicleTypeTwoOptions:[],
-        //排放标准信息
-        emissionOptions:[],
-        //车辆用途信息
-        carUsingOptions:[],
+import operate from "./components/operate"
 
-        //表单数据
-        form:{
-            usageUnitCode:"",    //用车单位
-            usageDept:"",   //用车部门
-            vehicleProperties:"",    //租赁类型
-            carNumber:"",    //车牌号
-            rentUnit:"",    //租赁公司
-            rentUnitCode:"",    //租赁公司营业执照
-            rentBeginDate:"",   //起租日期
-            rentEndDate:"",     //到期日期
-            carType:"",     //车辆类型Ⅰ
-            carType2:"",    //车辆类型Ⅱ
-            carBrand:"",    //品牌
-            vinNumber:"",   //车架号
-            engineNumber:"",    //发动机号
-            carMoneySource:"",  //资金来源
-            maxMens:"", //座位数
-            capacity:"",    //排气量
-            emission:"", //排放标准
-            maxWeight:"",   //核准载重
-            carUsing:"",    //车辆用途
-            registerDate:"",    //初登日期
-            originalValue:"",   //购车价格
-            rentPrice:"",   //租赁价格
-            rentMoneyDesc:"", //租金描述
-            rentAgreement:"",   //合同号
-            rentApplydesc:"",   //申请理由及用途
-            remark:"",   //备注
-            usageFlag:"0",
-            status:"1"
-        },
-        rules:{
-            usageUnitCode:[
-                {required:true,message:"用车单位不能为空",trigger:"change"}
-            ],
-            usageDept:[
-                {required:true,message:"用车部门不能为空",trigger:"change"}
-            ],
-            vehicleProperties:[
-                {required:true,message:"租赁类型不能为空",trigger:'change'}
-            ],
-            carNumber:[
-                {required:true,message:"车牌号不能为空",trigger:'blur'}
-            ],
-            rentUnit:[
-                {required:true,message:"租赁公司不能为空",trigger:"blur"}
-            ],
-            rentUnitCode:[
-                {required:true,message:"租赁公司营业执照不能为空",trigger:'blur'}
-            ],
-            rentBeginDate:[
-                {required:true,message:"起租日期不能为空",trigger:"change"}
-            ],
-            rentEndDate:[
-                {required:true,message:"到期日期不能为空",trigger:"change"}
-            ],
-            carType:[
-                {required:true,message:"车辆类型Ⅰ不能为空",trigger:"change"}
-            ],
-            carType2:[
-                {required:true,message:"车辆类型Ⅱ不能为空",trigger:"change"}
-            ],
-            carBrand:[
-                {required:true,message:"品牌型号不能为空",trigger:"blur"}
-            ],
-            vinNumber:[
-                {required:true,message:"车架号不能为空",trigger:"blur"}
-            ],
-            engineNumber:[
-                {required:true,message:"发动机号不能为空",trigger:'blur'}
-            ],
-            carMoneySource:[
-                {required:true,message:"资金来源不能为空",trigger:'blur'}
-            ],
-            maxMens:[
-                {required:true,message:"座位数不能为空",trigger:'blur'}
-            ],
-            capacity:[
-                {required:true,message:"排气量不能为空",trigger:'blur'}
-            ],
-            emission:[
-                {required:true,message:"排放标准不能为空",trigger:'change'}
-            ],
-            maxWeight:[
-                {required:true,message:"核准载重不能为空",trigger:'blur'}
-            ],
-            carUsing:[
-                {required:true,message:"车辆用途不能为空",trigger:'change'}
-            ],
-            registerDate:[
-                {required:true,message:"初登日期不能为空",trigger:'change'}
-            ],
-            rentPrice:[
-                {required:true,message:"租赁价格不能为空",trigger:'blur'}
-            ],
-            rentApplydesc:[
-                {required:true,message:"申请理由及用途不能为空",trigger:'blur'}
-            ],
-        }
-    };
-  },
-  computed: {
+export default {
+    name: "leaseEdit",
+    components:{operate},
+
+    data() {
+        return {
+            //loading框
+            loading:false,
+            //回显数据
+            echoData:{},
+            //单位信息
+            unitOptions:[],
+            //部门信息
+            departmentOptions:[],
+            //租赁类型信息：
+            vehiclePropertiesOptions:[],
+            //车辆类型Ⅰ信息
+            vehicleTypeOneOptions:[],
+            //车辆类型Ⅱ信息
+            vehicleTypeTwoOptions:[],
+            //排放标准信息
+            emissionOptions:[],
+            //车辆用途信息
+            carUsingOptions:[],
+
+            //表单数据
+            form:{
+                usageUnitCode:"",    //用车单位
+                usageDept:"",   //用车部门
+                vehicleProperties:"",    //租赁类型
+                carNumber:"",    //车牌号
+                rentUnit:"",    //租赁公司
+                rentUnitCode:"",    //租赁公司营业执照
+                rentBeginDate:"",   //起租日期
+                rentEndDate:"",     //到期日期
+                carType:"",     //车辆类型Ⅰ
+                carType2:"",    //车辆类型Ⅱ
+                carBrand:"",    //品牌
+                vinNumber:"",   //车架号
+                engineNumber:"",    //发动机号
+                carMoneySource:"",  //资金来源
+                maxMens:"", //座位数
+                capacity:"",    //排气量
+                emission:"", //排放标准
+                maxWeight:"",   //核准载重
+                carUsing:"",    //车辆用途
+                registerDate:"",    //初登日期
+                originalValue:"",   //购车价格
+                rentPrice:"",   //租赁价格
+                rentMoneyDesc:"", //租金描述
+                rentAgreement:"",   //合同号
+                rentApplydesc:"",   //申请理由及用途
+                remark:"",   //备注
+                usageFlag:"0",
+                status:"1",
+                procDefId:"",
+                assignee:""
+            },
+            rules:{
+                usageUnitCode:[
+                    {required:true,message:"用车单位不能为空",trigger:"change"}
+                ],
+                usageDept:[
+                    {required:true,message:"用车部门不能为空",trigger:"change"}
+                ],
+                vehicleProperties:[
+                    {required:true,message:"租赁类型不能为空",trigger:'change'}
+                ],
+                carNumber:[
+                    {required:true,message:"车牌号不能为空",trigger:'blur'}
+                ],
+                rentUnit:[
+                    {required:true,message:"租赁公司不能为空",trigger:"blur"}
+                ],
+                rentUnitCode:[
+                    {required:true,message:"租赁公司营业执照不能为空",trigger:'blur'}
+                ],
+                rentBeginDate:[
+                    {required:true,message:"起租日期不能为空",trigger:"change"}
+                ],
+                rentEndDate:[
+                    {required:true,message:"到期日期不能为空",trigger:"change"}
+                ],
+                carType:[
+                    {required:true,message:"车辆类型Ⅰ不能为空",trigger:"change"}
+                ],
+                carType2:[
+                    {required:true,message:"车辆类型Ⅱ不能为空",trigger:"change"}
+                ],
+                carBrand:[
+                    {required:true,message:"品牌型号不能为空",trigger:"blur"}
+                ],
+                vinNumber:[
+                    {required:true,message:"车架号不能为空",trigger:"blur"}
+                ],
+                engineNumber:[
+                    {required:true,message:"发动机号不能为空",trigger:'blur'}
+                ],
+                carMoneySource:[
+                    {required:true,message:"资金来源不能为空",trigger:'blur'}
+                ],
+                maxMens:[
+                    {required:true,message:"座位数不能为空",trigger:'blur'}
+                ],
+                capacity:[
+                    {required:true,message:"排气量不能为空",trigger:'blur'}
+                ],
+                emission:[
+                    {required:true,message:"排放标准不能为空",trigger:'change'}
+                ],
+                maxWeight:[
+                    {required:true,message:"核准载重不能为空",trigger:'blur'}
+                ],
+                carUsing:[
+                    {required:true,message:"车辆用途不能为空",trigger:'change'}
+                ],
+                registerDate:[
+                    {required:true,message:"初登日期不能为空",trigger:'change'}
+                ],
+                rentPrice:[
+                    {required:true,message:"租赁价格不能为空",trigger:'blur'}
+                ],
+                rentApplydesc:[
+                    {required:true,message:"申请理由及用途不能为空",trigger:'blur'}
+                ],
+            }
+        };
+    },
+    computed: {
         visitedViews() {
             return this.$store.state.tagsView.visitedViews
         }
-  },
-  activated(){
+     },
+    activated(){
         this.echoData = this.$route.params.row;
         this.$refs.elform.resetFields();
         this.getUnitOptions();
@@ -367,8 +375,8 @@ export default {
         this.getEmissionOptions();
         this.getCarUsingOptions();
         this.echoView();
-  },
-  methods: {
+    },
+    methods: {
         //回显数据
         echoView(){
             this.echoData.rentBeginDate = this.parseTime(this.echoData.rentBeginDate,"{y}-{m}-{d}");
@@ -472,22 +480,45 @@ export default {
                 this.loading = false;
             })
         },
-        //保存数据
+        //检查工作流
         handleSave() {
             this.$refs.elform.validate(async (result) => {
                 if (result) {
                     this.loading = true;
-                    let update = [];
-                    update.push(this.form);
-                    await vehicleInfoUpdGVC(update).then(({message}) => {
+                    activitiAssigneeListByType({type:"公车租赁"}).then(({data}) => {
                         this.loading = false;
-                        this.$modal.msgSuccess(message);
-                        this.closeCurrentPage();
+                        if(!data.procDefId){
+                            this.vehicleInfoUpdate();
+                        }else if(!!data.procDefId){
+                            this.form.procDefId = data.procDefId;
+                            if(!!data.assignee){
+                                this.form.assignee = data.assignee;
+                                this.vehicleInfoUpdate();
+                            }else{
+                                this.$refs.operate.init(data.assigneeList);
+                            }
+                        }
                     }).catch((err) => {
                         this.loading = false;
                     })
                 }
             })
+        },
+        //保存数据
+        async vehicleInfoUpdate(){
+            this.loading = true;
+            await vehicleInfoUpdGVC(this.form).then(({message}) => {
+                this.loading = false;
+                this.$modal.msgSuccess(message);
+                this.closeCurrentPage();
+            }).catch((err) => {
+                this.loading = false;
+            })
+        },
+        //选择审批人后回调
+        operateSuccess(assignee){
+            this.form.assignee = assignee;
+            this.vehicleInfoUpdate();
         },
         //关闭当前页面
         closeCurrentPage(){

@@ -1,29 +1,21 @@
 <template>
   <div class="navbar">
-    <hamburger v-if="sideTheme == 'theme-dark' || sideTheme == 'theme-dark-top'" id="hamburger-container" :is-active="sidebar.opened"
-               class="hamburger-container" @toggleClick="toggleSideBar"
-    />
-
-    <breadcrumb id="breadcrumb-container" class="breadcrumb-container"
-                v-if="!topNav && (sideTheme == 'theme-dark' || sideTheme == 'theme-dark-top')"
-    />
-    <top-nav id="topmenu-container" class="topmenu-container"
-             v-if="topNav && (sideTheme == 'theme-dark' || sideTheme == 'theme-dark-top')"
-    />
+    <hamburger v-if="sideTheme == 'theme-dark' || sideTheme == 'theme-dark-top'" id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    
+    <breadcrumb id="breadcrumb-container" class="breadcrumb-container" v-if="!topNav && (sideTheme == 'theme-dark' || sideTheme == 'theme-dark-top')"/>
+    <top-nav id="topmenu-container" class="topmenu-container" v-if="topNav && (sideTheme == 'theme-dark' || sideTheme == 'theme-dark-top')"/>
     <Sidebara class="topmenu-containera" v-if="sideTheme != 'theme-dark' && sideTheme != 'theme-dark-top'"/>
     <!-- <div style="position:absolute;top:10px;color:red;z-index: 10;left: 50%;font-weight: bold;font-size: 22px;">本系统为测试系统，均为测试数据</div> -->
     <div class="right-menu">
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
-          <span>{{ name }}</span>
-          <i class="el-icon-caret-bottom"/>
+          <span style="margin-right:10px;font-size:14px;">{{unitName}}</span>
+          <span>{{name}}</span>
+          <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item @click.native="setting=true">
             <span>布局设置</span>
-          </el-dropdown-item>
-          <el-dropdown-item divided @click.native="updatePwd">
-            <span>修改密码</span>
           </el-dropdown-item>
           <el-dropdown-item divided @click.native="logout">
             <span>退出登录</span>
@@ -33,11 +25,10 @@
     </div>
     <div class="notice-button">
       <el-tooltip content="消息通知" placement="bottom">
-        <i class="el-icon-chat-dot-round"></i>
+              <i class="el-icon-chat-dot-round"></i>
       </el-tooltip>
       <!-- <el-button type="primary">消息通知</el-button>-->
-    </div>
-    <update-password ref="updatePassword"></update-password>
+      </div> 
   </div>
 </template>
 
@@ -51,7 +42,6 @@ import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
 import { getCookie } from '@/utils/auth'
 import Sidebara from './Sidebara'
-import UpdatePassword from '@/components/UpdatePassword'
 
 export default {
   components: {
@@ -61,18 +51,18 @@ export default {
     Screenfull,
     SizeSelect,
     Search,
-    Sidebara,
-    UpdatePassword
+    Sidebara
   },
   computed: {
     ...mapGetters([
       'sidebar',
       'avatar',
       'device',
-      'name'
+      'name',
+      'unitName',
     ]),
     ...mapState({
-      sideTheme: state => state.settings.sideTheme
+      sideTheme: state => state.settings.sideTheme,
     }),
     setting: {
       get() {
@@ -92,7 +82,8 @@ export default {
     }
   },
   data() {
-    return {}
+    return {
+    }
   },
   methods: {
     toggleSideBar() {
@@ -106,14 +97,9 @@ export default {
       }).then(() => {
         this.$store.dispatch('LogOut').then(() => {
           console.log(11)
-          location.href = '/index'
+          location.href = '/index';
         })
-      }).catch(() => {
-      })
-    },
-    /**修改密码*/
-    updatePwd() {
-      this.$refs.updatePassword.initUpdatePassword(true, false)
+      }).catch(() => {});
     }
   }
 }
@@ -125,7 +111,7 @@ export default {
   overflow: hidden;
   position: relative;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
+  box-shadow: 0 1px 4px rgba(0,21,41,.08);
 
   .hamburger-container {
     line-height: 46px;
@@ -133,7 +119,7 @@ export default {
     float: left;
     cursor: pointer;
     transition: background .3s;
-    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color:transparent;
 
     &:hover {
       background: rgba(0, 0, 0, .025)
@@ -148,25 +134,21 @@ export default {
     position: absolute;
     left: 50px;
   }
-
-  .topmenu-containera {
+  .topmenu-containera{
     position: absolute;
     height: 50px;
     left: 22px;
   }
-
   .errLog-container {
     display: inline-block;
     vertical-align: top;
   }
-
-  .notice-button {
+  .notice-button{
     float: right;
     height: 100%;
-    line-height: 60px;
+       line-height: 60px;
     color: #409EFF;
   }
-
   .right-menu {
     float: right;
     height: 100%;

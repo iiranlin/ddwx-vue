@@ -6,8 +6,8 @@
 			<template>
 				<app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path, onlyOneChild.query)">
 					<el-menu-item :index="resolvePath(onlyOneChild.path)">
-						  <item :icon="onlyOneChild.meta.icon"  v-if="onlyOneChild.meta.title=='首页'"/>
-          <item  :title="onlyOneChild.meta.title" />
+						<item :icon="onlyOneChild.meta.icon"  v-if="onlyOneChild.meta.title=='首页'"/>
+						<item :title="onlyOneChild.meta.title" />
 					</el-menu-item>
 				</app-link>
 			</template>

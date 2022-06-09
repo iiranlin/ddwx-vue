@@ -426,3 +426,12 @@ export function gcywDrivingRecordListPage(params) {
     params
   })
 }
+
+//根据单据类型获取发起人列表
+export function activitiAssigneeListByType(params) {
+  return request({
+      url: `${VUE_APP_BASE_prefix}/activiti/assigneeListByType`,
+      method: 'get',
+      params
+  })
+}

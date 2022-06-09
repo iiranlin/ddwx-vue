@@ -1,6 +1,6 @@
 <template>
   <div class="acl_checkbok">
-    <div class="button_checked" v-if="item.buttonList">
+    <div class="button_checked" v-if="item.buttonList && item.buttonList.length > 0">
       <el-checkbox :indeterminate="isIndeterminateButton" v-model="checkAllButton" @change="handleCheckAllButtonChange">功能按钮</el-checkbox>
       <div class="button_list">
         <el-checkbox-group v-model="checkedButton" @change="handlecheckedButtonChange">
@@ -10,7 +10,7 @@
         </el-checkbox-group>
       </div>
     </div>
-    <div class="button_checked" v-if="item.fieldList">
+    <div class="button_checked" v-if="item.fieldList && item.fieldList.length > 0">
       <div class="button_all">
         <el-checkbox :indeterminate="isIndeterminateList" v-model="checkAllList" @change="handleCheckAllListChange">列表字段</el-checkbox>
       </div>

@@ -6,7 +6,7 @@
                     <el-col>
                         <div>
                             <span class="title-right">车辆</span>
-                            <el-button :disabled="!(item.status == 1 || item.status == 2 || !item.status) && buttonCode == 'reassignment'" class="delete-color" type="text" @click="deleteCar(index)">
+                            <el-button class="delete-color" type="text" @click="deleteCar(index)">
                                 <i class="el-icon-delete" />删除
                             </el-button>
                         </div>
@@ -21,6 +21,7 @@
                                 clearable
                                 filterable
                                 value-key="driverCode"
+                                :disabled="item.id?true : false"
                             >
                                 <el-option v-for="item in driverList" 
                                 :key="item.driverCode" 
@@ -38,6 +39,7 @@
                                 clearable
                                 filterable
                                 value-key="carNumber"
+                                :disabled="item.id?true : false"
                                 @change="carNumberChange(index)"
                             >
                                 <el-option v-for="item in vehicleList"
@@ -171,21 +173,26 @@ export default {
             this.formData.list.push({driver: {}, car: {},carName: ''});
         },
         deleteCar(index) {
-            let list = this.formData.list, num = 0;
-            for(let i = 0;i<list.length;i++){
-                if(list[i].restatus != 1){
-                    ++num
-                }
-            }
-            if(this.formData.list.length > 1 && num > 1){
-                if(this.formData.list[index].id){
-                    this.formData.list[index].restatus = 1;
-                }else{
-                    this.formData.list.splice(index, 1)
-                }
+            // let list = this.formData.list, num = 0;
+            // for(let i = 0;i<list.length;i++){
+            //     if(list[i].restatus != 1){
+            //         ++num
+            //     }
+            // }
+            if(this.formData.list[index].id){
+                this.formData.list[index].restatus = 1;
             }else{
-                this.$modal.msgWarning('至少有一条数据！');
+                this.formData.list.splice(index, 1);
             }
+            // if(this.formData.list.length > 1 && num > 1){
+            //     if(this.formData.list[index].id){
+            //         this.formData.list[index].restatus = 1;
+            //     }else{
+            //         this.formData.list.splice(index, 1)
+            //     }
+            // }else{
+            //     this.$modal.msgWarning('至少有一条数据！');
+            // }
         },
         gcjcDriverClassList (unitCode, usageDate) {
             let obj = {
@@ -215,6 +222,7 @@ export default {
             let obj = {
                 carNumber: carNumber,
                 cityId: cityId[1],
+                date: this.row.usageDate
             }
             vehicleInfoIsRestriction(obj).then(({message}) => {
                 this.formData.list[index].carName = message;
@@ -231,7 +239,7 @@ export default {
         addRequest () {
             this.$refs.elForm.validate( (valid) => {
                 if (valid) {
-                    let formList = this.formData.list;
+                    let formList = this.formData.list, num = 0;
                     let obj = {
                         status: this.row.status,
                         id: this.row.id,
@@ -244,6 +252,15 @@ export default {
                         handleUnit: this.row.handleUnit,
                         handleUnitCode: this.row.handleUnitCode,
                         reqAssignments: []
+                    }
+                    for(let i = 0;i<formList.length;i++){
+                        if(formList[i].restatus != 1){
+                            ++num
+                        }
+                    }
+                    if(formList.length <= 0 || num <= 0){
+                        this.$modal.msgWarning('至少有一条数据！');
+                        return
                     }
                     formList.forEach( (item) => {
                       obj.reqAssignments.push({

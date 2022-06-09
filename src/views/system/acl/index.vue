@@ -18,7 +18,7 @@
         </div>
       </el-col>
       <!--用户数据-->
-      <el-col :span="20" :xs="24" class="container_flex">
+      <el-col :span="20" :xs="24" class="container_flex" v-loading="loadingClick">
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
             <el-button
@@ -96,6 +96,7 @@ export default {
     return {
       // 遮罩层
       loading: false,
+      loadingClick: false,
       // 显示搜索条件
       showSearch: true,
       // 部门树选项
@@ -148,6 +149,7 @@ export default {
       })
     },
     roleDataRuleTree () {
+      this.loadingClick = true;
       roleDataRuleTree(this.formData.parentId).then( ({data}) => {
         this.roleDataRuleOptions = data;
         this.$nextTick( () => {
@@ -156,6 +158,7 @@ export default {
               this.$refs[`checkbox${item.menuId}`].isWatch();
             }
           })
+          this.loadingClick = false;
         })
       })
     },
@@ -177,6 +180,7 @@ export default {
       this.arrAclButtonList = data;
     },
     aclList () {
+      this.loadingClick = true;
       aclList({}, this.formData.parentId).then( ({data}) => {
         this.arrAclList = data;
         this.initData(this.arrAclList);
@@ -194,6 +198,7 @@ export default {
         }
         this.$nextTick(() => {
           selectAllFor(this.arrAclList);
+          this.loadingClick = false;
         })
       })
     },

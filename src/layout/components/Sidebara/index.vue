@@ -3,7 +3,7 @@
 		<logo v-if="showLogo" :collapse="isCollapse" />
 		<div class="horizontal_div">
 			<el-menu :default-active="activeMenu" mode="horizontal">
-				<sidebar-item v-for="(route, index) in sidebarRouters" :key="route.path + index" :item="route"
+				<sidebar-item v-for="(route, index) in sidebarRouters" :key="route.path + index" :index="index" :item="route"
 					:base-path="route.path" />
 			</el-menu>
 		</div>

@@ -58,12 +58,10 @@
     </div>
 </template>
 <script>
-import buttonTop from "@/components/buttonTop"
 import {sysWorkDayListWorkDay,sysWorkDaySetWorkDay} from '@/api/system/dict/setting';
 
 export default {
     name:"weekdayMaintenance",
-    components:{buttonTop},
 
     data() {
         return {
@@ -322,12 +320,6 @@ export default {
             pointer-events: none;
         }
     }
-}
-::v-deep .el-calendar-table thead td .next{
-            color: #cccccc !important;
-}
-::v-deep .el-calendar-table thead td .prev{
-            color: #cccccc !important;
 }
 .calendar-p-work{
     text-align: center;

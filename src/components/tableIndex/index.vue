@@ -9,7 +9,7 @@
     border
     highlight-current-row
     stripe
-    row-key="id"
+    :row-key="id"
     @selection-change="handleSelectionChange"
     @sort-change="sortableColumnChange"
   >
@@ -95,7 +95,7 @@
       fixed="right"
       label="操作"
       align="center"
-      min-width="180"
+      min-width="230"
       class-name="small-padding fixed-width"
       v-if="property.buttonRow && property.buttonRow.length > 0"
     >
@@ -147,6 +147,10 @@ export default {
   name: 'tableIndex',
   mixins: [indexMixin],
   props: {
+    id: {
+      type: String,
+      default: 'id'
+    },
     //加载
     loading: {
       type: Boolean,

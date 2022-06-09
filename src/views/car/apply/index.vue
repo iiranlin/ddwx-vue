@@ -144,20 +144,23 @@
       <el-button type="primary" :loading="loading" @click="addRequest">确 定</el-button>
       <el-button @click="closePush">关 闭</el-button>
     </div>
+    <activiti-assignee ref="activitiAssignee" @carSuccess="carSuccess"></activiti-assignee>
   </div>
 </template>
 
 <script>
 import { vehicleInfoGetAssignCount } from "@/api/vehicleInfo";
+import { activitiAssigneeListByType } from "@/api/driver"
 import { addVehicleRequest } from "@/api/gcywVehicleRequest";
 import formAddress from "./components/formAddress";
 import formCalendar from "./components/formCalendar";
+import activitiAssignee from "./components/activitiAssignee";
 import getDict from "@/views/mixins/getDict"
 import { limitInput, numberInput } from '@/utils/index'
 export default {
   name: "apply",
   mixins: [getDict],
-  components: { formAddress, formCalendar },
+  components: { formAddress, formCalendar, activitiAssignee },
   data() {
     var checkfromAddr = (rule, value, callback) => {
       if(value.indexOf('null') == -1 && value){
@@ -200,6 +203,8 @@ export default {
         hopeBrand: '',
         remark: '',
         source: 1,
+        procDefId: '',
+        assignee: ''
       },
       rules: {
         reasonCode:[
@@ -271,6 +276,8 @@ export default {
           hopeBrand: row.hopeBrand,
           remark: row.remark,
           source: 1,
+          procDefId: '',
+          assignee: ''
         }
         this.$refs.formAddress1.init(row.fromAddr);
         this.$refs.formAddress2.init(row.toAddr);
@@ -330,24 +337,40 @@ export default {
       this.formData.toAreaIdd = id;
       this.formData.toAddr = name;
     },
+    activitiAssigneeListByType () {
+      activitiAssigneeListByType({type: '用车审批'}).then( ({data}) => {
+        if(data.procDefId){
+          this.formData.procDefId = data.procDefId;
+          if(data.assignee){
+            this.formData.assignee = data.assignee;
+          }else{
+            this.$refs.activitiAssignee.init(data.assigneeList);
+          }
+        }
+      })
+    },
+    carSuccess (val) {
+      this.formData.assignee = val.code;
+      let obj = {}
+      this.dictionariesObj['1016'].forEach(item => {
+        if(item.code == this.formData.reasonCode){
+          obj = Object.assign({},this.formData, {reason: item.name});
+        }
+      });
+      this.dictionariesObj['10018'].forEach(item => {
+        if(item.code == this.formData.demandCode){
+          obj = Object.assign({}, obj, {demand: item.name});
+        }
+      });
+      addVehicleRequest(obj).then( ({message}) => {
+        this.$modal.msgSuccess(message);
+        this.$router.push({name:'myCar'});
+      })
+    },
     addRequest () {
       this.$refs.elForm.validate( (valid) => {
         if (valid) {
-          let obj = {}
-          this.dictionariesObj['1016'].forEach(item => {
-            if(item.code == this.formData.reasonCode){
-              obj = Object.assign({},this.formData, {reason: item.name});
-            }
-          });
-          this.dictionariesObj['10018'].forEach(item => {
-            if(item.code == this.formData.demandCode){
-              obj = Object.assign({}, obj, {demand: item.name});
-            }
-          });
-          addVehicleRequest(obj).then( ({message}) => {
-            this.$modal.msgSuccess(message);
-            this.$router.push({name:'myCar'});
-          })
+          this.activitiAssigneeListByType();
         }
       })
     },
