@@ -7,7 +7,7 @@
             <el-form-item label="转派单位:" prop="reassignUnitCode">
                 <el-select
                     v-model="form.reassignUnitCode"
-                    placeholder="请选择司机"
+                    placeholder="请选择单位"
                     clearable
                     filterable
                 >
@@ -30,6 +30,7 @@
 
 <script>
 import { gcjcTurnUnitListAll } from '@/api/gcjcTurnUnit'
+import {  redispatch } from '@/api/gcywVehicleRequest'
 export default {
   props: {
     deptOptions: {
@@ -76,7 +77,7 @@ export default {
       this.$refs["elForm"].validate(valid => {
         if(valid){
           this.loading = true;
-          gcjcTurnUnitListAll(Object.assign({}, this.form, {id: this.row.id})).then(({message}) => {
+          redispatch(Object.assign({}, this.form, {id: this.row.id})).then(({message}) => {
             this.$modal.msgSuccess(message);
             this.openDataScope = false;
             this.loading = false;

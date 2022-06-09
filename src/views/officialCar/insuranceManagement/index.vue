@@ -98,7 +98,7 @@ export default {
             }
         }
     },
-    activated(){
+    created(){
         this.menuProperty();
         this.getList();
     },

@@ -136,6 +136,7 @@ export default {
     },
     'formData.area': {
       handler(newVal, oldVal) {
+        this.addr = '';
         if(!newVal){
           this.formData.area = null;
         }
@@ -167,7 +168,6 @@ export default {
     }
   },
   created() {
-    this.gcjcDivisionList(0, 'province');
     this.gcjcCommonAddressListAll();
     this.getOperateDict(10019);
   },
@@ -202,8 +202,20 @@ export default {
       })
     },
     gcjcCommonAddressListAll () {
-      gcjcCommonAddressListAll().then( ({data}) => {
-        this.gcjcCommonAddressList = data;
+      const rule = new Promise( (resolve, reject) => {
+        gcjcCommonAddressListAll().then( ({data}) => {
+          this.gcjcCommonAddressList = data;
+          data.forEach((item) => {
+            if(item.defualtTag == '1' && this.addr == ''){
+              this.addr = item.areaLongName;
+              this.formData.address = item.address;
+            }
+          })
+          resolve();
+        })
+      })
+      Promise.all([rule]).then( () => {
+        this.gcjcDivisionList(0, 'province');
       })
     },
     dropdownClick (row) {

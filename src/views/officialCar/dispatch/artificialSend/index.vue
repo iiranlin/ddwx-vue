@@ -1,6 +1,6 @@
 <template>
     <div class="container-calendar" :style="{'--theme':theme}" v-loading="loading">
-        <el-form ref="elForm" :inline="true" label-width="85px"
+        <el-form ref="elForm" label-width="85px" style="margin-left: 20px;"
             :model="formData"
             :rules="rules">
             <el-collapse v-model="activeNames">
@@ -9,44 +9,42 @@
                         <i :class="calcIconClass('1')" />
                         <span class="title-right">单位信息</span>
                     </template>
-                    <div class="form-row">
-                        <el-row :gutter="24">
-                            <el-col :xs="24" :sm="12" :md="8" :lg="8">
-                                <el-form-item label="用车单位" prop="unitCode">
-                                    <el-select
-                                        ref="unitCodeRef"
-                                        v-model="formData.unitCode"
-                                        placeholder="请选择用车单位"
-                                        clearable
-                                        @change="unitCodeChange">
-                                        <el-option
-                                            v-for="item in unitData"
-                                            :key="item.value"
-                                            :label="item.unitName"
-                                            :value="item.unitCode">
-                                        </el-option>
-                                    </el-select>
-                                </el-form-item>
-                            </el-col>
-                            <el-col :xs="24" :sm="12" :md="8" :lg="8">
-                                <el-form-item label="用车部门" prop="deptId">
-                                    <el-select
-                                        ref="deptIdRef"
-                                        v-model="formData.deptId"
-                                        placeholder="请选择用车部门"
-                                        clearable
-                                        @change="deptIdChange">
-                                        <el-option
-                                            v-for="item in deptData"
-                                            :key="item.id"
-                                            :label="item.deptName"
-                                            :value="item.id">
-                                        </el-option>
-                                    </el-select>
-                                </el-form-item>
-                            </el-col>
-                        </el-row>
-                    </div>
+                    <el-row :gutter="24">
+                        <el-col :xs="24" :sm="12" :md="8" :lg="8">
+                            <el-form-item label="用车单位" prop="unitCode">
+                                <el-select
+                                    ref="unitCodeRef"
+                                    v-model="formData.unitCode"
+                                    placeholder="请选择用车单位"
+                                    clearable
+                                    @change="unitCodeChange">
+                                    <el-option
+                                        v-for="item in unitData"
+                                        :key="item.value"
+                                        :label="item.unitName"
+                                        :value="item.unitCode">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :xs="24" :sm="12" :md="8" :lg="8">
+                            <el-form-item label="用车部门" prop="deptId">
+                                <el-select
+                                    ref="deptIdRef"
+                                    v-model="formData.deptId"
+                                    placeholder="请选择用车部门"
+                                    clearable
+                                    @change="deptIdChange">
+                                    <el-option
+                                        v-for="item in deptData"
+                                        :key="item.id"
+                                        :label="item.deptName"
+                                        :value="item.id">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
                 </el-collapse-item>
                 <el-collapse-item name="2">
                     <template slot="title">
@@ -59,11 +57,10 @@
                 <el-collapse-item name="3">
                     <template slot="title">
                         <i :class="calcIconClass('3')" />
-                        <span class="title-right">单位信息</span>
+                        <span class="title-right">用车信息</span>
                     </template>
-                    <div class="form-row">
-                        <el-row>
-                            <el-col :span="8">
+                    <el-row>
+                        <el-col :xs="24" :sm="12" :md="8" :lg="8">
                             <el-form-item label="用车事由:" prop="reasonCode">
                                 <el-select
                                 v-model="formData.reasonCode"
@@ -78,8 +75,8 @@
                                 </el-option>
                                 </el-select>
                             </el-form-item>
-                            </el-col>
-                            <el-col :span="8">
+                        </el-col>
+                        <el-col :xs="24" :sm="12" :md="8" :lg="8">
                             <el-form-item label="用车需求:" prop="demandCode">
                                 <el-select
                                 v-model="formData.demandCode"
@@ -93,41 +90,41 @@
                                     :value="item.code">
                                 </el-option>
                                 </el-select>
-                            </el-form-item>
-                            </el-col>
-                            <el-col :span="8">
+                        </el-form-item>
+                        </el-col>
+                        <el-col :xs="24" :sm="12" :md="8" :lg="8">
                             <el-form-item label="是否长途:" prop="longDistanceTag">
                                 <el-radio-group v-model="formData.longDistanceTag">
                                 <el-radio :label="'1'">是</el-radio>
                                 <el-radio :label="'0'">否</el-radio>
                                 </el-radio-group>
                             </el-form-item>
-                            </el-col>
-                        </el-row>
-                        <el-row>
-                            <el-col :span="8">
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :xs="24" :sm="12" :md="8" :lg="8">
                             <el-form-item label="乘坐人数:" prop="usagePersons">
-                                <el-input v-model="formData.usagePersons" @input="numberInput($event,'usagePersons')" style="width: 217px" maxlength="200" placeholder="请输入乘坐人数" />
+                                <el-input v-model="formData.usagePersons" @input="numberInput($event,'usagePersons')" maxlength="200" placeholder="请输入乘坐人数" />
                             </el-form-item>
-                            </el-col>
-                            <el-col :span="8">
+                        </el-col>
+                        <el-col :xs="24" :sm="12" :md="8" :lg="8">
                             <el-form-item label="乘车人:" prop="userName">
-                                <el-input v-model="formData.userName" style="width: 217px" maxlength="200" placeholder="请输入乘车人" />
+                                <el-input v-model="formData.userName" maxlength="200" placeholder="请输入乘车人" />
                             </el-form-item>
-                            </el-col>
-                            <el-col :span="8">
+                        </el-col>
+                        <el-col :xs="24" :sm="12" :md="8" :lg="8">
                             <el-form-item label="联系电话:" prop="phone">
-                                <el-input v-model="formData.phone" @input="numberInput($event,'phone')" style="width: 217px" maxlength="200" placeholder="请输入联系电话" />
+                                <el-input v-model="formData.phone" @input="numberInput($event,'phone')" maxlength="200" placeholder="请输入联系电话" />
                             </el-form-item>
-                            </el-col>
-                        </el-row>
-                        <el-row>
-                            <el-col :span="8">
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :xs="24" :sm="12" :md="8" :lg="8">
                             <el-form-item label="用车日期:" prop="usageDate">
-                                <el-input v-model="formData.usageDate" style="width: 217px" disabled maxlength="200" placeholder="请选择用车日期" />
+                                <el-input v-model="formData.usageDate" disabled maxlength="200" placeholder="请选择用车日期" />
                             </el-form-item>
-                            </el-col>
-                            <el-col :span="8">
+                        </el-col>
+                        <el-col :xs="24" :sm="12" :md="8" :lg="8">
                             <el-form-item label="出发时间:" prop="usageTime">
                                 <el-time-picker
                                 v-model="formData.usageTime"
@@ -136,31 +133,31 @@
                                 placeholder="请输入出发时间">
                                 </el-time-picker>
                             </el-form-item>
-                            </el-col>
-                            <el-col :span="8">
+                        </el-col>
+                        <el-col :xs="24" :sm="12" :md="8" :lg="8">
                             <el-form-item label="预计时长:" prop="timeLength">
-                                <el-input v-model="formData.timeLength" @input="limitInput($event,'timeLength')" style="width: 217px" maxlength="200" placeholder="请输入预计时长">
+                                <el-input v-model="formData.timeLength" @input="limitInput($event,'timeLength')" maxlength="200" placeholder="请输入预计时长">
                                     <span slot="append">小时</span>
                                 </el-input>
                             </el-form-item>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="24">
-                            <el-col :span="24">
-                                <el-form-item label="出发地点:" prop="fromAddr">
-                                    <form-address v-if="isRouterAlive" ref="formAddress1" :name="'出发地'" @addressSuccess="addressSuccessOut" />
-                                </el-form-item>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="24">
-                            <el-col :span="24">
-                                <el-form-item label="前往地点:" prop="toAddr">
-                                    <form-address v-if="isRouterAlive" ref="formAddress2" :name="'目的地'" @addressSuccess="addressSuccessTo" />
-                                </el-form-item>
-                            </el-col>
-                        </el-row>
-                        <el-row>
-                            <el-col :span="24">
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="24">
+                        <el-col :span="24">
+                            <el-form-item label="出发地点:" prop="fromAddr">
+                                <form-address v-if="isRouterAlive" ref="formAddress1" :name="'出发地'" @addressSuccess="addressSuccessOut" />
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="24">
+                        <el-col :span="24">
+                            <el-form-item label="前往地点:" prop="toAddr">
+                                <form-address v-if="isRouterAlive" ref="formAddress2" :name="'目的地'" @addressSuccess="addressSuccessTo" />
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="24">
+                        <el-col :span="8">
                             <el-form-item label="期望车型:" prop="hopeBrand">
                                 <el-select
                                 v-model="formData.hopeBrand"
@@ -168,24 +165,22 @@
                                 clearable
                                 filterable
                                 >
-                                <el-option v-for="item in dictionariesObj['1018']" 
+                                <el-option v-for="item in dictionariesObj['101801']" 
                                     :key="item.code" 
                                     :label="item.name" 
                                     :value="item.code">
                                 </el-option>
                                 </el-select>
                             </el-form-item>
-                            </el-col>
-                        </el-row>
-                        <el-row>
-                            <el-col :span="24">
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="24">
                             <el-form-item label="备注:" prop="remark">
                                 <el-input type="textarea" style="width: 1000px" v-model="formData.remark" maxlength="200" placeholder="请输入备注" />
                             </el-form-item>
-                            </el-col>
-                        </el-row>
-
-                    </div>
+                        </el-col>
+                    </el-row>
                 </el-collapse-item>
                 <el-collapse-item name="4">
                     <template slot="title">
@@ -218,6 +213,7 @@ import formCalendar from "./components/formCalendar";
 import formInformation from "./components/formInformation";
 import { saveOrderDispatch } from "@/api/gcywVehicleRequest";
 import { limitInput, numberInput } from '@/utils/index'
+import { getCookie } from '@/utils/auth'
 export default {
     name: "dispatchACar",
     mixins: [getDict],
@@ -246,8 +242,8 @@ export default {
             dateList: [],
             assignTimey: '2022-05-23',
             assignTimer: '2022-05-29',
-            dictionariesCode: [1016, 10018, 1018],
-            dictionariesObj: {},
+            dictionariesCode: [1016, 10018, 101801],
+            dictionariesObj: {'1016': [], '10018': [], '101801': []},
             unitData: [],
             deptData: [],
             formData: {
@@ -257,8 +253,8 @@ export default {
                 demandCode: '1001801',
                 longDistanceTag: '0',
                 usagePersons: '1',
-                userName: '',
-                phone: '',
+                userName: getCookie('username'),
+                phone: getCookie('phone'),
                 usageDate: '',
                 usageTime: '',
                 timeLength: '',
@@ -370,9 +366,10 @@ export default {
         vehicleInfoGetAssignCount () {
             let { unitCode, deptId } = this.formData;
             vehicleInfoGetAssignCount({unitCode, deptId}).then(({data}) => {
-                this.dateList = data;
-                this.assignTimey = this.weekCheckingIn(data[0].assignTime, '周一');
-                this.assignTimer = this.weekCheckingIn(data[data.length - 1].assignTime, '周日');
+                let time_num = this.parseTime(data[0].assignTime, '{b}') - 1;
+                this.dateList = data.slice(0, data.length - time_num);
+                this.assignTimey = this.weekCheckingIn(this.dateList[0].assignTime, '周一');
+                this.assignTimer = this.weekCheckingIn(this.dateList[this.dateList.length - 1].assignTime, '周日');
             })
         },
         // 获取用车单位列表 当前用户有权限的单位
@@ -494,7 +491,7 @@ export default {
                         driver: item.driver.driver,
                         driverId: item.driver.driverCode,
                         driverPhone: item.driver.phone,
-                        beginMiles: item.car.beginMiles,
+                        beginMiles: item.car.startMiles,
                         carNumber: item.car.carNumber,
                         conditionDesc: item.car.conditionDesc,
                         vinNumber: item.car.vinNumber,
@@ -517,7 +514,7 @@ export default {
 
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .container-calendar{
     width: 100%;
     height: 100%;
@@ -532,6 +529,11 @@ export default {
     .el-icon-caret-bottom {
         font-size: 20px;
         color: #{"var(--theme)"};
+    }
+    ::v-deep .el-select,
+    .el-input,
+    .el-date-editor {
+        width: 95%;
     }
     .title-right{
         font-weight: 600;
@@ -560,9 +562,6 @@ export default {
                 text-align: center;
             }
         }
-    }
-    .form-row{
-      margin-left: 20px;
     }
 }
 </style>

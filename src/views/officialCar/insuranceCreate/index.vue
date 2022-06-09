@@ -56,17 +56,17 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="保单号：" prop="insrNumber">
-                        <el-input v-model="form.insrNumber" size="mini" placeholder="请输入保单号"></el-input>
+                        <el-input v-model="form.insrNumber" size="mini" placeholder="请输入保单号" maxlength="32"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="投保人：" prop="policyHolder">
-                        <el-input v-model="form.policyHolder" size="mini" placeholder="请输入投保人"></el-input>
+                        <el-input v-model="form.policyHolder" size="mini" placeholder="请输入投保人" maxlength="20"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="投保金额：" prop="insrFee">
-                        <el-input v-model="form.insrFee" size="mini" placeholder="请输入投保金额"></el-input>
+                        <el-input v-model="form.insrFee" size="mini" placeholder="请输入投保金额" maxlength="10"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
@@ -97,7 +97,7 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item label="经办人：" prop="clerk">
-                        <el-input v-model="form.clerk" size="mini" placeholder="请输入经办人" clearable></el-input>
+                        <el-input v-model="form.clerk" size="mini" placeholder="请输入经办人" clearable maxlength="20"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="24">
@@ -152,12 +152,12 @@
                     </el-table-column>
                     <el-table-column label="保费" align="center">
                         <template slot-scope="scope">
-                              <el-input v-model="form.items[scope.$index].insrFee"></el-input>
+                              <el-input v-model="form.items[scope.$index].insrFee" maxlength="10"></el-input>
                         </template>
                     </el-table-column>
                     <el-table-column label="保额" align="center">
                         <template slot-scope="scope">
-                              <el-input v-model="form.items[scope.$index].insrPaidAmount"></el-input>
+                              <el-input v-model="form.items[scope.$index].insrPaidAmount" maxlength="10"></el-input>
                         </template>
                     </el-table-column>
                     <el-table-column label="操作" align="center">
@@ -377,6 +377,10 @@ export default {
                     }
                 }
                 if (result) {
+                    if(this.checkDate()){
+                        this.$modal.msgWarning("生效日期应小于到期日期，请从新选择!")
+                        return;
+                    }
                     this.loading = true;
                     await gcywInsuranceRecordCreate(Object.assign({}, this.form)).then(({message}) => {
                         this.loading = false;
@@ -387,6 +391,13 @@ export default {
                     })
                 }
             })
+        },
+        //检查生效日期和到期日期范围
+        checkDate(){
+            let insrDate = new Date(this.form.insrDate).getTime();
+            let dueDate = new Date(this.form.dueDate).getTime();
+
+            return insrDate>dueDate;
         },
         //关闭当前页面
         closeCurrentPage(){
