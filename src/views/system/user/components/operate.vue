@@ -1,12 +1,12 @@
 <template>
     <!-- 添加或修改部门对话框 -->
     <el-dialog :title="title" :close-on-click-modal="false" :visible.sync="openDataScope" width="600px" append-to-body>
-      <el-form ref="elForm" :model="form" :rules="rules" label-width="85px">
+      <el-form ref="elForm" :model="formData" :rules="rules" label-width="85px">
         <el-row>
           <el-col :span="12">
             <el-form-item label="用户类型:" prop="userType">
               <el-select
-                v-model="form.userType"
+                v-model="formData.userType"
                 placeholder="请选择"
                 clearable
                 value-key="label"
@@ -22,31 +22,31 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="所属部门:" prop="deptId">
-              <treeselect v-model="form.deptId" :options="deptOptions" :normalizer="normalizer" placeholder="选择所属部门" />
+              <treeselect v-model="formData.deptId" :options="deptOptions" :normalizer="normalizer" placeholder="选择所属部门" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="用户编号:" prop="userCode">
-              <el-input v-model="form.userCode" placeholder="请输入用户编号" />
+              <el-input v-model="formData.userCode" placeholder="请输入用户编号" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="姓名:" prop="realName">
-              <el-input v-model="form.realName" placeholder="请输入姓名" />
+              <el-input v-model="formData.realName" placeholder="请输入姓名" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="电话:" prop="phone">
-              <el-input v-model="form.phone" placeholder="请输入电话" />
+              <el-input v-model="formData.phone" @input="numberInput($event,'phone')"  placeholder="请输入电话" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="性别:" prop="sex">
-              <el-radio-group v-model="form.sex">
+              <el-radio-group v-model="formData.sex">
                 <el-radio :label="0">男</el-radio>
                 <el-radio :label="1">女</el-radio>
               </el-radio-group>
@@ -56,19 +56,19 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="登录名:" prop="username">
-              <el-input v-model="form.username" placeholder="请输入登录名" />
+              <el-input v-model="formData.username" placeholder="请输入登录名" />
             </el-form-item>
           </el-col>
           <el-col :span="12" v-if="type != 'update'">
             <el-form-item label="密码:" prop="password">
-              <el-input v-model="form.password" placeholder="请输入密码" />
+              <el-input v-model="formData.password" placeholder="请输入密码" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
             <el-form-item label="用户级别:" prop="rank">
-              <el-radio-group v-model="form.rank">
+              <el-radio-group v-model="formData.rank">
                 <el-radio label="0">院级用户</el-radio>
                 <el-radio label="1">所级用户</el-radio>
                 <el-radio label="2">部级用户</el-radio>
@@ -90,11 +90,13 @@ import { deptTree } from '@/api/system/dept'
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import {listPost} from "@/api/system/post";
+import { numberInput } from '@/utils/index'
 import md5 from "js-md5";
 export default {
   components: { Treeselect },
   data() {
     return {
+      numberInput: numberInput,
       loading: false,
       title: '新增用户',
       type: 'add',
@@ -102,7 +104,7 @@ export default {
       openDataScope: false,
       deptOptions: [],
       positionOptions: [],
-      form: {
+      formData: {
           username: '',
           password: '',
           deptId: undefined,
@@ -135,6 +137,9 @@ export default {
         ],
         userType:  [
           { required: true, message: "用户类型不能为空", trigger: "blur" }
+        ],
+        phone:  [
+          { required: true, message: "用户电话不能为空", trigger: "blur" }
         ]
       },
       userTypeList:[
@@ -145,9 +150,9 @@ export default {
     }
   },
   watch: {
-    'form.username': {
+    'formData.username': {
       handler: function (newUsername){
-        this.form.username = newUsername.toLocaleUpperCase();
+        this.formData.username = newUsername.toLocaleUpperCase();
       }
     }
   },
@@ -178,7 +183,7 @@ export default {
                 this.id = id;
                 this.userDetail(id);
             }else if(type === 'create'){
-                this.form.deptId = id;
+                this.formData.deptId = id || undefined;
             }
         })
     },
@@ -195,19 +200,19 @@ export default {
     },
     userDetail (id) {
         userDetail(id).then( ({data}) => {
-          this.form = data
-            // this.form.username = data.username;
-            // this.form.nickName = data.nickName;
-            // this.form.deptId = data.deptId || undefined;
-            // this.form.positionCode = data.positionCode || undefined;
+          this.formData = data
+            // this.formData.username = data.username;
+            // this.formData.nickName = data.nickName;
+            // this.formData.deptId = data.deptId || undefined;
+            // this.formData.positionCode = data.positionCode || undefined;
         })
     },
     submitDataScope () {
       this.$refs["elForm"].validate(valid => {
         if(valid){
           this.loading = true;
-          let form = Object.assign({}, this.form, {password: this.form.password?md5(this.form.password):this.form.password});
-          userCreate(form).then(({message}) => {
+          let formData = Object.assign({}, this.formData, {password: this.formData.password?md5(this.formData.password):this.formData.password});
+          userCreate(formData).then(({message}) => {
             this.$modal.msgSuccess(message);
             this.openDataScope = false;
             this.loading = false;
@@ -220,8 +225,8 @@ export default {
       this.$refs["elForm"].validate(valid => {
         if(valid){
           this.loading = true;
-          let form = Object.assign({}, this.form, {id: this.id});
-          userModify(form).then(({message}) => {
+          let formData = Object.assign({}, this.formData, {id: this.id});
+          userModify(formData).then(({message}) => {
             this.$modal.msgSuccess(message);
             this.openDataScope = false;
             this.loading = false;
