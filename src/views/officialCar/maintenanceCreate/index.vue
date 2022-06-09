@@ -63,7 +63,7 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="驾驶员：" prop="driver">
-                <el-input v-model="form.driver" size="mini" placeholder="请输入驾驶员" v-if="status"></el-input>
+                <el-input v-model="form.driver" size="mini" placeholder="请输入驾驶员" v-if="status" maxlength="20"></el-input>
                 <span v-else>{{ form.driver }}</span>
               </el-form-item>
             </el-col>
@@ -85,7 +85,7 @@
             <el-col :span="8">
               <el-form-item label="其他店铺：" prop="maintainShop">
                 <el-input v-model="form.maintainShop" size="mini" placeholder="请填写不在定点的店铺"
-                          :disabled="form.maintainShopId!=='-1'" v-if="status"
+                          :disabled="form.maintainShopId!=='-1'" v-if="status" maxlength="20"
                 ></el-input>
                 <span v-if="!status && form.maintainShopId==='-1'">{{ form.maintainShop }}</span>
               </el-form-item>
@@ -109,14 +109,14 @@
             <el-col :span="8">
               <el-form-item label="维保里程：" prop="maintainMiles">
                 <el-input v-model="form.maintainMiles" size="mini" placeholder="请输入维保里程" clearable
-                          @change="inputNumberChange('maintainMiles')" v-if="status"
+                          @change="inputNumberChange('maintainMiles')" v-if="status" maxlength="8"
                 ></el-input>
                 <span v-else>{{ form.maintainMiles }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="维保地点：" prop="maintainAddress">
-                <el-input v-model="form.maintainAddress" size="mini" placeholder="请输入维保地点" clearable v-if="status"></el-input>
+                <el-input v-model="form.maintainAddress" size="mini" placeholder="请输入维保地点" clearable v-if="status" maxlength="30"></el-input>
                 <span v-else>{{ form.maintainAddress }}</span>
               </el-form-item>
             </el-col>
@@ -147,7 +147,7 @@
             <el-col :span="8">
               <el-form-item label="下次维保里程：" prop="nextMaintainMiles">
                 <el-input v-model="form.nextMaintainMiles" size="mini" placeholder="请输入下次维保里程" clearable
-                          :disabled="form.maintainType!=='1'" @change="inputNumberChange('nextMaintainMiles')" v-if="status"
+                          :disabled="form.maintainType!=='1'" @change="inputNumberChange('nextMaintainMiles')" v-if="status" maxlength="8"
                 ></el-input>
                 <span v-if="!status && form.maintainType==='1'">{{ form.nextMaintainMiles }}</span>
               </el-form-item>
@@ -178,7 +178,7 @@
             </el-col>
             <el-col :span="24">
               <el-form-item label="备注：" prop="remark">
-                <el-input type="textarea" :rows="3" maxlength="200" v-model="form.remark" size="mini" v-if="status"></el-input>
+                <el-input type="textarea" :rows="3" maxlength="60" v-model="form.remark" size="mini" v-if="status"></el-input>
                 <span v-else>{{ form.remark }}</span>
               </el-form-item>
             </el-col>
@@ -214,7 +214,7 @@
             <el-table-column label="材料数量" align="center">
               <template slot-scope="scope">
                 <el-input v-model="maintenanceData[scope.$index].materialNum"
-                          @change="maintenanceDataInputNumberChange(scope.$index,'materialNum')" v-if="status"
+                          @change="maintenanceDataInputNumberChange(scope.$index,'materialNum')" v-if="status" maxlength="8"
                 ></el-input>
                 <span v-else>{{ maintenanceData[scope.$index].materialNum }}</span>
               </template>
@@ -222,7 +222,7 @@
             <el-table-column label="材料费" align="center">
               <template slot-scope="scope">
                 <el-input v-model="maintenanceData[scope.$index].materialCost"
-                          @change="maintenanceDataInputNumberChange(scope.$index,'materialCost')" v-if="status"
+                          @change="maintenanceDataInputNumberChange(scope.$index,'materialCost')" v-if="status" maxlength="8"
                 ></el-input>
                 <span v-else>{{ maintenanceData[scope.$index].materialCost }}</span>
               </template>
@@ -230,7 +230,7 @@
             <el-table-column label="工时（小时）" align="center">
               <template slot-scope="scope">
                 <el-input v-model="maintenanceData[scope.$index].hourlyNum"
-                          @change="maintenanceDataInputNumberChange(scope.$index,'hourlyNum')" v-if="status"
+                          @change="maintenanceDataInputNumberChange(scope.$index,'hourlyNum')" v-if="status" maxlength="8"
                 ></el-input>
                 <span v-else>{{ maintenanceData[scope.$index].hourlyNum }}</span>
               </template>
@@ -238,7 +238,7 @@
             <el-table-column label="工时费" align="center">
               <template slot-scope="scope">
                 <el-input v-model="maintenanceData[scope.$index].hourlyCost"
-                          @change="maintenanceDataInputNumberChange(scope.$index,'hourlyCost')" v-if="status"
+                          @change="maintenanceDataInputNumberChange(scope.$index,'hourlyCost')" v-if="status" maxlength="8"
                 ></el-input>
                 <span v-else>{{ maintenanceData[scope.$index].hourlyCost }}</span>
               </template>
@@ -246,7 +246,7 @@
             <el-table-column label="其他费" align="center">
               <template slot-scope="scope">
                 <el-input v-model="maintenanceData[scope.$index].otherCost"
-                          @change="maintenanceDataInputNumberChange(scope.$index,'otherCost')" v-if="status"
+                          @change="maintenanceDataInputNumberChange(scope.$index,'otherCost')" v-if="status" maxlength="8"
                 ></el-input>
                 <span v-else>{{ maintenanceData[scope.$index].otherCost }}</span>
               </template>

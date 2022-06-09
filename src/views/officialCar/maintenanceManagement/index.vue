@@ -106,6 +106,9 @@ export default {
     this.menuProperty()
     this.getList()
   },
+  activated() {
+    this.handleQuery()
+  },
   methods: {
     //获取菜单数据
     menuProperty() {
