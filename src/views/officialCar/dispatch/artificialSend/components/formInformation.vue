@@ -72,7 +72,7 @@
                 <el-row :gutter="24">
                     <el-col :span="8">
                         <el-form-item label="保养时间">
-                            <el-input disabled v-model="item.car.maintainDate" maxlength="200" placeholder="请输入保养时间" />
+                            <el-input disabled :value="parseTime(item.car.maintainDate, '{y}-{m}-{d}')" maxlength="200" placeholder="请输入保养时间" />
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
