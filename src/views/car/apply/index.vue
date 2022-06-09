@@ -193,7 +193,7 @@ export default {
         longDistanceTag: '0',
         usagePersons: '1',
         userName: getCookie('username'),
-        phone: getCookie('phone'),
+        phone: getCookie('phone') || '',
         usageDate: '',
         usageTime: '',
         timeLength: '',
