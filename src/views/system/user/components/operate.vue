@@ -220,7 +220,7 @@ export default {
       this.$refs["elForm"].validate(valid => {
         if(valid){
           this.loading = true;
-          let form = Object.assign({}, this.form, {id: this.id,password: md5(this.form.password)});
+          let form = Object.assign({}, this.form, {id: this.id});
           userModify(form).then(({message}) => {
             this.$modal.msgSuccess(message);
             this.openDataScope = false;
