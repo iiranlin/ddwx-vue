@@ -48,17 +48,17 @@
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="车牌号：" prop="carNumber">
-                        <el-input v-model="form.carNumber" size="mini"></el-input>
+                        <el-input v-model="form.carNumber" size="mini" maxlength="20"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="租赁公司：" prop="rentUnit">
-                        <el-input v-model="form.rentUnit" size="mini"></el-input>
+                        <el-input v-model="form.rentUnit" size="mini" maxlength="100"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="租赁公司执照：" prop="rentUnitCode">
-                        <el-input v-model="form.rentUnitCode" size="mini"></el-input>
+                        <el-input v-model="form.rentUnitCode" size="mini" maxlength="20"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
@@ -114,32 +114,32 @@
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="品牌型号：" prop="carBrand">
-                        <el-input v-model="form.carBrand" size="mini" clearable></el-input>
+                        <el-input v-model="form.carBrand" size="mini" clearable maxlength="20"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="车架号：" prop="vinNumber">
-                        <el-input v-model="form.vinNumber" size="mini" clearable></el-input>
+                        <el-input v-model="form.vinNumber" size="mini" clearable maxlength="20"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="发动机号：" prop="engineNumber">
-                        <el-input v-model="form.engineNumber" size="mini" clearable></el-input>
+                        <el-input v-model="form.engineNumber" size="mini" clearable maxlength="20"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="资金来源：" prop="carMoneySource">
-                        <el-input v-model="form.carMoneySource" size="mini" clearable></el-input>
+                        <el-input v-model="form.carMoneySource" size="mini" clearable maxlength="200"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="座位数：" prop="maxMens">
-                        <el-input v-model="form.maxMens" size="mini" clearable></el-input>
+                        <el-input v-model="form.maxMens" size="mini" clearable maxlength="3"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
                      <el-form-item label="排气量：" prop="capacity">
-                        <el-input v-model="form.capacity" size="small" clearable>
+                        <el-input v-model="form.capacity" size="small" clearable maxlength="20">
                              <template slot="suffix">升</template>
                         </el-input>
                     </el-form-item>
@@ -158,7 +158,7 @@
                 </el-col>
                 <el-col :span="12">
                      <el-form-item label="核准载重：" prop="maxWeight">
-                        <el-input v-model="form.maxWeight" size="small" clearable>
+                        <el-input v-model="form.maxWeight" size="small" clearable maxlength="200">
                              <template slot="suffix">吨</template>
                         </el-input>
                     </el-form-item>
@@ -190,27 +190,27 @@
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="购车价格：" prop="originalValue">
-                        <el-input v-model="form.originalValue" size="mini" clearable></el-input>
+                        <el-input v-model="form.originalValue" size="mini" clearable maxlength="20"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="租赁价格：" prop="rentPrice">
-                        <el-input v-model="form.rentPrice" size="mini" clearable placeholder="录入总包价"></el-input>
+                        <el-input v-model="form.rentPrice" size="mini" clearable placeholder="录入总包价" maxlength="10"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="合同号：" prop="rentAgreement">
-                        <el-input v-model="form.rentAgreement" size="mini" clearable></el-input>
+                        <el-input v-model="form.rentAgreement" size="mini" clearable maxlength="100"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="租金描述：" prop="rentMoneyDesc ">
-                        <el-input v-model="form.rentMoneyDesc " size="mini" clearable></el-input>
+                        <el-input v-model="form.rentMoneyDesc " size="mini" clearable maxlength="500"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="24">
                     <el-form-item :label="'申请理由\u3000\n及用途：'" prop="rentApplydesc" class="fold_label">
-                        <el-input type="textarea" :rows="3" maxlength="200" v-model="form.rentApplydesc" size="mini"></el-input>
+                        <el-input type="textarea" :rows="3" maxlength="200" v-model="form.rentApplydesc" size="mini" ></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="24">
@@ -390,7 +390,7 @@ export default {
         //获取部门信息
         async getDepartmentOptions(id){
             this.loading = true;
-            await deptListPage({id:id}).then(({data}) => {
+            await deptListPage({unitId:id}).then(({data}) => {
                 this.loading = false;
                 this.departmentOptions = data.list;
             }).catch((err) => {
@@ -456,6 +456,10 @@ export default {
         handleSave() {
             this.$refs.elform.validate(async (result) => {
                 if (result) {
+                    if(this.checkDate()){
+                        this.$modal.msgWarning("起租日期应小于到期日期，请从新选择!")
+                        return;
+                    }
                     this.loading = true;
                     activitiAssigneeListByType({type:"公车租赁"}).then(({data}) => {
                         this.loading = false;
@@ -475,6 +479,13 @@ export default {
                     })
                 } 
             })
+        },
+        //检查起租日期和到期日期范围
+        checkDate(){
+            let beginData = new Date(this.form.rentBeginDate).getTime();
+            let endData = new Date(this.form.rentEndDate).getTime();
+
+            return beginData>endData;
         },
         //保存数据
         async vehicleInfoAdd(){
