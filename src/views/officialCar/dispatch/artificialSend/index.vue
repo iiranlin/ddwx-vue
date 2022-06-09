@@ -213,6 +213,7 @@ import formCalendar from "./components/formCalendar";
 import formInformation from "./components/formInformation";
 import { saveOrderDispatch } from "@/api/gcywVehicleRequest";
 import { limitInput, numberInput } from '@/utils/index'
+import { getCookie } from '@/utils/auth'
 export default {
     name: "dispatchACar",
     mixins: [getDict],
@@ -252,8 +253,8 @@ export default {
                 demandCode: '1001801',
                 longDistanceTag: '0',
                 usagePersons: '1',
-                userName: '',
-                phone: '',
+                userName: getCookie('username'),
+                phone: getCookie('phone'),
                 usageDate: '',
                 usageTime: '',
                 timeLength: '',
@@ -365,9 +366,10 @@ export default {
         vehicleInfoGetAssignCount () {
             let { unitCode, deptId } = this.formData;
             vehicleInfoGetAssignCount({unitCode, deptId}).then(({data}) => {
-                this.dateList = data;
-                this.assignTimey = this.weekCheckingIn(data[0].assignTime, '周一');
-                this.assignTimer = this.weekCheckingIn(data[data.length - 1].assignTime, '周日');
+                let time_num = this.parseTime(data[0].assignTime, '{b}') - 1;
+                this.dateList = data.slice(0, data.length - time_num);
+                this.assignTimey = this.weekCheckingIn(this.dateList[0].assignTime, '周一');
+                this.assignTimer = this.weekCheckingIn(this.dateList[this.dateList.length - 1].assignTime, '周日');
             })
         },
         // 获取用车单位列表 当前用户有权限的单位
@@ -489,7 +491,7 @@ export default {
                         driver: item.driver.driver,
                         driverId: item.driver.driverCode,
                         driverPhone: item.driver.phone,
-                        beginMiles: item.car.beginMiles,
+                        beginMiles: item.car.startMiles,
                         carNumber: item.car.carNumber,
                         conditionDesc: item.car.conditionDesc,
                         vinNumber: item.car.vinNumber,

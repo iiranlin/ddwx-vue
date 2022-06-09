@@ -60,7 +60,7 @@
                 <el-row :gutter="24">
                     <el-col :span="8">
                         <el-form-item label="出场里程">
-                            <el-input disabled v-model="item.car.beginMiles" maxlength="200" placeholder="请输入出场里程" />
+                            <el-input disabled v-model="item.car.startMiles" maxlength="200" placeholder="请输入出场里程" />
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">

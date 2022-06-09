@@ -157,6 +157,7 @@ import formCalendar from "./components/formCalendar";
 import activitiAssignee from "./components/activitiAssignee";
 import getDict from "@/views/mixins/getDict"
 import { limitInput, numberInput } from '@/utils/index'
+import { getCookie } from '@/utils/auth'
 export default {
   name: "apply",
   mixins: [getDict],
@@ -191,8 +192,8 @@ export default {
         demandCode: '1001801',
         longDistanceTag: '0',
         usagePersons: '1',
-        userName: '',
-        phone: '',
+        userName: getCookie('username'),
+        phone: getCookie('phone'),
         usageDate: '',
         usageTime: '',
         timeLength: '',
@@ -319,16 +320,10 @@ export default {
     },
     vehicleInfoGetAssignCount () {
       vehicleInfoGetAssignCount().then(({data}) => {
-        this.dateList = data;
-        // this.dateList = data.slice(0, data.length);
-        // console.log(this.dateList)
-        this.assignTimey = this.weekCheckingIn(data[0].assignTime, '周一');
-        this.assignTimer = this.weekCheckingIn(data[data.length - 1].assignTime, '周日');
-        // let time_str = this.parseTime(data[0].assignTime, '{a}');
-        // if(time_str){
-
-        //   console.log()
-        // }
+        let time_num = this.parseTime(data[0].assignTime, '{b}') - 1;
+        this.dateList = data.slice(0, data.length - time_num);
+        this.assignTimey = this.weekCheckingIn(this.dateList[0].assignTime, '周一');
+        this.assignTimer = this.weekCheckingIn(this.dateList[this.dateList.length - 1].assignTime, '周日');
       })
     },
     calendarClick (val) {

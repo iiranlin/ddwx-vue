@@ -62,7 +62,7 @@
                 <el-row :gutter="24">
                     <el-col :span="8">
                         <el-form-item label="出场里程">
-                            <el-input disabled v-model="item.car.beginMiles" maxlength="200" placeholder="请输入出场里程" />
+                            <el-input disabled v-model="item.car.startMiles" maxlength="200" placeholder="请输入出场里程" />
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
@@ -173,26 +173,11 @@ export default {
             this.formData.list.push({driver: {}, car: {},carName: ''});
         },
         deleteCar(index) {
-            // let list = this.formData.list, num = 0;
-            // for(let i = 0;i<list.length;i++){
-            //     if(list[i].restatus != 1){
-            //         ++num
-            //     }
-            // }
             if(this.formData.list[index].id){
                 this.formData.list[index].restatus = 1;
             }else{
                 this.formData.list.splice(index, 1);
             }
-            // if(this.formData.list.length > 1 && num > 1){
-            //     if(this.formData.list[index].id){
-            //         this.formData.list[index].restatus = 1;
-            //     }else{
-            //         this.formData.list.splice(index, 1)
-            //     }
-            // }else{
-            //     this.$modal.msgWarning('至少有一条数据！');
-            // }
         },
         gcjcDriverClassList (unitCode, usageDate) {
             let obj = {
@@ -269,7 +254,7 @@ export default {
                         driver: item.driver.driver,
                         driverId: item.driver.driverCode,
                         driverPhone: item.driver.phone,
-                        beginMiles: item.car.beginMiles,
+                        beginMiles: item.car.startMiles,
                         carNumber: item.car.carNumber,
                         conditionDesc: item.car.conditionDesc,
                         vinNumber: item.car.vinNumber,

@@ -32,12 +32,14 @@ export function parseTime(time, pattern) {
     h: date.getHours(),
     i: date.getMinutes(),
     s: date.getSeconds(),
-    a: date.getDay()
+    a: date.getDay(),
+    b: date.getDay(),
   }
-  const time_str = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result, key) => {
+  const time_str = format.replace(/{(y|m|d|h|i|s|a|b)+}/g, (result, key) => {
     let value = formatObj[key]
     // Note: getDay() returns 0 on Sunday
     if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value] }
+    if (key === 'b') { return ['7', '1', '2', '3', '4', '5', '6'][value] }
     if (result.length > 0 && value < 10) {
       value = '0' + value
     }

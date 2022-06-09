@@ -112,6 +112,7 @@ export default {
     },
     'formData.area': {
       handler(newVal, oldVal) {
+        this.addr = '';
         if(!newVal){
           this.formData.area = null;
         }
