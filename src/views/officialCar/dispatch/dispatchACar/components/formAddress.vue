@@ -1,7 +1,7 @@
 <template>
   <div class="select-address">
     <el-row :gutter="24">
-      <el-col :span="6">
+      <el-col :span="5">
         <el-select
           v-model="formData.province"
           placeholder="请选择省"
@@ -17,7 +17,7 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="5">
         <el-select
           v-model="formData.city"
           placeholder="请选择市"
@@ -33,7 +33,7 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="5">
         <el-select
           v-model="formData.area"
           placeholder="请选择区"
@@ -49,7 +49,7 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="5">
         <div style="position: relative">
           <el-input v-model="formData.address" disabled maxlength="200" placeholder="请输入详情地址" />
         </div>

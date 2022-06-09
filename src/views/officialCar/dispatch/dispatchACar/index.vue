@@ -9,14 +9,14 @@
         </template>
         <form-calendar :dateList="dateList" :assignTimey="assignTimey" :assignTimer="assignTimer" :usageDate="formData.usageDate"/>
       </el-collapse-item>
-      <el-form :inline="true" :model="formData" label-width="112px">
+      <el-form :model="formData" label-width="112px">
         <el-collapse-item name="2">
           <template slot="title">
             <i class="el-icon-caret-right" :style="activeNames.indexOf('2') != -1?'transform:rotate(90deg)':''"/>
             <span class="title-right">用车信息</span>
           </template>
           <div class="form-row">
-            <el-row>
+            <el-row :gutter="24">
               <el-col :span="8">
                 <el-form-item label="用车事由:" prop="reasonCode">
                   <el-select
@@ -60,27 +60,27 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-row>
+            <el-row :gutter="24">
               <el-col :span="8">
                 <el-form-item label="乘坐人数:" prop="usagePersons">
-                  <el-input disabled v-model="formData.usagePersons" style="width: 217px" maxlength="200" placeholder="请输入乘坐人数" />
+                  <el-input disabled v-model="formData.usagePersons" maxlength="200" placeholder="请输入乘坐人数" />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item label="乘车人:" prop="userName">
-                  <el-input disabled v-model="formData.userName" style="width: 217px" maxlength="200" placeholder="请输入乘车人" />
+                  <el-input disabled v-model="formData.userName" maxlength="200" placeholder="请输入乘车人" />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item label="联系电话:" prop="phone">
-                  <el-input disabled v-model="formData.phone" style="width: 217px" maxlength="200" placeholder="请输入联系电话" />
+                  <el-input disabled v-model="formData.phone" maxlength="200" placeholder="请输入联系电话" />
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-row>
+            <el-row :gutter="24">
               <el-col :span="8">
                 <el-form-item label="用车日期:" prop="usageDate">
-                  <el-input v-model="formData.usageDate" style="width: 217px" disabled maxlength="200" placeholder="请选择用车日期" />
+                  <el-input v-model="formData.usageDate" disabled maxlength="200" placeholder="请选择用车日期" />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
@@ -96,26 +96,26 @@
               </el-col>
               <el-col :span="8">
                 <el-form-item label="预计时长:" prop="timeLength">
-                  <el-input disabled v-model="formData.timeLength" style="width: 217px" maxlength="200" placeholder="请输入预计时长" />
+                  <el-input disabled v-model="formData.timeLength" maxlength="200" placeholder="请输入预计时长" />
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-row>
+            <el-row :gutter="24">
               <el-col :span="24">
                 <el-form-item label="出发地点:" prop="fromAddr">
                   <form-address ref="formAddress1" :name="'出发地'" @addressSuccess="addressSuccessOut" />
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-row>
+            <el-row :gutter="24">
               <el-col :span="24">
                 <el-form-item label="前往地点:" prop="toAddr">
                   <form-address ref="formAddress2" :name="'目的地'" @addressSuccess="addressSuccessTo" />
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-row>
-              <el-col :span="24">
+            <el-row :gutter="24">
+              <el-col :span="8">
                 <el-form-item label="期望车型:" prop="hopeBrand">
                   <el-select
                     v-model="formData.hopeBrand"
@@ -124,7 +124,7 @@
                     filterable
                     disabled
                   >
-                    <el-option v-for="item in dictionariesObj['1018']" 
+                    <el-option v-for="item in dictionariesObj['101801']" 
                       :key="item.code" 
                       :label="item.name" 
                       :value="item.code">
@@ -133,7 +133,7 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-row>
+            <el-row :gutter="24">
               <el-col :span="24">
                 <el-form-item label="备注:" prop="remark">
                   <el-input type="textarea" disabled style="width: 1000px" v-model="formData.remark" maxlength="200" placeholder="请输入备注" />
@@ -154,7 +154,7 @@
             <el-button type="text"> <i class="el-icon-plus"></i> 新增车辆</el-button>
           </span>
         </template>
-        <form-information ref="formInformation"/>
+        <form-information ref="formInformation" class="form-row"/>
       </el-collapse-item>
     </el-collapse>
     <div class="dialog-footer">
@@ -181,8 +181,8 @@ export default {
       assignTimey: '2022-05-23',
       assignTimer: '2022-05-29',
       activeNames: ['1', '2', '3'],
-      dictionariesCode: [1016, 10018, 1018],
-      dictionariesObj: {},
+      dictionariesCode: [1016, 10018, 101801],
+      dictionariesObj: {'1016': [], '10018': [], '101801': []},
       addCarInfoList: [],
       formData: {
         id: '',
@@ -305,7 +305,7 @@ export default {
   },
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
   .container-calendar{
     width: 100%;
     height: 100%;
@@ -316,6 +316,11 @@ export default {
     .el-icon-caret-right{
       font-size: 20px;
       color: #{'var(--theme)'};
+    }
+    ::v-deep .el-select,
+    .el-input,
+    .el-date-editor {
+        width: 95%;
     }
     .title-right{
       font-weight: 600;

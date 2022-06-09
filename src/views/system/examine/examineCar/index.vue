@@ -37,6 +37,7 @@
       @handleButton="handleButton"
       @selectChange="selectChange"
       @emitAblFilter="emitAblFilter"
+      @clickLink="clickLink"
     />
     <pagination
       v-show="total > 0"
@@ -180,6 +181,9 @@ export default {
       this.menuProperty();
       this.handleQuery();
     },
+    clickLink (row, fieldCode, linkText) {
+      this.$router.push({name: linkText,params: {id: row.id}});
+    }
   },
 };
 </script>

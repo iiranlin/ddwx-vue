@@ -14,7 +14,7 @@
           <i class="el-icon-caret-right" :style="activeNames.indexOf('2') != -1?'transform:rotate(90deg)':''"/>
           <span class="title-right">用车信息</span>
         </template>
-        <el-form ref="elForm" style="margin-left: 20px;" :inline="true" :model="formData" :rules="rules" label-width="85px">
+        <el-form ref="elForm" style="margin-left: 20px;" :model="formData" :rules="rules" label-width="85px">
           <el-row>
             <el-col :span="8">
               <el-form-item label="用车事由:" prop="reasonCode">
@@ -60,24 +60,24 @@
           <el-row>
             <el-col :span="8">
               <el-form-item label="乘坐人数:" prop="usagePersons">
-                <el-input v-model="formData.usagePersons" @input="numberInput($event,'usagePersons')" style="width: 217px" maxlength="200" placeholder="请输入乘坐人数" />
+                <el-input v-model="formData.usagePersons" @input="numberInput($event,'usagePersons')" maxlength="200" placeholder="请输入乘坐人数" />
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="乘车人:" prop="userName">
-                <el-input v-model="formData.userName" style="width: 217px" maxlength="40" placeholder="请输入乘车人" />
+                <el-input v-model="formData.userName" maxlength="40" placeholder="请输入乘车人" />
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="联系电话:" prop="phone">
-                <el-input v-model="formData.phone" @input="numberInput($event,'phone')" style="width: 217px" maxlength="20" placeholder="请输入联系电话" />
+                <el-input v-model="formData.phone" @input="numberInput($event,'phone')" maxlength="20" placeholder="请输入联系电话" />
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="8">
               <el-form-item label="用车日期:" prop="usageDate">
-                <el-input v-model="formData.usageDate" style="width: 217px" disabled maxlength="200" placeholder="请选择用车日期" />
+                <el-input v-model="formData.usageDate" disabled maxlength="200" placeholder="请选择用车日期" />
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -92,7 +92,7 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="预计时长:" prop="timeLength">
-                <el-input v-model="formData.timeLength" @input="limitInput($event,'timeLength')" style="width: 217px" maxlength="10" placeholder="请输入预计时长">
+                <el-input v-model="formData.timeLength" @input="limitInput($event,'timeLength')" maxlength="10" placeholder="请输入预计时长">
                   <span slot="append">小时</span>
                 </el-input>
               </el-form-item>
@@ -113,7 +113,7 @@
             </el-col>
           </el-row>
           <el-row>
-            <el-col :span="24">
+            <el-col :span="8">
               <el-form-item label="期望车型:" prop="hopeBrand">
                 <el-select
                   v-model="formData.hopeBrand"
@@ -121,7 +121,7 @@
                   clearable
                   filterable
                 >
-                  <el-option v-for="item in dictionariesObj['1018']" 
+                  <el-option v-for="item in dictionariesObj['101801']" 
                     :key="item.code" 
                     :label="item.name" 
                     :value="item.code">
@@ -184,8 +184,8 @@ export default {
       assignTimey: '2022-05-23',
       assignTimer: '2022-05-29',
       activeNames: ['1', '2'],
-      dictionariesCode: [1016, 10018, 1018],
-      dictionariesObj: {},
+      dictionariesCode: [1016, 10018, 101801],
+      dictionariesObj: {'1016': [], '10018': [], '101801': []},
       formData: {
         reasonCode: '1',
         demandCode: '1001801',
@@ -320,8 +320,15 @@ export default {
     vehicleInfoGetAssignCount () {
       vehicleInfoGetAssignCount().then(({data}) => {
         this.dateList = data;
+        // this.dateList = data.slice(0, data.length);
+        // console.log(this.dateList)
         this.assignTimey = this.weekCheckingIn(data[0].assignTime, '周一');
         this.assignTimer = this.weekCheckingIn(data[data.length - 1].assignTime, '周日');
+        // let time_str = this.parseTime(data[0].assignTime, '{a}');
+        // if(time_str){
+
+        //   console.log()
+        // }
       })
     },
     calendarClick (val) {
@@ -342,16 +349,20 @@ export default {
         if(data.procDefId){
           this.formData.procDefId = data.procDefId;
           if(data.assignee){
-            this.formData.assignee = data.assignee;
+            this.carSuccess({code: data.assignee});
           }else{
             this.$refs.activitiAssignee.init(data.assigneeList);
           }
+        }else{
+          this.carSuccess();
         }
       })
     },
     carSuccess (val) {
-      this.formData.assignee = val.code;
-      let obj = {}
+      if(val){
+        this.formData.assignee = val.code;
+      }
+      let obj = {};
       this.dictionariesObj['1016'].forEach(item => {
         if(item.code == this.formData.reasonCode){
           obj = Object.assign({},this.formData, {reason: item.name});
@@ -380,7 +391,7 @@ export default {
   },
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
   .container-calendar{
     width: 100%;
     height: 100%;
@@ -391,6 +402,11 @@ export default {
     .el-icon-caret-right{
       font-size: 20px;
       color: #{'var(--theme)'};
+    }
+    ::v-deep .el-select,
+    .el-input,
+    .el-date-editor {
+        width: 95%;
     }
     .title-right{
       font-weight: 600;

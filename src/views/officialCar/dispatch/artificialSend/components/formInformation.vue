@@ -1,5 +1,5 @@
 <template>
-    <el-form ref="elForm" label-suffix=":" :inline="true" :model="formData" :rules="rules" label-width="112px">
+    <el-form ref="elForm" label-suffix=":" :model="formData" :rules="rules" label-width="112px">
         <div class="form-row" v-for="(item, index) in formData.list" :key="'id' + index">
             <template>
                 <el-row :gutter="24">
@@ -12,7 +12,7 @@
                         </div>
                     </el-col>
                 </el-row>
-                <el-row>
+                <el-row :gutter="24">
                     <el-col :span="8">
                         <el-form-item label="指派司机" :prop="`list.${index}.driver`" :rules="rules.driver">
                             <el-select
@@ -57,27 +57,27 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <el-row>
+                <el-row :gutter="24">
                     <el-col :span="8">
                         <el-form-item label="出场里程">
-                            <el-input disabled v-model="item.car.beginMiles" style="width: 217px" maxlength="200" placeholder="请输入出场里程" />
+                            <el-input disabled v-model="item.car.beginMiles" maxlength="200" placeholder="请输入出场里程" />
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="下次保养里程">
-                            <el-input disabled v-model="item.car.nextMaintainMiles" style="width: 217px" maxlength="200" placeholder="请输入下次保养里程" />
+                            <el-input disabled v-model="item.car.nextMaintainMiles" maxlength="200" placeholder="请输入下次保养里程" />
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <el-row>
+                <el-row :gutter="24">
                     <el-col :span="8">
                         <el-form-item label="保养时间">
-                            <el-input disabled v-model="item.car.maintainDate" style="width: 217px" maxlength="200" placeholder="请输入保养时间" />
+                            <el-input disabled v-model="item.car.maintainDate" maxlength="200" placeholder="请输入保养时间" />
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="保养里程">
-                            <el-input disabled v-model="item.car.maintainMiles" style="width: 217px" maxlength="200" placeholder="请输入保养里程" />
+                            <el-input disabled v-model="item.car.maintainMiles" maxlength="200" placeholder="请输入保养里程" />
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -188,5 +188,12 @@ export default {
     .el-icon-caret-right{
         font-size: 20px;
         color: #{'var(--theme)'};
+    }
+    .form-row{
+        ::v-deep .el-select,
+        .el-input,
+        .el-date-editor {
+            width: 95%;
+        }
     }
 </style>
