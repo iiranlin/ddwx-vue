@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import { gcjcDriverClassList } from "@/api/driver";
+import { getAvailableDriver } from "@/api/gcjcDriverClass";
 import { vehicleInfoGetAvailableCar, vehicleInfoIsRestriction } from "@/api/vehicleInfo";
 import { saveOrderDispatch, reassignment } from "@/api/gcywVehicleRequest";
 export default {
@@ -164,7 +164,7 @@ export default {
             if(this.buttonCode == 'sendVehicle'){
                 this.addCarButton();
             }
-            this.gcjcDriverClassList(row.reassignUnitCode || row.unitCode || row.deptId, row.usageDate);
+            this.getAvailableDriver(row.reassignUnitCode || row.unitCode || row.deptId, row.usageDate);
             this.vehicleInfoGetAvailableCar(row.unitCode, row.deptId);
         }
     },
@@ -179,7 +179,7 @@ export default {
                 this.formData.list.splice(index, 1);
             }
         },
-        gcjcDriverClassList (unitCode, usageDate) {
+        getAvailableDriver (unitCode, usageDate) {
             let obj = {
                 classDateEnd: usageDate,
                 classDateStart: usageDate,
@@ -187,8 +187,8 @@ export default {
                 flag:  0,
                 unitCode: unitCode,
             }
-            gcjcDriverClassList(obj).then(({data}) => {
-                this.driverList = data.list
+            getAvailableDriver(obj).then(({data}) => {
+                this.driverList = data
                 this.num = ++this.num;
             })
         },

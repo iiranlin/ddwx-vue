@@ -29,13 +29,17 @@
                         </el-col>
                         <el-col :xs="24" :sm="12" :md="8" :lg="8">
                             <el-form-item label="用车部门" prop="deptId">
-                                <treeselect v-model="formData.deptId"
+                                <select-tree 
+                                    :value="formData.deptId"
+                                    :options="deptData"
+                                    @getValue="deptIdChange($event)"/>
+                                <!-- <treeselect v-model="formData.deptId"
                                     :appendToBody="true"
                                     z-index="9999"
                                     :options="deptData"
                                     :normalizer="normalizer"
                                     @input="deptIdChange"
-                                    placeholder="选择上级部门" />
+                                    placeholder="选择上级部门" /> -->
                                 <!-- <el-select
                                     ref="deptIdRef"
                                     v-model="formData.deptId"
@@ -218,6 +222,7 @@ import getDict from "@/views/mixins/getDict"
 import formAddress from "./components/formAddress";
 import formCalendar from "./components/formCalendar";
 import formInformation from "./components/formInformation";
+import selectTree from "@/components/selectTree";
 import { saveOrderDispatch } from "@/api/gcywVehicleRequest";
 import { limitInput, numberInput } from '@/utils/index'
 import { getCookie } from '@/utils/auth'
@@ -226,7 +231,7 @@ import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 export default {
     name: "dispatchACar",
     mixins: [getDict],
-    components: { formAddress, formCalendar, formInformation, Treeselect },
+    components: { formAddress, formCalendar, formInformation, Treeselect, selectTree },
     data() {
         var checkfromAddr = (rule, value, callback) => {
             if(value.indexOf('null') == -1 && value){
@@ -413,7 +418,6 @@ export default {
                     unitId: valId
                 }
                 const { data } = await deptTree(params);
-                console.log(data)
                 this.deptData = data;
             } catch (e) {
 
@@ -437,6 +441,7 @@ export default {
             this.getDeptDictList(val);
         },
         deptIdChange (val) {
+            this.formData.deptId = val;
             if(val){
                 this.vehicleInfoGetAssignCount();
                 this.$refs.formInformation.init(this.formData);
