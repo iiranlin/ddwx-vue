@@ -55,7 +55,7 @@
               >
                 <el-input
                   v-model="formData.contractCode"
-                  maxlength="200"
+                  maxlength="50"
                   placeholder="请输入合同编号"
                 />
               </el-form-item>
@@ -72,7 +72,7 @@
               >
                 <el-input
                   v-model="formData.contractAmount"
-                  maxlength="200"
+                  maxlength="12"
                   placeholder="请输入合同金额"
                   @change="inputNumberChange(formData.contractAmount, 'contractAmount')"
                 >
@@ -196,7 +196,7 @@
                 >
                   <el-input
                     v-model="item.lineKm"
-                    maxlength="200"
+                    maxlength="12"
                     placeholder="请输入往返里程"
                     @change="inputNumberChange(item.lineKm, 'lineKm', index)"
                   >
@@ -216,7 +216,7 @@
                 >
                   <el-input
                     v-model="item.lineStart"
-                    maxlength="200"
+                    maxlength="50"
                     placeholder="请输入线路起点"
                   />
                 </el-form-item>
@@ -233,7 +233,7 @@
                 >
                   <el-input
                     v-model="item.lineEnd"
-                    maxlength="200"
+                    maxlength="50"
                     placeholder="请输入线路终点"
                   />
                 </el-form-item>
@@ -250,7 +250,7 @@
                 >
                   <el-input
                     v-model="item.lineTripnum"
-                    maxlength="200"
+                    maxlength="4"
                     placeholder="请输入每天趟数"
                   >
                     <span slot="append">趟</span>
@@ -272,6 +272,7 @@
                     placeholder="请输入车辆数"
                     controls-position="right"
                     :min="1"
+                    :max="999"
                   >
                     <span slot="append">辆</span>
                   </el-input-number>
@@ -297,6 +298,7 @@
                     v-model="item.commute"
                     placeholder="请输入通勤人数"
                     controls-position="right"
+                    :max="999"
                     :min="1"
                   >
                     <span slot="append">人</span>
@@ -320,7 +322,7 @@
                 >
                   <el-input
                     v-model="item.quasiCarrier"
-                    maxlength="200"
+                    maxlength="3"
                     placeholder="请输入准载人数"
                   >
                     <span slot="append">人</span>

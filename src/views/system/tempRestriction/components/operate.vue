@@ -33,10 +33,10 @@
                 <el-col :span="12" >
                     <el-form-item label="限行规则：" prop="rule">
                         <el-select v-model="form.rule" ref="userSelect" placeholder="请选择限行规则" style="width:100%">
-                            <el-option 
-                                v-for="item in ruleOptions" 
-                                :key="item.value" 
-                                :label="item.name" 
+                            <el-option
+                                v-for="item in ruleOptions"
+                                :key="item.value"
+                                :label="item.name"
                                 :value="item.code"
                                 @click.native="handleRuleChange(item.name)">
                             </el-option>
@@ -46,10 +46,10 @@
                 <el-col :span="12" >
                     <el-form-item label="限行尾号：" prop="ruleResult">
                         <el-select v-model="form.ruleResult" placeholder="请选择限行尾号" style="width:100%">
-                            <el-option 
-                                v-for="item in ruleResultOptions" 
-                                :key="item.value" 
-                                :label="item.name" 
+                            <el-option
+                                v-for="item in ruleResultOptions"
+                                :key="item.value"
+                                :label="item.name"
                                 :value="item.name">
                             </el-option>
                         </el-select>
@@ -58,10 +58,10 @@
                 <el-col :span="12" >
                     <el-form-item :label="'尾号字母\u3000\n处理规则：'"  class="fold_label" prop="lastLetter">
                         <el-select v-model="form.lastLetter" placeholder="指定为特定数字" style="width:100%">
-                            <el-option 
-                                v-for="item in lastLetterOptions" 
-                                :key="item.value" 
-                                :label="item.name" 
+                            <el-option
+                                v-for="item in lastLetterOptions"
+                                :key="item.value"
+                                :label="item.name"
                                 :value="item.code"
                                 @click.native="handleLastLetterChange(item)">
                             </el-option>
@@ -69,14 +69,14 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="12" >
-                    <el-form-item label="指定数字：" 
+                    <el-form-item label="指定数字："
                         prop="letterAs"
                         :rules="{
                             required: !readOnly,
                             message: '指定数字不能为空',
                             trigger: 'blur',
                         }">
-                        <el-input v-model="form.letterAs" placeholder="请输入指定数字" :disabled="readOnly"></el-input>
+                        <el-input v-model="form.letterAs" placeholder="请输入指定数字" :disabled="readOnly" maxlength="1"></el-input>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -111,7 +111,7 @@ export default {
                 lazy: true,
                 lazyLoad (node, resolve) {
                     const { level } = node;
-                    
+
                     gcjcDivisionList({pid:node.value}).then(({data}) => {
                         const nodes = [];
                         data.list.map(item=>{
@@ -291,7 +291,7 @@ export default {
         handleCascaderChange(value){
             this.form.provinceId = value[0];
             this.form.cityId = value[1];
-            
+
             const checkedNode =  this.$refs.elCascader.getCheckedNodes();
             this.form.city = checkedNode[0].label;
         },

@@ -18,7 +18,7 @@
                                 :label="item.unitName"
                                 :value="item.unitCode"
                                 @click.native="handleUnitCodeChange(item)">
-                            </el-option>              
+                            </el-option>
                         </el-select>
                     </el-form-item>
                 </el-col>
@@ -30,7 +30,7 @@
                                 :key="item.id"
                                 :label="item.deptName"
                                 :value="item.id">
-                            </el-option>              
+                            </el-option>
                         </el-select>
                     </el-form-item>
                 </el-col>
@@ -42,7 +42,7 @@
                                 :key="item.id"
                                 :label="item.name"
                                 :value="item.code">
-                            </el-option>              
+                            </el-option>
                         </el-select>
                     </el-form-item>
                 </el-col>
@@ -96,7 +96,7 @@
                                 :label="item.name"
                                 :value="item.name"
                                 @click.native="handleVehicleTypeOneChange(item)">
-                            </el-option>              
+                            </el-option>
                         </el-select>
                     </el-form-item>
                 </el-col>
@@ -108,7 +108,7 @@
                                 :key="item.id"
                                 :label="item.name"
                                 :value="item.name">
-                            </el-option>              
+                            </el-option>
                         </el-select>
                     </el-form-item>
                 </el-col>
@@ -129,7 +129,7 @@
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="资金来源：" prop="carMoneySource">
-                        <el-input v-model="form.carMoneySource" size="mini" clearable maxlength="200"></el-input>
+                        <el-input v-model="form.carMoneySource" size="mini" clearable maxlength="60"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
@@ -152,13 +152,13 @@
                                 :key="item.id"
                                 :label="item.name"
                                 :value="item.name">
-                            </el-option>              
+                            </el-option>
                         </el-select>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
                      <el-form-item label="核准载重：" prop="maxWeight">
-                        <el-input v-model="form.maxWeight" size="small" clearable maxlength="200">
+                        <el-input v-model="form.maxWeight" size="small" clearable maxlength="50">
                              <template slot="suffix">吨</template>
                         </el-input>
                     </el-form-item>
@@ -171,7 +171,7 @@
                                 :key="item.id"
                                 :label="item.name"
                                 :value="item.name">
-                            </el-option>              
+                            </el-option>
                         </el-select>
                     </el-form-item>
                 </el-col>
@@ -190,17 +190,17 @@
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="购车价格：" prop="originalValue">
-                        <el-input v-model="form.originalValue" size="mini" clearable maxlength="20"></el-input>
+                        <el-input v-model="form.originalValue" size="mini" clearable maxlength="18"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="租赁价格：" prop="rentPrice">
-                        <el-input v-model="form.rentPrice" size="mini" clearable placeholder="录入总包价" maxlength="10"></el-input>
+                        <el-input v-model="form.rentPrice" size="mini" clearable placeholder="录入总包价" maxlength="8"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="合同号：" prop="rentAgreement">
-                        <el-input v-model="form.rentAgreement" size="mini" clearable maxlength="100"></el-input>
+                        <el-input v-model="form.rentAgreement" size="mini" clearable maxlength="30"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
@@ -477,7 +477,7 @@ export default {
                     }).catch((err) => {
                         this.loading = false;
                     })
-                } 
+                }
             })
         },
         //检查起租日期和到期日期范围
