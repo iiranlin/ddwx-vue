@@ -110,7 +110,7 @@ export default {
             //分页参数
             listQuery:{
                 pageNum:1,
-                pageSize:10
+                pageSize:30
             },
         }
     },

@@ -93,6 +93,7 @@ export function filterAsyncRoutes(menuList, flag) {
                 path: '',
                 component: 'Layout',
                 redirect: item.menuUrl,
+                hidden: item.isHide == 1? true : false,
                 children: [
                     {
                         alwaysShow: item.children.length != 0 ? true : false,
