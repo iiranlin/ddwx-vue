@@ -190,7 +190,6 @@ export default {
     },
     //发布日志
     handlePublishLog(row) {
-      console.log(row)
       this.$refs.publishLog.open(row);
     },
     //新建成功回调

@@ -265,7 +265,6 @@ export default {
       // menuProperty('1487327353118199704').then( ({data}) => {
       //   let fields = []
       //   data.fields.forEach(e => {
-      //     console.log(e)
       //     const field = {
       //       key: e.id,
       //       prop: e.fieldCode,

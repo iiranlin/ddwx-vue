@@ -263,7 +263,6 @@ export default {
     },
     created(){
         this.form = Object.assign({}, JSON.parse(this.$route.query.row))
-        console.log(this.form)
     },
 }
 </script>

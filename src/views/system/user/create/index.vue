@@ -230,7 +230,6 @@ export default {
     this.formData.deptId = this.$route.query.deptId==""?undefined:this.$route.query.deptId
     this.userId = this.$route.query.id
     // this.getTreeByParent2(40)
-    // console.log(this.userId)
     if(this.userId){      
       this.$route.meta.title="修改用户"
       this.isUpdate = true
@@ -246,7 +245,6 @@ export default {
     //   this.$route.meta.title="修改用户"
     //   this.userDetail(this.userId)
     // }
-    // console.log(this.userId && this.userId != '')
     // if(this.userId && this.userId != ''){
       
      

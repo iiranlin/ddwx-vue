@@ -79,7 +79,6 @@ const actions = {
 			});
 
 			accessedRoutes = accessedRoutes.concat(newFilterMenu).concat(dynamicRoutes);
-			// console.log(dynamicRoutes)
 			// const asyncRoutes = filterDynamicRoutes(dynamicRoutes);
 			
 			commit('SET_ROUTES', accessedRoutes);
@@ -94,7 +93,6 @@ const actions = {
 		return new Promise(async (resolve) => {
 			const menuList = await store.dispatch('getInfo');
 			const accessRoutes = await dispatch('generateRoutes', {menuList});
-			console.log(accessRoutes)
 			router.addRoutes(accessRoutes)
 			resolve();
 		})

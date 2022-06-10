@@ -49,6 +49,28 @@
       @pagination="getList"
       style="margin-bottom: 30px;"
     />
+    <el-dialog title="取消" :visible.sync="openWorkflow" width="600px" :close-on-click-modal="false" append-to-body>
+        <el-form ref="elForm" :model="form" :rules="rules" label-width="110px">
+          <el-row>
+            <el-col :span="24">
+              <el-form-item label="取消原因:" prop="closeReason">
+                <el-input
+                  type="textarea"
+                  placeholder="请输入取消原因"
+                  v-model="form.closeReason"
+                  maxlength="100"
+                  show-word-limit
+                >
+                </el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="cancelVehicleRequest" :loading="loadingCloseReason">确 定</el-button>
+          <el-button @click="openWorkflow = false">取 消</el-button>
+        </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -62,6 +84,7 @@ export default {
     return {
       // 遮罩层
       loading: false,
+      loadingCloseReason: false,
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -83,11 +106,18 @@ export default {
       formData: {
         parentId: "",
       },
+      form: {
+        closeReason: ''
+      },
+      rules: {
+        closeReason:[{required:true,message:"请输入取消原因",trigger:"blur"}]
+      },
       total: 0,
       listQuery: {
         pageNum: 1,
         pageSize: 30,
       },
+      openWorkflow: false,
     };
   },
   created() {
@@ -153,19 +183,40 @@ export default {
           }
         }
       }
-      let ids = id.map(item => {
+      let ids = [];
+      ids = id.map(item => {
         return {id: item};
       });
+      if(url == 'cancelVehicleRequest'){
+        if(this.$refs.elForm) this.$refs.elForm.resetFields();
+        this.openWorkflow = true;
+        this.ids = ids;
+        return
+      }
       this.$modal.confirm(title).then(() => {
-        if(url == 'cancelVehicleRequest'){
-          return cancelVehicleRequest(ids);
-        }else{
           return confirmVehicleRequest(ids);
-        }
       }).then(({message}) => {
         this.$modal.msgSuccess(message);
         this.handleQuery();
       }).catch(() => {});
+    },
+    cancelVehicleRequest () {
+      this.$refs.elForm.validate(async (result) => {
+        if (result) {
+          let ids = this.ids.map(item => {
+            return {id: item.id, closeReason: this.form.closeReason};
+          });
+          this.loadingCloseReason = true;
+          cancelVehicleRequest(ids).then( ({message}) => {
+            this.$modal.msgSuccess(message);
+            this.loadingCloseReason = false;
+            this.openWorkflow = false;
+            this.handleQuery();
+          }).finally(() => {
+            this.loadingCloseReason = false;
+          })
+        }
+      })
     },
     handleCheckAllChange(columns) {
       this.$refs.tableIndex.init(columns);

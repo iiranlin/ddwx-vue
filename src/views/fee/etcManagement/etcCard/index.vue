@@ -253,7 +253,6 @@ export default {
         text: '加载中...'
       })
       try {
-        console.log(buttonCode)
         await this.$confirm(`是否${buttonCode === 'stop' ? '停用' : '启用'}用所选信息?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',

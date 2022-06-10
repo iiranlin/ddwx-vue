@@ -552,7 +552,6 @@ export default {
     },
     //是否实习
     handleCheckBoxChange() {
-      console.log(this.internshipChecked)
       if (this.internshipChecked) {
         this.form.internshipTag = '1'
       } else {
