@@ -67,7 +67,7 @@ const user = {
                         commit('SET_UNIT_NAME',user.unitName)
                         
                         setCookie("unitCode", user.unitCode);
-                        setCookie("phone", user.phone);
+                        setCookie("phone", user.phone || '');
                             // commit('SET_AVATAR', avatar)
                         resolve(res)
                     }
