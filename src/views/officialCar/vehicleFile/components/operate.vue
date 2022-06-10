@@ -31,7 +31,6 @@ export default {
         //初始化
         init(fileNams){
             this.fileNams = fileNams;
-            console.log(this.fileNams);
             this.openDataScope = true;
             this.$nextTick(() => {
                 this.title = "图片详情"

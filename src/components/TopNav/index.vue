@@ -120,7 +120,6 @@ export default {
     setVisibleNumber() {
       const width = document.body.getBoundingClientRect().width / 2;
       this.visibleNumber = parseInt(width / 85);
-      console.log(this.visibleNumber)
     },
     // 默认激活的路由
     defaultRouter() {

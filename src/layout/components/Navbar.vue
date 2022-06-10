@@ -97,7 +97,6 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$store.dispatch('LogOut').then(() => {
-          console.log(11)
           location.href = '/index';
         })
       }).catch(() => {});

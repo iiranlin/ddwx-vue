@@ -19,7 +19,6 @@
 	export default {
 		components: { SidebarItem, Logo },
 		created (){
-			// console.log(this.sidebarRouters)
 		},
 		computed: {
 			...mapGetters(["sidebarRouters", "sidebar"]),

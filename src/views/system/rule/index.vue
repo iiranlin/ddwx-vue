@@ -257,7 +257,6 @@ export default {
       this.handleQuery();
     },
     handleQuery (row) {
-      console.log(row)
       this.formData = Object.assign({},this.formData,row)
       this.getList();
     },
@@ -288,7 +287,6 @@ export default {
       if (data.id) {
         this.menuFieldPage();
       }
-      console.log(this.form.menuId)
     },
     addList(row, index) {
       // this.rowClick = row;
@@ -299,7 +297,6 @@ export default {
       //   }
       // })
       // if(type){
-        console.log(row)
       this.sysDataRuleDetailList.push({
         andOr: "",
         colName: row.fieldName,
@@ -376,7 +373,6 @@ export default {
     },
     /** 新增按钮操作 */
     handleCreate() {
-      console.log(123456)
       this.reset();
       this.getMenuTree();
       this.menuList=[]
@@ -508,7 +504,6 @@ export default {
           _this.sysDataRuleDetailList.splice(newIndex, 0, currRow);
           _this.sysDataRuleDetailList[0].andOr = "";
           _this.sysDataRuleDetailList.forEach((item,index) => {
-            console.log(item,index ,604)
             item.seq = index+1;
             _this.$set(_this.sysDataRuleDetailList , index ,item)
           });
