@@ -16,12 +16,12 @@
                </el-col>
                <el-col :span="12" >
                     <el-form-item label="车队编号：" prop="fleetCode">
-                        <el-input v-model="form.fleetCode" size="small" maxlength="32"></el-input>
+                        <el-input v-model="form.fleetCode" size="small" maxlength="10"></el-input>
                     </el-form-item>
                </el-col>
                <el-col :span="12">
                     <el-form-item label="车队名称：" prop="fleetName">
-                        <el-input v-model="form.fleetName" size="small" maxlength="50"></el-input>
+                        <el-input v-model="form.fleetName" size="small" maxlength="10"></el-input>
                     </el-form-item>
                </el-col>
            </el-row>

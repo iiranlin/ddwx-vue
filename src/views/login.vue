@@ -5,7 +5,7 @@
 				<lottie :options="deraultOptions" id="lottieBg-lottie" :height="loginW" :width="loginW"/>
 			</div>
 		</div> -->
-    <div class="test-logo">测试系统,数据仅供参考</div>
+    <div class="test-title">{{ testTitle }}</div>
     <div id="loginBg">
       <video
         src="../assets/video/Login.mp4"
@@ -182,6 +182,7 @@ export default {
   },
   data() {
     return {
+
       loginForm: {
         username: '',
         password: '',
@@ -214,7 +215,8 @@ export default {
       patternSwitch: true,
       passwordType: 'password',
       verificationCode: '',
-      unitList: []
+      unitList: [],
+      testTitle: ''
     }
   },
   watch: {
@@ -231,6 +233,7 @@ export default {
     }
   },
   created() {
+    this.testTitle = process.env.VUE_APP_TEST_TITLE
     const unitId = getCookie('unitId')
     const username = getCookie('username')
     const password = getCookie('password')
@@ -336,22 +339,16 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss">
 
-.test-logo {
+.test-title {
   position: absolute;
-  left: 40%;
-  top: 0;
+  left: 50%;
+  top: 5%;
+  transform: translate(-50%, -50%);;
   font-size: 50px;
   color: red;
   z-index: 999;
 }
-.test-logo {
-  position: absolute;
-  left: 40%;
-  top: 0;
-  font-size: 50px;
-  color: red;
-  z-index: 999;
-}
+
 .login-app {
   position: relative;
   width: 100%;
@@ -548,6 +545,15 @@ export default {
 }
 
 @media screen and (max-width: 1440px) {
+  .test-title {
+    position: absolute;
+    left: 50%;
+    top: 5%;
+    transform: translate(-50%, -50%);;
+    font-size: 30px;
+    color: red;
+    z-index: 999;
+  }
   .login-app {
     background-size: 970px 634px;
     overflow: none;

@@ -1,6 +1,6 @@
 <template>
   <div class="navbar">
-    <div class="test-logo">测试系统,数据仅供参考</div>
+    <div class="test-title">{{testTitle}}</div>
     <hamburger v-if="sideTheme == 'theme-dark' || sideTheme == 'theme-dark-top'" id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
     <breadcrumb id="breadcrumb-container" class="breadcrumb-container" v-if="!topNav && (sideTheme == 'theme-dark' || sideTheme == 'theme-dark-top')"/>
@@ -84,7 +84,11 @@ export default {
   },
   data() {
     return {
+      testTitle: ''
     }
+  },
+  mounted() {
+    this.testTitle = process.env.VUE_APP_TEST_TITLE
   },
   methods: {
     toggleSideBar() {
@@ -107,14 +111,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.test-logo {
+
+.test-title {
   position: absolute;
-  left: 40%;
-  top: 0;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);;
   font-size: 30px;
   color: red;
   z-index: 999;
 }
+
 .navbar {
   height: 50px;
   overflow: hidden;
