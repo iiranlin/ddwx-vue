@@ -4,12 +4,12 @@
            <el-row :span="24" :gutter="20">
                <el-col :span="12" >
                     <el-form-item label="班次名称：" prop="className">
-                        <el-input v-model="form.className" size="small"></el-input>
+                        <el-input v-model="form.className" size="small" maxlength="50"></el-input>
                     </el-form-item>
                </el-col>
                <el-col :span="12">
                     <el-form-item label="备注：" prop="remark">
-                        <el-input v-model="form.remark" size="small"></el-input>
+                        <el-input v-model="form.remark" size="small" maxlength="50"></el-input>
                     </el-form-item>
                </el-col>
                <el-col :span="12">
