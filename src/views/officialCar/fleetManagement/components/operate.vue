@@ -5,10 +5,10 @@
                <el-col :span="24">
                    <el-form-item label="所属单位：" prop="unitCode">
                        <el-select v-model="form.unitCode" placeholder="请选择所属单位" clearable size="small" style="width:100%">
-                           <el-option 
-                                v-for="item in unitData" 
-                                :key="item.value" 
-                                :label="item.unitName" 
+                           <el-option
+                                v-for="item in unitData"
+                                :key="item.value"
+                                :label="item.unitName"
                                 :value="item.unitCode">
                            </el-option>
                        </el-select>
@@ -16,12 +16,12 @@
                </el-col>
                <el-col :span="12" >
                     <el-form-item label="车队编号：" prop="fleetCode">
-                        <el-input v-model="form.fleetCode" size="small"></el-input>
+                        <el-input v-model="form.fleetCode" size="small" maxlength="32"></el-input>
                     </el-form-item>
                </el-col>
                <el-col :span="12">
                     <el-form-item label="车队名称：" prop="fleetName">
-                        <el-input v-model="form.fleetName" size="small"></el-input>
+                        <el-input v-model="form.fleetName" size="small" maxlength="50"></el-input>
                     </el-form-item>
                </el-col>
            </el-row>
@@ -119,7 +119,7 @@ export default {
                        this.openDataScope = false;
                        this.$emit('operateSuccess')
                    }).catch((err) => {
-                       this.loading = false;   
+                       this.loading = false;
                    })
                }
            })

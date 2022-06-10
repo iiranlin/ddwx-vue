@@ -12,45 +12,45 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="单位编号" prop="unitCode">
-            <el-input v-model="form.unitCode" placeholder="请输入单位编号" clearable size="small"></el-input>
+            <el-input v-model="form.unitCode" placeholder="请输入单位编号" clearable size="small" maxlength="20"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="12">
           <el-form-item label="单位名称" prop="unitName">
-            <el-input v-model="form.unitName" placeholder="请输入单位名称" clearable size="small"></el-input>
+            <el-input v-model="form.unitName" placeholder="请输入单位名称" clearable size="small" maxlength="20"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="业务范围" prop="businessLine">
-            <el-input v-model="form.businessLine" placeholder="请输入业务范围" clearable size="small"></el-input>
+            <el-input v-model="form.businessLine" placeholder="请输入业务范围" clearable size="small" maxlength="100"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="12">
           <el-form-item label="全国信息代码" prop="unitNumber">
-            <el-input v-model="form.unitNumber" placeholder="请输入全国信息代码" clearable size="small"></el-input>
+            <el-input v-model="form.unitNumber" placeholder="请输入全国信息代码" clearable size="small" maxlength="20"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="联系人" prop="linkMan">
-            <el-input v-model="form.linkMan" placeholder="请输入联系人" clearable size="small"></el-input>
+            <el-input v-model="form.linkMan" placeholder="请输入联系人" clearable size="small" maxlength="20"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="12">
           <el-form-item label="联系方式" prop="linkPhone">
-            <el-input v-model="form.linkPhone" placeholder="请输入联系方式" clearable size="small"></el-input>
+            <el-input v-model="form.linkPhone" placeholder="请输入联系方式" clearable size="small" maxlength="20"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
           <el-form-item label="单位地址" prop="address">
-            <el-input v-model="form.address" placeholder="请输入单位地址" type="textarea" clearable size="small"></el-input>
+            <el-input v-model="form.address" placeholder="请输入单位地址" type="textarea" clearable size="small" maxlength="100"></el-input>
           </el-form-item>
         </el-col>
       </el-row>

@@ -1,7 +1,8 @@
 <template>
   <div class="navbar">
+    <div class="test-logo">测试系统,数据仅供参考</div>
     <hamburger v-if="sideTheme == 'theme-dark' || sideTheme == 'theme-dark-top'" id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
-    
+
     <breadcrumb id="breadcrumb-container" class="breadcrumb-container" v-if="!topNav && (sideTheme == 'theme-dark' || sideTheme == 'theme-dark-top')"/>
     <top-nav id="topmenu-container" class="topmenu-container" v-if="topNav && (sideTheme == 'theme-dark' || sideTheme == 'theme-dark-top')"/>
     <Sidebara class="topmenu-containera" v-if="sideTheme != 'theme-dark' && sideTheme != 'theme-dark-top'"/>
@@ -28,7 +29,7 @@
               <i class="el-icon-chat-dot-round"></i>
       </el-tooltip>
       <!-- <el-button type="primary">消息通知</el-button>-->
-      </div> 
+      </div>
   </div>
 </template>
 
@@ -106,6 +107,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.test-logo {
+  position: absolute;
+  left: 40%;
+  top: 0;
+  font-size: 30px;
+  color: red;
+  z-index: 999;
+}
 .navbar {
   height: 50px;
   overflow: hidden;
