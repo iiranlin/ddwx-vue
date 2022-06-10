@@ -60,12 +60,12 @@
           <el-row>
             <el-col :span="8">
               <el-form-item label="乘坐人数:" prop="usagePersons">
-                <el-input v-model="formData.usagePersons" @input="numberInput($event,'usagePersons')" maxlength="200" placeholder="请输入乘坐人数" />
+                <el-input v-model="formData.usagePersons" @input="numberInput($event,'usagePersons')" maxlength="3" placeholder="请输入乘坐人数" />
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="乘车人:" prop="userName">
-                <el-input v-model="formData.userName" maxlength="40" placeholder="请输入乘车人" />
+                <el-input v-model="formData.userName" maxlength="20" placeholder="请输入乘车人" />
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -92,7 +92,7 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="预计时长:" prop="timeLength">
-                <el-input v-model="formData.timeLength" @input="limitInput($event,'timeLength')" maxlength="10" placeholder="请输入预计时长">
+                <el-input v-model="formData.timeLength" @input="limitInput($event,'timeLength')" maxlength="5" placeholder="请输入预计时长">
                   <span slot="append">小时</span>
                 </el-input>
               </el-form-item>
@@ -133,7 +133,7 @@
           <el-row>
             <el-col :span="24">
               <el-form-item label="备注:" prop="remark">
-                <el-input type="textarea" style="width: 1000px" v-model="formData.remark" maxlength="200" placeholder="请输入备注" />
+                <el-input type="textarea" style="width: 1000px" v-model="formData.remark" maxlength="150" placeholder="请输入备注" />
               </el-form-item>
             </el-col>
           </el-row>

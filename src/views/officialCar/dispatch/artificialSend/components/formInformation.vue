@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import { gcjcDriverClassList } from "@/api/driver";
+import { getAvailableDriver } from "@/api/gcjcDriverClass";
 import { vehicleInfoGetAvailableCar, vehicleInfoIsRestriction } from "@/api/vehicleInfo";
 export default {
     data() {
@@ -128,7 +128,7 @@ export default {
     methods: {
         init (row) {
             this.row = row;
-            this.gcjcDriverClassList(row.unitCode, row.usageDate);
+            this.getAvailableDriver(row.unitCode, row.usageDate);
             this.vehicleInfoGetAvailableCar(row.unitCode, row.deptId);
         },
         addCarButton () {
@@ -141,7 +141,7 @@ export default {
                 this.$modal.msgWarning('至少有一条数据！');
             }
         },
-        gcjcDriverClassList (unitCode, usageDate) {
+        getAvailableDriver (unitCode, usageDate) {
             let obj = {
                 classDateEnd: usageDate,
                 classDateStart: usageDate,
@@ -149,8 +149,8 @@ export default {
                 flag:  0,
                 unitCode: unitCode,
             }
-            gcjcDriverClassList(obj).then(({data}) => {
-                this.driverList = data.list
+            getAvailableDriver(obj).then(({data}) => {
+                this.driverList = data
             })
         },
         vehicleInfoGetAvailableCar (unitCode, deptId) {

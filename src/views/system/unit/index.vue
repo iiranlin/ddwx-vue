@@ -224,14 +224,14 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.unitEntity.id != null) {
-            updateUnit(this.unitEntity).then(response => {
-              this.$modal.msgSuccess("修改成功");
+            updateUnit(this.unitEntity).then(({message}) => {
+              this.$modal.msgSuccess(message);
               this.open = false;
               this.handleQuery();
             });
           } else {
-            addUnit(this.unitEntity).then(response => {
-              this.$modal.msgSuccess("新增成功");
+            addUnit(this.unitEntity).then(({message}) => {
+              this.$modal.msgSuccess(message);
               this.open = false;
               this.handleQuery();
             });
