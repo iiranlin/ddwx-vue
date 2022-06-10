@@ -84,23 +84,47 @@ const permission = {
     }
 }
 
-
 export function filterAsyncRoutes(menuList, flag) {
     let res = [];
     menuList.forEach(item => {
-        let params = {
-            alwaysShow: item.children.length != 0 ? true : false,
-            name: item.menuUrl,
-            path: flag ? `/${item.menuUrl}` : item.menuUrl,
-            component: item.component,
-            hidden: item.isHide == 1? true : false,
-            meta: {
-                title: item.menuName,
-                icon: item.menuIcon || 'system',
-                noCache: item.isCache == 1?false:true,
-                link: null,
-                id: item.id,
-            },
+        let params = null;
+        if(flag && item.component != 'Layout'){
+            params = {
+                path: '',
+                component: 'Layout',
+                redirect: item.menuUrl,
+                children: [
+                    {
+                        alwaysShow: item.children.length != 0 ? true : false,
+                        name: item.menuUrl,
+                        path: flag ? `/${item.menuUrl}` : item.menuUrl,
+                        component: item.component,
+                        hidden: item.isHide == 1? true : false,
+                        meta: {
+                            title: item.menuName,
+                            icon: item.menuIcon || 'system',
+                            noCache: item.isCache == 1?false:true,
+                            link: null,
+                            id: item.id,
+                        },
+                    }
+                ]
+            }
+        }else{
+            params = {
+                alwaysShow: item.children.length != 0 ? true : false,
+                name: item.menuUrl,
+                path: flag ? `/${item.menuUrl}` : item.menuUrl,
+                component: item.component,
+                hidden: item.isHide == 1? true : false,
+                meta: {
+                    title: item.menuName,
+                    icon: item.menuIcon || 'system',
+                    noCache: item.isCache == 1?false:true,
+                    link: null,
+                    id: item.id,
+                },
+            }
         }
         if (item.children && item.children.length) {
             params.children = filterAsyncRoutes(item.children, false);
