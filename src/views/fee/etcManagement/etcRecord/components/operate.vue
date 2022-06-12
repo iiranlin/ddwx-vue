@@ -123,14 +123,14 @@
           <el-form-item
             label="交易金额"
             prop="transFee"
+            :rules="[{ required: true, message: '交易金额不能为空', trigger: 'blur' }, validateNumber8I2F]"
           >
             <el-input
               v-model="form.transFee"
               placeholder="请输入交易金额"
               clearable
-              maxlength="8"
+              maxlength="11"
               size="small"
-              @change="inputNumberChange(form.transFee, 'transFee')"
             ></el-input>
           </el-form-item>
         </el-col>
@@ -230,11 +230,11 @@ import {
 import { searchCarSelectInfo } from '@/api/car'
 import { ETC_CARD_RECORD_DICT } from '@/views/fee/etcManagement/constants/index'
 import getDict from '@/views/mixins/getDict'
-import _ from 'lodash'
+import mixIndex from '@/views/mixins/index'
 
 export default {
   name: '',
-  mixins: [getDict],
+  mixins: [getDict, mixIndex],
   components: {},
   filters: {},
   props: {
@@ -301,9 +301,10 @@ export default {
           { required: true, message: '消费类型不能为空', trigger: 'change' }
         ],
         // 交易金额
-        transFee: [
-          { required: true, message: '交易金额不能为空', trigger: 'blur' }
-        ],
+        // transFee: [
+        //   { required: true, message: '交易金额不能为空', trigger: 'blur' },
+        //   { trigger: 'blur', validator: validateMoney }
+        // ],
         // 交易时间
         transDate: [
           { required: true, message: '交易时间不能为空', trigger: 'change' }
@@ -359,6 +360,14 @@ export default {
   mounted() {
   },
   methods: {
+    validateMoney(rule, value, callback) {
+      let reg = /^0\.[0-9]{1,2}$|^0$|^[1-9]\d{0,7}\.\d{1,2}$|^[1-9]\d{0,7}$/
+      if (!reg.test(value)) {
+        callback(new Error('请最多输入八位整数和两位小数的金额'))
+      } else {
+        callback()
+      }
+    },
     //初始化
     init(type, id) {
       this.type = type

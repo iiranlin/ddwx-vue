@@ -128,6 +128,7 @@
           <el-form-item
             label="卡号"
             prop="cardNumber"
+            :rules="[ { required: true, message: '卡号不能为空', trigger: 'blur' } ,validateInteger]"
           >
             <el-input
               v-model="form.cardNumber"
@@ -181,30 +182,27 @@
 
 <script>
 
-import { getAllAvailableUnit } from "@/api/system/unit"
+import { getAllAvailableUnit } from '@/api/system/unit'
 import {
   createETCCard,
   updateETCCard,
   getETCCardDetail,
-  getAllETCMainCard,
-} from "@/api/etc"
-import { getVehicleInfoSelect } from "@/api/car"
-import { ETC_CARD_DICT } from "@/views/fee/etcManagement/constants/index"
-import getDict from "@/views/mixins/getDict"
-import _ from "lodash"
+  getAllETCMainCard
+} from '@/api/etc'
+import { getVehicleInfoSelect } from '@/api/car'
+import { ETC_CARD_DICT } from '@/views/fee/etcManagement/constants/index'
+import getDict from '@/views/mixins/getDict'
+import mixIndex from '@/views/mixins/index'
+import _ from 'lodash'
 
 export default {
   name: '',
-  mixins: [getDict],
-  components: {
-
-  },
-  filters: {
-
-  },
+  mixins: [getDict, mixIndex],
+  components: {},
+  filters: {},
   props: {
     rowId: {
-      default: '',
+      default: ''
     },
     buttonCode: {
       type: String,
@@ -220,11 +218,11 @@ export default {
       //遮罩层
       loading: false,
       //标题
-      title: "",
+      title: '',
       //类型
-      type: "",
+      type: '',
       //数据id
-      id: "",
+      id: '',
       //显示隐藏
       openDataScope: false,
       //表单数据
@@ -240,30 +238,27 @@ export default {
         // 卡号
         cardNumber: '',
         // 是否有效
-        enabled: 'Y',
+        enabled: 'Y'
       },
       //单位数据
       unitData: [],
       //表单校验
       rules: {
         unitCode: [
-          { required: true, message: "所属单位不能为空", trigger: "change" }
+          { required: true, message: '所属单位不能为空', trigger: 'change' }
         ],
         carNumber: [
-          { required: true, message: "所属车辆不能为空", trigger: ["change", 'blur'] }
+          { required: true, message: '所属车辆不能为空', trigger: ['change', 'blur'] }
         ],
         isMcard: [
-          { required: true, message: "ETC类型不能为空", trigger: "change" }
+          { required: true, message: 'ETC类型不能为空', trigger: 'change' }
         ],
         mCardNumber: [
-          { required: true, message: "主卡号不能为空", trigger: "change" }
-        ],
-        cardNumber: [
-          { required: true, message: "卡号不能为空", trigger: "blur" }
+          { required: true, message: '主卡号不能为空', trigger: 'change' }
         ],
         enabled: [
-          { required: true, message: "是否有效不能为空", trigger: "change" }
-        ],
+          { required: true, message: '是否有效不能为空', trigger: 'change' }
+        ]
       },
       // 主卡下拉选择框数据
       mCardNumberOptions: [],
@@ -271,19 +266,17 @@ export default {
       carNumberOptions: [],
       selectOptions: {
         isMcard: [],
-        enabled: [],
+        enabled: []
       },
-      currentETCInfo: {},
+      currentETCInfo: {}
     }
   },
-  computed: {
-
-  },
+  computed: {},
   watch: {
     operateDialogFlag: {
       handler(val) {
         if (val) {
-          this.openDataScope = true;
+          this.openDataScope = true
           this.init(this.buttonCode, this.rowId)
         }
       }
@@ -301,16 +294,16 @@ export default {
   methods: {
     //初始化
     init(type, id) {
-      this.type = type;
-      this.id = id;
-      this.$nextTick(async () => {
-        await this.getUnitDictList();
-        await this.handleETCCardDict(Object.keys(this.selectOptions));
-        if (type === "create") {
-          this.title = "新建ETC"
-        } else if (type === "update") {
-          this.title = "修改ETC"
-          this.getETCDetail(this.id);
+      this.type = type
+      this.id = id
+      this.$nextTick(async() => {
+        await this.getUnitDictList()
+        await this.handleETCCardDict(Object.keys(this.selectOptions))
+        if (type === 'create') {
+          this.title = '新建ETC'
+        } else if (type === 'update') {
+          this.title = '修改ETC'
+          this.getETCDetail(this.id)
         }
       })
     },
@@ -319,7 +312,7 @@ export default {
       // this.loading = true;
       await getAllAvailableUnit().then(({ data }) => {
         // this.loading = false;
-        this.unitData = data;
+        this.unitData = data
       }).catch((err) => {
         // this.loading = false;
       }).finally(() => {
@@ -330,50 +323,50 @@ export default {
     async getETCDetail(id = '') {
       const loading = this.$loading({
         lock: true,
-        text: "加载中...",
-      });
+        text: '加载中...'
+      })
       try {
-        const { data = {} } = await getETCCardDetail(id);
-        this.currentETCInfo = data;
+        const { data = {} } = await getETCCardDetail(id)
+        this.currentETCInfo = data
         for (const item in this.form) {
           this.form[item] = data[item]
         }
-        await this.getCarSelectOptions(data.unitCode);
+        await this.getCarSelectOptions(data.unitCode)
         // 当为副卡时  获取主卡号
         if (data.isMcard === '1') {
           await this.getAllMotherETCCard()
         }
       } catch (e) {
-        throw new Error(e.message || "获取ETC详情失败");
+        throw new Error(e.message || '获取ETC详情失败')
       } finally {
-        loading.close();
+        loading.close()
       }
     },
     //新建
     handleCreate() {
-      this.$refs.elForm.validate(async (valid) => {
+      this.$refs.elForm.validate(async(valid) => {
         if (valid) {
           const loading = this.$loading({
             lock: true,
-            text: "加载中...",
-          });
+            text: '加载中...'
+          })
           const params = {
-            ...this.form,
+            ...this.form
           }
           await createETCCard(Object.assign(params)).then(({ message }) => {
-            this.$modal.msgSuccess(message);
-            this.openDataScope = false;
+            this.$modal.msgSuccess(message)
+            this.openDataScope = false
             this.$emit('operateSuccess')
           }).catch((err) => {
           }).finally(() => {
-            loading.close();
+            loading.close()
           })
         }
       })
     },
     //编辑
     handleUpdate() {
-      this.$refs.elForm.validate(async (valid) => {
+      this.$refs.elForm.validate(async(valid) => {
         if (valid) {
           const params = {
             id: this.currentETCInfo.id,
@@ -384,12 +377,12 @@ export default {
           //   text: "加载中...",
           // });
           try {
-            const { message } = await updateETCCard(params);
-            this.$modal.msgSuccess(message);
-            this.openDataScope = false;
-            this.$emit('operateSuccess');
+            const { message } = await updateETCCard(params)
+            this.$modal.msgSuccess(message)
+            this.openDataScope = false
+            this.$emit('operateSuccess')
           } catch (e) {
-            throw new Error(e.message);
+            throw new Error(e.message)
           } finally {
             // loading.close();
           }
@@ -398,16 +391,16 @@ export default {
     },
     //取消
     handleCancel() {
-      this.openDataScope = false;
+      this.openDataScope = false
     },
     //关闭dialog回调
     handleDialogClose() {
-      this.$refs.elForm.resetFields();
+      this.$refs.elForm.resetFields()
     },
     // 获取当前页面的通用字典下拉数据
     async handleETCCardDict(nameArr = []) {
       for (const item of nameArr) {
-        const res = await this.getOperateDictList(ETC_CARD_DICT[item].id);
+        const res = await this.getOperateDictList(ETC_CARD_DICT[item].id)
         this.selectOptions[item] = res
       }
     },
@@ -418,10 +411,10 @@ export default {
       //   text: "加载中...",
       // });
       try {
-        const { data = [] } = await getAllETCMainCard();
-        this.mCardNumberOptions = data;
+        const { data = [] } = await getAllETCMainCard()
+        this.mCardNumberOptions = data
       } catch (e) {
-        throw new Error(e.message || "获取所有的主卡失败");
+        throw new Error(e.message || '获取所有的主卡失败')
       } finally {
         // loading.close();
       }
@@ -429,14 +422,14 @@ export default {
     // ETC类型发生变化是 0——主卡 1——副卡
     async ETCTypeChange(val) {
       if (val !== '1') {
-        this.form.mCardNumber = null;
-        return;
+        this.form.mCardNumber = null
+        return
       }
       this.getAllMotherETCCard()
     },
     // 单位发生变化时
     async unitCodeChange(val) {
-      this.form.carNumber = null;
+      this.form.carNumber = null
       this.$nextTick(() => {
         this.$refs.elForm.clearValidate('carNumber')
       })
@@ -445,23 +438,23 @@ export default {
     // 获取车辆下拉选择框
     async getCarSelectOptions(unitCode = '') {
       if (!unitCode) {
-        this.carNumberOptions = [];
-        return;
+        this.carNumberOptions = []
+        return
       }
       const params = {
-        unitCode,
+        unitCode
       }
       try {
-        const { data = [] } = await getVehicleInfoSelect(params);
+        const { data = [] } = await getVehicleInfoSelect(params)
         // TODO 调试阶段用了去重函数
-        this.carNumberOptions = _.uniqBy(data, 'carId');
+        this.carNumberOptions = _.uniqBy(data, 'carId')
       } catch (e) {
-        throw new Error(e.message || "获取车辆下拉选择框失败");
+        throw new Error(e.message || '获取车辆下拉选择框失败')
       } finally {
         // loading.close();
       }
-    },
-  },
+    }
+  }
 }
 </script>
 <style scoped>
