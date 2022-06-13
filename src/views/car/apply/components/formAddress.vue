@@ -48,7 +48,7 @@
       </el-col>
       <el-col :span="5">
         <div style="position: relative">
-          <el-input v-model="formData.address" maxlength="100" placeholder="请输入详情地址" />
+          <el-input v-model="formData.address" maxlength="50" placeholder="请输入详情地址" />
           <el-dropdown class="dropdown-address" trigger="click">
             <div class="avatar-wrapper">
               <i class="address-svg el-icon-location-outline" />
@@ -115,7 +115,7 @@ export default {
         this.formData.city = null;
         this.cityList = [];
         if(newVal){
-          this.gcjcDivisionList(newVal.divisionId, 'city');
+          this.gcjcDivisionList(newVal.divisionId, 'city', 1);
         }else{
           this.formData.province = null;
         }
@@ -127,7 +127,7 @@ export default {
         this.formData.area = null;
         this.areaList = [];
         if(newVal){
-          this.gcjcDivisionList(newVal.divisionId, 'area');
+          this.gcjcDivisionList(newVal.divisionId, 'area', 2);
         }else{
           this.formData.city = null;
         }
@@ -136,7 +136,6 @@ export default {
     },
     'formData.area': {
       handler(newVal, oldVal) {
-        this.addr = '';
         if(!newVal){
           this.formData.area = null;
         }
@@ -151,21 +150,6 @@ export default {
         this.formDataFlin();
       },
     },
-    'provinceList': {
-      handler(newVal, oldVal) {
-        this.newValArr(newVal, 0, 'province');
-      },
-    },
-    'cityList': {
-      handler(newVal, oldVal) {
-        this.newValArr(newVal, 1, 'city');
-      },
-    },
-    'areaList': {
-      handler(newVal, oldVal) {
-        this.newValArr(newVal, 2, 'area');
-      },
-    }
   },
   created() {
     this.gcjcCommonAddressListAll();
@@ -196,14 +180,15 @@ export default {
         }
       })
     },
-    gcjcDivisionList (id, type) {
+    gcjcDivisionList (id, type, index) {
       gcjcDivisionList({pid: id}).then( ({data}) => {
         this[type + 'List'] = data.list || [];
+        this.newValArr(data.list, index, type);
       })
     },
     gcjcCommonAddressListAll () {
       const rule = new Promise( (resolve, reject) => {
-        gcjcCommonAddressListAll().then( ({data}) => {
+        gcjcCommonAddressListAll({addressType: this.name == '出发地'? 1 : 2}).then( ({data}) => {
           this.gcjcCommonAddressList = data;
           data.forEach((item) => {
             if(item.defualtTag == '1' && this.addr == ''){
@@ -215,7 +200,7 @@ export default {
         })
       })
       Promise.all([rule]).then( () => {
-        this.gcjcDivisionList(0, 'province');
+        this.gcjcDivisionList(0, 'province', 0);
       })
     },
     dropdownClick (row) {
