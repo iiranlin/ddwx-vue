@@ -3,8 +3,18 @@
 		<logo v-if="showLogo" :collapse="isCollapse" />
 		<div class="horizontal_div">
 			<el-menu :default-active="activeMenu" mode="horizontal">
-				<sidebar-item v-for="(route, index) in sidebarRouters" :key="route.path + index" :index="index" :item="route"
-					:base-path="route.path" />
+				<template v-for="(item, index) in sidebarRoutersHidden">
+					<sidebar-item :key="item.path + index" :index="index" :item="item" v-if="index <= visibleNumber"
+						:base-path="item.path" />
+				</template>
+				<!-- 顶部菜单超出数量折叠 -->
+				<el-submenu class="submenu-more" :style="{'--theme': theme}" index="more" v-if="sidebarRoutersHidden.length > visibleNumber + 1">
+					<template slot="title">更多菜单</template>
+					<template v-for="(item, index) in sidebarRoutersHidden">
+						<sidebar-item :key="item.path + index" :index="index" :item="item" v-if="index > visibleNumber"
+							:base-path="item.path" :typeBlock="true" />
+					</template>
+				</el-submenu>
 			</el-menu>
 		</div>
 	</div>
@@ -18,7 +28,19 @@
 
 	export default {
 		components: { SidebarItem, Logo },
+		data () {
+			return {
+				// 顶部栏初始数
+				visibleNumber: 5,
+				sidebarRoutersHidden: [],
+			}
+		},
 		created (){
+			this.sidebarRouters.forEach(item => {
+				if(!item.hidden){
+					this.sidebarRoutersHidden.push(item);
+				}
+			});
 		},
 		computed: {
 			...mapGetters(["sidebarRouters", "sidebar"]),
@@ -39,7 +61,20 @@
 			},
 			isCollapse() {
 				return !this.sidebar.opened;
-			}
+			},
+			theme() {
+				return this.$store.state.settings.theme;
+			},
+		},
+		mounted() {
+			this.setVisibleNumber();
+		},
+		methods: {
+			// 根据宽度计算设置显示栏数
+			setVisibleNumber() {
+				const width = document.body.getBoundingClientRect().width / 2;
+				this.visibleNumber = parseInt(width / 135);
+			},
 		}
 	};
 </script>
@@ -49,5 +84,9 @@
 	height: 50px;
 	line-height: 50px;
 	margin-left: 20px;
+	.submenu-more{
+		float: none;
+		display: inline-block;
+	}
 }
 </style>

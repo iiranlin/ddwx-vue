@@ -1,6 +1,5 @@
 <template>
-	<div v-if="!item.hidden" :class="{'item_hidden_box': (item.alwaysShow && item.path.split('/').length == 2) || item.redirect == 'index'}">
-		<!-- !onlyOneChild.children -->
+	<div v-if="!item.hidden" :class="{'item_hidden_box': (item.alwaysShow && item.path.split('/').length == 2 && !typeBlock) || item.redirect == 'index'}">
 		<template
 			v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
 			<template>
@@ -29,13 +28,11 @@
 	import Item from "./Item";
 	import AppLink from "./Link";
 	import FixiOSBug from "./FixiOSBug";
-	import { jsonp } from '@/utils/index'
 	export default {
 		name: "SidebarItem",
 		components: { Item, AppLink },
 		mixins: [FixiOSBug],
 		props: {
-			// route object
 			item: {
 				type: Object,
 				required: true
@@ -47,11 +44,13 @@
 			basePath: {
 				type: String,
 				default: ""
-			}
+			},
+			typeBlock: {
+				type: Boolean,
+				default: false
+			},
 		},
 		data() {
-			// To fix https://github.com/PanJiaChen/vue-admin-template/issues/237
-			// TODO: refactor with render function
 			this.onlyOneChild = null;
 			return {
 				userData:{
@@ -77,18 +76,15 @@
 					if (item.hidden) {
 						return false
 					} else {
-						// Temp set(will be used if only has one showing child)
 						this.onlyOneChild = item
 						return true
 					}
 				})
 
-				// When there is only one child router, the child router is displayed by default
 				if (showingChildren.length === 1) {
 					return true
 				}
 
-				// Show parent if there are no child router to display
 				if (showingChildren.length === 0) {
 					this.onlyOneChild = { ... parent, path: '', noShowingChildren: true }
 					return true
