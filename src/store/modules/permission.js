@@ -38,7 +38,8 @@ const permission = {
         defaultRoutes: [],
         topbarRouters: [],
         sidebarRouters: [],
-        menuList1:menuList1
+        menuList1:menuList1,
+        sidebarRoutersHidden: []
     },
     mutations: {
         SET_ROUTES: (state, routes) => {
@@ -59,6 +60,9 @@ const permission = {
         SET_SIDEBAR_ROUTERS: (state, routes) => {
             state.sidebarRouters = routes
         },
+        SET_SIDEBAR_ROUTERS_HIDDEN: (state, routes) => {
+            state.sidebarRoutersHidden = routes
+        },
     },
     actions: {
         // 生成路由
@@ -75,7 +79,14 @@ const permission = {
                 rewriteRoutes.push({ path: '*', redirect: '/404', hidden: true })
                 router.addRoutes(asyncRoutes);
                 commit('SET_ROUTES', rewriteRoutes)
-                commit('SET_SIDEBAR_ROUTERS', constantRoutes.concat(sidebarRoutes))
+                let routesArr = constantRoutes.concat(sidebarRoutes), sidebarRoutersHidden = [];
+                commit('SET_SIDEBAR_ROUTERS', routesArr)
+                routesArr.forEach(item => {
+                    if(!item.hidden){
+                        sidebarRoutersHidden.push(item);
+                    }
+                });
+                commit('SET_SIDEBAR_ROUTERS_HIDDEN', sidebarRoutersHidden)
                 commit('SET_DEFAULT_ROUTES', sidebarRoutes)
                 commit('SET_TOPBAR_ROUTES', sidebarRoutes)
                 resolve(rewriteRoutes)

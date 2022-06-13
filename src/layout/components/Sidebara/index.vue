@@ -32,18 +32,10 @@
 			return {
 				// 顶部栏初始数
 				visibleNumber: 5,
-				sidebarRoutersHidden: [],
 			}
 		},
-		created (){
-			this.sidebarRouters.forEach(item => {
-				if(!item.hidden){
-					this.sidebarRoutersHidden.push(item);
-				}
-			});
-		},
 		computed: {
-			...mapGetters(["sidebarRouters", "sidebar"]),
+			...mapGetters(["sidebarRouters", "sidebar", "sidebarRoutersHidden"]),
 			activeMenu() {
 				const route = this.$route;
 				const { meta, path } = route;
