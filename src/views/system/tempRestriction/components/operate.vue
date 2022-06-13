@@ -166,7 +166,7 @@ export default {
                     {required:true,message:"限行规则不能为空",trigger:"change"}
                 ],
                 ruleResult:[
-                    {required:true,message:"限行尾号不能为空",trigger:"change"}
+                    {required:true,message:"限行尾号不能为空",trigger:"`change`"}
                 ],
                 lastLetter:[
                     {required:true,message:"尾号字母处理规则不能为空",trigger:"change"}
@@ -225,7 +225,7 @@ export default {
             })
             if("单双号"===obj.name){
                 this.ruleResultOptions = this.ruleResultData;
-            }else if("临时限行"===obj.name){
+            }else if("指定尾号"===obj.name){
                 this.ruleResultOptions = this.restrictionData;
             }
         },
@@ -304,9 +304,10 @@ export default {
         handleRuleChange(value){
             if("单双号"===value){
                 this.ruleResultOptions  = this.ruleResultData;
-            }else if("临时限行"===value){
+            }else if("指定尾号"===value){
                 this.ruleResultOptions = this.restrictionData;
             }
+            this.form.ruleResult = ''
         },
         //新建
         handleCreate(){
