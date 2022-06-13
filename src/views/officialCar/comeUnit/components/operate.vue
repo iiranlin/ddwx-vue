@@ -11,7 +11,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="单位编号" prop="unitCode">
+          <el-form-item label="单位编号" prop="unitCode" :rules="[{ required: true, message: '单位编号不能为空', trigger: 'blur' },validateNumberOrLetter]">
             <el-input v-model="form.unitCode" placeholder="请输入单位编号" clearable size="small" maxlength="20"></el-input>
           </el-form-item>
         </el-col>
@@ -42,7 +42,7 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="联系方式" prop="linkPhone">
+          <el-form-item label="联系方式" prop="linkPhone" :rules="[{ required: true, message: '联系方式不能为空', trigger: 'blur' },validateOnlyNumber]">
             <el-input v-model="form.linkPhone" placeholder="请输入联系方式" clearable size="small" maxlength="20"></el-input>
           </el-form-item>
         </el-col>
@@ -66,9 +66,11 @@
 
 import { getListByParentId } from '@/api/system/dict'
 import { addComeUnit, updateComeUnit } from '@/api/comeUnit'
+import mixins from '@/views/mixins'
 
 export default {
   name: '',
+  mixins: [mixins],
   data() {
     return {
       //遮罩层
@@ -98,9 +100,9 @@ export default {
         unitCategory: [
           { required: true, message: '单位类型不能为空', trigger: 'blur' }
         ],
-        unitCode: [
-          { required: true, message: '单位编号不能为空', trigger: 'blur' }
-        ],
+        // unitCode: [
+        //   { required: true, message: '单位编号不能为空', trigger: 'blur' }
+        // ],
         unitName: [
           { required: true, message: '单位名称不能为空', trigger: 'blur' }
         ],
@@ -110,9 +112,9 @@ export default {
         linkMan: [
           { required: true, message: '联系人不能为空', trigger: 'blur' }
         ],
-        linkPhone: [
-          { required: true, message: '联系方式不能为空', trigger: 'blur' }
-        ]
+        // linkPhone: [
+        //   { required: true, message: '联系方式不能为空', trigger: 'blur' }
+        // ]
       },
       unitCategoryList: []
     }

@@ -122,6 +122,7 @@
           <el-form-item
             label="交易金额"
             prop="transFee"
+            :rules="[{ required: true, message: '交易金额不能为空', trigger: 'blur' },validateNumber8I2F]"
           >
             <el-input
               v-model="form.transFee"
@@ -189,6 +190,7 @@
           <el-form-item
             label="数量"
             prop="oilVolume"
+            :rules="[{ required: true, message: '数量不能为空', trigger: 'blur' },validateNumber8I2F]"
           >
             <el-input
               v-model="form.oilVolume"
@@ -201,6 +203,7 @@
         <el-col
           :span="24"
           v-if="calcIncomeOrExpIsY"
+          :rules="[{ required: true, message: '单价不能为空', trigger: 'blur' },validateNumber8I2F]"
         >
           <el-form-item
             label="单价"
@@ -224,6 +227,7 @@
               placeholder="请输入摘要"
               type="textarea"
               :autosize="{ minRows: 3, maxRows: 5}"
+              maxlength="200"
               size="small"
             ></el-input>
           </el-form-item>
@@ -260,10 +264,11 @@ import {
 import { FUEL_CARD_RECORD_DICT } from '@/views/fee/fuelCardManagement/constants/index'
 import getDict from '@/views/mixins/getDict'
 import _ from 'lodash'
+import mixins from '@/views/mixins'
 
 export default {
   name: '',
-  mixins: [getDict],
+  mixins: [getDict,mixins],
   components: {},
   filters: {},
   props: {
@@ -335,10 +340,10 @@ export default {
         gasGrade: [
           { required: true, message: '油品类型不能为空', trigger: 'change' }
         ],
-        // 交易金额
-        transFee: [
-          { required: true, message: '交易金额不能为空', trigger: 'blur' }
-        ],
+        // // 交易金额
+        // transFee: [
+        //   { required: true, message: '交易金额不能为空', trigger: 'blur' }
+        // ],
         // 交易时间
         transDate: [
           { required: true, message: '交易时间不能为空', trigger: 'change' }
@@ -351,14 +356,14 @@ export default {
         bookTime: [
           { required: true, message: '记账时间不能为空', trigger: 'change' }
         ],
-        // 数量
-        oilVolume: [
-          { required: true, message: '数量不能为空', trigger: 'blur' }
-        ],
-        // 单价
-        oilPrice: [
-          { required: true, message: '单价不能为空', trigger: 'blur' }
-        ],
+        // // 数量
+        // oilVolume: [
+        //   { required: true, message: '数量不能为空', trigger: 'blur' }
+        // ],
+        // // 单价
+        // oilPrice: [
+        //   { required: true, message: '单价不能为空', trigger: 'blur' }
+        // ],
         // 摘要
         remark: ''
       },

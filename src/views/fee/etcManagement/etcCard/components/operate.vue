@@ -128,7 +128,7 @@
           <el-form-item
             label="卡号"
             prop="cardNumber"
-            :rules="[ { required: true, message: '卡号不能为空', trigger: 'blur' } ,validateInteger]"
+            :rules="[ { required: true, message: '卡号不能为空', trigger: 'blur' } ,validateOnlyNumber]"
           >
             <el-input
               v-model="form.cardNumber"

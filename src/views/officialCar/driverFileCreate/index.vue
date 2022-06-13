@@ -99,11 +99,11 @@
             </el-col>
             <el-col :span="7">
               <el-form-item label="紧急联系人：" prop="emergencyContact">
-                <el-input v-model="form.emergencyContact" size="mini" clearable maxlength="50"></el-input>
+                <el-input v-model="form.emergencyContact" size="mini" clearable maxlength="20"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="7">
-              <el-form-item label="紧急联系电话：" prop="emergencyPhone">
+              <el-form-item label="紧急联系电话：" prop="emergencyPhone" :rules="validateOnlyNumber">
                 <el-input v-model="form.emergencyPhone" size="mini" clearable maxlength="20"></el-input>
               </el-form-item>
             </el-col>
@@ -123,7 +123,10 @@
         <el-row>
           <el-col :span="22" :xs="24">
             <el-col :span="7">
-              <el-form-item label="驾照编号：" prop="license">
+              <el-form-item label="驾照编号：" prop="license" :rules="[
+          { required: true, message: '驾照编号不能为空', trigger: 'blur' },
+          validateIDCard
+        ]">
                 <el-input v-model="form.license" size="mini" clearable maxlength="20"></el-input>
               </el-form-item>
             </el-col>
@@ -190,13 +193,13 @@
               </el-form-item>
             </el-col>
             <el-col :span="7">
-              <el-form-item label="档案编号：" prop="fileNo">
+              <el-form-item label="档案编号：" prop="fileNo" :rules="[{ required: true, message: '档案编号不能为空', trigger: 'blur' },validateNumber12]">
                 <el-input v-model="form.fileNo" size="mini" clearable maxlength="50"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="7">
               <el-form-item label="发证单位：" prop="issuingUnit">
-                <el-input v-model="form.issuingUnit" size="mini" clearable maxlength="50"></el-input>
+                <el-input v-model="form.issuingUnit" size="mini" clearable maxlength="30"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="14">
@@ -329,9 +332,11 @@ import {
   gcjcDriverCreate
 } from '@/api/driver'
 import { getToken } from '@/utils/auth'
+import mixins from '@/views/mixins'
 
 export default {
   name: 'driverFileCreate',
+  mixins: [mixins],
   data() {
     return {
       endDatePicker: this.endDateScope(),
@@ -412,9 +417,9 @@ export default {
         driverType: [
           { required: true, message: '司机类型不能为空', trigger: ['blur', 'change'] }
         ],
-        license: [
-          { required: true, message: '驾照编号不能为空', trigger: 'blur' }
-        ],
+        // license: [
+        //   { required: true, message: '驾照编号不能为空', trigger: 'blur' }
+        // ],
         licenseType: [
           { required: true, message: '驾照类型不能为空', trigger: ['blur', 'change'] }
         ],
@@ -424,9 +429,9 @@ export default {
         firstDate: [
           { required: true, message: '首次领证日期不能为空', trigger: 'blur' }
         ],
-        fileNo: [
-          { required: true, message: '档案编号不能为空', trigger: 'blur' }
-        ],
+        // fileNo: [
+        //   { required: true, message: '档案编号不能为空', trigger: 'blur' }
+        // ],
         issuingUnit: [
           { required: true, message: '发证单位不能为空', trigger: 'blur' }
         ],
