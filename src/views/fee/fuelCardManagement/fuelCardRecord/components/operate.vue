@@ -240,7 +240,7 @@
     >
       <el-button
         type="primary"
-        @click="type==='create'?handleCreate():handleUpdate()"
+        @click="handleCreate()"
       >
         确定
       </el-button>

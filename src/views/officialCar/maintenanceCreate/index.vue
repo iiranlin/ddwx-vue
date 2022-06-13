@@ -83,7 +83,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="其他店铺：" prop="maintainShop">
+              <el-form-item label="其他店铺：" prop="maintainShop" :rules="{ required: status && form.maintainShopId === '-1' , message: '其他店铺不能为空', trigger: 'blur' }">
                 <el-input v-model="form.maintainShop" size="mini" placeholder="请填写不在定点的店铺"
                           :disabled="form.maintainShopId!=='-1'" v-if="status" maxlength="20"
                 ></el-input>
@@ -109,7 +109,7 @@
             <el-col :span="8">
               <el-form-item label="维保里程：" prop="maintainMiles">
                 <el-input v-model="form.maintainMiles" size="mini" placeholder="请输入维保里程" clearable
-                          @change="inputNumberChange('maintainMiles')" v-if="status" maxlength="8"
+                          @change="inputNumberChange('maintainMiles')" v-if="status" maxlength="11"
                 ></el-input>
                 <span v-else>{{ form.maintainMiles }}</span>
               </el-form-item>
@@ -178,7 +178,7 @@
             </el-col>
             <el-col :span="24">
               <el-form-item label="备注：" prop="remark">
-                <el-input type="textarea" :rows="3" maxlength="60" v-model="form.remark" size="mini" v-if="status"></el-input>
+                <el-input type="textarea" :rows="3" maxlength="200" v-model="form.remark" size="mini" v-if="status"></el-input>
                 <span v-else>{{ form.remark }}</span>
               </el-form-item>
             </el-col>
@@ -345,7 +345,12 @@ export default {
         ],
         maintainDate: { required: true, message: '维保日期不能为空', trigger: 'change' },
         maintainMiles: [
-          { required: true, message: '维保里程不能为空', trigger: 'blur' }
+          { required: true, message: '维保里程不能为空', trigger: 'blur' },
+          {
+            trigger: 'blur',
+            pattern: /^0\.[0-9]{1,2}$|^0$|^[1-9]\d{0,7}\.\d{1,2}$|^[1-9]\d{0,7}$/,
+            message: '请最多输入八位整数和两位小数'
+          }
         ],
         maintainAddress: [
           { required: true, message: '维保地点不能为空', trigger: 'blur' }
@@ -371,11 +376,8 @@ export default {
     // 监听店铺选择
     'form.maintainShopId'(newVal) {
       if (this.status) {
-        if (newVal === '-1') {
-          this.rules.maintainShop = { required: true, message: '其他店铺不能为空', trigger: 'blur' }
-        } else {
+        if (newVal !== '-1') {
           this.form.maintainShop = ''
-          this.rules.maintainShop = {}
         }
         this.$refs.elform.clearValidate('maintainShop')
       }

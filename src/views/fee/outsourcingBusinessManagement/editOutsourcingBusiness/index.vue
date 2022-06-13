@@ -72,7 +72,7 @@
               >
                 <el-input
                   v-model="formData.contractAmount"
-                  maxlength="12"
+                  maxlength="11"
                   placeholder="请输入合同金额"
                   @change="inputNumberChange(formData.contractAmount, 'contractAmount')"
                 >
@@ -196,7 +196,7 @@
                 >
                   <el-input
                     v-model="item.lineKm"
-                    maxlength="12"
+                    maxlength="11"
                     placeholder="请输入往返里程"
                     @change="inputNumberChange(item.lineKm, 'lineKm', index)"
                   >
@@ -250,7 +250,7 @@
                 >
                   <el-input
                     v-model="item.lineTripnum"
-                    maxlength="4"
+                    maxlength="3"
                     placeholder="请输入每天趟数"
                   >
                     <span slot="append">趟</span>
@@ -403,10 +403,16 @@ export default {
           { required: isValidate, message: "请选择使用单位", trigger: "change" }
         ],
         contractCode: [
-          { required: isValidate, message: "请输入合同编号", trigger: "blur" }
+          { required: isValidate, message: "请输入合同编号", trigger: "blur" },
+          { trigger: 'blur', pattern: /^[A-Za-z0-9]+$/, message: '只能输入数字或字母' }
         ],
         contractAmount: [
-          { required: isValidate, message: "请输入合同金额", trigger: "blur" }
+          { required: isValidate, message: "请输入合同金额", trigger: "blur" },
+          {
+            trigger: 'blur',
+            pattern: /^0\.[0-9]{1,2}$|^0$|^[1-9]\d{0,7}\.\d{1,2}$|^[1-9]\d{0,7}$/,
+            message: '请最多输入八位整数和两位小数'
+          }
         ],
         contractDate: [
           { required: isValidate, message: "请选择合同周期", trigger: "change" }
@@ -451,7 +457,12 @@ export default {
         ],
         // 往返里程
         lineKm: [
-          { required: isValidate, message: "请输入往返里程", trigger: "blur" }
+          { required: isValidate, message: "请输入往返里程", trigger: "blur" },
+          {
+            trigger: 'blur',
+            pattern: /^0\.[0-9]{1,2}$|^0$|^[1-9]\d{0,7}\.\d{1,2}$|^[1-9]\d{0,7}$/,
+            message: '请最多输入八位整数和两位小数'
+          }
         ],
         // 线路起点
         lineStart: [
@@ -463,7 +474,8 @@ export default {
         ],
         // 每天趟数
         lineTripnum: [
-          { required: isValidate, message: "请输入每天趟数", trigger: "blur" }
+          { required: isValidate, message: "请输入每天趟数", trigger: "blur" },
+          { trigger: 'blur', pattern: /^[0-9]*$/, message: '只能输入数字' }
         ],
         // 车辆数
         carNum: [

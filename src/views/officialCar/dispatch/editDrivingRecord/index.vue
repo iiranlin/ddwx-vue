@@ -160,6 +160,7 @@
               >
                 <el-input
                   v-model="formData.usagePersons"
+                  @input="numberInput($event,'usagePersons')"
                   maxlength="3"
                   placeholder="请输入乘坐人数"
                 />
@@ -264,7 +265,7 @@
                   v-model="formData.timeLength"
                   maxlength="5"
                   placeholder="请输入预计时长"
-                  @change="inputNumberChange(formData.timeLength, 'timeLength')"
+                  @input="limitInput($event,'timeLength')"
                 >
                   <span slot="append">小时</span>
                 </el-input>
@@ -330,7 +331,7 @@
                 <el-input
                   type="textarea"
                   v-model="formData.remark"
-                  maxlength="200"
+                  maxlength="150"
                   placeholder="请输入备注"
                 />
               </el-form-item>
@@ -528,7 +529,7 @@ import { vehicleInfoGetAssignCount } from "@/api/vehicleInfo";
 import { saveOrderDispatch } from "@/api/gcywVehicleRequest";
 import formAddress from "@/views/car/apply/components/formAddress";
 import getDict from "@/views/mixins/getDict"
-import { numToFixed2 } from '@/utils/index'
+import { limitInput, numToFixed2 } from '@/utils/index'
 import { getCookie } from '@/utils/auth'
 import { numberInput } from '@/utils/index'
 
@@ -554,6 +555,7 @@ export default {
     const isValidate = true
     return {
       numberInput: numberInput,
+      limitInput: limitInput,
       loading: false,
       dateList: [],
       calendarVal: null,
