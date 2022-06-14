@@ -159,12 +159,16 @@
             </el-table-column>
             <el-table-column label="保费" align="center">
               <template slot-scope="scope">
-                <el-input v-model="form.items[scope.$index].insrFee" maxlength="10"></el-input>
+                <el-input v-model="form.items[scope.$index].insrFee" maxlength="11"
+                          @input="handleMoney(form.items[scope.$index],'insrFee')"
+                ></el-input>
               </template>
             </el-table-column>
             <el-table-column label="保额" align="center">
               <template slot-scope="scope">
-                <el-input v-model="form.items[scope.$index].insrPaidAmount" maxlength="10"></el-input>
+                <el-input v-model="form.items[scope.$index].insrPaidAmount" maxlength="11"
+                          @input="handleMoney(form.items[scope.$index],'insrPaidAmount')"
+                ></el-input>
               </template>
             </el-table-column>
             <el-table-column label="操作" align="center">
@@ -184,12 +188,13 @@ import { gcywInsuranceRecordCreate, gcywComeUnitListAll } from '@/api/driver'
 import { getListByParentCode } from '@/api/system/dict'
 import { getVehicleInfoSelect } from '@/api/car'
 import { getToken } from '@/utils/auth'
-import { limitInput } from '@/utils'
+import { handleMoney } from '@/utils'
 
 export default {
   name: 'insuranceCreate',
   data() {
     return {
+      handleMoney: handleMoney,
       //loading框
       loading: false,
       //使用单位数据
@@ -283,18 +288,7 @@ export default {
     this.handleAddClick()
   },
   methods: {
-    // TODO
-    handleMoney(key, index) {
-      let num = parseInt(index)
-      let value = this.form.items[num][key]
-      console.log(value)
-      let reg = /^([1-9]\d{0,2})\.*(\d{0,2})$/
-      let result = value.match(reg)
-      console.log(result)
-      // if (result != null && parseFloat(result) <= 100) {
-      //   this.form.items[num][key] = result
-      // }
-    },
+
     //获取单位信息
     async getUnitOptions() {
       this.loading = true

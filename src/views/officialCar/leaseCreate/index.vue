@@ -320,7 +320,7 @@ export default {
           { required: true, message: '租赁公司营业执照不能为空', trigger: 'blur' },
           {
             trigger: 'blur',
-            pattern: /\\d{15}$/,
+            pattern: /^\d{15}$/,
             message: '请输入规范的15位营业执照'
           }
         ],

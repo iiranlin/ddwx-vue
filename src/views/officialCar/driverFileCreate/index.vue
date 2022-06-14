@@ -194,7 +194,7 @@
             </el-col>
             <el-col :span="7">
               <el-form-item label="档案编号：" prop="fileNo" :rules="[{ required: true, message: '档案编号不能为空', trigger: 'blur' },validateNumber12]">
-                <el-input v-model="form.fileNo" size="mini" clearable maxlength="50"></el-input>
+                <el-input v-model="form.fileNo" size="mini" clearable maxlength="12"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="7">

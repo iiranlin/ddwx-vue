@@ -95,7 +95,7 @@
                 <el-date-picker
                   style="width:100%"
                   value-format="yyyy-MM-dd"
-                  :picker-options="{firstDayOfWeek:1}"
+                  :picker-options="firstDatePicker"
                   v-model="form.maintainDate"
                   type="date"
                   placeholder="请选择维保日期"
@@ -157,7 +157,7 @@
                 <el-date-picker
                   style="width:100%"
                   value-format="yyyy-MM-dd"
-                  :picker-options="{firstDayOfWeek:1}"
+                  :picker-options="endDatePicker"
                   v-model="form.nextMaintainDate"
                   type="date"
                   placeholder="请选择下次维保日期"
@@ -275,6 +275,8 @@ export default {
   name: 'maintenanceCreate',
   data() {
     return {
+      endDatePicker: this.endDateScope(),
+      firstDatePicker: this.firstDateScope(),
       // 当前状态,create新增true,detail详情false
       status: true,
       //loading框
@@ -459,6 +461,30 @@ export default {
     this.initMaintenanceCreate()
   },
   methods: {
+    endDateScope() {
+      const self = this
+      return {
+        disabledDate(time) {
+          if (self.form.maintainDate) {
+            return new Date(self.form.maintainDate).getTime() > time.getTime()
+          }
+        },
+        firstDayOfWeek: 1
+      }
+    },
+    firstDateScope() {
+      const self = this
+      return {
+        disabledDate(time) {
+          if (self.form.nextMaintainDate) {
+            let endDate = new Date(self.form.nextMaintainDate)
+            endDate = endDate.setDate(endDate.getDate() - 1)
+            return new Date(endDate).getTime() < time.getTime()
+          }
+        },
+        firstDayOfWeek: 1
+      }
+    },
     // 获取保养项目id
     getItemId(index, value) {
       this.maintenanceItemOptions.forEach(item => {

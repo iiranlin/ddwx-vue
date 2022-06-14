@@ -34,7 +34,7 @@ export default {
       // 校验12位证件号,如果驾驶证档案
       validateNumber12: {
         trigger: 'blur',
-        pattern: /\\d{12}$/,
+        pattern: /^\d{12}$/,
         message: '请输入规范的12位证件号'
       },
       // 校验车牌号,包含油车和电车
