@@ -35,6 +35,7 @@
                 <table-index
                     ref="tableIndex"
                     style="margin-top:-8px"
+                    :id="'assignmentId'"
                     :loading="loading"
                     :tableData="dataList"
                     :property="property"
