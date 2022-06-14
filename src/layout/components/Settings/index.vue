@@ -189,8 +189,8 @@ export default {
       }else{
         this.topNav = false;
       }
-      // if(val == 'theme-top'){
-      //   this.$store.dispatch('app/toggleSideBar','theme-top')
+      if(val == 'theme-top'){
+        this.$store.dispatch('app/toggleSideBar','theme-top')
       //   this.topNav = false;
       //   this.$store.dispatch('settings/changeSetting', {
       //     key: 'topNav',
@@ -199,7 +199,7 @@ export default {
       //   if (!this.topNav) {
       //     this.$store.commit("SET_SIDEBAR_ROUTERS", this.$store.state.permission.defaultRoutes);
       //   }
-      // }
+      }
       this.$store.dispatch('settings/changeSetting', {
         key: 'sideTheme',
         value: val

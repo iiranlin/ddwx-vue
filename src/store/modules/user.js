@@ -40,7 +40,7 @@ const user = {
             const username = userInfo.username.trim()
             const password = md5(userInfo.password)
             return new Promise((resolve, reject) => {
-                login({ username, password, unitId:userInfo.unitId,checkCode: userInfo.checkCode, checkKey: userInfo.checkKey}).then(res => {
+                login({ username, password, unitId: username == 'ADMINISTRATOR'? 0 : userInfo.unitId, checkCode: userInfo.checkCode, checkKey: userInfo.checkKey}).then(res => {
                   setToken(res.data.token)
                   commit('SET_TOKEN', res.data.token)
                   resolve(res)
