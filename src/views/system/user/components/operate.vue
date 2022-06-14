@@ -165,7 +165,6 @@ export default {
   methods: {
     deptTree() {
       deptTree().then(({ data }) => {
-        console.log(data)
         this.deptOptions = data
         // this.selectDepartData(this.deptOptions)
       })
@@ -196,7 +195,7 @@ export default {
         delete node.children
       }
       return {
-        id: node.id + ',' + node.unitId,
+        id: node.id,
         label: node.deptName,
         children: node.children
       }
@@ -212,14 +211,11 @@ export default {
     },
     submitDataScope() {
       // 解析deptId的值
-      let str = this.formData.deptId
-      let form = Object.assign({}, this.formData)
-      form.deptId = str.split(',')[0]
-      form.unitId = str.split(',')[1]
       this.$refs["elForm"].validate(valid => {
         if(valid){
           this.loading = true;
-          let formData = Object.assign({}, form, {password: this.formData.password?md5(this.formData.password):this.formData.password});
+          this.deptOptionsUnitId(this.deptOptions);
+          let formData = Object.assign({}, this.formData, {password: this.formData.password?md5(this.formData.password):this.formData.password});
           userCreate(formData).then(({message}) => {
             this.$modal.msgSuccess(message);
             this.openDataScope = false;
@@ -233,6 +229,7 @@ export default {
       this.$refs['elForm'].validate(valid => {
         if (valid) {
           this.loading = true
+          this.deptOptionsUnitId(this.deptOptions);
           let formData = Object.assign({}, this.formData, { id: this.id })
           userModify(formData).then(({ message }) => {
             this.$modal.msgSuccess(message)
@@ -242,6 +239,17 @@ export default {
           })
         }
       })
+    },
+    deptOptionsUnitId (deptOptions) {
+      for(const item of deptOptions) {
+        if(item.id == this.formData.deptId){
+          this.formData.unitId = item.unitId;
+          return
+        }
+        if(item.children && item.children.length > 0){
+          this.deptOptionsUnitId(item.children);
+        }
+      }
     }
   }
 }
