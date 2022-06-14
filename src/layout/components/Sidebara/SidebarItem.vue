@@ -1,5 +1,5 @@
 <template>
-	<div v-if="!item.hidden" :class="{'item_hidden_box': (item.alwaysShow && item.path.split('/').length == 2) || item.redirect == 'index'}">
+	<div v-if="!item.hidden" :class="{'item_hidden_box': (!typeBlock && item.alwaysShow && item.path.split('/').length == 2) || item.redirect == 'index'}">
 		<!-- !onlyOneChild.children -->
     	<template v-if="!(item.meta && item.meta.skipUrl)">
 			<template

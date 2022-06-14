@@ -109,8 +109,7 @@ export default {
       if(skipUrl.indexOf('http') == -1){
         getReportToken().then((res) => {
           if(res.data){
-            // window.open(res.data.url + '/login/' + res.data.body + '?skipUrl=' + skipUrl, '_blank');
-            window.open('http://172.28.20.185:3000/login/' + res.data.body + '?skipUrl=' + skipUrl, '_blank');
+            window.open(res.data.url + '/login/' + res.data.body + '?skipUrl=' + skipUrl, '_blank');
           }
         })
       }else{
