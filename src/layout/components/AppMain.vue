@@ -1,18 +1,10 @@
 <template>
   <section class="app-main">
-    <!--不刷新-->
     <transition name="fade-transform" mode="out-in">
       <keep-alive :include="cachedViews">
         <router-view :key="key" />
       </keep-alive>
-			<!-- <keep-alive>
-				<router-view v-if="isShow" :key="key" />
-			</keep-alive> -->
 		</transition>
-    <!--刷新-->
-		<!-- <transition name="fade-transform" mode="out-in">
-			<router-view v-if="!isShow" :key="key" />
-		</transition> -->
   </section>
 </template>
 
@@ -27,9 +19,6 @@ export default {
     key() {
       return this.$route.path
     },
-    isShow () {
-      return JSON.stringify(this.$route.query) == '{}'
-    }
   }
 }
 </script>

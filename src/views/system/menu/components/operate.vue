@@ -124,6 +124,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
+            <el-form-item label="跳转地址:" prop="skipUrl">
+              <el-input v-model="form.skipUrl" maxlength="200" placeholder="请输入跳转地址" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
             <el-form-item label="字段权限:" prop="isAcl">
               <el-switch
                 v-model="form.isAcl"
@@ -303,7 +308,8 @@ export default {
         "status": 0,
         "isAcl":0,
         "datasource":"",
-        'isCache': 1
+        'isCache': 1,
+        'skipUrl': ''
       },
       // 表单校验
       rules: {

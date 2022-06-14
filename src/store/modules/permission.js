@@ -110,6 +110,7 @@ export function filterAsyncRoutes(menuList, flag) {
                 noCache: item.isCache == 1?false:true,
                 link: null,
                 id: item.id,
+                skipUrl: item.skipUrl || ''
             }
         }
         if(flag && item.component != 'Layout'){
