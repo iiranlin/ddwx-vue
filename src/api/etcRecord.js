@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
 let VUE_APP_BASE_PREFIX = process.env.VUE_APP_AUTH_SERVER
-export const etcRecordTemplateUrl = `${process.env.VUE_APP_BASE_API}${VUE_APP_BASE_PREFIX}/gcywEtcRecord/template`
-export const etcRecordImportUrl = `${process.env.VUE_APP_BASE_API}${VUE_APP_BASE_PREFIX}/gcywEtcRecord/import`
+export const etcRecordTemplateUrl = `${VUE_APP_BASE_PREFIX}/gcywEtcRecord/template`
+export const etcRecordImportUrl = `${VUE_APP_BASE_PREFIX}/gcywEtcRecord/import`
 
 /**
  * @function getETCRecordPageList
