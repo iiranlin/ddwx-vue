@@ -1,8 +1,10 @@
 import request from "@/utils/request";
-let VUE_APP_BASE_PREFIX = process.env.VUE_APP_AUTH_SERVER;
-let path = process.env.NODE_ENV === 'development'? process.env.VUE_APP_BASE_API: '';
+
+let path = process.env.NODE_ENV === 'development'? process.env.VUE_APP_BASE_API : '';
+let uploadPath = process.env.NODE_ENV === 'development'? path : '/api';
+
 export const fuelRecordTemplateUrl = `${path}${VUE_APP_BASE_PREFIX}/gcywFuelRecord/template`
-export const fuelRecordImportUrl = `${path}${VUE_APP_BASE_PREFIX}/gcywFuelRecord/import`
+export const fuelRecordImportUrl = `${uploadPath}${VUE_APP_BASE_PREFIX}/gcywFuelRecord/import`
 
 /**
  * @function getFuelRecordPageList
