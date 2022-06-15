@@ -9,6 +9,7 @@
     </el-row>
     <form-data :showSearch="showSearch" :searchArr="property.search || []" @handleQuery="handleQuery" />
     <table-index ref="tableIndex" :loading="loading" :tableData="list" :property="property"
+          :tableIndexs="tableIndex"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
           @selectChange="selectChange"

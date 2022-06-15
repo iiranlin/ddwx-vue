@@ -59,6 +59,7 @@
                 <table-index
                     ref="tableIndex"
                     style="margin-top:-8px"
+                    :tableIndexs="tableIndex"
                     :loading="loading"
                     :tableData="dataList"
                     :property="property"
@@ -89,8 +90,10 @@ import tableIndex from "@/components/tableIndex"
 import operate from "./components/operate"
 import {vehicleInfoUsagelistPage,vehicleInfoRemoveUsages} from "@/api/system/vehicleAllocation"
 import {deptTree} from "@/api/system/dept";
+import indexMixin from "@/views/mixins"
 export default {
     name:"vehicleAllocation",
+    mixins:[indexMixin],
     components:{buttonTop,formData,tableIndex,operate},
 
     data() {

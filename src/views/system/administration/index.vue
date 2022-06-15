@@ -35,6 +35,7 @@
                 <table-index
                     ref="tableIndex"
                     style="margin-top:-8px"
+                    :tableIndexs="tableIndex"
                     :loading="loading"
                     :tableData="dataList"
                     :property="property"
@@ -60,6 +61,7 @@
 </template>
 <script>
 import buttonTop from "@/components/buttonTop"
+import indexMixin from "@/views/mixins"
 import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
 import operate from "./components/operate"
@@ -67,6 +69,7 @@ import {gcjcDivisionListPage,
         gcjcDivisionDeleteBatch} from "@/api/system/dict/administration"
 export default {
     name:"administration",
+    mixins:[indexMixin],
     components:{buttonTop,formData,tableIndex,operate},
 
     data() {

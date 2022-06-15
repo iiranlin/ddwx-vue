@@ -35,6 +35,7 @@
                 <table-index
                     ref="tableIndex"
                     style="margin-top:-8px"
+                    :tableIndexs="tableIndex"
                     :loading="loading"
                     :tableData="dataList"
                     :property="property"
@@ -64,9 +65,11 @@ import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
 import operate from "./components/operate"
 import{vehicleInfoListPage,minioGetPic,vehicleInfoGetVehicleFile} from "@/api/driver"
+import indexMixin from "@/views/mixins"
 
 export default {
     name:"vehicleFile",
+    mixins:[indexMixin],
     components:{buttonTop,formData,tableIndex,operate},
 
     data() {

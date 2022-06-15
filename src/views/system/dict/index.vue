@@ -35,6 +35,7 @@
         ref="tableIndex"
         style="margin-top:-8px"
         pageName="commonDict"
+        :tableIndexs="tableIndex"
         :loading="loading"
         :tableData="dataList"
         :property="property"

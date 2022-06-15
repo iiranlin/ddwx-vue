@@ -344,7 +344,7 @@ export default {
   left: 50%;
   top: 5%;
   transform: translate(-50%, -50%);;
-  font-size: 50px;
+  font-size: 40px;
   color: red;
   z-index: 999;
 }

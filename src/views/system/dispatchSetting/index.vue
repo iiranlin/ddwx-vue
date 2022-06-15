@@ -27,6 +27,7 @@
                 <table-index
                     ref="tableIndex"
                     style="margin-top:-8px"
+                    :tableIndexs="tableIndex"
                     :loading="loading"
                     :tableData="dataList"
                     :property="property"
@@ -56,9 +57,11 @@ import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
 import operate from "./components/operate"
 import{sysUnitUsedisRelationListPage,sysUnitUsedisRelationDelDU} from "@/api/system/dict/setting"
+import indexMixin from '@/views/mixins';
 
 export default {
     name:"dispatchSetting",
+    mixins: [indexMixin],
     components:{buttonTop,formData,tableIndex,operate},
 
     data() {

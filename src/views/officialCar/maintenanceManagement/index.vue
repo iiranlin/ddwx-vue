@@ -22,6 +22,7 @@
             @queryTable="handleQuery"
             @handleCheckAllChange="handleCheckAllChange"
             @clickReset="clickReset"
+            @numberChange="numberChange"
           >
           </right-toolbar>
         </el-row>
@@ -39,6 +40,8 @@
         <table-index
           ref="tableIndex"
           style="margin-top:-8px"
+          :tableIndexs="tableIndex"
+          :numberShow="numberShow"
           :loading="loading"
           :tableData="dataList"
           :property="property"
@@ -66,9 +69,11 @@ import buttonTop from '@/components/buttonTop'
 import formData from '@/components/formData'
 import tableIndex from '@/components/tableIndex'
 import { getMaintenanceRecordByPage } from '@/api/maintenanceRecord'
+import indexMixin from "@/views/mixins"
 
 export default {
   name: 'maintenanceManagement',
+  mixins:[indexMixin],
   components: { buttonTop, formData, tableIndex },
 
   data() {
@@ -81,6 +86,8 @@ export default {
       multiple: true,
       //显示搜索条件
       showSearch: true,
+      // 表格序号是否展示
+      numberShow: false,
       //表格数据
       dataList: [],
       //日期范围
@@ -110,6 +117,9 @@ export default {
     this.handleQuery()
   },
   methods: {
+    numberChange (val) {
+      this.numberShow = val;
+    },
     //获取菜单数据
     menuProperty() {
       let id = this.$route.meta.id

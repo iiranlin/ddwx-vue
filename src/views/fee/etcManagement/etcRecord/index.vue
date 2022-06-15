@@ -56,6 +56,7 @@
         <table-index
           ref="tableIndex"
           style="margin-top:-8px"
+          :tableIndexs="tableIndex"
           :loading="loading"
           :tableData="dataList"
           :property="property"

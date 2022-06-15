@@ -48,6 +48,7 @@
                 <table-index
                     ref="tableIndex"
                     style="margin-top:-8px"
+                    :tableIndexs="tableIndex"
                     :loading="loading"
                     :tableData="dataList"
                     :property="property"
@@ -76,10 +77,12 @@ import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
 import {gcywVehicleRequestDispatchListInfo} from "@/api/car"
 import {getAllAvailableDept} from "@/api/dept"
+import indexMixin from "@/views/mixins"
 
 export default {
     name:"searchVehicleInfo",
     components:{buttonTop,formData,tableIndex},
+    mixins: [indexMixin],
 
     data() {
         return {

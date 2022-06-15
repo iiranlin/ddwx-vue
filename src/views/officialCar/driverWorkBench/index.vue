@@ -35,6 +35,7 @@
                 <table-index
                     ref="tableIndex"
                     style="margin-top:-8px"
+                    :tableIndexs="tableIndex"
                     :id="'assignmentId'"
                     :loading="loading"
                     :tableData="dataList"
@@ -62,6 +63,7 @@
     </div>
 </template>
 <script>
+import indexMixin from "@/views/mixins";
 import buttonTop from "@/components/buttonTop"
 import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
@@ -74,6 +76,7 @@ import {gcywVehicleRequestListPage,
 export default {
     name:"driverWorkBench",
     components:{buttonTop,formData,tableIndex,dispatchCar,returnCar},
+    mixins: [indexMixin],
     data() {
         return {
             //遮罩层

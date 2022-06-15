@@ -31,6 +31,7 @@
         />
           <table-index
         ref="tableIndex"
+        :tableIndexs="tableIndex"
         style="margin-top:-8px"
         :loading="loading"
         :tableData="dataList"

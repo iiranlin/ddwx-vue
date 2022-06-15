@@ -34,6 +34,7 @@
                 <!--表格数据-->
                 <table-index
                     ref="tableIndex"
+                    :tableIndexs="tableIndex"
                     style="margin-top:-8px"
                     :loading="loading"
                     :tableData="dataList"
@@ -64,11 +65,12 @@ import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
 import operate from "./components/operate"
 import{gcjcClassListPage,gcjcClassDeleteBatch} from "@/api/driver"
+import indexMixin from "@/views/mixins"
 
 export default {
     name:"carAudit",
     components:{buttonTop,formData,tableIndex,operate},
-
+    mixins: [indexMixin],
     data() {
         return {
             //遮罩层

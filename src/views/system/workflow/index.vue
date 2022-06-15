@@ -11,6 +11,7 @@
     </el-row>
     <form-data :showSearch="showSearch" :searchArr="property.search || []" @handleQuery="handleQuery"/>
     <table-index ref="tableIndex" :loading="loading" :menuName="menuName"
+      :tableIndexs="tableIndex"
       :tableData="dataList"
       :property="property"
       :numberShow="numberShow"

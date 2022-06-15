@@ -40,6 +40,7 @@
         <table-index
           ref="tableIndex"
           style="margin-top:-8px"
+          :tableIndexs="tableIndex"
           :loading="loading"
           :tableData="dataList"
           :property="property"
@@ -69,11 +70,13 @@
 import buttonTop from '@/components/buttonTop'
 import formData from '@/components/formData'
 import tableIndex from '@/components/tableIndex'
+import indexMixin from '@/views/mixins';
 import operate from '@/views/officialCar/comeUnit/components/operate'
 import { getLoginLogByPage } from '@/api/system/loginLog'
 
 export default {
   name: 'maintenanceManagement',
+  mixins: [indexMixin],
   components: { buttonTop, formData, tableIndex, operate },
   data() {
     return {

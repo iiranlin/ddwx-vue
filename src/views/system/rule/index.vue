@@ -9,10 +9,11 @@
     </el-row>
     <form-data :showSearch="showSearch" :searchArr="property.search || []" @handleQuery="handleQuery"/>
     <table-index ref="tableIndex" :loading="loading" :tableData="list" :property="property"
-                 @handleSelectionChange="handleSelectionChange"
-                 @handleButton="handleButton"
-                 @selectChange="selectChange"
-                 @emitAblFilter="emitAblFilter"/>
+                :tableIndexs="tableIndex"
+                @handleSelectionChange="handleSelectionChange"
+                @handleButton="handleButton"
+                @selectChange="selectChange"
+                @emitAblFilter="emitAblFilter"/>
     <pagination
       v-show="total > 0"
       :total="total"

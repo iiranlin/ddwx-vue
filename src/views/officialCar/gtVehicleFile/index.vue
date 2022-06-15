@@ -35,6 +35,7 @@
                 <table-index
                     ref="tableIndex"
                     style="margin-top:-8px"
+                    :tableIndexs="tableIndex"
                     :loading="loading"
                     :tableData="dataList"
                     :property="property"
@@ -61,10 +62,12 @@ import buttonTop from "@/components/buttonTop"
 import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
 import{vehicleInfoListPage} from "@/api/driver"
+import indexMixin from "@/views/mixins"
 
 export default {
     name:"gtVehicleFile",
     components:{buttonTop,formData,tableIndex},
+    mixins:[indexMixin],
 
     data() {
         return {

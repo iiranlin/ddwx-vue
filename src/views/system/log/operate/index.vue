@@ -39,6 +39,7 @@
         <!--表格数据-->
         <table-index
           ref="tableIndex"
+          :tableIndexs="tableIndex"
           style="margin-top:-8px"
           :loading="loading"
           :tableData="dataList"
@@ -72,9 +73,11 @@ import tableIndex from '@/components/tableIndex'
 import { deleteComeUnit, getComeUnitByPage } from '@/api/comeUnit'
 import operate from '@/views/officialCar/comeUnit/components/operate'
 import { getOperateLogByPage } from '@/api/system/operateLog'
+import indexMixin from '@/views/mixins';
 
 export default {
   name: 'maintenanceManagement',
+  mixins: [indexMixin],
   components: { buttonTop, formData, tableIndex, operate },
   data() {
     return {
