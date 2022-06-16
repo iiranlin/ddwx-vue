@@ -165,7 +165,7 @@ export default {
                 this.addCarButton();
             }
             this.getAvailableDriver(row.reassignUnitCode || row.unitCode || row.deptId, row.usageDate);
-            this.vehicleInfoGetAvailableCar(row.unitCode, row.deptId);
+            this.vehicleInfoGetAvailableCar(row);
         }
     },
     methods: {
@@ -192,12 +192,13 @@ export default {
                 this.num = ++this.num;
             })
         },
-        vehicleInfoGetAvailableCar (unitCode, deptId) {
+        vehicleInfoGetAvailableCar ({unitCode, deptId, reassignUnitCode}) {
             let obj = {
                 unitCode: unitCode,
                 deptId: deptId,
+                tunUnitCode: reassignUnitCode || ''
             }
-            vehicleInfoGetAvailableCar(obj).then(({data}) => {
+            vehicleInfoGetAvailableCar(obj, reassignUnitCode).then(({data}) => {
                 this.vehicleList = data
                 this.num = ++this.num;
             })

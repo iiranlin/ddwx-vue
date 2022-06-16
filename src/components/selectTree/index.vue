@@ -1,5 +1,5 @@
 <template>
-    <el-select :value="valueTitle" :clearable="clearable" @clear="clearHandle"  ref="treeSelect">
+    <el-select popper-class="treeSelectPopper" :value="valueTitle" :clearable="clearable" @clear="clearHandle"  ref="treeSelect">
         <el-input
             v-if="selectInputShow"
             class="selectInput"
@@ -96,8 +96,8 @@ export default {
         // 初始化滚动条
         initScroll(){
             this.$nextTick(()=>{
-                let scrollWrap = document.querySelectorAll('.el-scrollbar .el-select-dropdown__wrap')[0]
-                let scrollBar = document.querySelectorAll('.el-scrollbar .el-scrollbar__bar')
+                let scrollWrap = document.querySelectorAll('.treeSelectPopper .el-scrollbar .el-select-dropdown__wrap')[0]
+                let scrollBar = document.querySelectorAll('.treeSelectPopper .el-scrollbar .el-scrollbar__bar')
                 scrollWrap.style.cssText = 'margin: 0px; max-height: none; overflow: hidden;'
                 scrollBar.forEach(ele => ele.style.width = 0)
             })

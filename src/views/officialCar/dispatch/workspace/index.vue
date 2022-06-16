@@ -151,50 +151,63 @@ export default {
         rowObj = row;
       }
       if(buttonCode === 'sendVehicle'){
-        if(('4').indexOf(rowObj.status) == -1){
+        if(('4').indexOf(rowObj.status) == -1 || rowObj.reassignStr == '1'){
           this.$modal.msgWarning('当前状态不能派车！');
           return
         }
         this.$router.push({name:'dispatchACar',query: {row: JSON.stringify(rowObj), buttonCode: buttonCode}});
       }else if(buttonCode === 'reassignment'){
-        if(('5/7/8').indexOf(rowObj.status) == -1){
+        if(('5/7/8').indexOf(rowObj.status) == -1 || rowObj.reassignStr == '1'){
           this.$modal.msgWarning('当前状态不能改派！');
           return
         }
         this.$router.push({name:'dispatchACar',query: {row: JSON.stringify(rowObj), buttonCode: buttonCode}});
       }else if(buttonCode === 'edit'){
+        if(rowObj.reassignStr == '1'){
+          this.$modal.msgWarning('当前状态不能编辑！');
+          return
+        }
         this.$refs.editAssembly.init(rowObj);
       }else if(buttonCode === 'cancel'){
         this.vehicleRequest(rowObj, '是否取消？');
       }else if(buttonCode === 'turnSingle'){
-        if(('4').indexOf(rowObj.status) == -1){
+        if(('4').indexOf(rowObj.status) == -1 || ('0/1').indexOf(rowObj.reassignStr) != -1){
           this.$modal.msgWarning('当前状态不能转派！');
           return
         }
         this.$refs.operate.init(rowObj);
+      }else if(buttonCode === 'reassignReject'){
+        if(rowObj.reassignStr != '0'){
+          this.$modal.msgWarning('当前状态不能转派拒绝！');
+          return
+        }
+      }else if(buttonCode === 'reassignCancel'){
+        if(rowObj.reassignStr != '1'){
+          this.$modal.msgWarning('当前状态不能转派取消！');
+          return
+        }
       }
     },
     vehicleRequest (rowObj, title) {
       let ids = [];
-      let type = '';
+      let type = [], reassignStr = [];
       if(this.selectionData.length <= 1){
         let driverIds = rowObj.reqAssignments.map(item => {
           return {id: item.id,driverId: item.driverId}
         });
         ids = [{id: rowObj.id,reqAssignments: driverIds}]
-        type = type + '/' + rowObj.status;
+        type.push({status: rowObj.status, reassignStr: rowObj.reassignStr});
       }else{
         ids = this.selectionData.map(item => {
           let driverIds = item.reqAssignments.map(items => {
             return {id: items.id,driverId: items.driverId}
           });
-          type = type + '/' + item.status;
+          type.push({status: item.status, reassignStr: item.reassignStr});
           return {id: item.id,reqAssignments: driverIds};
         });
       }
-      type = type.split('/');
       for(let i = 0;i < type.length;i++){
-        if(('4/5/7/8').indexOf(type[i]) == -1){
+        if(('4/5/7/8').indexOf(type[i].status) == -1 || ('0/1').indexOf(type[i].reassignStr) != -1){
           this.$modal.msgWarning('当前状态不能取消！');
           return
         }

@@ -277,7 +277,7 @@ export default {
     },
     vehicleInfoGetAssignCount (row) {
       let {unitCode, deptId} = row;
-      vehicleInfoGetAssignCount({unitCode, deptId}).then(({data}) => {
+      vehicleInfoGetAssignCount({unitCode, deptId,tunUnitCode: row.reassignUnitCode || ''}, row.reassignUnitCode).then(({data}) => {
         let time_num = this.parseTime(data[0].assignTime, '{b}') - 1;
         this.dateList = data.slice(0, data.length - time_num);
         this.assignTimey = this.weekCheckingIn(this.dateList[0].assignTime, '周一');
