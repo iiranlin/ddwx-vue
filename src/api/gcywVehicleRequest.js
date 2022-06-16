@@ -71,6 +71,9 @@ export function gcywVehicleRequestDispatchList(params) {
   })
 }
 
+
+
+
 //调度工作台-派车、人工派车
 export function saveOrderDispatch(data) {
   return request({
@@ -104,3 +107,14 @@ export function updateVeh(data) {
     data
   })
 }
+
+//调度工作台-转派拒绝、转派取消
+export function updateRessUnit(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywVehicleRequest/updateRessUnit`,
+    method: 'post',
+    data
+  })
+}
+
+

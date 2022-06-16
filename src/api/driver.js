@@ -1,5 +1,8 @@
 import request from '@/utils/request'
 let VUE_APP_BASE_prefix = process.env.VUE_APP_AUTH_SERVER;
+let path = process.env.NODE_ENV === 'development'? process.env.VUE_APP_BASE_API: '';
+// 国铁车辆信息导出接口地址
+export const vehicleInfoExportUrl = `${path}${VUE_APP_BASE_prefix}/vehicleInfo/export`
 
 //班次字典-班次列表-分页
 export function gcjcClassListPage(params) {
@@ -408,6 +411,7 @@ export function vehicleInfoGetVehicleFile(params) {
     params
   })
 }
+
 
 //车辆档案-获取图片
 export function minioGetPic(params) {
