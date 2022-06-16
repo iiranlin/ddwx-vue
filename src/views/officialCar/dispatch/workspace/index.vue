@@ -207,7 +207,7 @@ export default {
         });
       }
       for(let i = 0;i < type.length;i++){
-        if(('4/5/7/8').indexOf(type[i].status) == -1 || ('0/1').indexOf(type[i].reassignStr) != -1){
+        if(('4/5/7/8').indexOf(type[i].status) == -1 || ('1').indexOf(type[i].reassignStr) != -1){
           this.$modal.msgWarning('当前状态不能取消！');
           return
         }
