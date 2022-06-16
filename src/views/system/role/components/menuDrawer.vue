@@ -118,7 +118,7 @@ export default {
 					if (route.children.length) {
 						filterRoute(route.children)
 					} else {
-						if(route.isBind == 0){
+						if(route.isBind == 1){
 							data.push(route);
                         }
 					};
