@@ -15,16 +15,16 @@
         <el-tab-pane label="指定范围页">
           <el-form :model="pageRange" :rules="exportRules" ref="pageRange" label-width="100px">
             <el-col :span="10">
-              <el-form-item label-width="0" prop="startPage">
-                <el-input v-model="pageRange.startPage" :size="size" placeholder="请输入开始页数"></el-input>
+              <el-form-item label-width="0" prop="startPageNum">
+                <el-input v-model="pageRange.startPageNum" :size="size" placeholder="请输入开始页数"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="1" style="margin-top: 10px">
               <i class="el-icon-minus"></i>
             </el-col>
             <el-col :span="10" style="margin-bottom: 10px">
-              <el-form-item label-width="0" prop="endPage">
-                <el-input v-model="pageRange.endPage" :size="size" placeholder="请输入结束页数"></el-input>
+              <el-form-item label-width="0" prop="endPageNum">
+                <el-input v-model="pageRange.endPageNum" :size="size" placeholder="请输入结束页数"></el-input>
               </el-form-item>
             </el-col>
           </el-form>
@@ -63,8 +63,8 @@ export default {
         if (parseInt(value) > this.maxPage) {
           callback(new Error('开始页数不能大于最大页'))
         }
-        if (this.pageRange.endPage !== '') {
-          if (parseInt(value) > this.pageRange.endPage) {
+        if (this.pageRange.endPageNum !== '') {
+          if (parseInt(value) > this.pageRange.endPageNum) {
             callback(new Error('开始页数不能大于结束页数'))
           }
         }
@@ -78,8 +78,8 @@ export default {
         if (parseInt(value) > Math.ceil(this.total / this.pageSize)) {
           callback(new Error('结束页数不能大于最大页'))
         }
-        if (this.pageRange.startPage !== '') {
-          if (parseInt(value) < this.pageRange.startPage) {
+        if (this.pageRange.startPageNum !== '') {
+          if (parseInt(value) < this.pageRange.startPageNum) {
             callback(new Error('结束页数不能小于开始页数'))
           }
         }
@@ -90,16 +90,16 @@ export default {
       size: 'small',
       visible: false,
       pageRange: {
-        startPage: '',
-        endPage: ''
+        startPageNum: '',
+        endPageNum: ''
       },
       exportRules: {
-        startPage: { required: true, validator: validateStartPage, trigger: 'blur' },
-        endPage: { required: true, validator: validateEndPage, trigger: 'blur' }
+        startPageNum: { required: true, validator: validateStartPage, trigger: 'blur' },
+        endPageNum: { required: true, validator: validateEndPage, trigger: 'blur' }
       },
-      searchInfo: {
-        startPage: this.pageNum,
-        endPage: this.pageNum
+      pageInfo: {
+        startPageNum: this.pageNum,
+        endPageNum: this.pageNum
       },
       currentTabIndex: '0',
       maxExportNum: 10000
@@ -115,13 +115,13 @@ export default {
       switch (tab.index) {
         case '0':
           this.currentTabIndex = '0'
-          this.searchInfo.startPage = this.pageNum
-          this.searchInfo.endPage = this.pageNum
+          this.pageInfo.startPageNum = this.pageNum
+          this.pageInfo.endPageNum = this.pageNum
           break
         case '1':
           this.currentTabIndex = '1'
-          this.searchInfo.startPage = 1
-          this.searchInfo.endPage = this.maxPage
+          this.pageInfo.startPageNum = 1
+          this.pageInfo.endPageNum = this.maxPage
           break
         case '2':
           this.currentTabIndex = '2'
@@ -131,24 +131,25 @@ export default {
       }
     },
     exportFile() {
+      this.pageInfo.exportType = this.currentTabIndex
       if (this.currentTabIndex === '0') {
-        this.$emit('exportFile', this.searchInfo)
+        this.$emit('exportFile', this.pageInfo)
       } else if (this.currentTabIndex === '1') {
         if (this.total > this.maxExportNum) {
           this.$message.warning('导出条数大于' + this.maxExportNum + '条')
         } else {
-          this.$emit('exportFile', this.searchInfo)
+          this.$emit('exportFile', this.pageInfo)
         }
       } else if (this.currentTabIndex === '2') {
         this.$refs.pageRange.validate((valid) => {
           if (valid) {
-            this.searchInfo.startPage = this.pageRange.startPage
-            this.searchInfo.endPage = this.pageRange.endPage
-            let exportNumber = (this.searchInfo.endPage - this.searchInfo.startPage + 1) * this.pageSize
+            this.pageInfo.startPageNum = this.pageRange.startPageNum
+            this.pageInfo.endPageNum = this.pageRange.endPageNum
+            let exportNumber = (this.pageInfo.endPageNum - this.pageInfo.startPageNum + 1) * this.pageSize
             if (exportNumber > this.maxExportNum) {
               this.$message.warning('导出条数大于' + this.maxExportNum + '条')
             } else {
-              this.$emit('exportFile', this.searchInfo)
+              this.$emit('exportFile', this.pageInfo)
             }
           }
         })

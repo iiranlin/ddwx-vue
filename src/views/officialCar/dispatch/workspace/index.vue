@@ -1,7 +1,7 @@
 <template>
-<div class="app-container container_flex">
-      <!--用户数据-->
-    <el-row :gutter="24" class="mb8 container_flex_button" >
+  <div class="app-container container_flex">
+    <!--用户数据-->
+    <el-row :gutter="24" class="mb8 container_flex_button">
       <el-col :span="1.5" v-for="item in property.buttonTop" :key="item.id">
         <button-top
           :item="item"
@@ -52,37 +52,38 @@
     <operate ref="operate" @unitSuccess="handleQuery"/>
     <edit-assembly ref="editAssembly" @updateSuccess="handleQuery"/>
     <el-dialog title="取消" :visible.sync="openWorkflow" width="600px" :close-on-click-modal="false" append-to-body>
-        <el-form ref="elForm" :model="form" :rules="rules" label-width="110px">
-          <el-row>
-            <el-col :span="24">
-              <el-form-item label="取消原因:" prop="closeReason">
-                <el-input
-                  type="textarea"
-                  placeholder="请输入取消原因"
-                  v-model="form.closeReason"
-                  maxlength="100"
-                  show-word-limit
-                >
-                </el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="cancelVehicleRequest" :loading="loadingCloseReason">确 定</el-button>
-          <el-button @click="openWorkflow = false">取 消</el-button>
-        </div>
+      <el-form ref="elForm" :model="form" :rules="rules" label-width="110px">
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="取消原因:" prop="closeReason">
+              <el-input
+                type="textarea"
+                placeholder="请输入取消原因"
+                v-model="form.closeReason"
+                maxlength="100"
+                show-word-limit
+              >
+              </el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="cancelVehicleRequest" :loading="loadingCloseReason">确 定</el-button>
+        <el-button @click="openWorkflow = false">取 消</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { gcywVehicleRequestDispatchList, cancelVehicleRequest } from "@/api/gcywVehicleRequest";
-import indexMixin from "@/views/mixins";
-import operate from "./components/operate";
-import editAssembly from "./components/editAssembly";
+import { gcywVehicleRequestDispatchList, cancelVehicleRequest, updateRessUnit } from '@/api/gcywVehicleRequest'
+import indexMixin from '@/views/mixins'
+import operate from './components/operate'
+import editAssembly from './components/editAssembly'
+
 export default {
-  name: "workspace",
+  name: 'workspace',
   mixins: [indexMixin],
   components: { operate, editAssembly },
   data() {
@@ -103,179 +104,202 @@ export default {
       // 表格数据
       dataList: [],
       // 弹出层标题
-      title: "",
+      title: '',
       //列表显示字段
       property: {},
       selectionData: [],
       // 查询参数
       formData: {
-        parentId: "",
+        parentId: ''
       },
       form: {
         closeReason: ''
       },
       rules: {
-        closeReason:[{required:true,message:"请输入取消原因",trigger:"blur"}]
+        closeReason: [{ required: true, message: '请输入取消原因', trigger: 'blur' }]
       },
       total: 0,
       listQuery: {
         pageNum: 1,
-        pageSize: 30,
+        pageSize: 30
       },
       openWorkflow: false
-    };
+    }
   },
   created() {
-    this.menuProperty();
-    this.getList();
+    this.menuProperty()
+    this.getList()
   },
-  mounted() {},
+  mounted() {
+  },
   methods: {
     menuProperty() {
-      const id = this.$route.meta.id;
-      this.$store.dispatch('menuProperty', id).then( (data) => {
-        this.property = data;
-      });
+      const id = this.$route.meta.id
+      this.$store.dispatch('menuProperty', id).then((data) => {
+        this.property = data
+      })
     },
-    numberChange (val) {
-      this.numberShow = val;
+    numberChange(val) {
+      this.numberShow = val
     },
-    newButton (buttonCode) {
+    newButton(buttonCode) {
       this.$refs.tableIndex.newButton(buttonCode)
     },
     handleButton(id, buttonCode, row, selectionArr) {
-      let rowObj = null;
-      if(Object.keys(row).length == 0){
-        rowObj = selectionArr[0];
-      }else{
-        rowObj = row;
+      let rowObj = null
+      if (Object.keys(row).length == 0) {
+        rowObj = selectionArr[0]
+      } else {
+        rowObj = row
       }
-      if(buttonCode === 'sendVehicle'){
-        if(('4').indexOf(rowObj.status) == -1 || rowObj.reassignStr == '1'){
-          this.$modal.msgWarning('当前状态不能派车！');
+      if (buttonCode === 'sendVehicle') {
+        if (('4').indexOf(rowObj.status) == -1 || rowObj.reassignStr == '1') {
+          this.$modal.msgWarning('当前状态不能派车！')
           return
         }
-        this.$router.push({name:'dispatchACar',query: {row: JSON.stringify(rowObj), buttonCode: buttonCode}});
-      }else if(buttonCode === 'reassignment'){
-        if(('5/7/8').indexOf(rowObj.status) == -1 || rowObj.reassignStr == '1'){
-          this.$modal.msgWarning('当前状态不能改派！');
+        this.$router.push({ name: 'dispatchACar', query: { row: JSON.stringify(rowObj), buttonCode: buttonCode } })
+      } else if (buttonCode === 'reassignment') {
+        if (('5/7/8').indexOf(rowObj.status) == -1 || rowObj.reassignStr == '1') {
+          this.$modal.msgWarning('当前状态不能改派！')
           return
         }
-        this.$router.push({name:'dispatchACar',query: {row: JSON.stringify(rowObj), buttonCode: buttonCode}});
-      }else if(buttonCode === 'edit'){
-        if(rowObj.reassignStr == '1'){
-          this.$modal.msgWarning('当前状态不能编辑！');
+        this.$router.push({ name: 'dispatchACar', query: { row: JSON.stringify(rowObj), buttonCode: buttonCode } })
+      } else if (buttonCode === 'edit') {
+        if (rowObj.reassignStr == '1') {
+          this.$modal.msgWarning('当前状态不能编辑！')
           return
         }
-        this.$refs.editAssembly.init(rowObj);
-      }else if(buttonCode === 'cancel'){
-        this.vehicleRequest(rowObj, '是否取消？');
-      }else if(buttonCode === 'turnSingle'){
-        if(('4').indexOf(rowObj.status) == -1 || ('0/1').indexOf(rowObj.reassignStr) != -1){
-          this.$modal.msgWarning('当前状态不能转派！');
+        this.$refs.editAssembly.init(rowObj)
+      } else if (buttonCode === 'cancel') {
+        this.vehicleRequest(rowObj, '是否取消？')
+      } else if (buttonCode === 'turnSingle') {
+        if (('4').indexOf(rowObj.status) == -1 || ('0/1').indexOf(rowObj.reassignStr) != -1) {
+          this.$modal.msgWarning('当前状态不能转派！')
           return
         }
-        this.$refs.operate.init(rowObj);
-      }else if(buttonCode === 'reassignReject'){
-        if(rowObj.reassignStr != '0'){
-          this.$modal.msgWarning('当前状态不能转派拒绝！');
-          return
+        this.$refs.operate.init(rowObj)
+      } else if (buttonCode === 'reassignReject') {
+        if (rowObj.reassignStr != '0') {
+          this.$modal.msgWarning('当前状态不能转派拒绝！')
+        } else {
+          this.$confirm(`确定拒绝转派吗?`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+            center: true
+          }).then(() => {
+            updateRessUnit([{ id: rowObj.id }]).then(({ message }) => {
+              this.$modal.msgSuccess(message)
+              this.handleQuery()
+            })
+          })
         }
-      }else if(buttonCode === 'reassignCancel'){
-        if(rowObj.reassignStr != '1'){
-          this.$modal.msgWarning('当前状态不能转派取消！');
-          return
+      } else if (buttonCode === 'reassignCancel') {
+        if (rowObj.reassignStr != '1') {
+          this.$modal.msgWarning('当前状态不能转派取消！')
+        } else {
+          this.$confirm(`确定取消转派吗?`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+            center: true
+          }).then(() => {
+            updateRessUnit([{ id: rowObj.id }]).then(({ message }) => {
+              this.$modal.msgSuccess(message)
+              this.handleQuery()
+            })
+          })
         }
       }
     },
-    vehicleRequest (rowObj, title) {
-      let ids = [];
-      let type = [], reassignStr = [];
-      if(this.selectionData.length <= 1){
+    vehicleRequest(rowObj, title) {
+      let ids = []
+      let type = [], reassignStr = []
+      if (this.selectionData.length <= 1) {
         let driverIds = rowObj.reqAssignments.map(item => {
-          return {id: item.id,driverId: item.driverId}
-        });
-        ids = [{id: rowObj.id,reqAssignments: driverIds}]
-        type.push({status: rowObj.status, reassignStr: rowObj.reassignStr});
-      }else{
+          return { id: item.id, driverId: item.driverId }
+        })
+        ids = [{ id: rowObj.id, reqAssignments: driverIds }]
+        type.push({ status: rowObj.status, reassignStr: rowObj.reassignStr })
+      } else {
         ids = this.selectionData.map(item => {
           let driverIds = item.reqAssignments.map(items => {
-            return {id: items.id,driverId: items.driverId}
-          });
-          type.push({status: item.status, reassignStr: item.reassignStr});
-          return {id: item.id,reqAssignments: driverIds};
-        });
+            return { id: items.id, driverId: items.driverId }
+          })
+          type.push({ status: item.status, reassignStr: item.reassignStr })
+          return { id: item.id, reqAssignments: driverIds }
+        })
       }
-      for(let i = 0;i < type.length;i++){
-        if(('4/5/7/8').indexOf(type[i].status) == -1 || ('1').indexOf(type[i].reassignStr) != -1){
-          this.$modal.msgWarning('当前状态不能取消！');
+      for (let i = 0; i < type.length; i++) {
+        if (('4/5/7/8').indexOf(type[i].status) == -1 || ('1').indexOf(type[i].reassignStr) != -1) {
+          this.$modal.msgWarning('当前状态不能取消！')
           return
         }
       }
-      if(this.$refs.elForm) this.$refs.elForm.resetFields();
-      this.openWorkflow = true;
-      this.ids = ids;
+      if (this.$refs.elForm) this.$refs.elForm.resetFields()
+      this.openWorkflow = true
+      this.ids = ids
     },
-    cancelVehicleRequest () {
-      this.$refs.elForm.validate(async (result) => {
+    cancelVehicleRequest() {
+      this.$refs.elForm.validate(async(result) => {
         if (result) {
           let ids = this.ids.map(item => {
-            return {id: item.id, reqAssignments: item.reqAssignments, closeReason: this.form.closeReason};
-          });
-          this.loadingCloseReason = true;
-          cancelVehicleRequest(ids).then( ({message}) => {
-            this.$modal.msgSuccess(message);
-            this.loadingCloseReason = false;
-            this.openWorkflow = false;
-            this.handleQuery();
+            return { id: item.id, reqAssignments: item.reqAssignments, closeReason: this.form.closeReason }
+          })
+          this.loadingCloseReason = true
+          cancelVehicleRequest(ids).then(({ message }) => {
+            this.$modal.msgSuccess(message)
+            this.loadingCloseReason = false
+            this.openWorkflow = false
+            this.handleQuery()
           }).finally(() => {
-            this.loadingCloseReason = false;
+            this.loadingCloseReason = false
           })
         }
       })
     },
     handleCheckAllChange(columns) {
-      this.$refs.tableIndex.init(columns);
+      this.$refs.tableIndex.init(columns)
     },
     //选择框回调
     selectChange(row) {
-      let {formData, isWatch} = row;
-      if(!isWatch){
-        this.handleQuery(formData);
-      }else{
-        this.formData = Object.assign({}, this.formData, formData);
+      let { formData, isWatch } = row
+      if (!isWatch) {
+        this.handleQuery(formData)
+      } else {
+        this.formData = Object.assign({}, this.formData, formData)
       }
     },
     emitAblFilter(listQuery) {
-      this.listQuery = Object.assign({}, this.listQuery, listQuery);
-      this.handleQuery();
+      this.listQuery = Object.assign({}, this.listQuery, listQuery)
+      this.handleQuery()
     },
     handleQuery(row = {}) {
-      this.formData = Object.assign({}, this.formData, row);
-      this.getList();
+      this.formData = Object.assign({}, this.formData, row)
+      this.getList()
     },
     getList() {
-      this.loading = true;
+      this.loading = true
       gcywVehicleRequestDispatchList(Object.assign({}, this.listQuery, this.formData)).then(
         ({ data }) => {
-          this.dataList = data.list;
-          this.total = data.total;
-          this.loading = false;
+          this.dataList = data.list
+          this.total = data.total
+          this.loading = false
         }
-      );
+      )
     },
     handleSelectionChange(ids, single, multiple, selection) {
-      this.single = single;
-      this.multiple = multiple;
-      this.selectionData = selection;
+      this.single = single
+      this.multiple = multiple
+      this.selectionData = selection
     },
     clickReset() {
-      this.menuProperty();
-      this.handleQuery();
+      this.menuProperty()
+      this.handleQuery()
     },
-    clickLink (row, fieldCode, linkText) {
-      this.$router.push({name:'carDetail',params: {id: row.id}});
+    clickLink(row, fieldCode, linkText) {
+      this.$router.push({ name: 'carDetail', params: { id: row.id } })
     }
-  },
-};
+  }
+}
 </script>
