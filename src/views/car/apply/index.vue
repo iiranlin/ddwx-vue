@@ -60,12 +60,12 @@
           <el-row>
             <el-col :span="8">
               <el-form-item label="乘坐人数:" prop="usagePersons">
-                <el-input v-model="formData.usagePersons" @input="numberInput($event,'usagePersons')" maxlength="3" placeholder="请输入乘坐人数" />
+                <el-input v-model="formData.usagePersons" @input="numberInput($event,'usagePersons')" maxlength="200" placeholder="请输入乘坐人数" />
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="乘车人:" prop="userName">
-                <el-input v-model="formData.userName" maxlength="20" placeholder="请输入乘车人" />
+                <el-input v-model="formData.userName" maxlength="40" placeholder="请输入乘车人" />
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -92,7 +92,7 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="预计时长:" prop="timeLength">
-                <el-input v-model="formData.timeLength" @input="limitInput($event,'timeLength')" maxlength="5" placeholder="请输入预计时长">
+                <el-input v-model="formData.timeLength" @input="limitInput($event,'timeLength')" maxlength="10" placeholder="请输入预计时长">
                   <span slot="append">小时</span>
                 </el-input>
               </el-form-item>
@@ -133,7 +133,7 @@
           <el-row>
             <el-col :span="24">
               <el-form-item label="备注:" prop="remark">
-                <el-input type="textarea" style="width: 1000px" v-model="formData.remark" maxlength="150" placeholder="请输入备注" />
+                <el-input type="textarea" style="width: 1000px" v-model="formData.remark" maxlength="200" placeholder="请输入备注" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -157,7 +157,6 @@ import formCalendar from "./components/formCalendar";
 import activitiAssignee from "./components/activitiAssignee";
 import getDict from "@/views/mixins/getDict"
 import { limitInput, numberInput } from '@/utils/index'
-import { getCookie } from '@/utils/auth'
 export default {
   name: "apply",
   mixins: [getDict],
@@ -192,8 +191,8 @@ export default {
         demandCode: '1001801',
         longDistanceTag: '0',
         usagePersons: '1',
-        userName: getCookie('username'),
-        phone: getCookie('phone') || '',
+        userName: '',
+        phone: '',
         usageDate: '',
         usageTime: '',
         timeLength: '',
@@ -320,10 +319,16 @@ export default {
     },
     vehicleInfoGetAssignCount () {
       vehicleInfoGetAssignCount().then(({data}) => {
-        let time_num = this.parseTime(data[0].assignTime, '{b}') - 1;
-        this.dateList = data.slice(0, data.length - time_num);
-        this.assignTimey = this.weekCheckingIn(this.dateList[0].assignTime, '周一');
-        this.assignTimer = this.weekCheckingIn(this.dateList[this.dateList.length - 1].assignTime, '周日');
+        this.dateList = data;
+        // this.dateList = data.slice(0, data.length);
+        // console.log(this.dateList)
+        this.assignTimey = this.weekCheckingIn(data[0].assignTime, '周一');
+        this.assignTimer = this.weekCheckingIn(data[data.length - 1].assignTime, '周日');
+        // let time_str = this.parseTime(data[0].assignTime, '{a}');
+        // if(time_str){
+
+        //   console.log()
+        // }
       })
     },
     calendarClick (val) {

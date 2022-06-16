@@ -167,11 +167,11 @@ export default {
             const isLt2M = file.size / 1024 / 1024 < 2;
 
             if (!isJPG && !isPNG) {
-                this.$modal.msgWarning('上传头像图片只能是 JPG 或 PNG 格式!');
+                this.$modal.msgWarning('上传图片只能是 JPG 或 PNG 格式!');
                 return false;
             }
             if (!isLt2M) {
-                this.$modal.msgWarning('上传头像图片大小不能超过 2MB!');
+                this.$modal.msgWarning('上传图片大小不能超过 2MB!');
                 return false;
             }
             return true;
