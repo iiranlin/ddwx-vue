@@ -21,7 +21,7 @@
 			}
 
 			if (title) {
-				vnodes.push(<span style="padding-left: 3px;padding-right: 15px;">{(title)}</span>)
+				vnodes.push(<span style="padding-left: 3px;padding-right: 15px;" title={title}>{(title)}</span>)
 			}
 			return vnodes
 		}
