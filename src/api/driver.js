@@ -270,6 +270,15 @@ export function gcywVehicleRequesReturning(data) {
   })
 }
 
+//司机工作台-出车时校验是否已还车
+export function gcywVehicleReqAssignmenntCheckDriving(params) {
+	return request({
+		url: `${VUE_APP_BASE_prefix}/gcywVehicleReqAssignmennt/driving/checkDriving`,
+		method: 'GET',
+		params
+	})
+}
+
 //司机值班-司机值班排班记录列表-最近3周
 export function gcjcDriverClassListLast3Weeks(params) {
   return request({

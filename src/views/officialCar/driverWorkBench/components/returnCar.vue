@@ -1,7 +1,14 @@
 <template>
    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="openDataScope" width="700px" append-to-body center @close="handleDialogClose()">
-       <el-form :model="form" :rules="rules" ref="elform" label-width="100px"  v-loading="loading">
+       <el-form :model="form" :rules="rules" ref="elform" label-width="100px"  v-loading="loading" >
            <el-row :span="24" :gutter="5">
+               <el-col :span="12">
+                    <el-form-item label="出车里程：" prop="beginMiles">
+                        <el-input v-model="form.beginMiles" size="small" clearable>
+                            <template slot="append"><span class="span-unit">千米</span></template>
+                        </el-input>
+                    </el-form-item>
+               </el-col>
                <el-col :span="12">
                     <el-form-item label="还车里程：" prop="endMiles">
                         <el-input v-model="form.endMiles" size="small" clearable>
@@ -115,18 +122,22 @@ export default {
             },
             //表单数据
             form:{
-                endMiles:"",
-                waitTimes:"",
-                etcCost:"",
-                oilCost:"",
-                otherCost:"",
-                parkCost:"",
+                beginMiles:"0",
+                endMiles:"0",
+                waitTimes:"0",
+                etcCost:"0",
+                oilCost:"0",
+                otherCost:"0",
+                parkCost:"0",
                 remark:"",
                 imageUrl:"",
                 images:[]
             },
             //表单校验
             rules:{
+                beginMiles:[
+                    {required:true,message:"出车里程不能为空",trigger:"blur"}
+                ],
                 endMiles:[
                     {required:true,message:"还车里程不能为空",trigger:"blur"}
                 ],
@@ -145,12 +156,12 @@ export default {
                 parkCost:[
                     {required:true,message:"停车费不能为空",trigger:"blur"}
                 ],
-                remark:[
-                    {required:true,message:"行程描述不能为空",trigger:"blur"}
-                ],
-                imageUrl:[
-                    {required:true,validator:validateImageUrl,trigger:"change"}
-                ],
+                // remark:[
+                //     {required:true,message:"行程描述不能为空",trigger:"blur"}
+                // ],
+                // imageUrl:[
+                //     {required:true,validator:validateImageUrl,trigger:"change"}
+                // ],
             }
         }
     },
@@ -189,7 +200,7 @@ export default {
         },
         //上传图片验证
         handleUploadChange(){
-            this.$refs.elform.validateField('imageUrl');
+            // this.$refs.elform.validateField('imageUrl');
         },
         //确定
         handleConfirm(){

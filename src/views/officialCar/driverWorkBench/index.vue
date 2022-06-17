@@ -158,7 +158,7 @@ export default {
                     })
                 })
             }else if(buttonCode==='dispatch'){
-                this.$refs.dispatchCar.init(this.selectionData[0].assignmentId,this.selectionData[0].beginMiles);
+                this.$refs.dispatchCar.init(this.selectionData[0].assignmentId,this.selectionData[0].beginMiles,this.selectionData[0].vinNumber);
             }else if(buttonCode==="remind"){
                 this.$modal.confirm("是否提醒该派单?").then(()=>{
                     gcywVehicleRequesRemind({assignmentId:this.selectionData[0].assignmentId}).then(({message})=>{

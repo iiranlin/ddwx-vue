@@ -4,7 +4,7 @@
            <el-row :span="24" :gutter="20">
                <el-col :span="12">
                     <el-form-item label="出车里程：">
-                        <span style="color:red;">{{beginMiles}}</span>
+                        <span style="color:red;">{{beginMiles}}</span><span>&nbsp;千米</span>
                     </el-form-item>
                </el-col>
                 <el-col :span="12">
@@ -53,7 +53,7 @@
 </template>
 <script>
 import { getToken } from '@/utils/auth'
-import { gcywVehicleRequesDriving} from "@/api/driver"
+import { gcywVehicleRequesDriving,gcywVehicleReqAssignmenntCheckDriving} from "@/api/driver"
 export default {
     data() {
         var validateImageUrl=(rule, value, callback)=>{
@@ -72,6 +72,8 @@ export default {
             isShowCatch:false,
             //派单id
             assignmentId:"",
+            //车架号
+            vinNumber:"",
             //出车里程
             beginMiles:"",
             //显示隐藏
@@ -105,9 +107,10 @@ export default {
     },
     methods:{
         //初始化
-        init(assignmentId,beginMiles){
+        init(assignmentId,beginMiles,vinNumber){
             this.assignmentId = assignmentId;
             this.beginMiles = beginMiles;
+            this.vinNumber = vinNumber;
             this.openDataScope = true;
             this.$nextTick(() => {
                 this.isShowCatch = false;
@@ -161,10 +164,21 @@ export default {
                 this.vehicleRequesDriving();
             }
         },
+        //出车校验
+        checkDriving(params){
+            return new Promise((resolve,reject)=>{
+            gcywVehicleReqAssignmenntCheckDriving(params).then(({data})=>{
+                resolve(data)
+            })
+          })  
+        },
         //出车
         async vehicleRequesDriving(){
-            this.loading = true;
-            await gcywVehicleRequesDriving(Object.assign({}, this.form,{id:this.assignmentId})).then((message) => {
+            let checkResult = await this.checkDriving({vinNumber:this.vinNumber});
+
+            if(checkResult){
+                this.loading = true;
+                gcywVehicleRequesDriving(Object.assign({}, this.form,{id:this.assignmentId})).then((message) => {
                 this.loading = false;
                 this.$modal.msgSuccess(message);
                 this.openDataScope = false;
@@ -172,6 +186,7 @@ export default {
             }).catch((err) => {
                 this.loading = false;
             })
+            }
         },
         //取消
         handleCancel(){
