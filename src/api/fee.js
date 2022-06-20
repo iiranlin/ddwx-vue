@@ -1,6 +1,13 @@
+import request from '@/utils/request'
 
-import request from "@/utils/request";
-let VUE_APP_BASE_PREFIX = process.env.VUE_APP_AUTH_SERVER;
+let VUE_APP_BASE_PREFIX = process.env.VUE_APP_AUTH_SERVER
+
+let path = process.env.NODE_ENV === 'development' ? process.env.VUE_APP_BASE_API : ''
+let uploadPath = process.env.NODE_ENV === 'development' ? path : '/api'
+
+export const carContractTemplateUrl = `${path}${VUE_APP_BASE_PREFIX}/gcywCarContract/template`
+
+export const carContractImportUrl = `${uploadPath}${VUE_APP_BASE_PREFIX}/gcywCarContract/import`
 
 /**
  * @function getCarContract
@@ -8,14 +15,13 @@ let VUE_APP_BASE_PREFIX = process.env.VUE_APP_AUTH_SERVER;
  * @param params.unitCode { Sting } "使用单位",
  * @param params.contractCode { Sting } "合同编号",
  * @param params.contractBeginDateStr { String } 起始时间
- * @return void
  */
 export function getCarContract(params = {}) {
   return request({
     url: `${VUE_APP_BASE_PREFIX}/gcywCarContract/listPage`,
-    method: "get",
-    params,
-  });
+    method: 'get',
+    params
+  })
 }
 
 /**
@@ -37,13 +43,13 @@ export function getCarContract(params = {}) {
  * @param params.details.commute { String } 通勤人数,
  * @param params.details.quasiCarrier { String } 准载人数,
  * @param params.details.remark { String } 备注,
- * @return void
  */
 
- export function createCarContract(params = {}) {
+export function createCarContract(params = {}) {
   return request({
     url: `${VUE_APP_BASE_PREFIX}/gcywCarContract/create`,
-    method: "post",
-    data: params,
-  });
+    method: 'post',
+    data: params
+  })
 }
+

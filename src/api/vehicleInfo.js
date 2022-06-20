@@ -36,3 +36,14 @@ export function getVehicleListAll(params) {
     params
   })
 }
+
+
+// 查询统计-运用情况统计: 分页获取车辆使用情况
+export function getUsageByPage(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/vehicleInfo/usage/page`,
+    method: 'get',
+    params
+  })
+}
+
