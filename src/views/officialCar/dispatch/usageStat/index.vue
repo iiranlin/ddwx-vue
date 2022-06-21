@@ -74,20 +74,23 @@
         />
       </el-col>
     </el-row>
+    <export-dialog ref="export" :page-num="listQuery.pageNum" :page-size="listQuery.pageSize" :total="total" @exportFile="exportFile"/>
+
   </div>
 </template>
 <script>
 import buttonTop from '@/components/buttonTop'
 import formData from '@/components/formData'
 import tableIndex from '@/components/tableIndex'
-import { gcywVehicleRequestDispatchListInfo } from '@/api/car'
 import { getAllAvailableDept } from '@/api/dept'
 import indexMixin from '@/views/mixins'
-import { getUsageByPage } from '@/api/vehicleInfo'
+import { getUsageByPage, VehicleUsageStatExportUrl } from '@/api/vehicleInfo'
+import exportDialog from '@/components/ExportDialog'
+import { axiosDownloadExcel } from '@/api/download'
 
 export default {
   name: 'searchVehicleInfo',
-  components: { buttonTop, formData, tableIndex },
+  components: { buttonTop, formData, tableIndex, exportDialog },
   mixins: [indexMixin],
 
   data() {
@@ -111,18 +114,20 @@ export default {
       //查询参数
       formData: {
         deptId: '',
-        statMonth: this.currentMonth
+        statMonth: ''
       },
       //已选中条目
       selectionData: [],
       //数据总数
-      total: 0,
+      total: 0
     }
   },
   created() {
-    Object.assign(this.$data, this.$options.data())
+    this.formData.statMonth = this.currentMonth
     this.menuProperty()
     this.getList()
+  },
+  activated() {
   },
   computed: {
     currentMonth() {
@@ -130,7 +135,6 @@ export default {
       let year = date.getFullYear()
       let month = date.getMonth() + 1
       month = (month > 9) ? month : ('0' + month)
-      console.log(year + '-' + month)
       return year + '-' + month
     }
   },
@@ -148,7 +152,6 @@ export default {
     //获取分页数据
     getList() {
       this.loading = true
-      console.log(this.formData)
       getUsageByPage(Object.assign({}, this.listQuery, this.formData)).then(({ data }) => {
         this.dataList = data.list
         this.total = data.total
@@ -163,7 +166,14 @@ export default {
     },
     //页面按钮点击事件
     handleButton(ids, buttonCode) {
-
+      if (buttonCode === 'export') {
+        this.$refs.export.init()
+      }
+    },
+    // 导出文件
+    exportFile(pageInfo) {
+      // 整合page信息
+      axiosDownloadExcel(VehicleUsageStatExportUrl, Object.assign({}, pageInfo, this.listQuery, this.formData))
     },
     //顶部列字段展示
     handleCheckAllChange(columns) {

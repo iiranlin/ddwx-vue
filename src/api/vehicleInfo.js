@@ -1,5 +1,9 @@
 import request from '@/utils/request'
 let VUE_APP_BASE_prefix = process.env.VUE_APP_AUTH_SERVER;
+let path = process.env.NODE_ENV === 'development'? process.env.VUE_APP_BASE_API : '';
+// 运用统计情况导出地址
+export const VehicleUsageStatExportUrl = `${path}${VUE_APP_BASE_prefix}/vehicleInfo/usage/export`
+
 
 //最近三周用车情况汇总
 export function vehicleInfoGetAssignCount(params, reassignUnitCode) {
