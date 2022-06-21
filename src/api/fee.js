@@ -9,6 +9,9 @@ export const carContractTemplateUrl = `${path}${VUE_APP_BASE_PREFIX}/gcywCarCont
 
 export const carContractImportUrl = `${uploadPath}${VUE_APP_BASE_PREFIX}/gcywCarContract/import`
 
+export const carContractExportUrl = `${path}${VUE_APP_BASE_PREFIX}/gcywCarContract/export`
+
+
 /**
  * @function getCarContract
  * @description 业务外包费用台账列表-分页

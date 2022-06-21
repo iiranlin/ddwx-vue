@@ -79,21 +79,21 @@
         />
       </el-col>
     </el-row>
+    <export-dialog ref="export" :page-num="listQuery.pageNum" :page-size="listQuery.pageSize" :total="total" @exportFile="exportFile"/>
   </div>
 </template>
 
 <script>
 
 import indexMixin from '@/views/mixins'
-import { carContractImportUrl, carContractTemplateUrl, getCarContract } from '@/api/fee'
+import { carContractExportUrl, carContractImportUrl, carContractTemplateUrl, getCarContract } from '@/api/fee'
 import { axiosDownloadExcel } from '@/api/download'
+import exportDialog from '@/components/ExportDialog'
 
 export default {
   name: 'outsourcingBusiness',
   mixins: [indexMixin],
-  components: {},
-  filters: {},
-  props: {},
+  components: { exportDialog },
   data() {
     return {
       //遮罩层
@@ -116,11 +116,6 @@ export default {
       selectionData: [],
       //数据总数
       total: 0,
-      //分页参数
-      listQuery: {
-        pageNum: 1,
-        pageSize: 10
-      },
       // 按钮类型 增删更新
       buttonCode: '',
       rowId: '',
@@ -135,16 +130,13 @@ export default {
   },
   created() {
     this.menuProperty()
-  },
-  mounted() {
     this.getList()
   },
   methods: {
     //查询菜单数据
     async menuProperty() {
       let id = this.$route.meta.id
-      const res = await this.$store.dispatch('menuProperty', id)
-      this.property = res
+      this.property = await this.$store.dispatch('menuProperty', id)
     },
     //获取分页数据
     async getList() {
@@ -190,7 +182,14 @@ export default {
         })
       } else if (buttonCode === 'template') {
         axiosDownloadExcel(carContractTemplateUrl)
+      } else if (buttonCode === 'export') {
+        this.$refs.export.init()
       }
+    },
+    // 导出文件
+    exportFile(pageInfo) {
+      // 整合page信息
+      axiosDownloadExcel(carContractExportUrl, Object.assign({}, pageInfo, this.listQuery, this.formData))
     },
     //顶部列字段展示
     handleCheckAllChange(columns) {
