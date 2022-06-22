@@ -661,6 +661,8 @@ export default {
         maintainDate: '',
         // 保养里程
         maintainMiles: '',
+        // 车架号
+        vinNumber: '',
       },
       // 每一个车辆信息 表单 校验规则
       addCarInfoFormRuleExample: {
@@ -838,6 +840,7 @@ export default {
         item['endMiles'] = '';
         item['maintainDate'] = '';
         item['maintainMiles'] = '';
+        item['vinNumber'] = '';
       });
       this.formData.unitName = '';
       if (!val) {
@@ -860,6 +863,7 @@ export default {
         item['endMiles'] = '';
         item['maintainDate'] = '';
         item['maintainMiles'] = '';
+        item['vinNumber'] = '';
       });
       // this.$nextTick(() => {
       //   this.$refs.elForm.clearValidate('carNumber')
@@ -900,6 +904,8 @@ export default {
       this.formData.reqAssignments[index]['maintainDate'] = selectedCar?.maintainDate ?? '';
       // 保养里;
       this.formData.reqAssignments[index]['maintainMiles'] = selectedCar?.maintainMiles ?? '';
+      // 车架号
+      this.formData.reqAssignments[index]['vinNumber'] = selectedCar?.vinNumber ?? '';
     },
     // 获取指派司机列表
     async getAllDriverData() {
