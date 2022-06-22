@@ -30,22 +30,22 @@
         :rules="loginRules"
         class="login-form"
       >
-        <el-form-item prop="unitId">
-          <el-select
-            v-model="loginForm.unitId"
-            placeholder="请选择单位"
-            style="width: 100%"
-          >
-            <el-option
-              v-for="item in unitList"
-              :key="item.id"
-              :label="item.unitName"
-              :value="item.id"
-              style="width: 100%; text-align: center"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
+        <!--<el-form-item prop="unitId">-->
+        <!--  <el-select-->
+        <!--    v-model="loginForm.unitId"-->
+        <!--    placeholder="请选择单位"-->
+        <!--    style="width: 100%"-->
+        <!--  >-->
+        <!--    <el-option-->
+        <!--      v-for="item in unitList"-->
+        <!--      :key="item.id"-->
+        <!--      :label="item.unitName"-->
+        <!--      :value="item.id"-->
+        <!--      style="width: 100%; text-align: center"-->
+        <!--    >-->
+        <!--    </el-option>-->
+        <!--  </el-select>-->
+        <!--</el-form-item>-->
         <el-form-item prop="username">
           <el-input
             v-model="loginForm.username"
@@ -186,7 +186,7 @@ export default {
       loginForm: {
         username: '',
         password: '',
-        unitId: '',
+        // unitId: '',
         checkCode: '',
         checkKey: '',
         rememberMe: true
@@ -199,7 +199,7 @@ export default {
       },
       loginW: 1416,
       loginRules: {
-        unitId: [{ required: true, trigger: 'blur', message: '请选择单位' }],
+        // unitId: [{ required: true, trigger: 'blur', message: '请选择单位' }],
         username: [
           { required: true, trigger: 'blur', message: '请输入您的账号' }
         ],
@@ -234,11 +234,11 @@ export default {
   },
   created() {
     this.testTitle = process.env.VUE_APP_TEST_TITLE
-    const unitId = getCookie('unitId')
+    // const unitId = getCookie('unitId')
     const username = getCookie('username')
     const password = getCookie('password')
     this.loginForm = {
-      unitId: unitId === undefined ? this.loginForm.unitId : unitId,
+      // unitId: unitId === undefined ? this.loginForm.unitId : unitId,
       username: username === undefined ? this.loginForm.username : username,
       password: password === undefined ? this.loginForm.password : password,
       rememberMe: true,
@@ -276,11 +276,11 @@ export default {
           if (this.loginForm.rememberMe) {
             setCookie('username', this.loginForm.username)
             setCookie('password', this.loginForm.password)
-            setCookie('unitId', this.loginForm.unitId)
+            // setCookie('unitId', this.loginForm.unitId)
           } else {
             removeCookie('username')
             removeCookie('password')
-            removeCookie('unitId')
+            // removeCookie('unitId')
           }
           this.$store
             .dispatch('Login', this.loginForm)
@@ -415,14 +415,14 @@ export default {
   .logo {
     position: absolute;
     left: 10px;
-    top: 10px;
+    top: 30px;
     width: 105px;
     height: 50px;
   }
 
   .right-title {
     .title-h2 {
-      margin-top: 62px;
+      margin-top: 90px;
       line-height: 80px;
       font-size: 30px;
       text-align: center;
@@ -477,6 +477,7 @@ export default {
     }
 
     .loginButton {
+      margin-top: 10px;
       width: 336px;
       height: 52px;
       border-radius: 5px;
@@ -604,7 +605,7 @@ export default {
 
     .right-title {
       .title-h2 {
-        margin-top: 52px;
+        margin-top: 75px;
         line-height: 68px;
         font-size: 24px;
       }

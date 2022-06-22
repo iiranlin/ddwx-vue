@@ -43,6 +43,7 @@
                 type="month"
                 format="yyyy-MM"
                 value-format="yyyy-MM"
+                :picker-options="datePicker"
               >
               </el-date-picker>
             </el-form-item>
@@ -119,7 +120,8 @@ export default {
       //已选中条目
       selectionData: [],
       //数据总数
-      total: 0
+      total: 0,
+      datePicker: this.datePickerHandler
     }
   },
   created() {
@@ -139,6 +141,18 @@ export default {
     }
   },
   methods: {
+    // TODO 限制选择范围,提示体验
+    /**搜索框起始日期限制*/
+    datePickerHandler() {
+      const self = this
+      return {
+        disabledDate(time) {
+          console.log(new Date(self.formData.statMonth))
+          console.log(new Date())
+          return new Date(self.formData.statMonth).getTime() > new Date().getTime()
+        }
+      }
+    },
     //获取菜单数据
     menuProperty() {
       let id = this.$route.meta.id
@@ -152,13 +166,17 @@ export default {
     //获取分页数据
     getList() {
       this.loading = true
-      getUsageByPage(Object.assign({}, this.listQuery, this.formData)).then(({ data }) => {
-        this.dataList = data.list
-        this.total = data.total
-        this.loading = false
-      }).catch(() => {
-        this.loading = false
-      })
+      if (this.formData.statMonth === null) {
+        this.$message.warning('请选择统计月份')
+      } else {
+        getUsageByPage(Object.assign({}, this.listQuery, this.formData)).then(({ data }) => {
+          this.dataList = data.list
+          this.total = data.total
+          this.loading = false
+        }).catch(() => {
+          this.loading = false
+        })
+      }
     },
     //顶部按钮点击
     newButton(buttonCode, row) {
@@ -173,7 +191,11 @@ export default {
     // 导出文件
     exportFile(pageInfo) {
       // 整合page信息
-      axiosDownloadExcel(VehicleUsageStatExportUrl, Object.assign({}, pageInfo, this.listQuery, this.formData))
+      if (this.formData.statMonth === null) {
+        this.$message.warning('请选择统计月份')
+      } else {
+        axiosDownloadExcel(VehicleUsageStatExportUrl, Object.assign({}, pageInfo, this.listQuery, this.formData))
+      }
     },
     //顶部列字段展示
     handleCheckAllChange(columns) {
