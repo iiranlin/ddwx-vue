@@ -246,7 +246,7 @@ export default {
       checkKey: ''
     }
     this.getVerificationCode()
-    this.getList()
+    // this.getList()
   },
   mounted() {
     let vdo_w = 2560
