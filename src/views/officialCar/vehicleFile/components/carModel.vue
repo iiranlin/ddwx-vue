@@ -3,13 +3,14 @@
     :close-on-click-modal="false"
     :visible.sync="visible"
     class="carModelDialog"
-    width="80%"
+    width="92%"
   >
     <div class="carModel">
       <div id="carBg">
-        <img class="carLogo" :src="logoPath" alt="红旗">
+        <img class="carLogo" :src="logoPath" alt="暂无此车辆信息">
         <h2>{{ carName }}</h2>
         <img class="ground" src="@/assets/images/car/MainBg@2x.jpg" alt="">
+        <div class="closeBtn" @click="visible=false"></div>
       </div>
       <div id="showCar">
         <img v-for="(path,index) in imgPathList" v-show="index===current" :src="path" alt="">
@@ -161,15 +162,28 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.carModelDialog {
+  ::v-deep .el-dialog {
+    height: 90%;
+  }
+}
+
+.carModelDialog ::v-deep .el-dialog__header {
+  padding: 0;
+}
+
+.carModelDialog::v-deep .el-dialog__body {
+  height: 100%;
+  padding: 0;
+}
+
 .carModel {
-  height: 750px;
+  height: 100%;
 
   #carBg {
     position: absolute;
-    width: 94%;
-    height: 90%;
-    left: 3%;
-    top: 5%;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
     z-index: 4;
 
@@ -177,7 +191,7 @@ export default {
       display: block;
       position: absolute;
       left: 50%;
-      top: 24%;
+      top: 21%;
       width: 240px;
       height: 100px;
       transform: translate(-50%, -100px);
@@ -188,8 +202,8 @@ export default {
     h2 {
       position: absolute;
       left: 50%;
-      top: 24%;
-      transform: translate(-50%, 0);
+      top: 21%;
+      transform: translate(-50%, -32px);
       line-height: 34px;
       font-size: 24px;
       color: #fff;
@@ -207,6 +221,24 @@ export default {
       height: 1920px;
       transform: translate(-50%, -50%);
     }
+
+    .closeBtn {
+      position: absolute;
+      right: 18px;
+      top: 12px;
+      width: 24px;
+      height: 24px;
+      background: url("../../../../assets/images/car/CloseBtn@2x.png") no-repeat left top;
+      background-size: contain;
+      z-index: 999;
+      cursor: pointer;
+      opacity: .6;
+    }
+
+    .closeBtn:hover {
+      opacity: 1;
+    }
+
   }
 
   #showCar {
@@ -225,8 +257,8 @@ export default {
       display: block;
       left: 0;
       top: 0;
-      width: 100%;
-      height: 100%;
+      //width: 100%;
+      //height: 100%;
       //opacity: 0;
       user-select: none;
     }
