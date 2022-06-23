@@ -68,11 +68,18 @@
       <el-row>
         <el-col :span="24">
           <el-form-item label="用户级别:" prop="rank">
-            <el-radio-group v-model="formData.rank">
+            <!-- <el-radio-group v-model="formData.rank">
               <el-radio label="0">院级用户</el-radio>
               <el-radio label="1">所级用户</el-radio>
               <el-radio label="2">部级用户</el-radio>
-            </el-radio-group>
+            </el-radio-group> -->
+            <el-select v-model="formData.rank" placeholder="请选择用户级别">
+              <el-option v-for="item in userLevelOptions" 
+                :key="item.value" 
+                :label="item.name" 
+                :value="item.code">
+              </el-option>
+            </el-select>
           </el-form-item>
         </el-col>
       </el-row>
@@ -87,6 +94,7 @@
 <script>
 import { userCreate, userDetail, userModify } from '@/api/system/user'
 import { deptTree } from '@/api/system/dept'
+import { getListByParentCode } from '@/api/system/dict'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import { listPost } from '@/api/system/post'
@@ -105,6 +113,7 @@ export default {
       openDataScope: false,
       deptOptions: [],
       positionOptions: [],
+      userLevelOptions:[],
       formData: {
         username: '',
         password: '',
@@ -112,7 +121,7 @@ export default {
         userType: '',
         realName: '',
         phone: '',
-        rank: '2',
+        rank: '',
         userCode: '',
         sex: '',
         unitId: ''
@@ -142,6 +151,9 @@ export default {
         ],
         phone: [
           { required: true, message: '用户电话不能为空', trigger: 'blur' }
+        ],
+        rank: [
+          { required: true, message: '用户级别不能为空', trigger: 'change' }
         ]
       },
       userTypeList: [
@@ -161,6 +173,7 @@ export default {
   created() {
     this.deptTree()
     this.getPositionOptions()
+    this.getUserLevelOptions();
   },
   methods: {
     deptTree() {
@@ -173,6 +186,16 @@ export default {
     getPositionOptions() {
       listPost().then(res => {
         this.positionOptions = res.data.list
+      })
+    },
+    //获取用户级别
+    async getUserLevelOptions() {
+      this.loading = true
+      await getListByParentCode('userLevel').then(({ data }) => {
+        this.loading = false
+        this.userLevelOptions = data;
+      }).catch((err) => {
+        this.loading = false
       })
     },
     /** 提交按钮（数据权限） */
