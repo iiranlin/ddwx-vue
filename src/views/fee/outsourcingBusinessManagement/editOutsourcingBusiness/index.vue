@@ -74,7 +74,7 @@
                   v-model="formData.contractAmount"
                   maxlength="11"
                   placeholder="请输入合同金额"
-                  @change="inputNumberChange(formData.contractAmount, 'contractAmount')"
+                  @input="handleMoney(formData,'contractAmount')"
                 >
                   <span slot="append">元</span>
                 </el-input>
@@ -198,7 +198,7 @@
                     v-model="item.lineKm"
                     maxlength="11"
                     placeholder="请输入往返里程"
-                    @change="inputNumberChange(item.lineKm, 'lineKm', index)"
+                    @input="handleMoney(item,'lineKm')"
                   >
                     <span slot="append">公里</span>
                   </el-input>
@@ -367,7 +367,7 @@
 </template>
 
 <script>
-import { numToFixed2 } from '@/utils/index'
+import { handleMoney, numToFixed2 } from '@/utils/index'
 import { getAllAvailableUnit } from "@/api/system/unit"
 import { createCarContract } from "@/api/fee";
 import getDict from "@/views/mixins/getDict"
@@ -380,6 +380,7 @@ export default {
   data() {
     const isValidate = true
     return {
+      handleMoney: handleMoney,
       loading: false,
       activeNames: ['1', '2'],
       // 使用单位下拉选择框
