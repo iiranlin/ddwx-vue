@@ -3,7 +3,7 @@
     :close-on-click-modal="false"
     :visible.sync="visible"
     class="carModelDialog"
-    width="92%"
+    width="96%"
   >
     <div class="carModel">
       <div id="carBg">
@@ -161,6 +161,10 @@ export default {
   ::v-deep .el-dialog {
     height: 90%;
   }
+}
+
+.carModelDialog ::v-deep .el-dialog:not(.is-fullscreen) {
+  margin-top: 3vh !important;
 }
 
 .carModelDialog ::v-deep .el-dialog__header {

@@ -248,13 +248,14 @@ export default {
           { required: true, message: "加油卡类型不能为空", trigger: "change" }
         ],
         carNumber: [
-          { required: true, message: "所处车辆不能为空", trigger: "change" }
+          { required: true, message: "所属车辆不能为空", trigger: "change" }
         ],
         mCardNumber: [
           { required: true, message: "主卡号不能为空", trigger: "change" }
         ],
         cardNumber: [
-          { required: true, message: "卡号不能为空", trigger: "blur" }
+          { required: true, message: "卡号不能为空", trigger: "blur" },
+          { trigger: 'blur', pattern: /^[0-9]*$/, message: '只能输入数字' }
         ],
         enabled: [
           { required: true, message: "是否有效不能为空", trigger: "change" }
