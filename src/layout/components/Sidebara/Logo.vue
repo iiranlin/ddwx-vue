@@ -2,8 +2,8 @@
 	<div class="sidebar-logo-container">
 		<transition name="sidebarLogoFade">
 			<router-link key="expand" class="sidebar-logo-link" to="/">
-				<img v-if="logo" src="@/assets/logo/logo.png" class="sidebar-logo">
-				<h1 class="sidebar-title">公务用车管理信息系统</h1>
+				<img v-if="logo" src="@/assets/logo/LogoTKY.svg" class="sidebar-logo">
+				<h1 class="sidebar-title">公务用车</h1>
 			</router-link>
 		</transition>
 	</div>
@@ -49,8 +49,8 @@
 			width: 100%;
 
 			& .sidebar-logo {
-				width: 17px;
-				height: 17px;
+				width: 62px;
+				height: 30px;
 				vertical-align: middle;
 				margin-right: 12px;
 			}

@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import logoImg from '@/assets/logo/logo.png'
+import logoImg from '@/assets/logo/LogoTKY.svg'
 import variables from '@/assets/styles/variables.scss'
 
 export default {
@@ -35,7 +35,7 @@ export default {
   },
   data() {
     return {
-      title: '公务用车管理信息系统',
+      title: '公务用车',
       logo: logoImg
     }
   }
@@ -66,8 +66,8 @@ export default {
     width: 100%;
 
     & .sidebar-logo {
-      width: 20px;
-      height: 20px;
+      width: 62px;
+      height: 30px;
       vertical-align: middle;
       margin-right: 12px;
     }

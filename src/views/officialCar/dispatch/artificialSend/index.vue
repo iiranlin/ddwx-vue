@@ -522,7 +522,7 @@ export default {
                 formList.forEach( (item) => {
                     obj.reqAssignments.push({
                         restatus: item.restatus || null,
-                        driver: item.driver.driver,
+                        driver: item.driver.realName,
                         driverId: item.driver.driverCode,
                         driverPhone: item.driver.phone,
                         beginMiles: item.car.startMiles,
