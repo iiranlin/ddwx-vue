@@ -237,6 +237,8 @@ export default {
                         handleUserName: this.row.handleUserName,
                         handleUnit: this.row.handleUnit,
                         handleUnitCode: this.row.handleUnitCode,
+                        fromAddr: this.row.fromAddr,
+                        toAddr: this.row.toAddr,
                         reqAssignments: []
                     }
                     for(let i = 0;i<formList.length;i++){
