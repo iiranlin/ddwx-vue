@@ -11,7 +11,7 @@
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
           <span style="margin-right:10px;font-size:14px;">{{unitName}}</span>
-          <span>{{name}}</span>
+          <span>{{realName}}</span>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
@@ -61,6 +61,7 @@ export default {
       'device',
       'name',
       'unitName',
+      'realName',
     ]),
     ...mapState({
       sideTheme: state => state.settings.sideTheme,

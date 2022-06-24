@@ -7,6 +7,7 @@ const user = {
     state: {
         token: getToken(),
         name: '',
+        realName: '',
         unitName:"",
         avatar: '',
         roles: false,
@@ -19,6 +20,9 @@ const user = {
         },
         SET_NAME: (state, name) => {
             state.name = name
+        },
+        SET_REAL_NAME: (state, realName) => {
+            state.realName = realName
         },
         SET_UNIT_NAME: (state, unitName) => {
             state.unitName = unitName
@@ -65,6 +69,7 @@ const user = {
                             // }
                         commit('SET_NAME', user.username)
                         commit('SET_UNIT_NAME',user.unitName)
+                        commit('SET_REAL_NAME', user.realName)
                         
                         setCookie("unitCode", user.unitCode);
                         setCookie("phone", user.phone || '');
