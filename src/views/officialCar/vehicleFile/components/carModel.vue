@@ -12,7 +12,7 @@
         <img class="ground" src="@/assets/images/car/MainBg@2x.jpg" alt="">
         <div class="closeBtn" @click="visible=false"></div>
       </div>
-      <div id="showCar">
+      <div id="showCar" ref="showCar">
         <img v-for="(path,index) in imgPathList" v-show="index===current" :src="path" alt="">
       </div>
     </div>
@@ -20,7 +20,6 @@
 </template>
 
 <script>
-import $ from 'jquery'
 
 export default {
   name: 'carModel',
@@ -78,24 +77,24 @@ export default {
     // 绑定鼠标事件
     bindRotation() {
       let _this = this
-      let $showCar = $('#showCar')
-      $showCar.mousedown(function(event) {
+      let showCar = this.$refs.showCar
+      showCar.mousedown(function(event) {
         _this.mouseStart = event.pageX
         _this.mouseTimer = 1
         _this.playIndex = 0
         _this.state = 1
       })
-      $showCar.mouseup(function() {
+      showCar.mouseup(function() {
         _this.mouseTimer = 1
         _this.state = 0
         _this.playIndex = _this.goto
       })
-      $showCar.mouseleave(function() {
+      showCar.mouseleave(function() {
         _this.mouseTimer = 1
         _this.state = 0
         _this.playIndex = _this.goto
       })
-      $showCar.mousemove(function(event) {
+      showCar.mousemove(function(event) {
         if ((event.pageX - _this.mouseMove) * _this.goto >= 0) {
           _this.mouseMove = event.pageX
         } else {
