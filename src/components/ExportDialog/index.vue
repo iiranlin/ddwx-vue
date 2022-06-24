@@ -134,11 +134,13 @@ export default {
       this.pageInfo.exportType = this.currentTabIndex
       if (this.currentTabIndex === '0') {
         this.$emit('exportFile', this.pageInfo)
+        this.visible = false
       } else if (this.currentTabIndex === '1') {
         if (this.total > this.maxExportNum) {
           this.$message.warning('导出条数大于' + this.maxExportNum + '条')
         } else {
           this.$emit('exportFile', this.pageInfo)
+          this.visible = false
         }
       } else if (this.currentTabIndex === '2') {
         this.$refs.pageRange.validate((valid) => {
@@ -150,6 +152,7 @@ export default {
               this.$message.warning('导出条数大于' + this.maxExportNum + '条')
             } else {
               this.$emit('exportFile', this.pageInfo)
+              this.visible = false
             }
           }
         })
@@ -157,6 +160,9 @@ export default {
     },
     init() {
       this.visible = true
+    },
+    close() {
+      this.visible = false
     }
   }
 }

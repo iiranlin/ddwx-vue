@@ -43,6 +43,7 @@
                 type="month"
                 format="yyyy-MM"
                 value-format="yyyy-MM"
+                :picker-options="datePicker"
               >
               </el-date-picker>
             </el-form-item>
@@ -74,20 +75,23 @@
         />
       </el-col>
     </el-row>
+    <export-dialog ref="export" :page-num="listQuery.pageNum" :page-size="listQuery.pageSize" :total="total" @exportFile="exportFile"/>
+
   </div>
 </template>
 <script>
 import buttonTop from '@/components/buttonTop'
 import formData from '@/components/formData'
 import tableIndex from '@/components/tableIndex'
-import { gcywVehicleRequestDispatchListInfo } from '@/api/car'
 import { getAllAvailableDept } from '@/api/dept'
 import indexMixin from '@/views/mixins'
-import { getUsageByPage } from '@/api/vehicleInfo'
+import { getUsageByPage, VehicleUsageStatExportUrl } from '@/api/vehicleInfo'
+import exportDialog from '@/components/ExportDialog'
+import { axiosDownloadExcel } from '@/api/download'
 
 export default {
   name: 'searchVehicleInfo',
-  components: { buttonTop, formData, tableIndex },
+  components: { buttonTop, formData, tableIndex, exportDialog },
   mixins: [indexMixin],
 
   data() {
@@ -111,18 +115,21 @@ export default {
       //查询参数
       formData: {
         deptId: '',
-        statMonth: this.currentMonth
+        statMonth: ''
       },
       //已选中条目
       selectionData: [],
       //数据总数
       total: 0,
+      datePicker: this.datePickerHandler
     }
   },
   created() {
-    Object.assign(this.$data, this.$options.data())
+    this.formData.statMonth = this.currentMonth
     this.menuProperty()
     this.getList()
+  },
+  activated() {
   },
   computed: {
     currentMonth() {
@@ -130,11 +137,22 @@ export default {
       let year = date.getFullYear()
       let month = date.getMonth() + 1
       month = (month > 9) ? month : ('0' + month)
-      console.log(year + '-' + month)
       return year + '-' + month
     }
   },
   methods: {
+    // TODO 限制选择范围,提示体验
+    /**搜索框起始日期限制*/
+    datePickerHandler() {
+      const self = this
+      return {
+        disabledDate(time) {
+          console.log(new Date(self.formData.statMonth))
+          console.log(new Date())
+          return new Date(self.formData.statMonth).getTime() > new Date().getTime()
+        }
+      }
+    },
     //获取菜单数据
     menuProperty() {
       let id = this.$route.meta.id
@@ -148,14 +166,17 @@ export default {
     //获取分页数据
     getList() {
       this.loading = true
-      console.log(this.formData)
-      getUsageByPage(Object.assign({}, this.listQuery, this.formData)).then(({ data }) => {
-        this.dataList = data.list
-        this.total = data.total
-        this.loading = false
-      }).catch(() => {
-        this.loading = false
-      })
+      if (this.formData.statMonth === null) {
+        this.$message.warning('请选择统计月份')
+      } else {
+        getUsageByPage(Object.assign({}, this.listQuery, this.formData)).then(({ data }) => {
+          this.dataList = data.list
+          this.total = data.total
+          this.loading = false
+        }).catch(() => {
+          this.loading = false
+        })
+      }
     },
     //顶部按钮点击
     newButton(buttonCode, row) {
@@ -163,7 +184,18 @@ export default {
     },
     //页面按钮点击事件
     handleButton(ids, buttonCode) {
-
+      if (buttonCode === 'export') {
+        this.$refs.export.init()
+      }
+    },
+    // 导出文件
+    exportFile(pageInfo) {
+      // 整合page信息
+      if (this.formData.statMonth === null) {
+        this.$message.warning('请选择统计月份')
+      } else {
+        axiosDownloadExcel(VehicleUsageStatExportUrl, Object.assign({}, pageInfo, this.listQuery, this.formData))
+      }
     },
     //顶部列字段展示
     handleCheckAllChange(columns) {

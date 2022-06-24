@@ -50,7 +50,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="车牌号：" prop="carNumber" :rules="[ {required:true,message:'车牌号不能为空',trigger:'blur'},validateCarNumber]">
+              <el-form-item label="车牌号：" prop="carNumber">
                 <el-input v-model="form.carNumber" size="mini" maxlength="20"></el-input>
               </el-form-item>
             </el-col>
@@ -125,12 +125,12 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="车架号：" prop="vinNumber" :rules="[{ required: true, message: '车架号不能为空', trigger: 'blur' },validateVinNumber]">
+              <el-form-item label="车架号：" prop="vinNumber">
                 <el-input v-model="form.vinNumber" size="mini" clearable maxlength="17"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="发动机号：" prop="engineNumber" :rules="[{ required: true, message: '发动机号不能为空', trigger: 'blur' },validateNumber_Letter]">
+              <el-form-item label="发动机号：" prop="engineNumber">
                 <el-input v-model="form.engineNumber" size="mini" clearable maxlength="20"></el-input>
               </el-form-item>
             </el-col>
@@ -140,12 +140,12 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="座位数：" prop="maxMens" :rules="[{ required: true, message: '座位数不能为空', trigger: 'blur' },validateOnlyNumber]">
-                <el-input v-model="form.maxMens" size="mini" clearable maxlength="2"></el-input>
+              <el-form-item label="座位数：" prop="maxMens">
+                <el-input v-model="form.maxMens" size="mini" clearable maxlength="3"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="排气量：" prop="capacity" :rules="[{ required: true, message: '排气量不能为空', trigger: 'blur' },validateOnlyNumber]">
+              <el-form-item label="排气量：" prop="capacity">
                 <el-input v-model="form.capacity" size="small" clearable maxlength="20">
                   <template slot="suffix">升</template>
                 </el-input>
@@ -199,13 +199,16 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="购车价格：" prop="originalValue" :rules="validateNumber8I2F">
-                <el-input v-model="form.originalValue" size="mini" clearable maxlength="18"></el-input>
+              <el-form-item label="购车价格：" prop="originalValue">
+                <el-input v-model="form.originalValue" size="mini" clearable maxlength="11" @input="handleMoney(form,'originalValue')"
+                ></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="租赁价格：" prop="rentPrice" :rules="[{ required: true, message: '租赁价格不能为空', trigger: 'blur' },validateNumber8I2F]">
-                <el-input v-model="form.rentPrice" size="mini" clearable placeholder="录入总包价" maxlength="8"></el-input>
+              <el-form-item label="租赁价格：" prop="rentPrice">
+                <el-input v-model="form.rentPrice" size="mini" clearable placeholder="录入总包价" maxlength="11"
+                          @input="handleMoney(form,'rentPrice')"
+                ></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -243,6 +246,7 @@ import { deptListPage } from '@/api/system/dept'
 import { systemUnitListAll } from '@/api/system/dict/setting'
 import operate from './components/operate'
 import mixins from '@/views/mixins'
+import { handleMoney } from '@/utils'
 
 export default {
   name: 'leaseCreate',
@@ -250,6 +254,7 @@ export default {
   mixins: [mixins],
   data() {
     return {
+      handleMoney: handleMoney,
       //loading框
       loading: false,
       //单位信息
@@ -310,9 +315,14 @@ export default {
         vehicleProperties: [
           { required: true, message: '租赁类型不能为空', trigger: 'change' }
         ],
-        // carNumber:[
-        //     {required:true,message:"车牌号不能为空",trigger:'blur'}
-        // ],
+        carNumber: [
+          { required: true, message: '车牌号不能为空', trigger: 'blur' },
+          {
+            trigger: 'blur',
+            pattern: /^([京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[a-zA-Z](([DF]((?![IO])[a-zA-Z0-9](?![IO]))[0-9]{4})|([0-9]{5}[DF]))|[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1})$/,
+            message: '请输入规范的车牌号'
+          }
+        ],
         rentUnit: [
           { required: true, message: '租赁公司不能为空', trigger: 'blur' }
         ],
@@ -339,27 +349,35 @@ export default {
         carBrand: [
           { required: true, message: '品牌型号不能为空', trigger: 'blur' }
         ],
-        // vinNumber: [
-        //   { required: true, message: '车架号不能为空', trigger: 'blur' }
-        // ],
-        // engineNumber: [
-        //   { required: true, message: '发动机号不能为空', trigger: 'blur' },
-        //   // ^[A-Za-z0-9\-]+$
-        // ],
+        vinNumber: [
+          { required: true, message: '车架号不能为空', trigger: 'blur' },
+          {
+            trigger: 'blur',
+            pattern: /^[A-Za-z0-9]{17}$/,
+            message: '请输入规范的17位车架号'
+          }
+        ],
+        engineNumber: [
+          { required: true, message: '发动机号不能为空', trigger: 'blur' },
+          { trigger: 'blur', pattern: /^[A-Za-z0-9]+$/, message: '只能输入数字或字母' }
+        ],
         carMoneySource: [
           { required: true, message: '资金来源不能为空', trigger: 'blur' }
         ],
-        // maxMens: [
-        //   { required: true, message: '座位数不能为空', trigger: 'blur' }
-        // ],
-        // capacity: [
-        //   { required: true, message: '排气量不能为空', trigger: 'blur' }
-        // ],
+        maxMens: [
+          { required: true, message: '座位数不能为空', trigger: 'blur' },
+          { trigger: 'blur', pattern: /^[0-9]*$/, message: '只能输入数字' }
+        ],
+        capacity: [
+          { required: true, message: '排气量不能为空', trigger: 'blur' },
+          { trigger: 'blur', pattern: /^[0-9]*$/, message: '只能输入数字' }
+        ],
         emission: [
           { required: true, message: '排放标准不能为空', trigger: 'change' }
         ],
         maxWeight: [
-          { required: true, message: '核准载重不能为空', trigger: 'blur' }
+          { required: true, message: '核准载重不能为空', trigger: 'blur' },
+          { trigger: 'blur', pattern: /^[0-9]*$/, message: '只能输入数字' }
         ],
         carUsing: [
           { required: true, message: '车辆用途不能为空', trigger: 'change' }
@@ -367,9 +385,9 @@ export default {
         registerDate: [
           { required: true, message: '初登日期不能为空', trigger: 'change' }
         ],
-        // rentPrice: [
-        //   { required: true, message: '租赁价格不能为空', trigger: 'blur' }
-        // ],
+        rentPrice: [
+          { required: true, message: '租赁价格不能为空', trigger: 'blur' }
+        ],
         rentApplydesc: [
           { required: true, message: '申请理由及用途不能为空', trigger: 'blur' }
         ]

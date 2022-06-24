@@ -4,59 +4,59 @@
            <el-row :span="24" :gutter="5">
                <el-col :span="12">
                     <el-form-item label="出车里程：" prop="beginMiles">
-                        <el-input v-model="form.beginMiles" size="small" clearable>
+                        <el-input v-model="form.beginMiles" size="small" clearable disabled>
                             <template slot="append"><span class="span-unit">千米</span></template>
                         </el-input>
                     </el-form-item>
                </el-col>
                <el-col :span="12">
                     <el-form-item label="还车里程：" prop="endMiles">
-                        <el-input v-model="form.endMiles" size="small" clearable>
+                        <el-input v-model="form.endMiles" size="small" clearable @input="handleMoney(form,'endMiles')">
                             <template slot="append"><span class="span-unit">千米</span></template>
                         </el-input>
                     </el-form-item>
                </el-col>
                <el-col :span="12">
                     <el-form-item label="等待时长：" prop="waitTimes">
-                        <el-input v-model="form.waitTimes" size="small" clearable>
+                        <el-input v-model="form.waitTimes" size="small" clearable maxlength="4">
                              <template slot="append">小时</template>
                         </el-input>
                     </el-form-item>
                </el-col>
                <el-col :span="12">
                     <el-form-item label="路桥费：" prop="etcCost">
-                        <el-input v-model="form.etcCost" size="small" clearable>
+                        <el-input v-model="form.etcCost" size="small" clearable @input="handleMoney(form,'etcCost')">
                              <template slot="append"><span class="span-unit">元</span></template>
                         </el-input>
                     </el-form-item>
                </el-col>
                <el-col :span="12">
                     <el-form-item label="加油费：" prop="oilCost">
-                        <el-input v-model="form.oilCost" size="small" clearable>
+                        <el-input v-model="form.oilCost" size="small" clearable @input="handleMoney(form,'oilCost')">
                              <template slot="append">元</template>
                         </el-input>
                     </el-form-item>
                </el-col>
                <el-col :span="12">
                     <el-form-item label="其他费：" prop="otherCost">
-                        <el-input v-model="form.otherCost" size="small" clearable>
+                        <el-input v-model="form.otherCost" size="small" clearable @input="handleMoney(form,'otherCost')">
                              <template slot="append">元</template>
                         </el-input>
                     </el-form-item>
                </el-col>
                <el-col :span="12">
                     <el-form-item label="停车费：" prop="parkCost">
-                        <el-input v-model="form.parkCost" size="small" clearable>
+                        <el-input v-model="form.parkCost" size="small" clearable @input="handleMoney(form,'parkCost')">
                              <template slot="append">元</template>
                         </el-input>
                     </el-form-item>
                </el-col>
                <el-col :span="24">
                     <el-form-item label="行程描述：" prop="remark">
-                        <el-input v-model="form.remark" size="small" type="textarea" :rows="2" placeholder="请输入形成描述，最多300字" maxlength="300"></el-input>
+                        <el-input v-model="form.remark" size="small" type="textarea" :rows="2" placeholder="请输入形成描述，最多100字" maxlength="100"></el-input>
                     </el-form-item>
                </el-col>
-              
+
                <el-col :span="24">
                     <el-col :span="24">
                         <el-form-item :label="'还车里程\u3000\n拍照上传：'" prop="imageUrl">
@@ -92,6 +92,7 @@
 <script>
 import { getToken } from '@/utils/auth'
 import { gcywVehicleRequesReturning } from "@/api/driver"
+import { handleMoney } from '@/utils'
 export default {
     data() {
         var validateImageUrl=(rule, value, callback)=>{
@@ -102,6 +103,7 @@ export default {
             }
         }
         return {
+            handleMoney: handleMoney,
             //遮罩层
             loading:false,
             //标题
@@ -117,7 +119,7 @@ export default {
                 Authorization: getToken(),
             },
             //图片上传参数
-            uploadData:{ 
+            uploadData:{
                 type: "4"
             },
             //表单数据
@@ -167,8 +169,9 @@ export default {
     },
     methods:{
         //初始化
-        init(assignmentId){
-            this.assignmentId = assignmentId;
+        init(data){
+            this.assignmentId = data.assignmentId;
+            this.form.beginMiles = data.beginMiles
             this.openDataScope = true;
         },
          //上传图片前
@@ -207,7 +210,7 @@ export default {
             this.$refs.elform.validate(async (result) => {
                 if (result) {
                     this.vehicleRequesReturning();
-                }   
+                }
             })
         },
         //还车

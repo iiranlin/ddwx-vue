@@ -69,7 +69,7 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="投保金额：" prop="insrFee">
-                <el-input v-model="form.insrFee" size="mini" placeholder="请输入投保金额" maxlength="11"></el-input>
+                <el-input v-model="form.insrFee" size="mini" placeholder="请输入投保金额" maxlength="11" @input="handleMoney(form,'insrFee')"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">

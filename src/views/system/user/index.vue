@@ -11,7 +11,7 @@
             :expand-on-click-node="false"
             ref="tree"
             :highlight-current="true"
-            default-expand-all
+            :default-expand-all="false"
             @node-click="handleNodeClick"
           />
         </div>

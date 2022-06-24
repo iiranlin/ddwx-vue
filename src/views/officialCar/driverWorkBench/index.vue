@@ -154,7 +154,7 @@ export default {
                         this.$modal.msgSuccess(message);
                         this.getList();
                     }).catch((err) => {
-                    
+
                     })
                 })
             }else if(buttonCode==='dispatch'){
@@ -165,11 +165,11 @@ export default {
                         this.$modal.msgSuccess(message);
                         this.getList();
                     }).catch((err) => {
-                    
+
                     })
                 })
             }else if(buttonCode==="return"){
-                this.$refs.returnCar.init(this.selectionData[0].assignmentId);
+                this.$refs.returnCar.init(this.selectionData[0]);
             }
         },
         //页面链接点击
