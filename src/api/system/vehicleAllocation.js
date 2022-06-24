@@ -13,7 +13,7 @@ export function vehicleInfoUsagelistPage(params) {
 //车辆分配-修改
 export function vehicleInfoUpdGVC(data) {
   return request({
-    url: `${VUE_APP_BASE_prefix}/vehicleInfo/updGVC`,
+    url: `${VUE_APP_BASE_prefix}/vehicleInfo/updUsage`,
     method: 'post',
     data
   })

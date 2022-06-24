@@ -51,8 +51,8 @@ export default {
         //保存
         async handleSave(){
             let commitData = [];
-            let obj = {};
             this.vehicleData.forEach((item) => {
+                let obj = {};
                 this.$set(obj, 'usageFlag', item.usageFlag)
                 this.$set(obj, 'usageDept', item.usageDept)
                 this.$set(obj, 'carId', item.carId);

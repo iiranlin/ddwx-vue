@@ -33,7 +33,8 @@
    </el-dialog>
 </template>
 <script>
-import {gcjcFleetCreate,gcjcFleetDetail,gcjcFleetModify,getUnitDictList} from "@/api/driver"
+import {gcjcFleetCreate,gcjcFleetDetail,gcjcFleetModify} from "@/api/driver"
+import {getAllAvailableUnit} from "@/api/system/unit"
 export default {
     data() {
         return {
@@ -91,7 +92,7 @@ export default {
         //获取单位列表
         async getUnitDictList(){
             this.loading = true;
-            await getUnitDictList().then(({data}) => {
+            await getAllAvailableUnit().then(({data}) => {
                 this.loading = false;
                 this.unitData = data;
             }).catch((err) => {
