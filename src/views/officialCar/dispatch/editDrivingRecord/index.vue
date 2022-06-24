@@ -891,7 +891,7 @@ export default {
     driverChange(driverCode, _uniqueId, index) {
       // 需要回传司机的 名称 driver  司机的 driverPhone 司机id driverId  是下拉框接口的 driverCode
       const selectedDriver = (this.driverData?.find(item => item.driverCode === driverCode) ?? {}) || {};
-      this.formData.reqAssignments[index]['driver'] = selectedDriver?.driver ?? '';
+      this.formData.reqAssignments[index]['driver'] = selectedDriver?.realName ?? '';
       this.formData.reqAssignments[index]['driverPhone'] = selectedDriver?.phone ?? '';
     },
     // 车辆发生变化时

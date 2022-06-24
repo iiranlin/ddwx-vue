@@ -254,7 +254,7 @@ export default {
                       obj.reqAssignments.push({
                         id: item.id || null,
                         restatus: item.restatus || null,
-                        driver: item.driver.driver,
+                        driver: item.driver.realName,
                         driverId: item.driver.driverCode,
                         driverPhone: item.driver.phone,
                         beginMiles: item.car.startMiles,
