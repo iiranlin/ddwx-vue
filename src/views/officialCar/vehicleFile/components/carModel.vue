@@ -12,7 +12,9 @@
         <img class="ground" src="@/assets/images/car/MainBg@2x.jpg" alt="">
         <div class="closeBtn" @click="visible=false"></div>
       </div>
-      <div id="showCar" ref="showCar">
+      <div id="showCar" ref="showCar" @mousedown="onShowCarMousedown" @mouseup="onShowCarMouseup"
+           @mouseleave="onShowCarMouseleave" @mousemove="onShowCarMousemove"
+      >
         <img v-for="(path,index) in imgPathList" v-show="index===current" :src="path" alt="">
       </div>
     </div>
@@ -61,7 +63,6 @@ export default {
       this.visible = true
       this.$nextTick(() => {
         this.autoPlay()
-        this.bindRotation()
       })
     },
     // 加载图片资源
@@ -74,43 +75,38 @@ export default {
         this.imgPathList.push(carImgPath)
       }
     },
-    // 绑定鼠标事件
-    bindRotation() {
-      let _this = this
-      let showCar = this.$refs.showCar
-      showCar.mousedown(function(event) {
-        _this.mouseStart = event.pageX
-        _this.mouseTimer = 1
-        _this.playIndex = 0
-        _this.state = 1
-      })
-      showCar.mouseup(function() {
-        _this.mouseTimer = 1
-        _this.state = 0
-        _this.playIndex = _this.goto
-      })
-      showCar.mouseleave(function() {
-        _this.mouseTimer = 1
-        _this.state = 0
-        _this.playIndex = _this.goto
-      })
-      showCar.mousemove(function(event) {
-        if ((event.pageX - _this.mouseMove) * _this.goto >= 0) {
-          _this.mouseMove = event.pageX
-        } else {
-          _this.mouseStart = _this.mouseMove
-          _this.mouseMove = event.pageX
+    onShowCarMousedown(event) {
+      this.mouseStart = event.pageX
+      this.mouseTimer = 1
+      this.playIndex = 0
+      this.state = 1
+    },
+    onShowCarMouseup() {
+      this.mouseTimer = 1
+      this.state = 0
+      this.playIndex = this.goto
+    },
+    onShowCarMouseleave() {
+      this.mouseTimer = 1
+      this.state = 0
+      this.playIndex = this.goto
+    },
+    onShowCarMousemove(event) {
+      if ((event.pageX - this.mouseMove) * this.goto >= 0) {
+        this.mouseMove = event.pageX
+      } else {
+        this.mouseStart = this.mouseMove
+        this.mouseMove = event.pageX
+      }
+      if (this.state === 1) {
+        this.goto = Math.round((this.mouseMove - this.mouseStart) / 30)
+        this.playFrame()
+        if (this.mouseTimer > 20) {
+          this.mouseTimer = 1
+          this.playIndex = 0
+          this.mouseStart = this.mouseMove
         }
-        if (_this.state === 1) {
-          _this.goto = Math.round((_this.mouseMove - _this.mouseStart) / 30)
-          _this.playFrame()
-          if (_this.mouseTimer > 20) {
-            _this.mouseTimer = 1
-            _this.playIndex = 0
-            _this.mouseStart = _this.mouseMove
-          }
-        }
-      })
+      }
     },
     //修改各个状态值
     playNext() {

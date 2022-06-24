@@ -18,6 +18,9 @@
           <el-dropdown-item @click.native="setting=true">
             <span>布局设置</span>
           </el-dropdown-item>
+          <el-dropdown-item divided @click.native="updatePwd">
+            <span>修改密码</span>
+          </el-dropdown-item>
           <el-dropdown-item divided @click.native="logout">
             <span>退出登录</span>
           </el-dropdown-item>
@@ -30,6 +33,7 @@
       </el-tooltip>
       <!-- <el-button type="primary">消息通知</el-button>-->
       </div>
+    <update-password ref="updatePassword"></update-password>
   </div>
 </template>
 
@@ -41,8 +45,8 @@ import Hamburger from '@/components/Hamburger'
 import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
-import { getCookie } from '@/utils/auth'
 import Sidebara from './Sidebara'
+import UpdatePassword from '@/components/UpdatePassword'
 
 export default {
   components: {
@@ -52,7 +56,8 @@ export default {
     Screenfull,
     SizeSelect,
     Search,
-    Sidebara
+    Sidebara,
+    UpdatePassword
   },
   computed: {
     ...mapGetters([
@@ -105,6 +110,10 @@ export default {
           location.href = '/index';
         })
       }).catch(() => {});
+    },
+    /**修改密码*/
+    updatePwd() {
+      this.$refs.updatePassword.initUpdatePassword(true, false)
     }
   }
 }
