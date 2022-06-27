@@ -93,12 +93,7 @@ export default {
             //已选中条目
             selectionData:[],
             //数据总数
-            total:0,
-            //分页参数
-            listQuery:{
-                pageNum:1,
-                pageSize:10
-            }
+            total:0
         }
     },
     created(){

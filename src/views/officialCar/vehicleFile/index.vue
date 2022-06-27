@@ -4,7 +4,7 @@
       <el-col :span="24" :xs="24" class="container_flex">
         <!--顶部按钮-->
         <el-row :gutter="24" class="container_flex-right_list">
-          <el-col :span="1.5" v-for="item in property.buttonTop" :key="item.id" style="margin-top:2px;padding:0px;">
+          <el-col :span="1.5" v-for="item in property.buttonTop" :key="item.id" style="margin-top:2px;padding:0;">
             <button-top
               :item="item"
               :multiple="multiple"
@@ -19,6 +19,7 @@
             style="margin-top:4px;padding-right:20px"
             :showSearch.sync="showSearch"
             :columns="property.fields"
+            @numberChange="numberChange"
             @queryTable="handleQuery"
             @handleCheckAllChange="handleCheckAllChange"
             @clickReset="clickReset"
@@ -42,6 +43,7 @@
           :loading="loading"
           :tableData="dataList"
           :property="property"
+          :numberShow="numberShow"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
           @selectChange="selectChange"
@@ -102,11 +104,7 @@ export default {
       fileNames: [],
       //数据总数
       total: 0,
-      //分页参数
-      listQuery: {
-        pageNum: 1,
-        pageSize: 10
-      }
+      numberShow: false
     }
   },
   created() {
@@ -114,6 +112,9 @@ export default {
     this.getList()
   },
   methods: {
+    numberChange(val) {
+      this.numberShow = val
+    },
     //获取菜单数据
     menuProperty() {
       let id = this.$route.meta.id
@@ -137,7 +138,7 @@ export default {
         })
         this.total = data.total
         this.loading = false
-      }).catch((err) => {
+      }).catch(() => {
         this.loading = false
       })
     },

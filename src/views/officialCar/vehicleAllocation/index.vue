@@ -1,4 +1,4 @@
-<template lang="">
+<template>
     <div class="app-container_list">
         <el-row :gutter="20" class="container_h">
              <!--左侧树形布局-->
@@ -22,7 +22,7 @@
                         </span>
                     </el-tree>
                 </div>
-            </el-col> 
+            </el-col>
             <!--右侧内容布局-->
             <el-col :span="20" :xs="24" class="container_flex">
                 <!--顶部按钮-->
@@ -42,6 +42,7 @@
                      :showSearch.sync="showSearch"
                      :columns="property.fields"
                      @queryTable="handleQuery"
+                     @numberChange="numberChange"
                      @handleCheckAllChange="handleCheckAllChange"
                      @clickReset="clickReset">
                    </right-toolbar>
@@ -63,6 +64,7 @@
                     :loading="loading"
                     :tableData="dataList"
                     :property="property"
+                    :numberShow="numberShow"
                     @handleSelectionChange="handleSelectionChange"
                     @handleButton="handleButton"
                     @selectChange="selectChange"
@@ -131,17 +133,16 @@ export default {
             ids:[],
             //数据总数
             total:0,
-            //分页参数
-            listQuery:{
-                pageNum:1,
-                pageSize:10
-            }
+          numberShow: false
         }
     },
     created(){
         this.getTreeOptions();
     },
     methods:{
+      numberChange(val) {
+        this.numberShow = val
+      },
         //获取左侧树形数据
         async getTreeOptions() {
             await deptTree().then(({ data }) => {
