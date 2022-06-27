@@ -2,7 +2,7 @@
 	<div class="sidebar-logo-container">
 		<transition name="sidebarLogoFade">
 			<router-link key="expand" class="sidebar-logo-link" to="/">
-				<img v-if="logo" src="@/assets/logo/LogoTKY.svg" class="sidebar-logo">
+				<img v-if="logo" src="@/assets/logo/LogoCars.svg" class="sidebar-logo">
 				<h1 class="sidebar-title">公务用车</h1>
 			</router-link>
 		</transition>
