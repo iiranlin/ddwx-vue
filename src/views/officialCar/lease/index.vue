@@ -19,6 +19,7 @@
                      :showSearch.sync="showSearch"
                      :columns="property.fields"
                      @queryTable="handleQuery"
+                     @numberChange="numberChange"
                      @handleCheckAllChange="handleCheckAllChange"
                      @clickReset="clickReset">
                    </right-toolbar>
@@ -39,6 +40,7 @@
                     :loading="loading"
                     :tableData="dataList"
                     :property="property"
+                    :numberShow="numberShow"
                     @handleSelectionChange="handleSelectionChange"
                     @handleButton="handleButton"
                     @selectChange="selectChange"
@@ -93,11 +95,7 @@ export default {
             ids:[],
             //数据总数
             total:0,
-            //分页参数
-            listQuery:{
-                pageNum:1,
-                pageSize:10
-            }
+       numberShow: false
         }
     },
     created(){
@@ -105,6 +103,9 @@ export default {
         this.getList();
     },
     methods:{
+      numberChange(val) {
+        this.numberShow = val
+      },
         //获取菜单数据
         menuProperty(){
             let id = this.$route.meta.id;

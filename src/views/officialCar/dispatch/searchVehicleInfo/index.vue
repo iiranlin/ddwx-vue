@@ -19,6 +19,7 @@
                      :showSearch.sync="showSearch"
                      :columns="property.fields"
                      @queryTable="handleQuery"
+                     @numberChange="numberChange"
                      @handleCheckAllChange="handleCheckAllChange"
                      @clickReset="clickReset">
                    </right-toolbar>
@@ -35,9 +36,9 @@
                     <template slot="customItem">
                       <el-form-item label="用车部门" prop="value">
                         <el-select v-model="formData.deptId" placeholder="请选择用车部门" clearable style="width:240px" size="small">
-                          <el-option v-for="item in deptOptions" 
-                            :key="item.value" 
-                            :label="item.deptName" 
+                          <el-option v-for="item in deptOptions"
+                            :key="item.value"
+                            :label="item.deptName"
                             :value="item.id">
                           </el-option>
                         </el-select>
@@ -53,6 +54,7 @@
                     :tableData="dataList"
                     :property="property"
                     @clickLink="clickLink"
+                    :numberShow="numberShow"
                     @handleSelectionChange="handleSelectionChange"
                     @handleButton="handleButton"
                     @selectChange="selectChange"
@@ -110,11 +112,7 @@ export default {
             selectionData:[],
             //数据总数
             total:0,
-            //分页参数
-            listQuery:{
-                pageNum:1,
-                pageSize:30
-            },
+          numberShow: false
         }
     },
     created(){
@@ -123,6 +121,9 @@ export default {
         this.getList();
     },
     methods:{
+      numberChange(val) {
+        this.numberShow = val
+      },
         //获取菜单数据
         menuProperty(){
             let id = this.$route.meta.id;
