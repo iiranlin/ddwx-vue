@@ -22,6 +22,7 @@
             @queryTable="handleQuery"
             @handleCheckAllChange="handleCheckAllChange"
             @clickReset="clickReset"
+            @numberChange="numberChange"
           >
           </right-toolbar>
         </el-row>
@@ -43,6 +44,7 @@
           :loading="loading"
           :tableData="dataList"
           :property="property"
+          :numberShow="numberShow"
           @clickLink="clickLink"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
@@ -106,11 +108,7 @@ export default {
       selectionData: [],
       //数据总数
       total: 0,
-      //分页参数
-      listQuery: {
-        pageNum: 1,
-        pageSize: 10
-      }
+      numberShow: false
     }
   },
   mounted() {
@@ -118,6 +116,9 @@ export default {
     this.getList()
   },
   methods: {
+    numberChange (val) {
+      this.numberShow = val;
+    },
     //获取菜单数据
     menuProperty() {
       let id = this.$route.meta.id
@@ -176,7 +177,6 @@ export default {
           })
         })
       } else if (buttonCode === 'return') {
-        console.log(this.selectionData[0])
         // 只有状态为4（已出车）的时候才能还车
         if (this.selectionData[0].status !== '4') {
           this.$modal.msgWarning('请选择状态为[已出车]的订单进行还车')

@@ -98,11 +98,6 @@ export default {
       formData: {},
       // 总条数
       total: 0,
-      //分页参数
-      listQuery: {
-        pageNum: 1,
-        pageSize: 10,
-      },
       // 角色表格数据
       dataList: [],
       // 日期范围
@@ -160,7 +155,7 @@ export default {
         this.handlePublishNotice(row.id)
       } else if (buttonCode === 'publishLog') {
         this.handlePublishLog(row)
-      } 
+      }
     },
     //新建
     handleCreate() {
