@@ -14,13 +14,14 @@
                       </button-top>
                   </el-col>
                   <right-toolbar
-                     ref="rightToolbar"
-                     style="margin-top:4px;padding-right:20px"
-                     :showSearch.sync="showSearch"
-                     :columns="property.fields"
-                     @queryTable="handleQuery"
-                     @handleCheckAllChange="handleCheckAllChange"
-                     @clickReset="clickReset">
+                    ref="rightToolbar"
+                    style="margin-top:4px;padding-right:20px"
+                    :showSearch.sync="showSearch"
+                    :columns="property.fields"
+                    @queryTable="handleQuery"
+                    @handleCheckAllChange="handleCheckAllChange"
+                    @numberChange="numberChange"
+                    @clickReset="clickReset">
                    </right-toolbar>
                 </el-row>
                 <!--搜索条件按钮-->
@@ -36,6 +37,7 @@
                     ref="tableIndex"
                     style="margin-top:-8px"
                     :tableIndexs="tableIndex"
+                    :numberShow="numberShow"
                     :loading="loading"
                     :tableData="dataList"
                     :property="property"
@@ -82,6 +84,8 @@ export default {
             multiple:true,
             //显示搜索条件
             showSearch:true,
+            // 表格序号是否展示
+            numberShow: false,
             //表格数据
             dataList:[],
             //日期范围
@@ -101,6 +105,9 @@ export default {
         this.getList();
     },
     methods:{
+        numberChange(val) {
+            this.numberShow = val
+        },
         //获取菜单数据
         menuProperty(){
             let id = this.$route.meta.id;

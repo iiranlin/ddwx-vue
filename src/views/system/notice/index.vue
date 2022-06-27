@@ -25,6 +25,7 @@
             @queryTable="handleQuery"
             @handleCheckAllChange="handleCheckAllChange"
             @clickReset="clickReset"
+            @numberChange="numberChange"
           ></right-toolbar>
         </el-row>
         <!--搜索条件按钮-->
@@ -40,6 +41,7 @@
           ref="tableIndex"
           style="margin-top: -8px"
           :tableIndexs="tableIndex"
+          :numberShow="numberShow"
           :loading="loading"
           :tableData="dataList"
           :property="property"
@@ -90,6 +92,8 @@ export default {
       multiple: true,
       // 显示搜索条件
       showSearch: true,
+      // 表格序号是否展示
+      numberShow: false,
       // 查询参数
       formData: {},
       // 总条数
@@ -114,6 +118,9 @@ export default {
     this.getList();
   },
   methods: {
+    numberChange(val) {
+      this.numberShow = val
+    },
     //查询菜单数据
     menuProperty() {
       const id = this.$route.meta.id;
