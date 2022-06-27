@@ -421,12 +421,13 @@ export const numToFixed2 = (n) => {
 }
 
 /**
- * 计算两个数字的和
+ * 计算小数运算，目前只支持加减
  * @param num1 数字1,可以小数
  * @param num2 数字2,可以小数
- * @returns {number} 求和结果
+ * @param type 加 add,减subtract,默认加 add
+ * @returns {number} 结果
  */
-export function calSum(num1, num2) {
+export function calFloat(num1, num2, type = 'add') {
   let r1, r2, m
   try {
     r1 = num1.toString().split('.')[1].length
@@ -439,7 +440,11 @@ export function calSum(num1, num2) {
     r2 = 0
   }
   m = Math.pow(10, Math.max(r1, r2))
-  return Math.round(num1 * m + num2 * m) / m
+  if (type === 'add') {
+    return Math.round(num1 * m + num2 * m) / m
+  } else if (type === 'subtract') {
+    return Math.round(num1 * m - num2 * m) / m
+  }
 }
 
 /**
