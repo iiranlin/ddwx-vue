@@ -5,11 +5,12 @@
       <el-col :span="1.5" v-for="item in property.buttonTop" :key="item.id">
         <button-top :item="item" :multiple="multiple" :single="single" @newButton="newButton"></button-top>
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" :columns="property.fields" @queryTable="handleQuery" @handleCheckAllChange="handleCheckAllChange" @clickReset="clickReset"></right-toolbar>
+      <right-toolbar :showSearch.sync="showSearch" :columns="property.fields"  @numberChange="numberChange" @queryTable="handleQuery" @handleCheckAllChange="handleCheckAllChange" @clickReset="clickReset"></right-toolbar>
     </el-row>
     <form-data :showSearch="showSearch" :searchArr="property.search || []" @handleQuery="handleQuery" />
     <table-index ref="tableIndex" :loading="loading" :tableData="list" :property="property"
           :tableIndexs="tableIndex"
+                 :numberShow="numberShow"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
           @selectChange="selectChange"
@@ -58,7 +59,7 @@ export default {
           icon: "el-icon-edit",
           buttonCode: "update",
           buttonName: "修改",
-        },{ 
+        },{
           icon: "el-icon-delete",
           buttonCode: "delete",
           buttonName: "删除",
@@ -94,6 +95,7 @@ export default {
         status: '',
       },
       visible: false,
+      numberShow: false
     };
   },
   created() {
@@ -101,6 +103,9 @@ export default {
     this.getList();
   },
   methods: {
+    numberChange(val) {
+      this.numberShow = val
+    },
     menuProperty() {
       const id = this.$route.meta.id;
       this.$store.dispatch('menuProperty', id).then( (data) => {
@@ -181,7 +186,7 @@ export default {
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
     },
-    
+
   }
 };
 </script>

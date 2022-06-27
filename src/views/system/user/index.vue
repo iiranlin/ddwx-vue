@@ -32,6 +32,7 @@
             style="margin-top:4px; padding-right:20px"
             :showSearch.sync="showSearch"
             :columns="property.fields"
+            @numberChange="numberChange"
             @queryTable="handleQuery"
             @handleCheckAllChange="handleCheckAllChange"
             @clickReset="clickReset"
@@ -53,10 +54,11 @@
           :property="property"
           :showMoreButton="true"
           pageName="userPage"
+          :numberShow="numberShow"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
           @selectChange="selectChange"
-          @emitAblFilter="emitAblFilter" 
+          @emitAblFilter="emitAblFilter"
         />
         <pagination
           v-show="listQuery.total>0"
@@ -66,9 +68,9 @@
           @pagination="getList"
           style="margin-bottom: 40px;"
         />
-        </el-col> 
-      </el-row>    
-      <operate ref="operate" @operateSuccess="operateSuccess" />    
+        </el-col>
+      </el-row>
+      <operate ref="operate" @operateSuccess="operateSuccess" />
        <roleDrawer ref="roleDrawer" @userBindRoleSuccess="operateSuccess"/>
     </div>
 </template>
@@ -120,6 +122,7 @@ export default {
         status: "0",
         deptId: "",
       },
+      numberShow: false
     }
   },
   created() {
@@ -128,6 +131,9 @@ export default {
     this.getList();
   },
   methods: {
+    numberChange(val) {
+      this.numberShow = val
+    },
     newButton(buttonCode) {
       if (buttonCode === "bindStoryhouse") {
         this.checkWarehouseState();
@@ -240,14 +246,14 @@ export default {
     //     this.updateGrantStatus(this.selectionData[0].id,'1');
     //   }else{
     //     this.$modal.msgError("当前为停发状态,正常状态可操作停发");
-    //   } 
+    //   }
     // },
     // handleRecovery(ids){
     //   if(this.selectionData[0].cardGrantStatus === '1'){
     //     this.updateGrantStatus(this.selectionData[0].id,'0');
     //   }else{
     //      this.$modal.msgError("当前为正常状态,停发状态可操作恢复");
-    //   } 
+    //   }
     // },
     // updateGrantStatus(id,status){
     //   updateGrantStatus({id:id,cardGrantStatus:status}).then((res)=>{

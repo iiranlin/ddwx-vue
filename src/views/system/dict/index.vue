@@ -19,11 +19,12 @@
             style="margin-top:4px; padding-right:20px"
             :showSearch.sync="showSearch"
             :columns="property.fields"
+            @numberChange="numberChange"
             @queryTable="handleQuery"
             @handleCheckAllChange="handleCheckAllChange"
             @clickReset="clickReset"
           ></right-toolbar>
-          </el-row>  
+          </el-row>
           <form-data
           :formData="formData"
           :showSearch="showSearch"
@@ -39,10 +40,11 @@
         :loading="loading"
         :tableData="dataList"
         :property="property"
+        :numberShow="numberShow"
         @handleSelectionChange="handleSelectionChange"
         @handleButton="handleButton"
         @selectChange="selectChange"
-        @emitAblFilter="emitAblFilter" 
+        @emitAblFilter="emitAblFilter"
       />
         <pagination
           v-show="pageInfo.total>0"
@@ -100,7 +102,7 @@ export default {
         // parentId: '',
         // startTime: '',
         // endTime: '',
-        
+
       },
       pageInfo: {
         total: 0,
@@ -117,6 +119,7 @@ export default {
           label: "停用"
         },
       ],
+      numberShow: false
     };
   },
   watch: {
@@ -126,6 +129,9 @@ export default {
     this.getList();
   },
   methods: {
+    numberChange(val) {
+      this.numberShow = val
+    },
     newButton(buttonCode) {
       this.$refs.tableIndex.newButton(buttonCode);
     },

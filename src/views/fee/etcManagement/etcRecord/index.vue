@@ -127,11 +127,6 @@ export default {
       selectionData: [],
       //数据总数
       total: 0,
-      //分页参数
-      listQuery: {
-        pageNum: 1,
-        pageSize: 10
-      },
       // 子组件弹出框是否展示
       operateDialogFlag: false,
       // 按钮类型 增删更新

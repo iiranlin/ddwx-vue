@@ -245,11 +245,6 @@ export default {
       menuOptions: [],
       // 部门列表
       deptOptions: [],
-      // 查询参数
-      listQuery: {
-        pageNum: 1,
-        pageSize: 30,
-      },
       // 表单参数
       formData: {
         username: "",

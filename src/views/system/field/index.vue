@@ -22,17 +22,18 @@
           <el-col :span="1.5" v-for="item in property.buttonTop" :key="item.id">
             <button-top :item="item" :multiple="multiple" :single="single" @newButton="newButton"></button-top>
           </el-col>
-          <right-toolbar :showSearch.sync="showSearch" :columns="property.fields" @queryTable="handleQuery" @handleCheckAllChange="handleCheckAllChange" @clickReset="clickReset"></right-toolbar>
+          <right-toolbar :showSearch.sync="showSearch"  @numberChange="numberChange" :columns="property.fields" @queryTable="handleQuery" @handleCheckAllChange="handleCheckAllChange" @clickReset="clickReset"></right-toolbar>
         </el-row>
         <form-data :showSearch="showSearch" :searchArr="property.search || []" @handleQuery="handleQuery" />
         <table-index ref="tableIndex" :loading="loading" :tableData="menuList" :property="property"
               :tableIndexs="tableIndex"
               @handleSelectionChange="handleSelectionChange"
+                     :numberShow="numberShow"
               @handleButton="handleButton"
               @selectChange="selectChange"
               @emitAblFilter="emitAblFilter"
               />
-          <pagination 
+          <pagination
         style="margin-bottom:35px"
         v-show="total>0"
           :total="total"
@@ -109,11 +110,6 @@ export default {
           label: "停用"
         },
       ],
-      // 查询参数
-      listQuery: {
-        pageNum: 1,
-        pageSize: 30,
-      },
       // 表单参数
       formData: {
         fieldName: '',
@@ -122,6 +118,7 @@ export default {
       },
       visible: false,
       property:{},
+      numberShow: false
     };
   },
   created() {
@@ -131,6 +128,9 @@ export default {
     this.getList();
   },
   methods: {
+    numberChange(val) {
+      this.numberShow = val
+    },
     menuProperty() {
       const id = this.$route.meta.id;
       this.$store.dispatch('menuProperty', id).then( (data) => {

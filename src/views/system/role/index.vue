@@ -18,10 +18,11 @@
             :showSearch.sync="showSearch"
             :columns="property.fields"
             @queryTable="handleQuery"
+            @numberChange="numberChange"
             @handleCheckAllChange="handleCheckAllChange"
             @clickReset="clickReset">
           </right-toolbar>
-      </el-row>  
+      </el-row>
           <form-data
           :formData="formData"
           :showSearch="showSearch"
@@ -36,10 +37,11 @@
         :loading="loading"
         :tableData="dataList"
         :property="property"
+        :numberShow="numberShow"
         @handleSelectionChange="handleSelectionChange"
         @handleButton="handleButton"
         @selectChange="selectChange"
-        @emitAblFilter="emitAblFilter" 
+        @emitAblFilter="emitAblFilter"
       />
       <pagination
       style="margin-bottom:35px"
@@ -49,7 +51,7 @@
       :limit.sync="listQuery.pageSize"
       @pagination="getList"
     />
-     </el-col>   
+     </el-col>
   </el-row>
     <operate ref="operate" @operateSuccess="operateSuccess"/>
     <menuDrawer ref="menuDrawer" />
@@ -102,17 +104,13 @@ export default {
       menuOptions: [],
       // 部门列表
       deptOptions: [],
-      // 查询参数
-      listQuery: {
-        pageNum: 1,
-        pageSize: 30,
-      },
       // 表单参数
       formData: {
         roleName: '',
         status: ''
       },
-      selectRadioData: null
+      selectRadioData: null,
+      numberShow: false
     };
   },
   created() {
@@ -120,6 +118,9 @@ export default {
     this.getList();
   },
   methods: {
+    numberChange(val) {
+      this.numberShow = val
+    },
     newButton(buttonCode) {
       if (buttonCode === "bindStoryhouse") {
         this.checkWarehouseState();
@@ -137,7 +138,7 @@ export default {
       } else if (buttonCode === 'assignUser') {
         this.bindMenu(id)
       }
-      
+
     },
     handleCheckAllChange(columns) {
       this.$refs.tableIndex.init(columns);

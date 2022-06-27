@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    
+
     <el-row :gutter="20" class="container_h">
       <!--菜单数据-->
       <el-col :span="4" :xs="24" class="container_flex_overflow">
@@ -25,7 +25,7 @@
               icon="el-icon-plus"
               size="mini"
               @click="handleCreate"
-              
+
             >新增</el-button>
         <el-form :model="formData" ref="queryForm" v-show="showSearch" :inline="true">
           <el-form-item label="字段名称:" prop="fieldName">
@@ -115,8 +115,8 @@
           <!-- <el-table-column v-for="(val,key) in fields" :key="key"
           :v-if="val.visible"
           :show-overflow-tooltip="true"
-          :label="val.label" 
-          :prop="val.prop" 
+          :label="val.label"
+          :prop="val.prop"
           :align="val.align"
           :width="val.width"
           >
@@ -171,7 +171,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <pagination 
+        <pagination
         style="margin-bottom:35px"
         v-show="total>0"
           :total="total"
@@ -245,11 +245,6 @@ export default {
           label: "停用"
         },
       ],
-      // 查询参数
-      listQuery: {
-        pageNum: 1,
-        pageSize: 30,
-      },
       // 表单参数
       formData: {
         fieldName: '',

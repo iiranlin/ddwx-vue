@@ -114,11 +114,7 @@ export default {
       formData: {
         parentId: "",
       },
-      total: 0,
-      listQuery: {
-        pageNum: 1,
-        pageSize: 30,
-      },
+      total: 0
     };
   },
   created() {

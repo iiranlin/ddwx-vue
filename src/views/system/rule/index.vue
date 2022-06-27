@@ -4,11 +4,11 @@
       <el-col :span="1.5" v-for="item in property.buttonTop" :key="item.id">
         <button-top :item="item" :multiple="multiple" :single="single" @newButton="newButton"></button-top>
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" :columns="property.fields" @queryTable="handleQuery" 
-                     @handleCheckAllChange="handleCheckAllChange" @clickReset="clickReset"></right-toolbar>
+      <right-toolbar :showSearch.sync="showSearch" :columns="property.fields" @queryTable="handleQuery"
+                     @handleCheckAllChange="handleCheckAllChange" @clickReset="clickReset" @numberChange="numberChange"></right-toolbar>
     </el-row>
     <form-data :showSearch="showSearch" :searchArr="property.search || []" @handleQuery="handleQuery"/>
-    <table-index ref="tableIndex" :loading="loading" :tableData="list" :property="property"
+    <table-index ref="tableIndex" :loading="loading" :tableData="list" :property="property" :numberShow="numberShow"
                 :tableIndexs="tableIndex"
                 @handleSelectionChange="handleSelectionChange"
                 @handleButton="handleButton"
@@ -217,6 +217,7 @@ export default {
           { required: true, message: '请输入自定义规则', trigger: 'change' }
         ],
       },
+      numberShow: false
     };
   },
   created() {
@@ -224,6 +225,9 @@ export default {
     this.getList();
   },
   methods: {
+    numberChange(val) {
+      this.numberShow = val
+    },
     menuProperty() {
       const id = this.$route.meta.id;
       this.$store.dispatch('menuProperty', id).then( (data) => {
@@ -382,7 +386,7 @@ export default {
       this.$nextTick(()=>{
         this.rowDrop()
       })
-      
+
     },
     //字段接口
     menuFieldPage() {

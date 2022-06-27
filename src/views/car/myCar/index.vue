@@ -113,10 +113,6 @@ export default {
         closeReason:[{required:true,message:"请输入取消原因",trigger:"blur"}]
       },
       total: 0,
-      listQuery: {
-        pageNum: 1,
-        pageSize: 30,
-      },
       openWorkflow: false,
     };
   },

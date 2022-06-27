@@ -1,4 +1,4 @@
-<template lang="">
+<template>
     <div class="app-container_list">
         <el-row :gutter="20" class="container_h">
             <el-col :span="24" :xs="24" class="container_flex">
@@ -19,6 +19,7 @@
                      :showSearch.sync="showSearch"
                      :columns="property.fields"
                      @queryTable="handleQuery"
+                     @numberChange="numberChange"
                      @handleCheckAllChange="handleCheckAllChange"
                      @clickReset="clickReset">
                    </right-toolbar>
@@ -40,6 +41,7 @@
                     :loading="loading"
                     :tableData="dataList"
                     :property="property"
+                    :numberShow="numberShow"
                     @handleSelectionChange="handleSelectionChange"
                     @handleButton="handleButton"
                     @selectChange="selectChange"
@@ -92,7 +94,8 @@ export default {
             //查询参数
             formData:{},
             //数据总数
-            total:0
+            total:0,
+            numberShow: false
         }
     },
     created(){
@@ -100,6 +103,9 @@ export default {
         this.getList();
     },
     methods:{
+        numberChange(val) {
+          this.numberShow = val
+        },
         //获取菜单数据
         menuProperty(){
             let id = this.$route.meta.id;
