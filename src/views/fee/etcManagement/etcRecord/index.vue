@@ -37,6 +37,7 @@
             style="margin-top:4px;padding-right:20px"
             :showSearch.sync="showSearch"
             :columns="property.fields"
+            @numberChange="numberChange"
             @queryTable="handleQuery"
             @handleCheckAllChange="handleCheckAllChange"
             @clickReset="clickReset"
@@ -60,6 +61,7 @@
           :loading="loading"
           :tableData="dataList"
           :property="property"
+          :numberShow="numberShow"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
           @selectChange="selectChange"
@@ -104,6 +106,7 @@ export default {
   props: {},
   data() {
     return {
+      numberShow: false,
       //遮罩层
       loading: false,
       //非单个禁用
@@ -151,6 +154,9 @@ export default {
     this.getList()
   },
   methods: {
+    numberChange(val) {
+      this.numberShow = val
+    },
     //查询菜单数据
     async menuProperty() {
       let id = this.$route.meta.id
@@ -186,7 +192,7 @@ export default {
       }
     },
     uploadOnError() {
-      this.$modal.msgError("上传失败, 数据格式有误")
+      this.$modal.msgError('上传失败, 数据格式有误')
     },
     //页面按钮点击事件
     handleButton(ids, buttonCode) {

@@ -37,6 +37,7 @@
             style="margin-top:4px;padding-right:20px"
             :showSearch.sync="showSearch"
             :columns="property.fields"
+            @numberChange="numberChange"
             @queryTable="handleQuery"
             @handleCheckAllChange="handleCheckAllChange"
             @clickReset="clickReset"
@@ -60,7 +61,7 @@
           :loading="loading"
           :tableData="dataList"
           :property="property"
-          :numberShow="true"
+          :numberShow="numberShow"
           :selectShow="false"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
@@ -119,7 +120,8 @@ export default {
       // 按钮类型 增删更新
       buttonCode: '',
       rowId: '',
-      uploadUrl: carContractImportUrl
+      uploadUrl: carContractImportUrl,
+      numberShow: false,
     }
   },
   computed: {},
@@ -133,6 +135,9 @@ export default {
     this.getList()
   },
   methods: {
+    numberChange(val) {
+      this.numberShow = val;
+    },
     //查询菜单数据
     async menuProperty() {
       let id = this.$route.meta.id

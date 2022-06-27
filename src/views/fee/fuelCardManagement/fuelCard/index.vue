@@ -35,6 +35,7 @@
             :showSearch.sync="showSearch"
             :columns="property.fields"
             @queryTable="handleQuery"
+            @numberChange="numberChange"
             @handleCheckAllChange="handleCheckAllChange"
             @clickReset="clickReset"
           >
@@ -57,7 +58,7 @@
           :loading="loading"
           :tableData="dataList"
           :property="property"
-          :numberShow="true"
+          :numberShow="numberShow"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
           @selectChange="selectChange"
@@ -139,7 +140,8 @@ export default {
       buttonCode: '',
       rowId: '',
       // 分配金额的弹出框
-      distributeDialogFlag: false
+      distributeDialogFlag: false,
+      numberShow: false
     }
   },
   activated() {
@@ -153,6 +155,9 @@ export default {
     this.getList()
   },
   methods: {
+    numberChange(val) {
+      this.numberShow = val
+    },
     //查询菜单数据
     async menuProperty() {
       let id = this.$route.meta.id

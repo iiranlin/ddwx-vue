@@ -20,6 +20,7 @@
             :showSearch.sync="showSearch"
             :columns="property.fields"
             @queryTable="handleQuery"
+            @numberChange="numberChange"
             @handleCheckAllChange="handleCheckAllChange"
             @clickReset="clickReset"
           >
@@ -43,7 +44,7 @@
           :loading="loading"
           :tableData="dataList"
           :property="property"
-          :numberShow="true"
+          :numberShow="numberShow"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
           @selectChange="selectChange"
@@ -109,7 +110,8 @@ export default {
       },
       operateDialogFlag: false,
       rowId: '',
-      buttonCode: ''
+      buttonCode: '',
+      numberShow: false,
     }
   },
   created() {
@@ -126,6 +128,9 @@ export default {
         })
         this.property = data
       })
+    },
+    numberChange(val) {
+      this.numberShow = val;
     },
     //获取分页数据
     async getList() {

@@ -34,6 +34,7 @@
             style="margin-top:4px;padding-right:20px"
             :showSearch.sync="showSearch"
             :columns="property.fields"
+            @numberChange="numberChange"
             @queryTable="handleQuery"
             @handleCheckAllChange="handleCheckAllChange"
             @clickReset="clickReset"
@@ -57,6 +58,7 @@
           :loading="loading"
           :tableData="dataList"
           :property="property"
+          :numberShow="numberShow"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
           @selectChange="selectChange"
@@ -131,7 +133,8 @@ export default {
       operateDialogFlag: false,
       // 按钮类型 增删更新
       buttonCode: '',
-      rowId: ''
+      rowId: '',
+      numberShow: false
     }
   },
   computed: {},
@@ -147,6 +150,9 @@ export default {
     this.getList()
   },
   methods: {
+    numberChange(val) {
+      this.numberShow = val
+    },
     //查询菜单数据
     async menuProperty() {
       let id = this.$route.meta.id

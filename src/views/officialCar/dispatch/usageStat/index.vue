@@ -20,6 +20,7 @@
             :showSearch.sync="showSearch"
             :columns="property.fields"
             @queryTable="handleQuery"
+            @numberChange="numberChange"
             @handleCheckAllChange="handleCheckAllChange"
             @clickReset="clickReset"
           >
@@ -57,6 +58,7 @@
           :loading="loading"
           :tableData="dataList"
           :property="property"
+          :numberShow="numberShow"
           @clickLink="clickLink"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
@@ -121,7 +123,8 @@ export default {
       selectionData: [],
       //数据总数
       total: 0,
-      datePicker: this.datePickerHandler
+      datePicker: this.datePickerHandler,
+      numberShow: false
     }
   },
   created() {
@@ -141,6 +144,9 @@ export default {
     }
   },
   methods: {
+    numberChange(val) {
+      this.numberShow = val;
+    },
     // TODO 限制选择范围,提示体验
     /**搜索框起始日期限制*/
     datePickerHandler() {

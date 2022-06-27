@@ -38,6 +38,7 @@
             :showSearch.sync="showSearch"
             :columns="property.fields"
             @queryTable="handleQuery"
+            @numberChange="numberChange"
             @handleCheckAllChange="handleCheckAllChange"
             @clickReset="clickReset"
           >
@@ -60,6 +61,7 @@
           :loading="loading"
           :tableData="dataList"
           :property="property"
+          :numberShow="numberShow"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
           @selectChange="selectChange"
@@ -134,7 +136,8 @@ export default {
       // 按钮类型 增删更新
       buttonCode: '',
       rowId: '',
-      uploadUrl: fuelRecordImportUrl
+      uploadUrl: fuelRecordImportUrl,
+      numberShow: false,
     }
   },
   computed: {},
@@ -150,6 +153,9 @@ export default {
     this.getList()
   },
   methods: {
+    numberChange(val) {
+      this.numberShow = val;
+    },
     // 上传成功
     uploadOnSuccess(code, data, message) {
       if (code === 0) {
