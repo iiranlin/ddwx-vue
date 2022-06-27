@@ -270,7 +270,7 @@ import { getAllAvailableUnit } from '@/api/system/unit'
 import { MAINTENANCE_DICT } from '@/views/officialCar/maintenanceCreate/constants'
 import { getListByParentId } from '@/api/system/dict'
 import { getComeUnitList } from '@/api/comeUnit'
-import { calSum, handleMoney, numToFixed2 } from '@/utils'
+import { calFloat, handleMoney, numToFixed2 } from '@/utils'
 import { addMaintenanceRecord, getMaintenanceDetailById } from '@/api/maintenanceRecord'
 import { getVehicleListAll } from '@/api/vehicleInfo'
 
@@ -400,14 +400,14 @@ export default {
       handler(val) {
         let totalMaterialCost = 0, totalHourlyCost = 0, totalOtherCost = 0
         val.forEach(item => {
-          totalMaterialCost = calSum(totalMaterialCost, item.materialCost)
-          totalHourlyCost = calSum(totalHourlyCost, item.hourlyCost)
-          totalOtherCost = calSum(totalOtherCost, item.otherCost)
+          totalMaterialCost = calFloat(totalMaterialCost, item.materialCost)
+          totalHourlyCost = calFloat(totalHourlyCost, item.hourlyCost)
+          totalOtherCost = calFloat(totalOtherCost, item.otherCost)
         })
         this.form.materialCost = totalMaterialCost
         this.form.hourlyCost = totalHourlyCost
         this.form.otherCost = totalOtherCost
-        this.form.totalCost = calSum(calSum(totalMaterialCost, totalHourlyCost), totalOtherCost)
+        this.form.totalCost = calFloat(calFloat(totalMaterialCost, totalHourlyCost), totalOtherCost)
       },
       deep: true
     },
