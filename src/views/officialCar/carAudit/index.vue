@@ -97,11 +97,6 @@ export default {
             selectionData:[],
             //数据总数
             total:0,
-            //分页参数
-            listQuery:{
-                pageNum:1,
-                pageSize:30
-            }
         }
     },
     created(){
