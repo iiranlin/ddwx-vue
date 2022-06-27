@@ -23,6 +23,7 @@
             @queryTable="handleQuery"
             @handleCheckAllChange="handleCheckAllChange"
             @clickReset="clickReset"
+            @numberChange="numberChange"
           >
           </right-toolbar>
         </el-row>
@@ -39,8 +40,9 @@
         <!--表格数据-->
         <table-index
           ref="tableIndex"
-          :tableIndexs="tableIndex"
           style="margin-top:-8px"
+          :tableIndexs="tableIndex"
+          :numberShow="numberShow"
           :loading="loading"
           :tableData="dataList"
           :property="property"
@@ -89,6 +91,8 @@ export default {
       multiple: true,
       //显示搜索条件
       showSearch: true,
+      // 表格序号是否展示
+      numberShow: false,
       //表格数据
       dataList: [],
       //日期范围
@@ -118,6 +122,9 @@ export default {
     this.getList()
   },
   methods: {
+    numberChange(val) {
+      this.numberShow = val
+    },
     //获取菜单数据
     menuProperty() {
       let id = this.$route.meta.id
