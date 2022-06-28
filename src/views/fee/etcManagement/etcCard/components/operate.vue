@@ -28,6 +28,7 @@
             <el-select
               v-model="form.unitCode"
               placeholder="请选择所属单位"
+              filterable
               clearable
               size="small"
               style="width:100%"
@@ -52,6 +53,7 @@
               v-model="form.carNumber"
               placeholder="请选择所属车辆"
               clearable
+              filterable
               size="small"
               style="width:100%"
             >
