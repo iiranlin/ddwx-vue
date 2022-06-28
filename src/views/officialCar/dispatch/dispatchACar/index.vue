@@ -298,7 +298,9 @@ export default {
       this.$refs.formInformation.addRequest();
     },
     closePush () {
-      this.$router.push({name:'workspace'});
+      this.$tab.closePage(this.$route).then(({ visitedViews }) => {
+        this.toLastView(visitedViews, this.$route);
+      })
     },
     addCarButton () {
       this.$refs.formInformation.addCarButton();

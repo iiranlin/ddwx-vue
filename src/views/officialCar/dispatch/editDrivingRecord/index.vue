@@ -476,7 +476,7 @@
                   :prop="`reqAssignments.${index}.maintainDate`"
                 >
                   <el-input
-                    v-model="item.maintainDate"
+                    :value="parseTime(item.maintainDate, '{y}-{m}-{d}')"
                     readonly
                     disabled
                     maxlength="200"

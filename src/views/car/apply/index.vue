@@ -381,7 +381,10 @@ export default {
       })
     },
     closePush () {
-      this.$router.push({name:'myCar'});
+      // this.$router.push({name:'myCar'});
+      this.$tab.closePage(this.$route).then(({ visitedViews }) => {
+        this.toLastView(visitedViews, this.$route);
+      })
     }
   },
 };
