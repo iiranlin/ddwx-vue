@@ -164,7 +164,7 @@ export default {
             if(this.buttonCode == 'sendVehicle'){
                 this.addCarButton();
             }
-            this.getAvailableDriver(row.reassignUnitCode || row.unitCode || row.deptId, row.usageDate);
+            this.getAvailableDriver(row.reassignUnitCode || row.assignUnitCode || row.deptId, row.usageDate);
             this.vehicleInfoGetAvailableCar(row);
         }
     },
