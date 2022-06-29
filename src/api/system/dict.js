@@ -62,3 +62,10 @@ export function getListByParentCode(code) {
   })
 }
 
+export function getUserLevel() {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/dict/getUserLevel`,
+    method: 'get',
+  })
+}
+

@@ -94,7 +94,7 @@
 <script>
 import { userCreate, userDetail, userModify } from '@/api/system/user'
 import { deptTree } from '@/api/system/dept'
-import { getListByParentCode } from '@/api/system/dict'
+import { getUserLevel } from '@/api/system/dict'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import { listPost } from '@/api/system/post'
@@ -191,7 +191,7 @@ export default {
     //获取用户级别
     async getUserLevelOptions() {
       this.loading = true
-      await getListByParentCode('userLevel').then(({ data }) => {
+      await getUserLevel().then(({ data }) => {
         this.loading = false
         this.userLevelOptions = data;
       }).catch((err) => {
