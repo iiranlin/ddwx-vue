@@ -2,7 +2,7 @@
   <div class="app-container app-container-selection" :style="{'--theme': theme}">
     <el-row :gutter="20" class="container_h">
       <!--部门数据-->
-      <el-col :span="4" :xs="24">
+      <el-col :span="4" :xs="24" class="container_flex_overflow">
         <h2 class="head-container-h2">角色</h2>
         <div class="head-container ov_head" :loading="loading">
           <el-tree
@@ -465,6 +465,9 @@ export default {
 </script>
 <style lang="scss">
 .app-container-selection{
+  .container_flex_overflow{
+    border-right: none;
+  }
   .head-container-h2{
     text-align: center;
     color: #606266;
