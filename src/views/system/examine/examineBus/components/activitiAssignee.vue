@@ -100,22 +100,24 @@ export default {
         },
         submitDataScope () {
             if(this.selectChangeData.type == '5'){
-                this.loading = true;
-                if(this.row.workflowId){
-                    this.activitiComplete();
-                }else{
-                    let obj = {
-                        assignee: this.form.id,
-                        procDefId: this.ids[0] || this.row.procDefId,
-                        businessId: this.row.id
-                    };
-                    activitiStart(obj).then( ({message}) => {
-                        this.$modal.msgSuccess(message);
-                        this.openWorkflow = false;
-                        this.loading = false;
-                        this.$emit('carSuccess');
-                    })
-                }
+                this.$modal.confirm('是否确认该审批人?').then(() => {
+                    this.loading = true;
+                    if(this.row.workflowId){
+                        this.activitiComplete();
+                    }else{
+                        let obj = {
+                            assignee: this.form.id,
+                            procDefId: this.ids[0] || this.row.procDefId,
+                            businessId: this.row.id
+                        };
+                        activitiStart(obj).then( ({message}) => {
+                            this.$modal.msgSuccess(message);
+                            this.openWorkflow = false;
+                            this.loading = false;
+                            this.$emit('carSuccess');
+                        })
+                    }
+                }).catch(() => {});
             }else{
                 this.$modal.msgWarning('请选择人！');
             }

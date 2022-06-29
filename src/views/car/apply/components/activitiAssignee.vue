@@ -62,8 +62,10 @@ export default {
         },
         submitDataScope () {
             if(this.selectChangeData.type == '5'){
-                this.openWorkflow = false;
-                this.$emit('carSuccess', this.selectChangeData);
+                this.$modal.confirm('是否确认该审批人?').then(() => {
+                    this.openWorkflow = false;
+                    this.$emit('carSuccess', this.selectChangeData);
+                }).catch(() => {});
             }else{
                 this.$modal.msgWarning('请选择人！');
             }

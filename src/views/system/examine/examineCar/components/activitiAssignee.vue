@@ -100,12 +100,14 @@ export default {
         },
         submitDataScope () {
             if(this.selectChangeData.type == '5'){
-                this.loading = true;
-                if(this.row.workflowId){
-                    this.activitiComplete();
-                }else{
-                    this.activitiStart();
-                }
+                this.$modal.confirm('是否确认该审批人?').then(() => {
+                    this.loading = true;
+                    if(this.row.workflowId){
+                        this.activitiComplete();
+                    }else{
+                        this.activitiStart();
+                    }
+                }).catch(() => {});
             }else{
                 this.$modal.msgWarning('请选择人！');
             }
