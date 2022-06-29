@@ -13,42 +13,42 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="还车里程：" prop="endMiles">
-            <el-input v-model="form.endMiles" size="small" clearable @input="handleMoney(form,'endMiles')">
+            <el-input v-model="form.endMiles" size="small" clearable @input="handleNumberLimit(form,'endMiles')">
               <template slot="append"><span class="span-unit">千米</span></template>
             </el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="等待时长：" prop="waitTimes">
-            <el-input v-model="form.waitTimes" size="small" clearable @input="handleMoney(form,'endMiles',2)">
+            <el-input v-model="form.waitTimes" size="small" clearable @input="handleNumberLimit(form,'endMiles',2)">
               <template slot="append">小时</template>
             </el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="路桥费：" prop="etcCost">
-            <el-input v-model="form.etcCost" size="small" clearable @input="handleMoney(form,'etcCost')">
+            <el-input v-model="form.etcCost" size="small" clearable @input="handleNumberLimit(form,'etcCost')">
               <template slot="append"><span class="span-unit">元</span></template>
             </el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="加油费：" prop="oilCost">
-            <el-input v-model="form.oilCost" size="small" clearable @input="handleMoney(form,'oilCost')">
+            <el-input v-model="form.oilCost" size="small" clearable @input="handleNumberLimit(form,'oilCost')">
               <template slot="append">元</template>
             </el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="其他费：" prop="otherCost">
-            <el-input v-model="form.otherCost" size="small" clearable @input="handleMoney(form,'otherCost')">
+            <el-input v-model="form.otherCost" size="small" clearable @input="handleNumberLimit(form,'otherCost')">
               <template slot="append">元</template>
             </el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="停车费：" prop="parkCost">
-            <el-input v-model="form.parkCost" size="small" clearable @input="handleMoney(form,'parkCost')">
+            <el-input v-model="form.parkCost" size="small" clearable @input="handleNumberLimit(form,'parkCost')">
               <template slot="append">元</template>
             </el-input>
           </el-form-item>
@@ -95,7 +95,7 @@
 <script>
 import { getToken } from '@/utils/auth'
 import { gcywVehicleRequesReturning } from '@/api/driver'
-import { calFloat, handleMoney } from '@/utils'
+import { calFloat, handleNumberLimit } from '@/utils'
 import { userDeleteBatch } from '@/api/system/user'
 
 export default {
@@ -119,7 +119,7 @@ export default {
       }
     }
     return {
-      handleMoney: handleMoney,
+      handleNumberLimit: handleNumberLimit,
       //遮罩层
       loading: false,
       //标题

@@ -111,7 +111,7 @@
             <el-col :span="8">
               <el-form-item label="维保里程：" prop="maintainMiles">
                 <el-input v-model="form.maintainMiles" size="mini" placeholder="请输入维保里程" clearable
-                          @input="handleMoney(form,'maintainMiles')" v-if="status" maxlength="11"
+                          @input="handleNumberLimit(form,'maintainMiles')" v-if="status" maxlength="11"
                 ></el-input>
                 <span v-else>{{ form.maintainMiles }}</span>
               </el-form-item>
@@ -150,7 +150,7 @@
             <el-col :span="8">
               <el-form-item label="下次维保里程：" prop="nextMaintainMiles">
                 <el-input v-model="form.nextMaintainMiles" size="mini" placeholder="请输入下次维保里程" clearable
-                          :disabled="form.maintainType!=='1'" @input="handleMoney(form,'nextMaintainMiles')" v-if="status" maxlength="8"
+                          :disabled="form.maintainType!=='1'" @input="handleNumberLimit(form,'nextMaintainMiles')" v-if="status" maxlength="8"
                 ></el-input>
                 <span v-if="!status && form.maintainType==='1'">{{ form.nextMaintainMiles }}</span>
               </el-form-item>
@@ -217,7 +217,7 @@
             <el-table-column label="材料数量" align="center">
               <template slot-scope="scope">
                 <el-input v-model="maintenanceData[scope.$index].materialNum"
-                          @input="handleMoney(maintenanceData[scope.$index],'materialNum')" v-if="status" maxlength="11"
+                          @input="handleNumberLimit(maintenanceData[scope.$index],'materialNum')" v-if="status" maxlength="11"
                 ></el-input>
                 <span v-else>{{ maintenanceData[scope.$index].materialNum }}</span>
               </template>
@@ -225,7 +225,7 @@
             <el-table-column label="材料费" align="center">
               <template slot-scope="scope">
                 <el-input v-model="maintenanceData[scope.$index].materialCost"
-                          @input="handleMoney(maintenanceData[scope.$index],'materialCost')" v-if="status" maxlength="11"
+                          @input="handleNumberLimit(maintenanceData[scope.$index],'materialCost')" v-if="status" maxlength="11"
                 ></el-input>
                 <span v-else>{{ maintenanceData[scope.$index].materialCost }}</span>
               </template>
@@ -233,7 +233,7 @@
             <el-table-column label="工时（小时）" align="center">
               <template slot-scope="scope">
                 <el-input v-model="maintenanceData[scope.$index].hourlyNum"
-                          @input="handleMoney(maintenanceData[scope.$index],'hourlyNum',2)" v-if="status" maxlength="11"
+                          @input="handleNumberLimit(maintenanceData[scope.$index],'hourlyNum',2)" v-if="status" maxlength="11"
                 ></el-input>
                 <span v-else>{{ maintenanceData[scope.$index].hourlyNum }}</span>
               </template>
@@ -241,7 +241,7 @@
             <el-table-column label="工时费" align="center">
               <template slot-scope="scope">
                 <el-input v-model="maintenanceData[scope.$index].hourlyCost"
-                          @input="handleMoney(maintenanceData[scope.$index],'hourlyCost')" v-if="status" maxlength="11"
+                          @input="handleNumberLimit(maintenanceData[scope.$index],'hourlyCost')" v-if="status" maxlength="11"
                 ></el-input>
                 <span v-else>{{ maintenanceData[scope.$index].hourlyCost }}</span>
               </template>
@@ -249,7 +249,7 @@
             <el-table-column label="其他费" align="center">
               <template slot-scope="scope">
                 <el-input v-model="maintenanceData[scope.$index].otherCost"
-                          @input="handleMoney(maintenanceData[scope.$index],'otherCost')" v-if="status" maxlength="11"
+                          @input="handleNumberLimit(maintenanceData[scope.$index],'otherCost')" v-if="status" maxlength="11"
                 ></el-input>
                 <span v-else>{{ maintenanceData[scope.$index].otherCost }}</span>
               </template>
@@ -270,7 +270,7 @@ import { getAllAvailableUnit } from '@/api/system/unit'
 import { MAINTENANCE_DICT } from '@/views/officialCar/maintenanceCreate/constants'
 import { getListByParentId } from '@/api/system/dict'
 import { getComeUnitList } from '@/api/comeUnit'
-import { calFloat, handleMoney, numToFixed2 } from '@/utils'
+import { calFloat, handleNumberLimit, numToFixed2 } from '@/utils'
 import { addMaintenanceRecord, getMaintenanceDetailById } from '@/api/maintenanceRecord'
 import { getVehicleListAll } from '@/api/vehicleInfo'
 
@@ -278,7 +278,7 @@ export default {
   name: 'maintenanceCreate',
   data() {
     return {
-      handleMoney: handleMoney,
+      handleNumberLimit: handleNumberLimit,
       endDatePicker: this.endDateScope(),
       firstDatePicker: this.firstDateScope(),
       // 当前状态,create新增true,detail详情false

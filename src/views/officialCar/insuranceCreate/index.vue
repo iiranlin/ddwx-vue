@@ -69,7 +69,7 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="投保金额：" prop="insrFee">
-                <el-input v-model="form.insrFee" size="mini" placeholder="请输入投保金额" maxlength="11" @input="handleMoney(form,'insrFee')"></el-input>
+                <el-input v-model="form.insrFee" size="mini" placeholder="请输入投保金额" maxlength="11" @input="handleNumberLimit(form,'insrFee')"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -160,14 +160,14 @@
             <el-table-column label="保费" align="center">
               <template slot-scope="scope">
                 <el-input v-model="form.items[scope.$index].insrFee" maxlength="11"
-                          @input="handleMoney(form.items[scope.$index],'insrFee')"
+                          @input="handleNumberLimit(form.items[scope.$index],'insrFee')"
                 ></el-input>
               </template>
             </el-table-column>
             <el-table-column label="保额" align="center">
               <template slot-scope="scope">
                 <el-input v-model="form.items[scope.$index].insrPaidAmount" maxlength="11"
-                          @input="handleMoney(form.items[scope.$index],'insrPaidAmount')"
+                          @input="handleNumberLimit(form.items[scope.$index],'insrPaidAmount')"
                 ></el-input>
               </template>
             </el-table-column>
@@ -188,13 +188,13 @@ import { gcywInsuranceRecordCreate, gcywComeUnitListAll } from '@/api/driver'
 import { getListByParentCode } from '@/api/system/dict'
 import { getVehicleInfoSelect } from '@/api/car'
 import { getToken } from '@/utils/auth'
-import { handleMoney } from '@/utils'
+import { handleNumberLimit } from '@/utils'
 
 export default {
   name: 'insuranceCreate',
   data() {
     return {
-      handleMoney: handleMoney,
+      handleNumberLimit: handleNumberLimit,
       //loading框
       loading: false,
       //使用单位数据

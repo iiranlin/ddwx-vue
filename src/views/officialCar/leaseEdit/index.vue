@@ -200,14 +200,14 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="购车价格：" prop="originalValue">
-                <el-input v-model="form.originalValue" size="mini" clearable maxlength="11" @input="handleMoney(form,'originalValue')"
+                <el-input v-model="form.originalValue" size="mini" clearable maxlength="11" @input="handleNumberLimit(form,'originalValue')"
                 ></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="租赁价格：" prop="rentPrice">
                 <el-input v-model="form.rentPrice" size="mini" clearable placeholder="录入总包价" maxlength="11"
-                          @input="handleMoney(form,'rentPrice')"
+                          @input="handleNumberLimit(form,'rentPrice')"
                 ></el-input>
               </el-form-item>
             </el-col>
@@ -245,7 +245,7 @@ import { getListByParentCode, getListByParentId } from '@/api/system/dict'
 import { deptListPage } from '@/api/system/dept'
 import { systemUnitListAll } from '@/api/system/dict/setting'
 import operate from './components/operate'
-import { handleMoney } from '@/utils'
+import { handleNumberLimit } from '@/utils'
 
 export default {
   name: 'leaseEdit',
@@ -253,7 +253,7 @@ export default {
 
   data() {
     return {
-      handleMoney: handleMoney,
+      handleNumberLimit: handleNumberLimit,
       //loading框
       loading: false,
       //回显数据

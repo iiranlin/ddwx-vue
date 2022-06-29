@@ -471,12 +471,12 @@ export function numberInput(value, name) {
 }
 
 /**
- * 规范金额输入,整数位默认8,小数位2
+ * 规范数字输入,整数位默认8,小数位2
  * @param obj 表单项或绑定的对象
  * @param key 对象的属性名
  * @param intLimit 整数位限制,默认为8
  */
-export function handleMoney(obj, key, intLimit = 8) {
+export function handleNumberLimit(obj, key, intLimit = 8) {
   // 先把非数字的都替换掉，除了数字和 .
   obj[key] = obj[key].replace(/[^\d.]/g, '')
   // 保证只有出现一个 . 而没有多个 .
