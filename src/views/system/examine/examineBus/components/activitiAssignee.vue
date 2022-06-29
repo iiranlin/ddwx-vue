@@ -6,6 +6,7 @@
                     <el-form-item label="下一级审批人:" prop="id">
                         <treeselect
                             v-model="form.id"
+                            :default-expand-level="100"
                             :options="deptOptions"
                             :normalizer="normalizer"
                             @select="selectChange"
