@@ -158,6 +158,7 @@ import activitiAssignee from "./components/activitiAssignee";
 import getDict from "@/views/mixins/getDict";
 import { limitInput, numberInput } from '@/utils/index';
 import { getCookie } from '@/utils/auth';
+import { mapGetters } from 'vuex';
 export default {
   name: "apply",
   mixins: [getDict],
@@ -192,7 +193,7 @@ export default {
         demandCode: '1001801',
         longDistanceTag: '0',
         usagePersons: '1',
-        userName: getCookie('username'),
+        userName: '',
         phone: getCookie('phone') || '',
         usageDate: '',
         usageTime: '',
@@ -248,6 +249,9 @@ export default {
     };
   },
   computed: {
+    ...mapGetters([
+      'realName',
+    ]),
     theme() {
       return this.$store.state.settings.theme;
     }
@@ -258,6 +262,7 @@ export default {
       this.getOperateDict(item);
     }
     this.$nextTick( () => {
+      this.formData.userName = this.realName || '';
       if(this.$route.query.row){
         let row = JSON.parse(this.$route.query.row);
         this.formData = {

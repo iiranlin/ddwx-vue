@@ -242,8 +242,8 @@
 <script>
 import { vehicleInfoUpdGVC, activitiAssigneeListByType } from '@/api/driver'
 import { getListByParentCode, getListByParentId } from '@/api/system/dict'
-import { deptListPage } from '@/api/system/dept'
-import { systemUnitListAll } from '@/api/system/dict/setting'
+import { getAllAvailableDept } from '@/api/dept'
+import { getAllAvailableUnit } from '@/api/system/unit'
 import operate from './components/operate'
 import { handleNumberLimit } from '@/utils'
 
@@ -421,7 +421,7 @@ export default {
     //获取单位信息
     async getUnitOptions() {
       this.loading = true
-      await systemUnitListAll().then(({ data }) => {
+      await getAllAvailableUnit().then(({ data }) => {
         this.loading = false
         this.unitOptions = data
 
@@ -444,9 +444,9 @@ export default {
     //获取部门信息
     async getDepartmentOptions(id) {
       this.loading = true
-      await deptListPage({ unitId: id }).then(({ data }) => {
+      await getAllAvailableDept({ unitId: id }).then(({ data }) => {
         this.loading = false
-        this.departmentOptions = data.list
+        this.departmentOptions = data;
       }).catch((err) => {
         this.loading = false
       })

@@ -228,6 +228,7 @@ import { limitInput, numberInput } from '@/utils/index'
 import { getCookie } from '@/utils/auth'
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import { mapGetters } from 'vuex';
 export default {
     name: "dispatchACar",
     mixins: [getDict],
@@ -267,7 +268,7 @@ export default {
                 demandCode: '1001801',
                 longDistanceTag: '0',
                 usagePersons: '1',
-                userName: getCookie('username'),
+                userName: '',
                 phone: getCookie('phone') || '',
                 usageDate: '',
                 usageTime: '',
@@ -328,11 +329,17 @@ export default {
         }
     },
     computed: {
+        ...mapGetters([
+            'realName',
+        ]),
         theme() {
             return this.$store.state.settings.theme;
         }
     },
     created() {
+        this.$nextTick( () => {
+            this.formData.userName = this.realName;
+        })
         this.vehicleInfoGetAssignCount();
         for(const item of this.dictionariesCode){
             this.getOperateDict(item);
