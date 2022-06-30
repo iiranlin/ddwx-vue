@@ -30,7 +30,19 @@
                     :showSearch="showSearch"
                     :searchArr="property.search || []"
                     @handleQuery="handleQuery"
+                    @handleResetDept="handleResetDept"
                     style="margin-top:-12px;margin-bottom:6px">
+                    <template slot="customItem">
+                      <el-form-item label="用车单位" prop="value">
+                        <el-select v-model="formData.usageUnitCode" placeholder="请选择用车单位" clearable style="width:240px" size="small">
+                          <el-option v-for="item in unitOptions"
+                            :key="item.value"
+                            :label="item.unitName"
+                            :value="item.unitCode">
+                          </el-option>
+                        </el-select>
+                      </el-form-item>
+                    </template>
                 </form-data>
                 <!--表格数据-->
                 <table-index
@@ -64,6 +76,7 @@ import buttonTop from "@/components/buttonTop"
 import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
 import{vehicleInfoRentPage,vehicleInfoRemoveGVC} from "@/api/driver"
+import { getAllAvailableUnit } from '@/api/system/unit'
 import indexMixin from "@/views/mixins"
 
 export default {
@@ -81,6 +94,8 @@ export default {
             multiple:true,
             //显示搜索条件
             showSearch:true,
+            //用车单位信息
+            unitOptions:[],
             //表格数据
             dataList:[],
             //日期范围
@@ -88,24 +103,37 @@ export default {
             //列表显示字段
             property:{},
             //查询参数
-            formData:{},
+            formData:{
+                usageUnitCode:"",
+            },
             //已选中条目
             selectionData:[],
             //已选中条目的id
             ids:[],
             //数据总数
             total:0,
-       numberShow: false
+            numberShow: false
         }
     },
     created(){
         this.menuProperty();
+        this.getUnitOptions();
         this.getList();
     },
     methods:{
       numberChange(val) {
         this.numberShow = val
       },
+       //获取单位信息
+        async getUnitOptions() {
+            this.loading = true
+            await getAllAvailableUnit().then(({ data }) => {
+                this.loading = false
+                this.unitOptions = data;
+            }).catch((err) => {
+                this.loading = false
+            })
+        },
         //获取菜单数据
         menuProperty(){
             let id = this.$route.meta.id;
@@ -192,6 +220,10 @@ export default {
             this.multiple = multiple;
             this.selectionData = selection;
             this.ids = selection.map(item => item.carId)
+        },
+        //清空部门数据
+        handleResetDept(){
+            this.formData.usageUnitCode = "";
         },
         //刷新列表数据
         handleQuery(row = {}){
