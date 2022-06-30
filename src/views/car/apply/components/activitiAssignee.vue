@@ -35,7 +35,7 @@ export default {
             deptOptions: undefined,
             ids: [],
             form: {
-                id: null
+                id: undefined
             },
             selectChangeData: {},
             comment: '',
