@@ -29,7 +29,7 @@
       </el-select>
       <el-select
         v-else-if="item.fieldType == 'enum'"
-        v-model="formData['unitCode']"
+        v-model="formData['usageUnitCode']"
         :placeholder="'请选择' + item.fieldName"
         clearable
         size="small"

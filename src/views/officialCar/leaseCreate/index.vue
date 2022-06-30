@@ -428,7 +428,7 @@ export default {
       this.loading = true
       await getAllAvailableDept({ unitId: id }).then(({ data }) => {
         this.loading = false
-        this.departmentOptions = data.list
+        this.departmentOptions = data;
       }).catch((err) => {
         this.loading = false
       })
