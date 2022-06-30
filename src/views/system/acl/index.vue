@@ -160,6 +160,8 @@ export default {
           })
           this.loadingClick = false;
         })
+      }).finally(() => {
+          this.loadingClick = false;
       })
     },
     // 节点单击事件
@@ -200,6 +202,8 @@ export default {
           selectAllFor(this.arrAclList);
           this.loadingClick = false;
         })
+      }).finally(() => {
+          this.loadingClick = false;
       })
     },
     handleAdd () {
