@@ -7,7 +7,7 @@ let path = process.env.NODE_ENV === 'development'? process.env.VUE_APP_BASE_API 
 
 export const etcRecordTemplateUrl = `${path}${VUE_APP_BASE_PREFIX}/gcywEtcRecord/template`
 
-export const etcRecordImportUrl = `${path}${VUE_APP_BASE_PREFIX}/gcywEtcRecord/import`
+export const etcRecordImportUrl = `${process.env.VUE_APP_BASE_API}/${VUE_APP_BASE_PREFIX}/gcywEtcRecord/import`
 
 /**
  * @function getETCRecordPageList
