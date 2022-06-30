@@ -521,17 +521,18 @@
 </template>
 
 <script>
-import { getAllAvailableUnit } from "@/api/system/unit"
-import { getAllAvailableDept } from "@/api/dept"
-import { gcjcDriverClassList } from "@/api/driver"
-import { getAllAvailableCar } from "@/api/car"
+import { getAllAvailableUnit } from "@/api/system/unit";
+import { getAllAvailableDept } from "@/api/dept";
+import { gcjcDriverClassList } from "@/api/driver";
+import { getAllAvailableCar } from "@/api/car";
 import { vehicleInfoGetAssignCount } from "@/api/vehicleInfo";
 import { saveOrderDispatch } from "@/api/gcywVehicleRequest";
 import formAddress from "@/views/car/apply/components/formAddress";
-import getDict from "@/views/mixins/getDict"
-import { limitInput, numToFixed2 } from '@/utils/index'
-import { getCookie } from '@/utils/auth'
-import { numberInput } from '@/utils/index'
+import getDict from "@/views/mixins/getDict";
+import { limitInput, numToFixed2 } from '@/utils/index';
+import { getCookie } from '@/utils/auth';
+import { numberInput } from '@/utils/index';
+import { mapGetters } from 'vuex';
 
 export default {
   name: "editDrivingRecord",
@@ -580,8 +581,8 @@ export default {
         demandCode: '1001801',
         longDistanceTag: '0',
         usagePersons: '1',
-        userName: getCookie('username'),
-        phone: getCookie('phone'),
+        userName: '',
+        phone: getCookie('phone') || '',
         usageDate: '',
         usageTime: '',
         timeLength: '',
@@ -690,6 +691,9 @@ export default {
     };
   },
   computed: {
+    ...mapGetters([
+      'realName',
+    ]),
     theme() {
       return this.$store.state.settings.theme;
     }
@@ -702,6 +706,9 @@ export default {
     // this.getUnitDictList();
   },
   created() {
+    this.$nextTick( () => {
+      this.formData.userName = this.realName;
+    })
     this.vehicleInfoGetAssignCount();
     for (const item of this.dictionariesCode) {
       this.getOperateDict(item);
