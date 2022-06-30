@@ -85,7 +85,7 @@ export default {
                 Authorization: getToken(),
             },
             //图片上传参数
-            uploadData:{ 
+            uploadData:{
                 type: "3"
             },
             //表单数据
@@ -109,7 +109,11 @@ export default {
         //初始化
         init(assignmentId,beginMiles,vinNumber){
             this.assignmentId = assignmentId;
-            this.beginMiles = beginMiles;
+            if (!beginMiles) {
+              this.beginMiles = 0
+            } else {
+              this.beginMiles = beginMiles
+            }
             this.vinNumber = vinNumber;
             this.openDataScope = true;
             this.$nextTick(() => {
@@ -170,7 +174,7 @@ export default {
             gcywVehicleReqAssignmenntCheckDriving(params).then(({data})=>{
                 resolve(data)
             })
-          })  
+          })
         },
         //出车
         async vehicleRequesDriving(){

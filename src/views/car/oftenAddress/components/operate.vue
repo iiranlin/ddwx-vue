@@ -11,9 +11,9 @@
                 clearable
                 filterable
               >
-                <el-option v-for="item in dictionariesArr" 
-                  :key="item.code" 
-                  :label="item.name" 
+                <el-option v-for="item in dictionariesArr"
+                  :key="item.code"
+                  :label="item.name"
                   :value="item.code">
                 </el-option>
               </el-select>
@@ -21,7 +21,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="别名:" prop="name">
-              <el-input v-model="form.name" maxlength="200" placeholder="请输入别名" />
+              <el-input v-model="form.name" maxlength="20" placeholder="请输入别名" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -35,9 +35,9 @@
                 filterable
                 @change="provinceChange"
               >
-                <el-option v-for="item in provinceList" 
-                  :key="item.divisionId" 
-                  :label="item.divisionName" 
+                <el-option v-for="item in provinceList"
+                  :key="item.divisionId"
+                  :label="item.divisionName"
                   :value="item.divisionId">
                 </el-option>
               </el-select>
@@ -52,9 +52,9 @@
                 filterable
                 @change="cityChange"
               >
-                <el-option v-for="item in cityList" 
-                  :key="item.divisionId" 
-                  :label="item.divisionName" 
+                <el-option v-for="item in cityList"
+                  :key="item.divisionId"
+                  :label="item.divisionName"
                   :value="item.divisionId">
                 </el-option>
               </el-select>
@@ -71,9 +71,9 @@
                 filterable
                 @change="areaChange"
               >
-                <el-option v-for="item in areaList" 
-                  :key="item.divisionId" 
-                  :label="item.divisionName" 
+                <el-option v-for="item in areaList"
+                  :key="item.divisionId"
+                  :label="item.divisionName"
                   :value="item.divisionId">
                 </el-option>
               </el-select>
@@ -91,7 +91,7 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="详情地址:" prop="address">
-                <el-input type="textarea" v-model="form.address" maxlength="200" placeholder="请输入详情地址" />
+                <el-input type="textarea" v-model="form.address" maxlength="100" placeholder="请输入详情地址" />
             </el-form-item>
           </el-col>
         </el-row>

@@ -190,7 +190,11 @@ export default {
     //初始化
     init(data) {
       this.assignmentId = data.assignmentId
-      this.form.beginMiles = data.beginMiles
+      if (!data.beginMiles) {
+        this.form.beginMiles = 0
+      } else {
+        this.form.beginMiles = data.beginMiles
+      }
       this.longDistanceTag = data.longDistanceTag
       this.openDataScope = true
     },

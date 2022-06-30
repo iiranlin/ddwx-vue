@@ -116,8 +116,8 @@ export default {
     this.getList()
   },
   methods: {
-    numberChange (val) {
-      this.numberShow = val;
+    numberChange(val) {
+      this.numberShow = val
     },
     //获取菜单数据
     menuProperty() {
@@ -148,34 +148,50 @@ export default {
     //页面按钮点击事件
     handleButton(ids, buttonCode) {
       if (buttonCode === 'receive') {
-        this.$modal.confirm('是否接受该派单?').then(() => {
-          gcywVehicleRequesTakeOrder({ assignmentId: this.selectionData[0].assignmentId }).then(({ message }) => {
-            this.$modal.msgSuccess(message)
-            this.getList()
-          }).catch((err) => {
+        if (this.selectionData[0].status !== '1') {
+          this.$modal.msgWarning('请选择状态为[待接单]的订单进行接收')
+        } else {
+          this.$modal.confirm('是否接受该派单?').then(() => {
+            gcywVehicleRequesTakeOrder({ assignmentId: this.selectionData[0].assignmentId }).then(({ message }) => {
+              this.$modal.msgSuccess(message)
+              this.getList()
+            }).catch((err) => {
 
+            })
           })
-        })
+        }
       } else if (buttonCode === 'refuse') {
-        this.$modal.confirm('是否拒绝该派单?').then(() => {
-          gcywVehicleRequesCancelOrder({ assignmentId: this.selectionData[0].assignmentId }).then(({ message }) => {
-            this.$modal.msgSuccess(message)
-            this.getList()
-          }).catch((err) => {
+        if (this.selectionData[0].status !== '1') {
+          this.$modal.msgWarning('请选择状态为[待接单]的订单进行拒绝')
+        } else {
+          this.$modal.confirm('是否拒绝该派单?').then(() => {
+            gcywVehicleRequesCancelOrder({ assignmentId: this.selectionData[0].assignmentId }).then(({ message }) => {
+              this.$modal.msgSuccess(message)
+              this.getList()
+            }).catch((err) => {
 
+            })
           })
-        })
+        }
       } else if (buttonCode === 'dispatch') {
-        this.$refs.dispatchCar.init(this.selectionData[0].assignmentId, this.selectionData[0].beginMiles, this.selectionData[0].vinNumber)
+        if (this.selectionData[0].status !== '2') {
+          this.$modal.msgWarning('请选择状态为[待出车]的订单进行出车')
+        } else {
+          this.$refs.dispatchCar.init(this.selectionData[0].assignmentId, this.selectionData[0].beginMiles, this.selectionData[0].vinNumber)
+        }
       } else if (buttonCode === 'remind') {
-        this.$modal.confirm('是否提醒该派单?').then(() => {
-          gcywVehicleRequesRemind({ assignmentId: this.selectionData[0].assignmentId }).then(({ message }) => {
-            this.$modal.msgSuccess(message)
-            this.getList()
-          }).catch((err) => {
+        if (this.selectionData[0].status !== '4') {
+          this.$modal.msgWarning('请选择状态为[已出车]的订单进行到达提醒')
+        } else {
+          this.$modal.confirm('是否提醒该派单?').then(() => {
+            gcywVehicleRequesRemind({ assignmentId: this.selectionData[0].assignmentId }).then(({ message }) => {
+              this.$modal.msgSuccess(message)
+              this.getList()
+            }).catch((err) => {
 
+            })
           })
-        })
+        }
       } else if (buttonCode === 'return') {
         // 只有状态为4（已出车）的时候才能还车
         if (this.selectionData[0].status !== '4') {
