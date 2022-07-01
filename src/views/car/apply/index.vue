@@ -374,7 +374,7 @@ export default {
         }
       });
       addVehicleRequest(obj).then( ({message}) => {
-        this.$modal.msgSuccess(message);
+        this.$modal.msgSuccess('操作成功');
         this.$router.push({name:'myCar'});
       })
     },
