@@ -75,7 +75,7 @@ export default {
                     this.form.id = data.assignee;
                     this.activitiComplete();
                 }else{
-                    this.form.id = '';
+                    this.form.id = undefined;
                     if(data.assigneeList && data.assigneeList.length > 0){
                         this.deptOptions = data.assigneeList;
                         this.openWorkflow = true;
