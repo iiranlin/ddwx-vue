@@ -20,7 +20,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="等待时长：" prop="waitTimes">
-            <el-input v-model="form.waitTimes" size="small" clearable @input="handleNumberLimit(form,'endMiles',2)">
+            <el-input v-model="form.waitTimes" size="small" clearable @input="handleNumberLimit(form,'waitTimes',2)">
               <template slot="append">小时</template>
             </el-input>
           </el-form-item>
