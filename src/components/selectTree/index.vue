@@ -13,7 +13,7 @@
                 :accordion="accordion"
                 :data="options"
                 :props="props"
-                :node-key="props.value"    
+                :node-key="props.value"
                 :default-expanded-keys="defaultExpandedKey"
                 :filter-node-method="filterNode"
                 @node-click="handleNodeClick">
@@ -21,7 +21,7 @@
         </el-option>
     </el-select>
 </template>
- 
+
 <script>
 export default {
     name: "select-tree",
@@ -39,7 +39,7 @@ export default {
         },
         /* 选项列表数据(树形结构的对象数组) */
         options:{
-            type: Array,       
+            type: Array,
             default: ()=>{ return [] }
         },
         /* 初始值 */
@@ -77,7 +77,7 @@ export default {
             filterText: '',
             valueId:this.value,    // 初始值
             valueTitle:'',
-            defaultExpandedKey:[]    
+            defaultExpandedKey:[]
         }
     },
     mounted(){
@@ -90,7 +90,10 @@ export default {
                 this.valueTitle = this.$refs.selectTree.getNode(this.valueId).data[this.props.label]     // 初始化显示
                 this.$refs.selectTree.setCurrentKey(this.valueId)       // 设置默认选中
                 this.defaultExpandedKey = [this.valueId]      // 设置默认展开
-            } 
+            }else{
+                this.filterText = '';
+                this.valueTitle = '';
+            }
             this.initScroll()
         },
         // 初始化滚动条
