@@ -121,9 +121,9 @@ export default {
         this.getList();
     },
     methods:{
-      numberChange(val) {
-        this.numberShow = val
-      },
+        numberChange(val) {
+            this.numberShow = val
+        },
        //获取单位信息
         async getUnitOptions() {
             this.loading = true

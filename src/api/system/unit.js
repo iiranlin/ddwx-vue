@@ -64,3 +64,12 @@ export function allUnit() {
     params,
   });
 }
+
+export function getDisAvailableUnit(params = {}) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/system/unit/getDisAvailableUnit`,
+    method: "get",
+    params,
+  });
+}
+

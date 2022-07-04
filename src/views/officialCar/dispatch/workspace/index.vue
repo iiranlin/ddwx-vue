@@ -27,7 +27,19 @@
       :showSearch="showSearch"
       :searchArr="property.search || []"
       @handleQuery="handleQuery"
-    />
+      @handleResetDept="handleResetDept">
+      <template slot="customItem">
+        <el-form-item label="用车单位" prop="value">
+          <el-select v-model="formData.unitCode" placeholder="请选择用车单位" clearable style="width:240px" size="small">
+            <el-option v-for="item in unitOptions"
+              :key="item.value"
+              :label="item.unitName"
+              :value="item.unitCode">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </template>
+    </form-data>
     <table-index
       ref="tableIndex"
       :loading="loading"
@@ -81,6 +93,7 @@ import { gcywVehicleRequestDispatchList, cancelVehicleRequest, updateRessUnit } 
 import indexMixin from '@/views/mixins'
 import operate from './components/operate'
 import editAssembly from './components/editAssembly'
+import { getDisAvailableUnit } from '@/api/system/unit'
 
 export default {
   name: 'workspace',
@@ -103,6 +116,8 @@ export default {
       numberShow: false,
       // 表格数据
       dataList: [],
+      //用车单位数据
+      unitOptions:[],
       // 弹出层标题
       title: '',
       //列表显示字段
@@ -110,7 +125,8 @@ export default {
       selectionData: [],
       // 查询参数
       formData: {
-        parentId: ''
+        parentId: '',
+        unitCode:''
       },
       form: {
         closeReason: ''
@@ -123,12 +139,23 @@ export default {
     }
   },
   created() {
-    this.menuProperty()
-    this.getList()
+    this.menuProperty();
+    this.getUnitOptions();
+    this.getList();
   },
   mounted() {
   },
   methods: {
+    //获取用车单位信息
+    async getUnitOptions() {
+        this.loading = true
+        await getDisAvailableUnit().then(({ data }) => {
+            this.loading = false
+            this.unitOptions = data;
+        }).catch((err) => {
+            this.loading = false
+        })
+    },
     menuProperty() {
       const id = this.$route.meta.id
       this.$store.dispatch('menuProperty', id).then((data) => {
@@ -288,6 +315,10 @@ export default {
       this.single = single
       this.multiple = multiple
       this.selectionData = selection
+    },
+    //清空用车单位数据
+    handleResetDept(){
+        this.formData.unitCode = "";
     },
     clickReset() {
       this.menuProperty()

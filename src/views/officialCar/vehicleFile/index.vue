@@ -32,8 +32,19 @@
           :showSearch="showSearch"
           :searchArr="property.search || []"
           @handleQuery="handleQuery"
-          style="margin-top:-12px;margin-bottom:6px"
-        >
+          @handleResetDept="handleResetDept"
+          style="margin-top:-12px;margin-bottom:6px">
+            <template slot="customItem">
+              <el-form-item label="状态" prop="value">
+                <el-select v-model="formData.carStatus" placeholder="请选择状态" clearable style="width:240px" size="small">
+                  <el-option v-for="item in statusOptions"
+                    :key="item.value"
+                    :label="item.name"
+                    :value="item.code">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </template>
         </form-data>
         <!--表格数据-->
         <table-index
@@ -72,6 +83,7 @@ import formData from '@/components/formData'
 import tableIndex from '@/components/tableIndex'
 import operate from './components/operate'
 import { vehicleInfoListPage, vehicleInfoGetVehicleFile } from '@/api/driver'
+import {getListByParentCode} from '@/api/system/dict'
 import indexMixin from '@/views/mixins'
 import carModel from '@/views/officialCar/vehicleFile/components/carModel'
 
@@ -92,12 +104,16 @@ export default {
       showSearch: true,
       //表格数据
       dataList: [],
+      //状态数据
+      statusOptions:[],
       //日期范围
       dateRange: [],
       //列表显示字段
       property: {},
       //查询参数
-      formData: {},
+      formData: {
+        carStatus:"",
+      },
       //已选中条目
       selectionData: [],
       //图片名称数据
@@ -108,12 +124,23 @@ export default {
     }
   },
   created() {
-    this.menuProperty()
-    this.getList()
+    this.menuProperty();
+    this.getStatusOptions();
+    this.getList();
   },
   methods: {
     numberChange(val) {
       this.numberShow = val
+    },
+    //获取状态信息
+    async getStatusOptions() {
+        this.loading = true
+        await getListByParentCode("carStatus").then(({ data }) => {
+            this.loading = false
+            this.statusOptions = data;
+        }).catch((err) => {
+            this.loading = false
+        })
     },
     //获取菜单数据
     menuProperty() {
@@ -199,6 +226,10 @@ export default {
     handleQuery(row = {}) {
       this.formData = Object.assign({}, this.formData, row)
       this.getList()
+    },
+    //清空状态数据
+    handleResetDept(){
+        this.formData.carStatus = "";
     },
     tableRowClassName({ row, rowIndex }) {
       row.index = rowIndex + 1
