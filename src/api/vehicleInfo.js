@@ -51,3 +51,12 @@ export function getUsageByPage(params) {
   })
 }
 
+// 查询统计-车辆类型统计: 分页获取车辆类型情况,目前统计所级
+export function getCarTypeStatByUnitLevel(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/vehicleInfo/unit/1/carType/stat`,
+    method: 'get',
+    params
+  })
+}
+
