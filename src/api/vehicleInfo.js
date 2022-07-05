@@ -54,7 +54,17 @@ export function getUsageByPage(params) {
 // 查询统计-车辆类型统计: 分页获取车辆类型情况,目前统计所级
 export function getCarTypeStatByUnitLevel(params) {
   return request({
-    url: `${VUE_APP_BASE_prefix}/vehicleInfo/unit/1/carType/stat`,
+    url: `${VUE_APP_BASE_prefix}/vehicleInfo/unit/2/carType/stat`,
+    method: 'get',
+    params
+  })
+}
+
+// 查询统计-车辆信息统计: 查询所级单位车辆总体信息,(自有数量,租赁数量,加油卡,etc数量等)
+// 目前业务上只有按照单位等级1(所级)查询,但是支持其他级别查询
+export function getCarStatInfo(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/vehicleInfo/unit/2/car/stat`,
     method: 'get',
     params
   })
