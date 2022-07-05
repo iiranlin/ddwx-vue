@@ -32,8 +32,6 @@
           :showSearch="showSearch"
           :searchArr="property.search || []"
           @handleQuery="handleQuery"
-          @handleQueryDept="handleQueryDept"
-          @handleResetDept="handleResetDept"
           style="margin-top:-12px;margin-bottom:6px"
         >
         </form-data>
@@ -46,7 +44,6 @@
           :tableData="dataList"
           :property="property"
           :numberShow="numberShow"
-          @clickLink="clickLink"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
           @selectChange="selectChange"
@@ -64,20 +61,21 @@
         />
       </el-col>
     </el-row>
-
+    <export-dialog ref="export" :page-num="listQuery.pageNum" :page-size="listQuery.pageSize" :total="total" @exportFile="exportFile"/>
   </div>
 </template>
 <script>
 import buttonTop from '@/components/buttonTop'
 import formData from '@/components/formData'
 import tableIndex from '@/components/tableIndex'
-import { getAllAvailableDept } from '@/api/dept'
 import indexMixin from '@/views/mixins'
-import { getCarTypeStatByUnitLevel } from '@/api/vehicleInfo'
+import { getCarTypeStatByUnitLevel, VehicleTypeStatExportUrl } from '@/api/vehicleInfo'
+import { axiosDownloadExcel } from '@/api/download'
+import exportDialog from '@/components/ExportDialog'
 
 export default {
   name: 'searchVehicleInfo',
-  components: { buttonTop, formData, tableIndex },
+  components: { buttonTop, formData, tableIndex, exportDialog },
   mixins: [indexMixin],
 
   data() {
@@ -96,12 +94,8 @@ export default {
       dateRange: [],
       //列表显示字段
       property: {},
-      //用车部门数据
-      deptOptions: [],
       //查询参数
       formData: {
-        deptId: '',
-        statMonth: ''
       },
       //已选中条目
       selectionData: [],
@@ -147,6 +141,13 @@ export default {
     },
     //页面按钮点击事件
     handleButton(ids, buttonCode) {
+      if (buttonCode === 'export') {
+        this.$refs.export.init()
+      }
+    },
+    // 导出文件
+    exportFile(pageInfo) {
+      axiosDownloadExcel(VehicleTypeStatExportUrl, Object.assign({}, pageInfo, this.listQuery, this.formData))
     },
     //顶部列字段展示
     handleCheckAllChange(columns) {
@@ -175,32 +176,6 @@ export default {
       this.single = single
       this.multiple = multiple
       this.selectionData = selection
-    },
-    //查询部门数据
-    handleQueryDept() {
-      this.formData.deptId = ''
-      this.loading = true
-      getAllAvailableDept({ unitLevel: 1 }).then(({ data }) => {
-        this.loading = false
-        this.deptOptions = data
-      }).catch(() => {
-        this.loading = false
-      })
-    },
-    //清空部门数据
-    handleResetDept() {
-      this.formData.deptId = ''
-      this.deptOptions = []
-    },
-    //
-    clickLink(row, fieldCode, linkText) {
-      let name = linkText.substring(linkText.indexOf('/') + 1)
-      this.$router.push({
-        name: name,
-        params: {
-          id: row.id
-        }
-      })
     },
     //刷新列表数据
     handleQuery(row = {}) {

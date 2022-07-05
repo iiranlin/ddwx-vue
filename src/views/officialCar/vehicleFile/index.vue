@@ -33,18 +33,20 @@
           :searchArr="property.search || []"
           @handleQuery="handleQuery"
           @handleResetDept="handleResetDept"
-          style="margin-top:-12px;margin-bottom:6px">
-            <template slot="customItem">
-              <el-form-item label="状态" prop="value">
-                <el-select v-model="formData.carStatus" placeholder="请选择状态" clearable style="width:240px" size="small">
-                  <el-option v-for="item in statusOptions"
-                    :key="item.value"
-                    :label="item.name"
-                    :value="item.code">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </template>
+          style="margin-top:-12px;margin-bottom:6px"
+        >
+          <template slot="customItem">
+            <el-form-item label="状态" prop="value">
+              <el-select v-model="formData.carStatus" placeholder="请选择状态" clearable style="width:240px" size="small">
+                <el-option v-for="item in statusOptions"
+                           :key="item.value"
+                           :label="item.name"
+                           :value="item.code"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </template>
         </form-data>
         <!--表格数据-->
         <table-index
@@ -83,7 +85,7 @@ import formData from '@/components/formData'
 import tableIndex from '@/components/tableIndex'
 import operate from './components/operate'
 import { vehicleInfoListPage, vehicleInfoGetVehicleFile } from '@/api/driver'
-import {getListByParentCode} from '@/api/system/dict'
+import { getListByParentCode } from '@/api/system/dict'
 import indexMixin from '@/views/mixins'
 import carModel from '@/views/officialCar/vehicleFile/components/carModel'
 
@@ -105,14 +107,14 @@ export default {
       //表格数据
       dataList: [],
       //状态数据
-      statusOptions:[],
+      statusOptions: [],
       //日期范围
       dateRange: [],
       //列表显示字段
       property: {},
       //查询参数
       formData: {
-        carStatus:"",
+        carStatus: ''
       },
       //已选中条目
       selectionData: [],
@@ -124,9 +126,12 @@ export default {
     }
   },
   created() {
-    this.menuProperty();
-    this.getStatusOptions();
-    this.getList();
+    this.menuProperty()
+    this.getStatusOptions()
+    if (this.$route.params) {
+      this.formData = this.$route.params
+    }
+    this.getList()
   },
   methods: {
     numberChange(val) {
@@ -134,13 +139,13 @@ export default {
     },
     //获取状态信息
     async getStatusOptions() {
-        this.loading = true
-        await getListByParentCode("carStatus").then(({ data }) => {
-            this.loading = false
-            this.statusOptions = data;
-        }).catch((err) => {
-            this.loading = false
-        })
+      this.loading = true
+      await getListByParentCode('carStatus').then(({ data }) => {
+        this.loading = false
+        this.statusOptions = data
+      }).catch((err) => {
+        this.loading = false
+      })
     },
     //获取菜单数据
     menuProperty() {
@@ -150,6 +155,8 @@ export default {
           item.fieldFormat = JSON.parse(JSON.stringify(item.fieldFormat))
         })
         this.property = data
+        console.log(this.property.search)
+
       })
     },
     //获取分页数据
@@ -228,8 +235,8 @@ export default {
       this.getList()
     },
     //清空状态数据
-    handleResetDept(){
-        this.formData.carStatus = "";
+    handleResetDept() {
+      this.formData.carStatus = ''
     },
     tableRowClassName({ row, rowIndex }) {
       row.index = rowIndex + 1

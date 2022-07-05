@@ -3,6 +3,10 @@ let VUE_APP_BASE_prefix = process.env.VUE_APP_AUTH_SERVER;
 let path = process.env.NODE_ENV === 'development'? process.env.VUE_APP_BASE_API : '';
 // 运用统计情况导出地址
 export const VehicleUsageStatExportUrl = `${path}${VUE_APP_BASE_prefix}/vehicleInfo/usage/export`
+// 公务用车统计导出地址
+export const VehicleTypeStatExportUrl = `${path}${VUE_APP_BASE_prefix}/vehicleInfo/unit/2/carType/export`
+// 车辆信息统计导出地址
+export const VehicleInfoStatExportUrl = `${path}${VUE_APP_BASE_prefix}/vehicleInfo/unit/2/info/export`
 
 
 //最近三周用车情况汇总
