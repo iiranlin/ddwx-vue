@@ -30,17 +30,28 @@
                     :showSearch="showSearch"
                     :searchArr="property.search || []"
                     @handleQuery="handleQuery"
-                    @handleQueryDept="handleQueryDept"
                     @handleResetDept="handleResetDept"
                     style="margin-top:-12px;margin-bottom:6px">
-                    <template slot="customItem">
+                     <template slot="customItemStar">
+                        <el-form-item label="用车单位" prop="value">
+                        <el-select v-model="formData.unitCode" placeholder="请选择用车单位" clearable style="width:240px" size="small">
+                            <el-option v-for="item in unitOptions"
+                                :key="item.value"
+                                :label="item.unitName"
+                                :value="item.unitCode"
+                                @click.native="handleUnitChange(item.unitCode)">
+                            </el-option>
+                        </el-select>
+                        </el-form-item>
+                    </template>
+                    <template slot="customItemStar">
                       <el-form-item label="用车部门" prop="value">
                         <el-select v-model="formData.deptId" placeholder="请选择用车部门" clearable style="width:240px" size="small">
-                          <el-option v-for="item in deptOptions"
-                            :key="item.value"
-                            :label="item.deptName"
-                            :value="item.id">
-                          </el-option>
+                            <el-option v-for="item in deptOptions"
+                                :key="item.value"
+                                :label="item.deptName"
+                                :value="item.id">
+                            </el-option>
                         </el-select>
                       </el-form-item>
                     </template>
@@ -79,6 +90,7 @@ import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
 import {gcywVehicleRequestDispatchListInfo} from "@/api/car"
 import {getAllAvailableDept} from "@/api/dept"
+import { getDisAvailableUnit } from '@/api/system/unit'
 import indexMixin from "@/views/mixins"
 
 export default {
@@ -102,11 +114,14 @@ export default {
             dateRange:[],
             //列表显示字段
             property:{},
+            //用车单位数据
+            unitOptions:[],
             //用车部门数据
             deptOptions:[],
             //查询参数
             formData:{
                 deptId:"",
+                unitCode:"",
             },
             //已选中条目
             selectionData:[],
@@ -118,12 +133,23 @@ export default {
     created(){
         Object.assign(this.$data, this.$options.data());
         this.menuProperty();
+        this.getUnitOptions();
         this.getList();
     },
     methods:{
-      numberChange(val) {
-        this.numberShow = val
-      },
+        numberChange(val) {
+            this.numberShow = val
+        },
+        //获取用车单位信息
+        async getUnitOptions() {
+            this.loading = true
+            await getDisAvailableUnit().then(({ data }) => {
+                this.loading = false
+                this.unitOptions = data;
+            }).catch((err) => {
+                this.loading = false
+            })
+        },
         //获取菜单数据
         menuProperty(){
             let id = this.$route.meta.id;
@@ -182,6 +208,10 @@ export default {
             this.multiple = multiple;
             this.selectionData = selection;
         },
+        //用车单位选择回调
+        handleUnitChange(unitCode){
+            this.handleQueryDept(unitCode)
+        },
         //查询部门数据
         handleQueryDept(unitCode){
             this.formData.deptId ="";
@@ -196,6 +226,7 @@ export default {
         //清空部门数据
         handleResetDept(){
             this.formData.deptId = "";
+            this.formData.unitCode = "";
             this.deptOptions = [];
         },
         //
