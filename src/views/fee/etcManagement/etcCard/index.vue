@@ -135,8 +135,10 @@ export default {
   computed: {},
   watch: {},
   activated() {
-    // this.menuProperty();
-    // this.getList()
+    if (this.$route.params) {
+      this.formData = this.$route.params
+      this.getList()
+    }
   },
   created() {
     this.menuProperty()
