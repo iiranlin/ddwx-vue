@@ -6,15 +6,16 @@
     :inline="true"
     v-show="showSearch"
   >
-    <slot name='customItemStar'></slot>
+    <slot name="customItemStar"></slot>
     <el-form-item
       :label="item.fieldName"
-      :prop="item.fieldType == 'date' ? '' : item.fieldCode"
+      :prop="item.fieldType === 'date' ? '' : item.fieldCode"
       v-for="item in searchArr"
       :key="item.id"
     >
+      <!--字典单选框-->
       <el-select
-        v-if="item.fieldType == 'dict'"
+        v-if="item.fieldType === 'dict' && item.isMultiple===0"
         v-model="formData[item.fieldCode]"
         :placeholder="'请选择' + item.fieldName"
         clearable
@@ -28,8 +29,26 @@
           :value="item.code"
         />
       </el-select>
+      <!--字典多选框,注意: 当多选框时,绑定属性为原属性名+list,例如:原来为brand多选时,绑定brandList-->
       <el-select
-        v-else-if="item.fieldType == 'enum'"
+        v-else-if="item.fieldType === 'dict' && item.isMultiple===1"
+        v-model="formData[item.fieldCode+'List']"
+        :placeholder="'请选择' + item.fieldName"
+        multiple
+        collapse-tags
+        clearable
+        size="small"
+        style="width: 240px"
+      >
+        <el-option
+          v-for="(item, key) in item.fieldFormatArr"
+          :key="key"
+          :label="item.name"
+          :value="item.code"
+        />
+      </el-select>
+      <el-select
+        v-else-if="item.fieldType === 'enum'"
         v-model="formData['unitCode']"
         :placeholder="'请选择' + item.fieldName"
         clearable
@@ -41,11 +60,11 @@
           :key="key"
           :label="item.unitName"
           :value="item.unitCode"
-           @click.native="handleUnitChange(item)"
+          @click.native="handleUnitChange(item)"
         />
       </el-select>
       <el-date-picker
-        v-else-if="item.fieldType && item.fieldType.indexOf('date') != -1"
+        v-else-if="item.fieldType && item.fieldType.indexOf('date') !== -1"
         v-model="dateRange[item.fieldCode]"
         size="small"
         style="width: 240px"
@@ -56,7 +75,7 @@
         end-placeholder="结束日期"
       ></el-date-picker>
       <el-input
-        v-else-if="item.fieldType == 'String'"
+        v-else-if="item.fieldType === 'String'"
         v-model="formData[item.fieldCode]"
         :placeholder="'请输入' + item.fieldName"
         clearable
@@ -74,90 +93,92 @@
         @keyup.enter.native="handleQuery"
       />
     </el-form-item>
-    <slot name='customItem'></slot>
+    <slot name="customItem"></slot>
     <el-form-item>
       <el-button
         type="primary"
         icon="el-icon-search"
         size="mini"
         @click="handleQuery"
-        >搜索</el-button
+      >搜索
+      </el-button
       >
       <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
-        >重置</el-button
+      >重置
+      </el-button
       >
     </el-form-item>
   </el-form>
 </template>
 
 <script>
-import { getAllAvailableUnit } from "@/api/system/unit";
+import { getAllAvailableUnit } from '@/api/system/unit'
+
 export default {
-  name: "FormData",
+  name: 'FormData',
   props: {
     showSearch: {
       type: Boolean,
-      default: true,
+      default: true
     },
     searchArr: {
       type: Array,
-      default: [],
-    },
+      default: []
+    }
   },
   data() {
     return {
       // 日期范围
       dateRange: {},
       formData: {},
-      enumData: [],
-    };
+      enumData: []
+    }
   },
   watch: {
     searchArr: {
-      handler: function (val, oldVal) {
+      handler: function(val) {
         val.forEach((item) => {
-          if (item.fieldType === "enum") {
+          if (item.fieldType === 'enum') {
             getAllAvailableUnit().then(({ data }) => {
-              this.enumData = data;
-            });
+              this.enumData = data
+            })
           }
-        });
+        })
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   methods: {
     handleQuery() {
-      let dateRange = this.dateRange;
+      let dateRange = this.dateRange
       for (let key in dateRange) {
         if (dateRange[key]) {
-          this.formData[key + "Start"] = dateRange[key][0];
-          this.formData[key + "End"] = dateRange[key][1];
+          this.formData[key + 'Start'] = dateRange[key][0]
+          this.formData[key + 'End'] = dateRange[key][1]
         } else {
-          this.formData[key + "Start"] = null;
-          this.formData[key + "End"] = null;
+          this.formData[key + 'Start'] = null
+          this.formData[key + 'End'] = null
         }
       }
-
-      this.$emit("handleQuery", this.formData);
+      this.$emit('handleQuery', this.formData)
     },
     //使用单位选择回调
-    handleUnitChange(value){
-      this.$emit("handleQueryDept", value.unitCode);
+    handleUnitChange(value) {
+      this.$emit('handleQueryDept', value.unitCode)
     },
     /** 重置按钮操作 */
     resetQuery() {
       //清空用车信息查询界面-用车部门信息
-      this.$emit("handleResetDept");
+      this.$emit('handleResetDept')
       // this.resetForm("queryForm");
-      this.dateRange = {};
+      this.dateRange = {}
       for (let key in this.formData) {
-        this.formData[key] = null;
+        this.formData[key] = null
       }
-      this.handleQuery();
-    },
-  },
-};
+      this.handleQuery()
+    }
+  }
+}
 </script>
 
 <style scoped lang="scss">

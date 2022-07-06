@@ -149,7 +149,7 @@ export default {
       await getListByParentCode('carStatus').then(({ data }) => {
         this.loading = false
         this.statusOptions = data
-      }).catch((err) => {
+      }).catch(() => {
         this.loading = false
       })
     },
@@ -166,7 +166,6 @@ export default {
     //获取分页数据
     async getList() {
       this.loading = true
-
       await vehicleInfoListPage(Object.assign({}, this.listQuery, this.formData, { type: '1' })).then(({ data }) => {
         this.dataList = data.list
         this.dataList.forEach((item) => {

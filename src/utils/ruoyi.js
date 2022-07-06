@@ -70,7 +70,7 @@ export function addDateRange(params, dateRange, propName) {
   return search;
 }
 
-// 回显数据字典 
+// 回显数据字典
 export function selectDictLabel(datas, value) {
   var actions = [];
   Object.keys(datas).some((key) => {
@@ -197,14 +197,24 @@ export function tansParams(params) {
   let result = ''
   for (const propName of Object.keys(params)) {
     const value = params[propName];
-    var part = encodeURIComponent(propName) + "=";
+    const part = encodeURIComponent(propName) + '='
     if (value !== null && typeof (value) !== "undefined") {
       if (typeof value === 'object') {
-        for (const key of Object.keys(value)) {
-          if (value[key] !== null && typeof (value[key]) !== 'undefined') {
-            let params = propName + '[' + key + ']';
-            var subPart = encodeURIComponent(params) + "=";
-            result += subPart + encodeURIComponent(value[key]) + "&";
+        // 针对数组进行处理
+        if (value instanceof Array) {
+          for (const key of Object.keys(value)) {
+            if (value[key] !== null && typeof (value[key]) !== 'undefined') {
+              const subPart = encodeURIComponent(propName) + '='
+              result += subPart + encodeURIComponent(value[key]) + "&";
+            }
+          }
+        }else {
+          for (const key of Object.keys(value)) {
+            if (value[key] !== null && typeof (value[key]) !== 'undefined') {
+              let params = propName + '[' + key + ']';
+              const subPart = encodeURIComponent(params) + '='
+              result += subPart + encodeURIComponent(value[key]) + "&";
+            }
           }
         }
       } else {
