@@ -6,7 +6,7 @@
     :inline="true"
     v-show="showSearch"
   >
-    <slot name='customItem1'></slot>
+    <slot name='customItemStar'></slot>
     <el-form-item
       :label="item.fieldName"
       :prop="item.fieldType == 'date' ? '' : item.fieldCode"

@@ -26,48 +26,62 @@
             </el-row>
             <el-row>
                 <el-col :span="24" :xs="24"  style="width:90%;">
-                    <el-col :span="8">
-                        <el-form-item label="用车事由："><span>{{vehicleData.reason}}</span></el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="用车需求："><span>{{vehicleData.demand}}</span></el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="是否长途：">
-                            <span v-if="vehicleData.longDistanceTag===1">是</span>
-                            <span v-if="vehicleData.longDistanceTag===0">否</span>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="乘坐人数："><span>{{vehicleData.usagePersons}}</span></el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="乘坐人："><span>{{vehicleData.userName}}</span></el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="联系电话："><span>{{vehicleData.phone}}</span></el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="用车日期："><span>{{vehicleData.usageDate}}</span></el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="出发时间："><span>{{vehicleData.usageTime}}</span></el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="预计时长："><span>{{vehicleData.timeLength}}</span></el-form-item>
-                    </el-col>
-                    <el-col :span="24">
-                        <el-form-item label="出发地点："><span>{{vehicleData.fromAddr}}</span></el-form-item>
-                    </el-col>
-                    <el-col :span="24">
-                        <el-form-item label="前往地点："><span>{{vehicleData.toAddr}}</span></el-form-item>
-                    </el-col>
-                    <el-col :span="24">
-                        <el-form-item label="期望车型："><span>{{hopeBrandInfo}}</span></el-form-item>
-                    </el-col>
-                    <el-col :span="24">
-                        <el-form-item label="备注："><span>{{vehicleData.remark}}</span></el-form-item>
-                    </el-col>
+                    <el-row :gutter="20">    
+                        <el-col :span="8">
+                            <el-form-item label="用车事由："><span>{{vehicleData.reason}}</span></el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="用车需求："><span>{{vehicleData.demand}}</span></el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="是否长途：">
+                                <span v-if="vehicleData.longDistanceTag===1">是</span>
+                                <span v-if="vehicleData.longDistanceTag===0">否</span>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">     
+                        <el-col :span="8">
+                            <el-form-item label="乘坐人数："><span>{{vehicleData.usagePersons}}</span></el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="乘坐人："><span>{{vehicleData.userName}}</span></el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="联系电话："><span>{{vehicleData.phone}}</span></el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">    
+                        <el-col :span="8">
+                            <el-form-item label="用车日期："><span>{{vehicleData.usageDate}}</span></el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="出发时间："><span>{{vehicleData.usageTime}}</span></el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="预计时长："><span>{{vehicleData.timeLength}}</span></el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">    
+                        <el-col :span="24">
+                            <el-form-item label="出发地点："><span>{{vehicleData.fromAddr}}</span></el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">    
+                        <el-col :span="24">
+                            <el-form-item label="前往地点："><span>{{vehicleData.toAddr}}</span></el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">    
+                        <el-col :span="24">
+                            <el-form-item label="期望车型："><span>{{hopeBrandInfo}}</span></el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">    
+                        <el-col :span="24">
+                            <el-form-item label="备注："><span>{{vehicleData.remark}}</span></el-form-item>
+                        </el-col>
+                    </el-row>
                 </el-col>
             </el-row>
             <!--派车信息-->
@@ -78,27 +92,33 @@
             </el-row>
             <el-row v-for="item in vehicleData.reqAssignments" :key="item.id">
                 <el-col :span="24" :xs="24"  style="width:90%;"> 
-                    <el-col :span="8">
-                        <el-form-item label="指派司机："><span>{{item.driver}}</span></el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="指派车辆："><span>{{item.carNumber}}</span></el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="出场里程："><span>{{item.beginMiles}}</span></el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="还车里程："><span>{{item.endMiles}}</span></el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="下次保养里程："><span>{{item.nextMaintainDate}}</span></el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="保养时间："><span>{{parseTime(item.maintainDate)}}</span></el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="保养里程："><span>{{item.maintainMiles}}</span></el-form-item>
-                    </el-col>       
+                    <el-row :gutter="20">    
+                        <el-col :span="8">
+                            <el-form-item label="指派司机："><span>{{item.driver}}</span></el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="指派车辆："><span>{{item.carNumber}}</span></el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="出场里程："><span>{{item.beginMiles}}</span></el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">    
+                        <el-col :span="8">
+                            <el-form-item label="还车里程："><span>{{item.endMiles}}</span></el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="下次保养里程："><span>{{item.nextMaintainDate}}</span></el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="保养时间："><span>{{parseTime(item.maintainDate)}}</span></el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">    
+                        <el-col :span="8">
+                            <el-form-item label="保养里程："><span>{{item.maintainMiles}}</span></el-form-item>
+                        </el-col>       
+                    </el-row>
                 </el-col>
                 <el-col :span="24">
                         <hr style="color: #dddddd ;border:1px dashed;width:90%;margin-left:40px;">
@@ -162,6 +182,7 @@ export default {
                 this.vehicleData = data.list[0] || {};
                 this.loading = false;
                 this.getHopeBrandInfo();
+                console.log(this.vehicleData)
             }).catch((err) => {
                 this.loading = false;
             })

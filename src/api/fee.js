@@ -56,3 +56,10 @@ export function createCarContract(params = {}) {
   })
 }
 
+export function gcywCarContractDetail(id) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/gcywCarContract/detail/${id}`,
+    method: 'get',
+  })
+}
+

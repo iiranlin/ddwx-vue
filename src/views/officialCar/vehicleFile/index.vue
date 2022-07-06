@@ -133,6 +133,12 @@ export default {
     }
     this.getList()
   },
+  activated() {
+    if (this.$route.params) {
+      this.formData = this.$route.params
+      this.getList()
+    }
+  },
   methods: {
     numberChange(val) {
       this.numberShow = val
@@ -155,8 +161,6 @@ export default {
           item.fieldFormat = JSON.parse(JSON.stringify(item.fieldFormat))
         })
         this.property = data
-        console.log(this.property.search)
-
       })
     },
     //获取分页数据
