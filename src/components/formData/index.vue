@@ -124,6 +124,10 @@ export default {
     searchArr: {
       type: Array,
       default: []
+    },
+    formDta: {
+      type: Object,
+      default: {}
     }
   },
   data() {
@@ -144,6 +148,13 @@ export default {
             })
           }
         })
+      },
+      immediate: true
+    },
+    formDta: {
+      deep: true,
+      handler: function(val) {
+        this.formData = val
       },
       immediate: true
     }

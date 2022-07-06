@@ -184,13 +184,13 @@ export default {
       if (fieldCode === 'ownCar') {
         params = {
           unitCode: row.unitCode,
-          vehicleProperties: '1'
+          vehiclePropertiesList: ['1']
         }
       } else if (fieldCode === 'leaseCar') {
         params = {
           unitCode: row.unitCode,
           // 后台约定:传4时查询所有租赁车辆,包含短租和长租
-          vehiclePropertiesList: [2, 3]
+          vehiclePropertiesList: ['2', '3']
         }
       } else if (fieldCode === 'overStandardCar') {
         params = {

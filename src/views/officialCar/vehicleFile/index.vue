@@ -125,7 +125,7 @@ export default {
       numberShow: false
     }
   },
-  created() {
+  mounted() {
     this.menuProperty()
     this.getStatusOptions()
     if (this.$route.params) {
