@@ -28,7 +28,7 @@
       :searchArr="property.search || []"
       @handleQuery="handleQuery"
       @handleResetDept="handleResetDept">
-      <template slot="customItem">
+      <template slot="customItem1">
         <el-form-item label="用车单位" prop="value">
           <el-select v-model="formData.unitCode" placeholder="请选择用车单位" clearable style="width:240px" size="small">
             <el-option v-for="item in unitOptions"
@@ -202,7 +202,8 @@ export default {
         }
         this.$refs.operate.init(rowObj)
       } else if (buttonCode === 'reassignReject') {
-        if (rowObj.reassignStr != '0') {
+        console.log(('5').indexOf(rowObj.status))
+        if (rowObj.reassignStr != '0' || ('5').indexOf(rowObj.status) != -1) {
           this.$modal.msgWarning('当前状态不能转派拒绝！')
         } else {
           this.$confirm(`确定拒绝转派吗?`, '提示', {
@@ -218,7 +219,7 @@ export default {
           })
         }
       } else if (buttonCode === 'reassignCancel') {
-        if (rowObj.reassignStr != '1') {
+        if (rowObj.reassignStr != '1' || ('5').indexOf(rowObj.status) != -1) {
           this.$modal.msgWarning('当前状态不能转派取消！')
         } else {
           this.$confirm(`确定取消转派吗?`, '提示', {

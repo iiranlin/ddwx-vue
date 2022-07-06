@@ -226,7 +226,7 @@ export default {
         this.propertyFields = JSON.parse(JSON.stringify(newFields))
         this.propertyFieldsArr = JSON.parse(JSON.stringify(newFields))
       }
-    }
+    },
     // showIf: {
     //   handler: function (newShowIf) {
     //     if (newShowIf) {
@@ -237,6 +237,11 @@ export default {
     //     }
     //   },
     // },
+  },
+  activated () {
+    this.$nextTick(() => {
+      if (this.$refs.elTable) this.$refs.elTable.doLayout();
+    })
   },
   mounted() {
     // this.rowDrop();
