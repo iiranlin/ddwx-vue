@@ -53,7 +53,7 @@
 </template>
 <script>
 import { getToken } from '@/utils/auth'
-import { gcywVehicleRequesDriving,gcywVehicleReqAssignmenntCheckDriving} from "@/api/driver"
+import { gcywVehicleRequesDriving,gcywVehicleReqAssignmenntCheckDriving,vehicleInfoDetail} from "@/api/driver"
 export default {
     data() {
         var validateImageUrl=(rule, value, callback)=>{
@@ -107,18 +107,26 @@ export default {
     },
     methods:{
         //初始化
-        init(assignmentId,beginMiles,vinNumber){
+        init(assignmentId,vinNumber){
             this.assignmentId = assignmentId;
-            if (!beginMiles) {
-              this.beginMiles = 0
-            } else {
-              this.beginMiles = beginMiles
-            }
             this.vinNumber = vinNumber;
             this.openDataScope = true;
             this.$nextTick(() => {
                 this.isShowCatch = false;
                 this.$refs.elform.resetFields();
+                this.getVehicleInfo();
+            })
+        },
+        //获取车辆信息详情
+        async getVehicleInfo(){
+            await vehicleInfoDetail(this.vinNumber).then(({data}) => {
+                if (!data.startMiles) {
+                  this.beginMiles = 0
+                } else {
+                  this.beginMiles = data.startMiles;
+                }
+            }).catch((err) => {
+                
             })
         },
         //异常报告显示隐藏

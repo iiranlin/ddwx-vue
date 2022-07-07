@@ -448,3 +448,11 @@ export function activitiAssigneeListByType(params) {
       params
   })
 }
+
+///车辆信息-详情
+export function vehicleInfoDetail(vinNumber) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/vehicleInfo/detail/${vinNumber}`,
+    method: 'get',
+  })
+}

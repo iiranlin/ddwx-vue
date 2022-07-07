@@ -103,7 +103,9 @@ export default {
       //列表显示字段
       property: {},
       //查询参数
-      formData: {},
+      formData: {
+        statusList:"1,2,4"
+      },
       //已选中条目
       selectionData: [],
       //数据总数
@@ -177,7 +179,7 @@ export default {
         if (this.selectionData[0].status !== '2') {
           this.$modal.msgWarning('请选择状态为[待出车]的订单进行出车')
         } else {
-          this.$refs.dispatchCar.init(this.selectionData[0].assignmentId, this.selectionData[0].beginMiles, this.selectionData[0].vinNumber)
+          this.$refs.dispatchCar.init(this.selectionData[0].assignmentId,this.selectionData[0].vinNumber)
         }
       } else if (buttonCode === 'remind') {
         if (this.selectionData[0].status !== '4') {
@@ -217,6 +219,7 @@ export default {
     },
     //顶部重置按钮
     clickReset() {
+      this.formData.status = "";
       this.menuProperty()
       this.handleQuery()
     },
@@ -241,6 +244,11 @@ export default {
     },
     //刷新列表数据
     handleQuery(row = {}) {
+      if(!!row.status){
+        this.formData.statusList = "";
+      }else{
+        this.formData.statusList = "1,2,4";
+      }
       this.formData = Object.assign({}, this.formData, row)
       this.getList()
     },
