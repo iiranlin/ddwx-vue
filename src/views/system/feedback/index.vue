@@ -59,6 +59,8 @@
         </el-row>
         <!--弹出框-->
         <operate ref="operate" @operateSuccess="operateSuccess"></operate>
+        <!--新建-->
+        <createFeedBack ref="createFeedBack" @createSuccess="createSuccess"></createFeedBack>
     </div>
 </template>
 <script>
@@ -66,13 +68,14 @@ import buttonTop from "@/components/buttonTop"
 import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
 import operate from "./components/operate"
+import createFeedBack from "./components/createFeedBack"
 import{gcywSuggestionListPage} from "@/api/system/dict/data"
 import indexMixin from "@/views/mixins";
 
 export default {
     name:"feedback",
     mixins: [indexMixin],
-    components:{buttonTop,formData,tableIndex,operate},
+    components:{buttonTop,formData,tableIndex,operate,createFeedBack},
 
     data() {
         return {
@@ -142,6 +145,8 @@ export default {
                     return;
                 }
                 this.$refs.operate.init(this.selectionData[0]);
+            }else if(buttonCode==='create'){
+                this.$refs.createFeedBack.init();
             }
         },
         //顶部列字段展示
@@ -174,6 +179,10 @@ export default {
         },
         //回复成功回调
         operateSuccess(){
+            this.handleQuery();
+        },
+        //新建成功回调
+        createSuccess(){
             this.handleQuery();
         },
         //刷新列表数据

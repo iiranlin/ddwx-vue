@@ -77,3 +77,12 @@ export function gcywSuggestionUpdSuggestion(data) {
     data
   })
 }
+
+//意见反馈-新增
+ export function gcywSuggestionAddSuggestion(data) { 
+	return request({
+		url: `${VUE_APP_BASE_PREFIX}/gcywSuggestion/addSuggestion`,
+		method: 'POST',
+		data
+	})
+}
