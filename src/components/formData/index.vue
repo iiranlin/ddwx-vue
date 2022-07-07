@@ -186,7 +186,6 @@ export default {
           this.formData[key + 'End'] = null
         }
       }
-      console.log(this.formData)
       this.$emit('handleQuery', this.formData)
     },
     //使用单位选择回调
