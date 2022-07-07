@@ -23,10 +23,10 @@
         style="width: 240px"
       >
         <el-option
-          v-for="(item, key) in item.fieldFormatArr"
+          v-for="(itemArr, key) in item.fieldFormatArr"
           :key="key"
-          :label="item.name"
-          :value="item.code"
+          :label="itemArr.name"
+          :value="itemArr.code"
         />
       </el-select>
       <!--字典多选框,注意: 当多选框时,绑定属性为原属性名+list,例如:原来为brand多选时,绑定brandList-->
@@ -41,14 +41,14 @@
         style="width: 240px"
       >
         <el-option
-          v-for="(item, key) in item.fieldFormatArr"
+          v-for="(itemArr, key) in item.fieldFormatArr"
           :key="key"
-          :label="item.name"
-          :value="item.code"
+          :label="itemArr.name"
+          :value="itemArr.code"
         />
       </el-select>
       <el-select
-        v-else-if="item.fieldType === 'enum'"
+        v-else-if="item.fieldType === 'enum' && !item.enumUrl"
         v-model="formData['unitCode']"
         :placeholder="'请选择' + item.fieldName"
         clearable
@@ -56,11 +56,26 @@
         style="width: 240px"
       >
         <el-option
-          v-for="(item, key) in enumData"
+          v-for="(itemArr, key) in enumData"
           :key="key"
-          :label="item.unitName"
-          :value="item.unitCode"
+          :label="itemArr.unitName"
+          :value="itemArr.unitCode"
           @click.native="handleUnitChange(item)"
+        />
+      </el-select>
+      <el-select
+        v-else-if="item.fieldType === 'enum' && item.enumUrl"
+        v-model="formData[item.fieldCode.split('Name')[0] + 'Code']"
+        :placeholder="'请选择' + item.fieldName"
+        clearable
+        size="small"
+        style="width: 240px"
+      >
+        <el-option
+          v-for="(itemArr, key) in item.fieldFormatArr"
+          :key="key"
+          :label="itemArr[item.fieldCode]"
+          :value="itemArr[item.fieldCode.split('Name')[0] + 'Code']"
         />
       </el-select>
       <el-date-picker
@@ -125,17 +140,17 @@ export default {
       type: Array,
       default: []
     },
-    formDta: {
-      type: Object,
-      default: {}
-    }
+    // formDta: {
+    //   type: Object,
+    //   default: {}
+    // }
   },
   data() {
     return {
       // 日期范围
       dateRange: {},
       formData: {},
-      enumData: []
+      enumData: [],
     }
   },
   watch: {
@@ -151,13 +166,13 @@ export default {
       },
       immediate: true
     },
-    formDta: {
-      deep: true,
-      handler: function(val) {
-        this.formData = val
-      },
-      immediate: true
-    }
+    // formDta: {
+    //   deep: true,
+    //   handler: function(val) {
+    //     this.formData = val
+    //   },
+    //   immediate: true
+    // }
   },
   methods: {
     handleQuery() {
@@ -171,6 +186,7 @@ export default {
           this.formData[key + 'End'] = null
         }
       }
+      console.log(this.formData)
       this.$emit('handleQuery', this.formData)
     },
     //使用单位选择回调
@@ -187,7 +203,7 @@ export default {
         this.formData[key] = null
       }
       this.handleQuery()
-    }
+    },
   }
 }
 </script>

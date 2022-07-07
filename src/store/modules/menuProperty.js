@@ -1,5 +1,6 @@
 import { menuProperty } from '@/api/system/menu'
 import { getListByParentId } from '@/api/system/dict'
+import { enumUrl } from '@/api/enumUrl'
 const menu = {
     state: {
         menuPropertys: {},
@@ -18,6 +19,8 @@ const menu = {
                     for(let item of data.search){
                         if(item.fieldType == "dict"){
                             item.fieldFormatArr = await getListByParentIds(item.fieldFormatDict);
+                        }else if(item.fieldType == "enum" && item.enumUrl){
+                            item.fieldFormatArr = await enumUrlPromise(item.enumUrl);
                         }
                     }
                     for(let val of data.fields){
@@ -35,6 +38,13 @@ const menu = {
     }
 }
 
+function enumUrlPromise (url) {
+    return new Promise((resolve, reject) => {
+        enumUrl({}, url).then( ({data}) => {
+            resolve(data)
+        })
+    })
+}
 function getListByParentIds (id) {
     return new Promise( resolve => {
         getListByParentId(id).then(({data}) => {

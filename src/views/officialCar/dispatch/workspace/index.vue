@@ -28,17 +28,6 @@
       :searchArr="property.search || []"
       @handleQuery="handleQuery"
       @handleResetDept="handleResetDept">
-      <template slot="customItemStar">
-        <el-form-item label="用车单位" prop="value">
-          <el-select v-model="formData.unitCode" placeholder="请选择用车单位" clearable style="width:240px" size="small">
-            <el-option v-for="item in unitOptions"
-              :key="item.value"
-              :label="item.unitName"
-              :value="item.unitCode">
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </template>
     </form-data>
     <table-index
       ref="tableIndex"
