@@ -140,10 +140,10 @@ export default {
       type: Array,
       default: []
     },
-    // formDta: {
-    //   type: Object,
-    //   default: {}
-    // }
+    formDta: {
+      type: Object,
+      default: {}
+    }
   },
   data() {
     return {
@@ -166,13 +166,13 @@ export default {
       },
       immediate: true
     },
-    // formDta: {
-    //   deep: true,
-    //   handler: function(val) {
-    //     this.formData = val
-    //   },
-    //   immediate: true
-    // }
+    formDta: {
+      deep: true,
+      handler: function(val) {
+        this.formData = val
+      },
+      immediate: true
+    }
   },
   methods: {
     handleQuery() {
