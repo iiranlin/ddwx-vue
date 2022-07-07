@@ -123,39 +123,51 @@ export default {
       selectionData: [],
       //数据总数
       total: 0,
-      datePicker: this.datePickerHandler,
+      datePicker: this.datePickerHandler(),
       numberShow: false
     }
   },
   created() {
-    this.formData.statMonth = this.currentMonth
+    this.formData.statMonth = this.lastMonth
     this.menuProperty()
     this.getList()
   },
   activated() {
   },
   computed: {
-    currentMonth() {
+    // 只能查询上个月份之前的
+    lastMonth() {
       let date = new Date()
       let year = date.getFullYear()
-      let month = date.getMonth() + 1
-      month = (month > 9) ? month : ('0' + month)
+      let month = date.getMonth()
+      if (month > 9) {
+        month = '0' + month
+      } else if (month === 0) {
+        year -= 1
+        month = 12
+      }
       return year + '-' + month
     }
   },
   methods: {
     numberChange(val) {
-      this.numberShow = val;
+      this.numberShow = val
     },
-    // TODO 限制选择范围,提示体验
     /**搜索框起始日期限制*/
     datePickerHandler() {
-      const self = this
+      let current = new Date()
+      let year = current.getFullYear()
+      let month = current.getMonth()
+      if (month === 0) {
+        year -= 1
+        month = 11
+      } else {
+        month -= 1
+      }
+      let first = new Date(year, month, 1)
       return {
         disabledDate(time) {
-          console.log(new Date(self.formData.statMonth))
-          console.log(new Date())
-          return new Date(self.formData.statMonth).getTime() > new Date().getTime()
+          return first.getTime() < time.getTime()
         }
       }
     },
