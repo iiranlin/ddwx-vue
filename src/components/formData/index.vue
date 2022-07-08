@@ -142,7 +142,7 @@ export default {
     },
     formDta: {
       type: Object,
-      default: {}
+      default: null
     }
   },
   data() {
@@ -169,7 +169,9 @@ export default {
     formDta: {
       deep: true,
       handler: function(val) {
-        this.formData = val
+        if(val){
+          this.formData = val
+        }
       },
       immediate: true
     }

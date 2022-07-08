@@ -23,11 +23,33 @@
       ></right-toolbar>
     </el-row>
     <form-data
-      :formData="formData"
       :showSearch="showSearch"
       :searchArr="property.search || []"
       @handleQuery="handleQuery"
       @handleResetDept="handleResetDept">
+      <template slot="customItemStar">
+        <el-form-item label="用车单位" prop="value">
+        <el-select v-model="formData.unitCode" placeholder="请选择用车单位" clearable style="width:240px" size="small">
+            <el-option v-for="item in unitOptions"
+                :key="item.value"
+                :label="item.unitName"
+                :value="item.unitCode"
+                @click.native="handleUnitChange(item.unitCode)">
+            </el-option>
+        </el-select>
+        </el-form-item>
+    </template>
+    <template slot="customItemStar">
+      <el-form-item label="使用部门" prop="value">
+        <el-select v-model="formData.deptId" placeholder="请选择使用部门" clearable style="width:240px" size="small">
+            <el-option v-for="item in deptOptions"
+                :key="item.value"
+                :label="item.deptName"
+                :value="item.id">
+            </el-option>
+        </el-select>
+      </el-form-item>
+    </template>
     </form-data>
     <table-index
       ref="tableIndex"
@@ -83,6 +105,7 @@ import indexMixin from '@/views/mixins'
 import operate from './components/operate'
 import editAssembly from './components/editAssembly'
 import { getDisAvailableUnit } from '@/api/system/unit'
+import { getAllAvailableDept } from "@/api/dept"
 
 export default {
   name: 'workspace',
@@ -107,6 +130,8 @@ export default {
       dataList: [],
       //用车单位数据
       unitOptions:[],
+      //使用部门数据
+      deptOptions:[],
       // 弹出层标题
       title: '',
       //列表显示字段
@@ -115,7 +140,8 @@ export default {
       // 查询参数
       formData: {
         parentId: '',
-        unitCode:''
+        unitCode:'',
+        deptId: ''
       },
       form: {
         closeReason: ''
@@ -143,6 +169,21 @@ export default {
             this.unitOptions = data;
         }).catch((err) => {
             this.loading = false
+        })
+    },
+    //用车单位选择回调
+    handleUnitChange(unitCode){
+        this.handleQueryDept(unitCode)
+    },
+    //查询部门数据
+    handleQueryDept(unitCode){
+        this.formData.deptId = "";
+        this.loading = true;
+        getAllAvailableDept({unitCode: unitCode}).then( ({ data }) => {
+            this.loading = false;
+            this.deptOptions = data;
+        }).catch((err) => {
+            this.loading = false;
         })
     },
     menuProperty() {
@@ -309,6 +350,7 @@ export default {
     //清空用车单位数据
     handleResetDept(){
         this.formData.unitCode = "";
+        this.formData.deptId = "";
     },
     clickReset() {
       this.menuProperty()
