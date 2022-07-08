@@ -3,6 +3,11 @@ let VUE_APP_BASE_prefix = process.env.VUE_APP_AUTH_SERVER;
 let path = process.env.NODE_ENV === 'development'? process.env.VUE_APP_BASE_API: '';
 // 国铁车辆信息导出接口地址
 export const vehicleInfoExportUrl = `${path}${VUE_APP_BASE_prefix}/vehicleInfo/export`
+// 出行信息补录模板下载
+export const drivingRecordTemplateUrl = `${path}${VUE_APP_BASE_prefix}/gcywVehicleRequest/template`
+// 出行信息补录模板导入
+export const drivingRecordImportUrl = `${process.env.VUE_APP_BASE_API}/${VUE_APP_BASE_prefix}/gcywVehicleRequest/import`
+
 
 //班次字典-班次列表-分页
 export function gcjcClassListPage(params) {

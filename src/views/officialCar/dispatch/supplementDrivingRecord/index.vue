@@ -1,5 +1,5 @@
 <template>
-  <div class='app-container_list refueling-record'>
+  <div class="app-container_list refueling-record">
     <el-row
       :gutter="20"
       class="container_h"
@@ -24,6 +24,9 @@
               :item="item"
               :multiple="multiple"
               :single="single"
+              :upload-url="uploadUrl"
+              @uploadOnSuccess="uploadOnSuccess"
+              @uploadOnError="uploadOnError"
               @newButton="newButton"
               class="cume-button"
             >
@@ -82,19 +85,17 @@
 
 <script>
 
-import indexMixin from "@/views/mixins"
-import { gcywVehicleRequestDispatchList } from "@/api/car";
+import indexMixin from '@/views/mixins'
+import { gcywVehicleRequestDispatchList } from '@/api/car'
+import { axiosDownloadExcel } from '@/api/download'
+import { drivingRecordImportUrl, drivingRecordTemplateUrl } from '@/api/driver'
+
 export default {
   name: 'supplementDrivingRecord',
   mixins: [indexMixin],
-  components: {
-  },
-  filters: {
-
-  },
-  props: {
-
-  },
+  components: {},
+  filters: {},
+  props: {},
   data() {
     return {
       //遮罩层
@@ -118,21 +119,18 @@ export default {
       //已选中条目
       selectionData: [],
       //数据总数
-      total: 0
-    };
+      total: 0,
+      uploadUrl: drivingRecordImportUrl
+    }
   },
-  computed: {
-
-  },
-  watch: {
-
-  },
+  computed: {},
+  watch: {},
   activated() {
     // this.menuProperty();
     // this.getList()
   },
   created() {
-    this.menuProperty();
+    this.menuProperty()
     this.getList()
   },
   mounted() {
@@ -144,74 +142,87 @@ export default {
     },
     //查询菜单数据
     async menuProperty() {
-      let id = this.$route.meta.id;
-      const res = await this.$store.dispatch('menuProperty', id);
-      this.property = res;
+      let id = this.$route.meta.id
+      const res = await this.$store.dispatch('menuProperty', id)
+      this.property = res
     },
     //获取分页数据
     async getList() {
-      this.loading = true;
+      this.loading = true
       try {
         const params = {
           ...this.listQuery,
           ...this.formData,
           // 固定参数
-          createType: '2',
+          createType: '2'
         }
-        const { data = {} } = await gcywVehicleRequestDispatchList(params);
-        this.dataList = data.list;
-        this.total = data.total;
-        this.loading = false;
+        const { data = {} } = await gcywVehicleRequestDispatchList(params)
+        this.dataList = data.list
+        this.total = data.total
+        this.loading = false
       } catch (e) {
 
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
     //顶部按钮点击
     newButton(buttonCode, row) {
-      this.$refs.tableIndex.newButton(buttonCode, row);
+      this.$refs.tableIndex.newButton(buttonCode, row)
     },
     //页面按钮点击事件
-    async handleButton(ids, buttonCode) {
+    handleButton(ids, buttonCode) {
       this.buttonCode = buttonCode
       if (buttonCode === 'create') {
-        // 新建
-        this.$router.push({ name: 'editDrivingRecord' });
-        return;
+        this.$router.push({ name: 'editDrivingRecord' })
+      } else if (buttonCode === 'template') {
+        axiosDownloadExcel(drivingRecordTemplateUrl)
+      } else if (buttonCode === 'import') {
+
       }
+    },
+    uploadOnSuccess(code, data, message) {
+      if (code === 0) {
+        this.$modal.msgSuccess('导入成功')
+        this.handleQuery()
+      } else {
+        this.$modal.msgError(message)
+      }
+    },
+    uploadOnError() {
+      this.$modal.msgError('上传失败, 数据格式有误')
     },
     //顶部列字段展示
     handleCheckAllChange(columns) {
-      this.$refs.tableIndex.init(columns);
+      this.$refs.tableIndex.init(columns)
     },
     //顶部重置按钮
     clickReset() {
-      this.menuProperty();
-      this.handleQuery();
+      this.menuProperty()
+      this.handleQuery()
     },
     //表格内部搜索条件回调
     selectChange(type, value) {
-      if (type === "createTime") {
-        this.dateRange = value;
+      if (type === 'createTime') {
+        this.dateRange = value
       } else {
-        this.formData[type] = value;
+        this.formData[type] = value
       }
-      this.handleQuery();
+      this.handleQuery()
     },
     //表格内部排序
     emitAblFilter() {
-      this.getList();
+      this.getList()
     },
     //多选获取行数据
     handleSelectionChange(ids, single, multiple, selection) {
       // this.single = single;
-      this.multiple = multiple;
-      this.selectionData = selection;
+      this.multiple = multiple
+      this.selectionData = selection
     },
     //新建或修改成功回调
     operateSuccess() {
-      this.handleQuery();
+      this.handleQuery()
     },
     //刷新列表数据
     handleQuery(row = {}) {
@@ -219,16 +230,16 @@ export default {
         ...this.formData,
         ...row
       }
-      this.getList();
+      this.getList()
     },
     tableRowClassName({ row, rowIndex }) {
-      row.index = rowIndex + 1;
+      row.index = rowIndex + 1
     },
     clickLink(row, _fieldCode, linkText) {
-      this.$router.push({ name: linkText, params: { id: row.id } });
+      this.$router.push({ name: linkText, params: { id: row.id } })
     }
-  },
-};
+  }
+}
 </script>
 
 <style scoped lang="scss">
