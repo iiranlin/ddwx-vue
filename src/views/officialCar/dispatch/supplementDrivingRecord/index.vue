@@ -186,7 +186,9 @@ export default {
         this.$modal.msgSuccess('导入成功')
         this.handleQuery()
       } else {
-        this.$modal.msgError(message)
+        this.$modal.confirm(message).catch(() => {
+
+        })
       }
     },
     uploadOnError() {
