@@ -154,7 +154,8 @@ export default {
           ...this.listQuery,
           ...this.formData,
           // 固定参数
-          createType: '2'
+          createType: '2',
+          status: '11'
         }
         const { data = {} } = await gcywVehicleRequestDispatchList(params)
         this.dataList = data.list
