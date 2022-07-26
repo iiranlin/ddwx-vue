@@ -11,15 +11,15 @@
       </el-row>
       <el-form :model="passwordForm" status-icon :rules="passwordRules" ref="passwordForm" label-width="100px">
         <el-form-item label="旧密码:" prop="oldPass" v-if="!pwdInitStatus">
-          <el-input size="small" style="width: 80%" type="text" clearable v-model.trim="passwordForm.oldPass"
+          <el-input size="small" style="width: 80%" type="password" clearable v-model.trim="passwordForm.oldPass"
                     autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="新密码:" prop="pass">
-          <el-input size="small" style="width: 80%" type="text" clearable v-model.trim="passwordForm.pass"
+          <el-input size="small" style="width: 80%" type="password" clearable v-model.trim="passwordForm.pass"
                     autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="确认新密码:" prop="checkPass">
-          <el-input size="small" style="width: 80%" type="text" clearable v-model.trim="passwordForm.checkPass"
+          <el-input size="small" style="width: 80%" type="password" clearable v-model.trim="passwordForm.checkPass"
                     autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
