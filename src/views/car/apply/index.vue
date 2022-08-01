@@ -360,7 +360,7 @@ export default {
     },
     carSuccess (val) {
       if(val){
-        this.formData.assignee = val.code;
+        this.formData.assignee = val;
       }
       let obj = {};
       this.dictionariesObj['1016'].forEach(item => {

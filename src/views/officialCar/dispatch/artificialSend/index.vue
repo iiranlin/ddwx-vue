@@ -137,12 +137,15 @@
                         </el-col>
                         <el-col :xs="24" :sm="12" :md="8" :lg="8">
                             <el-form-item label="出发时间:" prop="usageTime">
-                                <el-time-picker
-                                v-model="formData.usageTime"
-                                value-format="HH:mm"
-                                format="HH:mm"
-                                placeholder="请输入出发时间">
-                                </el-time-picker>
+                                <el-time-select
+                                    v-model="formData.usageTime"
+                                    :picker-options="{
+                                        start: '00:00',
+                                        step: '00:15',
+                                        end: '24:00'
+                                    }"
+                                    placeholder="请选择出发时间">
+                                </el-time-select>
                             </el-form-item>
                         </el-col>
                         <el-col :xs="24" :sm="12" :md="8" :lg="8">
@@ -265,14 +268,14 @@ export default {
                 unitCode: '',
                 deptId: undefined,
                 reasonCode: '1',
-                demandCode: '1001801',
+                demandCode: '1001803',
                 longDistanceTag: '0',
                 usagePersons: '1',
                 userName: '',
                 phone: getCookie('phone') || '',
                 usageDate: '',
                 usageTime: '',
-                timeLength: '',
+                timeLength: '2',
                 fromAddr: '',
                 fromAreaId: '',
                 toAddr: '',
@@ -331,6 +334,10 @@ export default {
     computed: {
         ...mapGetters([
             'realName',
+            'unitName',
+            'unitCode',
+            'deptName',
+            'deptId',
         ]),
         theme() {
             return this.$store.state.settings.theme;
@@ -340,6 +347,7 @@ export default {
         this.$nextTick( () => {
             this.formData.userName = this.realName;
         })
+   
         this.vehicleInfoGetAssignCount();
         for(const item of this.dictionariesCode){
             this.getOperateDict(item);
@@ -397,6 +405,12 @@ export default {
         async getUnitDictList() {
             await getAllAvailableUnit().then(({ data }) => {
                 this.unitData = data;
+
+                this.formData.unitName = this.unitName;
+                this.formData.unitCode = this.unitCode;
+
+                this.vehicleInfoGetAssignCount();
+                this.getDeptDictListDefault();
             }).catch((err) => {
             }).finally(() => {
             })
@@ -411,6 +425,19 @@ export default {
                 label: node.deptName,
                 children: node.children
             };
+        },
+        //获取默认用车部门数据
+        async getDeptDictListDefault(){
+            const { data } = await deptTree({unitId:this.formData.unitCode});
+            this.deptData = data;
+
+            this.formData.deptId = this.deptId;
+            this.formData.deptName = this.deptName;
+
+            if(this.deptId){
+                this.vehicleInfoGetAssignCount();
+                this.$refs.formInformation.init(this.formData);
+            }
         },
         // 获取用车部门列表
         async getDeptDictList(val) {

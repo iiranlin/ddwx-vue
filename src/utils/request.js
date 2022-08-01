@@ -110,9 +110,22 @@ service.interceptors.response.use(res => {
       })
       return res.data
     }else if (code !== 200) {
-      Notification.error({
-        title: msg
-      })
+      if(msg==='登录失败：用户不存在或密码错误'){
+        if(Date.now() < new Date('2022-08-06').getTime()){
+          Notification.error({
+            title: '用户名或密码错误！默认密码为1qaz@WSX，如登录失败，请联系93142。'
+          })
+        }else{
+          Notification.error({
+            title: '用户名或密码错误！如登录失败，请联系93142。'
+          })
+        }
+      }else{
+        Notification.error({
+          title: msg
+        })
+      }
+     
       return Promise.reject('error')
     } else {
       return res.data

@@ -9,6 +9,9 @@ const user = {
         name: '',
         realName: '',
         unitName:"",
+        unitCode:"",
+        deptName:"",
+        deptId:"",
         avatar: '',
         roles: false,
         permissions: []
@@ -26,6 +29,15 @@ const user = {
         },
         SET_UNIT_NAME: (state, unitName) => {
             state.unitName = unitName
+        },
+        SET_UNIT_CODE: (state, unitCode) => {
+            state.unitCode = unitCode
+        },
+        SET_DEPT_NAME: (state, deptName) => {
+            state.deptName = deptName
+        },
+        SET_DEPT_ID: (state, deptId) => {
+            state.deptId = deptId
         },
         SET_AVATAR: (state, avatar) => {
             state.avatar = avatar
@@ -69,6 +81,9 @@ const user = {
                             // }
                         commit('SET_NAME', user.username)
                         commit('SET_UNIT_NAME',user.unitName)
+                        commit('SET_UNIT_CODE',user.unitCode)
+                        commit('SET_DEPT_NAME',user.deptName)
+                        commit('SET_DEPT_ID',user.deptId)
                         commit('SET_REAL_NAME', user.realName)
                         
                         setCookie("unitCode", user.unitCode);

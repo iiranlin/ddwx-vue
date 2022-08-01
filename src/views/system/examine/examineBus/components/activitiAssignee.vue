@@ -4,13 +4,13 @@
             <el-row>
                 <el-col :span="24">
                     <el-form-item label="下一级审批人:" prop="id">
-                        <treeselect
-                            v-model="form.id"
-                            :default-expand-level="100"
-                            :options="deptOptions"
-                            :normalizer="normalizer"
-                            @select="selectChange"
-                            placeholder="选择下一级审批人" />
+                        <el-select v-model="form.id" placeholder="请选择下一级审批人" style="width:100%;">
+                            <el-option v-for="item in deptOptions" 
+                                :key="item.code" 
+                                :label="item.name" 
+                                :value="item.code">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -78,6 +78,7 @@ export default {
                     this.form.id = undefined;
                     if(data.assigneeList && data.assigneeList.length > 0){
                         this.deptOptions = data.assigneeList;
+                        this.form.id = data.assigneeList[0].code;
                         this.openWorkflow = true;
                     }else{
                         this.activitiComplete();
@@ -99,28 +100,24 @@ export default {
             this.selectChangeData = node;
         },
         submitDataScope () {
-            if(this.selectChangeData.type == '5'){
-                this.$modal.confirm('是否确认该审批人?').then(() => {
-                    this.loading = true;
-                    if(this.row.workflowId){
-                        this.activitiComplete();
-                    }else{
-                        let obj = {
-                            assignee: this.form.id,
-                            procDefId: this.ids[0] || this.row.procDefId,
-                            businessId: this.row.id
-                        };
-                        activitiStart(obj).then( ({message}) => {
-                            this.$modal.msgSuccess(message);
-                            this.openWorkflow = false;
-                            this.loading = false;
-                            this.$emit('carSuccess');
-                        })
-                    }
-                }).catch(() => {});
-            }else{
-                this.$modal.msgWarning('请选择人！');
-            }
+            this.$modal.confirm('是否确认该审批人?').then(() => {
+                this.loading = true;
+                if(this.row.workflowId){
+                    this.activitiComplete();
+                }else{
+                    let obj = {
+                        assignee: this.form.id,
+                        procDefId: this.ids[0] || this.row.procDefId,
+                        businessId: this.row.id
+                    };
+                    activitiStart(obj).then( ({message}) => {
+                        this.$modal.msgSuccess(message);
+                        this.openWorkflow = false;
+                        this.loading = false;
+                        this.$emit('carSuccess');
+                    })
+                }
+            }).catch(() => {});
         },
         carSuccess () {
             this.openWorkflow = false;

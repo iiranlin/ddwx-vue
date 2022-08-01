@@ -4,12 +4,13 @@
             <el-row>
                 <el-col :span="24">
                     <el-form-item label="审批人:" prop="code">
-                        <treeselect
-                            v-model="form.code"
-                            :options="assigneeList"
-                            :normalizer="normalizer"
-                            @select="selectChange"
-                            placeholder="请选择审批人" />
+                        <el-select v-model="form.code" placeholder="请选择审批人" style="width:100%;">
+                            <el-option v-for="item in assigneeList" 
+                                :key="item.code" 
+                                :label="item.name" 
+                                :value="item.code">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -39,9 +40,9 @@ export default {
     },
     methods: {
         init (assigneeList) {
-            this.form.code = null;
             this.assigneeList = assigneeList;
             this.openWorkflow = true;
+            this.form.code = this.assigneeList[0].code;
         },
         /** 转换部门数据结构 */
         normalizer(node) {
@@ -58,16 +59,8 @@ export default {
             this.selectChangeData = node;
         },
         submitDataScope () {
-            if(!this.selectChangeData){
-                 this.$modal.msgWarning('请选择审批人！');
-                 return;
-            }
-            if(this.selectChangeData.type == '5'){
-                this.openWorkflow = false;
-                this.$emit("operateSuccess",this.form.code);
-            }else{
-                this.$modal.msgWarning('请选择审批人！');
-            }
+            this.openWorkflow = false;
+            this.$emit("operateSuccess",this.form.code);
         },
     }
 };

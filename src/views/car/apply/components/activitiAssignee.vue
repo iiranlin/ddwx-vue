@@ -4,13 +4,13 @@
             <el-row>
                 <el-col :span="24">
                     <el-form-item label="下一级审批人:" prop="id">
-                        <treeselect
-                            v-model="form.id"
-                            :default-expand-level="100"
-                            :options="deptOptions"
-                            :normalizer="normalizer"
-                            @select="selectChange"
-                            placeholder="选择下一级审批人" />
+                        <el-select v-model="form.id" placeholder="请选择下一级审批人" style="width:100%;">
+                            <el-option v-for="item in deptOptions" 
+                                :key="item.code" 
+                                :label="item.name" 
+                                :value="item.code">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -45,6 +45,7 @@ export default {
         init (row) {
             this.openWorkflow = true;
             this.deptOptions = row;
+            this.form.id = this.deptOptions[0].code;
         },
         /** 转换部门数据结构 */
         normalizer(node) {
@@ -61,14 +62,10 @@ export default {
             this.selectChangeData = node;
         },
         submitDataScope () {
-            if(this.selectChangeData.type == '5'){
-                this.$modal.confirm('是否确认该审批人?').then(() => {
-                    this.openWorkflow = false;
-                    this.$emit('carSuccess', this.selectChangeData);
-                }).catch(() => {});
-            }else{
-                this.$modal.msgWarning('请选择人！');
-            }
+            this.$modal.confirm('是否确认该审批人?').then(() => {
+                this.openWorkflow = false;
+                this.$emit('carSuccess', this.form.id);
+            }).catch(() => {});
         }
     }
 };

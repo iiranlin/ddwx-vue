@@ -170,7 +170,7 @@ export default {
       this.$modal
         .confirm("是否确认删除通知?")
         .then(function () {
-          return noticeDeleteBatch(ids);
+          return noticeDeleteBatch({ids:ids});
         })
         .then(() => {
           this.getList();

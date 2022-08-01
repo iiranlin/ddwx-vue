@@ -233,7 +233,7 @@ export default {
     }
   },
   created() {
-    this.testTitle = process.env.VUE_APP_TEST_TITLE
+    this.testTitle = process.env.VUE_APP_TITLE
     // const unitId = getCookie('unitId')
     const username = getCookie('username')
     const password = getCookie('password')
@@ -286,6 +286,7 @@ export default {
             .dispatch('Login', this.loginForm)
             .then((res) => {
               this.loading = false
+
               if (res.code !== 10001) {
                 this.$router
                   .push({ path: this.redirect || '/' })

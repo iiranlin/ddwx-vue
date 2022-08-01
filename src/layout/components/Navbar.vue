@@ -94,7 +94,7 @@ export default {
     }
   },
   mounted() {
-    this.testTitle = process.env.VUE_APP_TEST_TITLE
+    this.testTitle = process.env.VUE_APP_TITLE
   },
   methods: {
     toggleSideBar() {
