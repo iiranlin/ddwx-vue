@@ -85,20 +85,24 @@
       @operateSuccess="operateSuccess"
     ></operate>
 
+      <!--分配金额 弹出框-->
+    <distribute ref="distribute" @distributeSuccess="distributeSuccess"></distribute>
+
   </div>
 </template>
 
 <script>
 
 import indexMixin from '@/views/mixins'
-import { getEtcCardPageList, switchETCEnabled } from '@/api/etc'
+import { getEtcCardPageList, switchETCEnabled ,getETCCardCardInfoByCarNumber} from '@/api/etc'
 import operate from './components/operate'
+import distribute from './components/distribute'
 
 export default {
   name: 'etcCard',
   mixins: [indexMixin],
   components: {
-    operate
+    operate,distribute
   },
   filters: {},
   props: {},
@@ -182,7 +186,7 @@ export default {
       this.$refs.tableIndex.newButton(buttonCode, row)
     },
     //页面按钮点击事件
-    async handleButton(ids, buttonCode) {
+    async handleButton(ids, buttonCode,row) {
       this.rowId = ids
       this.buttonCode = buttonCode
       if (buttonCode === 'create') {
@@ -192,6 +196,22 @@ export default {
       }
       if (buttonCode === 'update') {
         this.operateDialogFlag = true
+        return
+      }
+      if (buttonCode === 'distribute') {
+        if(row.isMcard=='0'){
+          this.$modal.msgWarning("请选择副卡进行分配!")
+          return;
+        }
+        getETCCardCardInfoByCarNumber(row.mCardNumber).then(({data}) => {
+          if(data.balance<0){
+            this.$modal.msgWarning("主卡余额不足，无法分配!")
+            return;
+          }
+          this.$refs.distribute.init(row,data);
+        }).catch((err) => {
+          
+        })
         return
       }
       // if (buttonCode === 'distribute') {
@@ -244,6 +264,10 @@ export default {
     //新建或修改成功回调
     operateSuccess() {
       this.handleQuery()
+    },
+    //分配余额回调
+    distributeSuccess(){
+      this.handleQuery();
     },
     //刷新列表数据
     handleQuery(row = {}) {

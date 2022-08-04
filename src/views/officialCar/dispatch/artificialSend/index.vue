@@ -280,7 +280,7 @@ export default {
                 fromAreaId: '',
                 toAddr: '',
                 toAreaIdd: '',
-                hopeBrand: '',
+                hopeBrand: '2',
                 remark: '',
                 source: 1,
                 createType: '1'

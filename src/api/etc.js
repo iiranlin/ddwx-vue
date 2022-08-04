@@ -127,3 +127,18 @@ export function getETCCardDetail(id = '') {
     method: "get",
   });
 }
+
+export function getETCCardCardInfoByCarNumber(carNumber = '') {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/gcjcEtcCard/${carNumber}/cardInfo`,
+    method: "get",
+  });
+}
+
+export function gcjcEtcCardUpdETCs(params = {}) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/gcjcEtcCard/updETCs`,
+    method: "post",
+    data: params,
+  });
+}

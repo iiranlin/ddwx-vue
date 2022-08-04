@@ -11,6 +11,9 @@ const whiteList = ['/login']
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
+
+
+  
 	const hasToken = getToken()
   if (hasToken) {
     to.meta.title && store.dispatch('settings/setTitle', to.meta.title)
