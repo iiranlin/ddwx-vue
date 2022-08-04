@@ -82,12 +82,15 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="出发时间:" prop="usageTime">
-                <el-time-picker
-                  v-model="formData.usageTime"
-                  value-format="HH:mm"
-                  format="HH:mm"
-                  placeholder="请输入出发时间">
-                </el-time-picker>
+                <el-time-select
+                    v-model="formData.usageTime"
+                    :picker-options="{
+                        start: '00:00',
+                        step: '00:15',
+                        end: '24:00'
+                    }"
+                    placeholder="请选择出发时间">
+                </el-time-select>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -190,7 +193,7 @@ export default {
       dictionariesObj: {'1016': [], '10018': [], '101801': []},
       formData: {
         reasonCode: '1',
-        demandCode: '1001801',
+        demandCode: '1001803',
         longDistanceTag: '0',
         usagePersons: '1',
         userName: '',

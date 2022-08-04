@@ -147,6 +147,7 @@ export default {
           this.masterCard.balance = parseInt(this.masterCard.balance) - parseInt(this.form.assignMoney);
           this.secondaryCard.balance = parseInt(this.secondaryCard.balance) + parseInt(this.form.assignMoney);
           // this.secondaryCard.incomeMoney = parseInt(this.secondaryCard.incomeMoney) + parseInt(this.form.assignMoney);
+          this.secondaryCard.transFee = this.form.assignMoney;
 
           this.loading = true;
           const paramArr = [this.masterCard,this.secondaryCard];

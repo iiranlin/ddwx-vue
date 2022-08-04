@@ -241,14 +241,15 @@
                 label="出发时间"
                 prop="usageTime"
               >
-                <el-time-picker
-                  v-model="formData.usageTime"
-                  size="small"
-                  format="HH:mm"
-                  value-format="HH:mm"
-                  placeholder="选择出发时间"
-                  clearable
-                />
+                <el-time-select
+                    v-model="formData.usageTime"
+                    :picker-options="{
+                        start: '00:00',
+                        step: '00:15',
+                        end: '24:00'
+                    }"
+                    placeholder="请选择出发时间">
+                </el-time-select>
               </el-form-item>
             </el-col>
             <el-col
@@ -369,6 +370,7 @@
               </el-col>
             </el-row>
             <el-row :gutter="24">
+              <el-row>
               <el-col
                 :xs="24"
                 :sm="12"
@@ -445,6 +447,8 @@
                   </el-input>
                 </el-form-item>
               </el-col>
+              </el-row>
+              <el-row>
               <el-col
                 :xs="24"
                 :sm="12"
@@ -504,6 +508,7 @@
                   </el-input>
                 </el-form-item>
               </el-col>
+              </el-row>
             </el-row>
           </div>
         </el-collapse-item>
@@ -578,14 +583,14 @@ export default {
         // 用车部门
         deptId: '',
         reasonCode: '1',
-        demandCode: '1001801',
+        demandCode: '1001803',
         longDistanceTag: '0',
         usagePersons: '1',
         userName: '',
         phone: getCookie('phone') || '',
         usageDate: '',
         usageTime: '',
-        timeLength: '',
+        timeLength: '2',
         fromAddr: '',
         fromAreaId: '',
         toAddr: '',
