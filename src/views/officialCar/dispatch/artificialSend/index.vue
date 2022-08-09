@@ -61,7 +61,7 @@
                     <template slot="title">
                         <i :class="calcIconClass('2')" />
                         <span class="title-right">可用车辆</span>
-                        <span class="title-span">下表数量说明：黑色字体为车辆数量；蓝色字体为已预约车辆数量；绿色字体为已受理车辆数量；橙色字体为可用车辆数量。</span>
+                        <span class="title-span">下表数量说明：橙色字体为可用车辆数量；蓝色字体为已预约车辆数量；绿色字体为已受理车辆数量；黑色字体为车辆数量。</span>
                     </template>
                     <form-calendar v-if="isRouterAlive" :dateList="dateList" :assignTimey="assignTimey" :assignTimer="assignTimer" :usageDate="formData.usageDate" @calendarClick="calendarClick"/>
                 </el-collapse-item>
@@ -611,7 +611,7 @@ export default {
         margin-left: 38px;
         color: #e77676;
         font-style: oblique;
-        font-size: 12px;
+        font-size: 14px;
     }
     .dialog-footer{
         margin-top: 20px;

@@ -40,7 +40,7 @@ export default {
       title: '审批',
       openDataScope: false,
       form: {
-        comment: ''
+        comment: '通过'
       },
       // 表单校验
       rules: {

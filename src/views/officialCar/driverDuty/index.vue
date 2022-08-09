@@ -180,7 +180,9 @@ export default {
                 }
             }
             this.dutyRecordData[rowIndex][columnIndex].isActive = true;
-            this.refreshList();
+
+            this.getDriverList();
+            this.getDutyDriverList();
         },
         //单元格选中样式
         tableCellStyle (row, column, rowIndex, columnIndex) {

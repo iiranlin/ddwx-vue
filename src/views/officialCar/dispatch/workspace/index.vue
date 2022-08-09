@@ -141,7 +141,8 @@ export default {
       formData: {
         parentId: '',
         unitCode:'',
-        deptId: ''
+        deptId: '',
+        status:'4',
       },
       form: {
         closeReason: ''
