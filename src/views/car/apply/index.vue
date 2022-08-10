@@ -5,7 +5,13 @@
         <template slot="title">
           <i class="el-icon-caret-right" :style="activeNames.indexOf('1') != -1?'transform:rotate(90deg)':''"/>
           <span class="title-right">可用车辆</span>
-          <span class="title-span">下表数量说明：橙色字体为可用车辆数量；蓝色字体为已预约车辆数量；绿色字体为已受理车辆数量；黑色字体为车辆数量。</span>
+          <p class="title-span">
+            <span >下表数量说明（按字体颜色）：</span>
+            <span>可用车辆数</span> 
+            <span>已预约车辆数</span>
+            <span>已受理车辆数</span>
+            <span>车辆总数</span>
+          </p>
         </template>
         <form-calendar :dateList="dateList" :assignTimey="assignTimey" :assignTimer="assignTimer" :usageDate="formData.usageDate" @calendarClick="calendarClick"/>
       </el-collapse-item>
@@ -420,9 +426,25 @@ export default {
     }
     .title-span{
       margin-left: 38px;
-      color: #e77676;
       font-style: oblique;
-      font-size: 14px;
+      font-size: 12px;
+    }
+     .title-span{
+        span{
+            padding-left: 10px;
+            &:nth-child(2){
+                color: #d57b48;
+            }
+            &:nth-child(3){
+                color: #6292ff;
+            }
+            &:nth-child(4){
+                color: #4da32d;
+            }
+            &:nth-child(5){
+                color: #26413c;
+            }
+        }
     }
     .dialog-footer{
       margin-top: 20px;
