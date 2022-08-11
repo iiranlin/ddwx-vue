@@ -152,7 +152,10 @@ export default {
       }
     },
     vehicleRequest (id, row, url, title) {
+      console.log(row)
+      console.log(url)
       if(Object.keys(row).length == 0){
+         console.log('1111')
         for (const item of this.selectionData) {
           if(url == 'confirmVehicleRequest'){
             if(item.status != 10){
@@ -160,20 +163,21 @@ export default {
               return false;
             }
           }else if(url == 'cancelVehicleRequest') {
-            if(item.status >= 9){
+            if(item.status >= 5){
               this.$modal.msgWarning('该状态不能取消');
               return false;
             }
           }
         }
       }else{
+        console.log('222')
         if(url == 'confirmVehicleRequest'){
           if(row.status != 10){
             this.$modal.msgWarning('该状态不能确认');
             return false;
           }
         }else if(url == 'cancelVehicleRequest') {
-          if(row.status >= 9){
+          if(row.status >= 5){
             this.$modal.msgWarning('该状态不能取消');
             return false;
           }
