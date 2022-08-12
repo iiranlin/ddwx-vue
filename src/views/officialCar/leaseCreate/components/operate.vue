@@ -4,7 +4,7 @@
             <el-row>
                 <el-col :span="24">
                     <el-form-item label="审批人:" prop="code">
-                        <el-select v-model="form.code" placeholder="请选择审批人" style="width:100%;">
+                        <el-select multiple v-model="form.code" placeholder="请选择审批人" style="width:100%;">
                             <el-option v-for="item in assigneeList" 
                                 :key="item.code" 
                                 :label="item.name" 
@@ -42,7 +42,7 @@ export default {
         init (assigneeList) {
             this.assigneeList = assigneeList;
             this.openWorkflow = true;
-            this.form.code = this.assigneeList[0].code;
+            this.form.code = [this.assigneeList[0].code];
         },
         /** 转换部门数据结构 */
         normalizer(node) {

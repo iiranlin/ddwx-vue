@@ -4,7 +4,7 @@
             <el-row>
                 <el-col :span="24">
                     <el-form-item label="下一级审批人:" prop="id">
-                        <el-select v-model="form.id" placeholder="请选择下一级审批人" style="width:100%;">
+                        <el-select multiple v-model="form.id" placeholder="请选择下一级审批人" style="width:100%;">
                             <el-option v-for="item in deptOptions" 
                                 :key="item.code" 
                                 :label="item.name" 
@@ -78,7 +78,7 @@ export default {
                     this.form.id = undefined;
                     if(data.assigneeList && data.assigneeList.length > 0){
                         this.deptOptions = data.assigneeList;
-                        this.form.id = data.assigneeList[0].code;
+                        this.form.id = [data.assigneeList[0].code];
                         this.openWorkflow = true;
                     }else{
                         this.activitiComplete();
@@ -89,7 +89,7 @@ export default {
         activitiComplete () {
             let { id, procInstId, taskId } = this.row;
             let comment = this.comment;
-            activitiComplete({comment: comment, businessId: id, procInstId: procInstId, taskId: taskId, assignee: this.form.id}).then(({message}) => {
+            activitiComplete({comment: comment, businessId: id, procInstId: procInstId, taskId: taskId, candidateUser: this.form.id}).then(({message}) => {
                 this.$modal.msgSuccess(message);
                 this.openWorkflow = false;
                 this.loading = false;
@@ -106,7 +106,7 @@ export default {
                     this.activitiComplete();
                 }else{
                     let obj = {
-                        assignee: this.form.id,
+                        candidateUser: this.form.id,
                         procDefId: this.ids[0] || this.row.procDefId,
                         businessId: this.row.id
                     };

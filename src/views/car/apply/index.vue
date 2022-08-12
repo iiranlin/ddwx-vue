@@ -368,8 +368,8 @@ export default {
       })
     },
     carSuccess (val) {
-      if(val){
-        this.formData.assignee = val;
+      if(val.length){
+        this.formData.candidateUser = val;
       }
       let obj = {};
       this.dictionariesObj['1016'].forEach(item => {

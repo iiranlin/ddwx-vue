@@ -562,7 +562,7 @@ export default {
     },
     //选择审批人后回调
     operateSuccess(assignee) {
-      this.form.assignee = assignee
+      this.form.candidateUser = assignee
       this.vehicleInfoUpdate()
     },
     //关闭当前页面
