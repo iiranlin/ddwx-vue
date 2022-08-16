@@ -544,6 +544,28 @@ export default {
                     this.$modal.msgWarning('请新增车辆');
                     return
                 }
+                //检查是否有重复司机
+                for (let i = 0; i < formList.length; i++) {
+                    let driverCode = formList[i].driver.driverCode;
+
+                    for (let j = i+1; j < formList.length; j++) {
+                        if(driverCode===formList[j].driver.driverCode){
+                            this.$modal.msgWarning('指派司机不能重复，请重新选择!');
+                            return
+                        }
+                    }
+                }
+                //检查是否有重复车辆
+                for (let i = 0; i < formList.length; i++) {
+                    let carNumber = formList[i].car.carNumber;
+
+                    for (let j = i+1; j < formList.length; j++) {
+                        if(carNumber===formList[j].car.carNumber){
+                            this.$modal.msgWarning('指派车辆不能重复，请重新选择!');
+                            return
+                        }
+                    }
+                }
                 this.unitData.forEach(item => {
                     if(item.unitCode == this.formData.unitCode){
                         obj = Object.assign({}, obj, {unitName: item.unitName});

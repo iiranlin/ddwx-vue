@@ -755,6 +755,29 @@ export default {
       }
       this.$refs.elForm.validate(async (valid) => {
         if (valid) {
+          let formList = this.formData.reqAssignments;
+          //检查是否有重复司机
+          for (let i = 0; i < formList.length; i++) {
+              let driverId = formList[i].driverId;
+
+              for (let j = i+1; j < formList.length; j++) {
+                  if(driverId===formList[j].driverId){
+                      this.$modal.msgWarning('指派司机不能重复，请重新选择!');
+                      return
+                  }
+              }
+          }
+          //检查是否有重复车辆
+          for (let i = 0; i < formList.length; i++) {
+              let carNumber = formList[i].carNumber;
+
+              for (let j = i+1; j < formList.length; j++) {
+                  if(carNumber===formList[j].carNumber){
+                      this.$modal.msgWarning('指派车辆不能重复，请重新选择!');
+                      return
+                  }
+              }
+          }
           const loading = this.$loading({
             lock: true,
             text: "加载中...",
