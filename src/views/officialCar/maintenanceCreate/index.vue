@@ -513,6 +513,17 @@ export default {
         } else {
           this.$refs.elform.validate((result) => {
             if (result) {
+              //检查是否有重复维保项目
+              for (let i = 0; i < this.maintenanceData.length; i++) {
+                  let itemName = this.maintenanceData[i].itemName;
+
+                  for (let j = i+1; j < this.maintenanceData.length; j++) {
+                      if(itemName===this.maintenanceData[j].itemName){
+                          this.$modal.msgWarning('维保项目不能重复，请重新选择!');
+                          return
+                      }
+                  }
+              }
               let form = Object.assign({}, this.form)
               // 处理维保商店名称
               let maintainShopId = this.form.maintainShopId
