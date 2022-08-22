@@ -368,7 +368,7 @@ export default {
       })
     },
     carSuccess (val) {
-      if(val.length){
+      if(!!val && val.length){
         this.formData.candidateUser = val;
       }
       let obj = {};

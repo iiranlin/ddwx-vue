@@ -250,25 +250,34 @@ export default {
                         this.$modal.msgWarning('至少有一条数据！');
                         return
                     }
+                    console.log(formList)
                     //检查是否有重复司机
                     for (let i = 0; i < formList.length; i++) {
-                        let driverCode = formList[i].driver.driverCode;
+                        if(formList[i].restatus!='1'){
+                            let driverCode = formList[i].driver.driverCode;
 
-                        for (let j = i+1; j < formList.length; j++) {
-                            if(driverCode===formList[j].driver.driverCode){
-                                this.$modal.msgWarning('指派司机不能重复，请重新选择!');
-                                return
+                            for (let j = i+1; j < formList.length; j++) {
+                                if(formList[j].restatus!='1'){
+                                    if(driverCode===formList[j].driver.driverCode){
+                                        this.$modal.msgWarning('指派司机不能重复，请重新选择!');
+                                    return
+                                    }
+                                }
                             }
                         }
                     }
                     //检查是否有重复车辆
                     for (let i = 0; i < formList.length; i++) {
-                        let carNumber = formList[i].car.carNumber;
+                        if(formList[i].restatus!='1'){
+                            let carNumber = formList[i].car.carNumber;
 
-                        for (let j = i+1; j < formList.length; j++) {
-                            if(carNumber===formList[j].car.carNumber){
-                                this.$modal.msgWarning('指派车辆不能重复，请重新选择!');
-                                return
+                            for (let j = i+1; j < formList.length; j++) {
+                                if(formList[j].restatus!='1'){
+                                    if(carNumber===formList[j].car.carNumber){
+                                        this.$modal.msgWarning('指派车辆不能重复，请重新选择!');
+                                        return
+                                    }
+                                }
                             }
                         }
                     }
