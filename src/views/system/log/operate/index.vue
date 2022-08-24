@@ -147,6 +147,7 @@ export default {
     },
     //页面按钮点击事件
     handleButton(ids, buttonCode, row) {
+      console.log(buttonCode)
       if (buttonCode === 'create') {
         this.$refs.operate.init('create', null)
       } else if (buttonCode === 'update') {
@@ -163,6 +164,13 @@ export default {
           this.handleQuery()
         }).catch(() => {
           this.loading = false
+        })
+      } else if(buttonCode==='detail'){
+        this.$router.push({
+          name: 'operateDetail',
+          params: {
+            detail:row            
+          },
         })
       }
     },
