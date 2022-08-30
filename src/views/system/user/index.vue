@@ -75,7 +75,7 @@
     </div>
 </template>
 <script>
-import {userPage, userDeleteBatch, userRoleList, resetPwd,updateGrantStatus} from '@/api/system/user';
+import {userPage, userDeleteBatch, userRoleList, resetPwd,updateGrantStatus,userModifys} from '@/api/system/user';
 import {deptTree} from '@/api/system/dept';
 import roleDrawer from "./components/roleDrawer";
 import operate from "./components/operate";
@@ -152,6 +152,10 @@ export default {
         this.handleResetPwd(row)
       } else if (buttonCode === 'authRole') {
         this.handleAuthRole(row)
+      } else if(buttonCode === 'refuseSms'){
+        this.handleChangeSms('1');
+      } else if(buttonCode === 'acceptSms'){
+        this.handleChangeSms('0');
       }
     },
     handleCheckAllChange(columns) {
@@ -241,6 +245,44 @@ export default {
       }).catch(() => {
       })
     },
+    //修改短信状态
+    handleChangeSms(smsFlag){
+      if(smsFlag==='0'){
+        let obj =this.selectionData.some((item) => {
+          return item.smsFlag==='0'
+        })
+        if(!!obj){
+          this.$modal.msgWarning("已选条目中存在接收短信状态的条目，请重新选择!");
+          return
+        }
+      }
+      if(smsFlag==='1'){
+        let obj =this.selectionData.some((item) => {
+          return item.smsFlag==='1'
+        })
+        if(!!obj){
+          this.$modal.msgWarning("已选条目中存不收短信状态的条目，请重新选择!");
+          return
+        }
+      }
+      this.$modal.confirm("是否确认操作？").then(()=>{
+        let paramsArr = [];
+        for (let i = 0; i < this.selectionData.length; i++) {
+          let obj = {};
+          this.$set(obj, 'id', this.selectionData[i].id);
+          this.$set(obj, 'smsFlag', smsFlag);
+          paramsArr.push(obj);
+        }
+        userModifys(paramsArr).then(({message}) => {
+          this.$modal.msgSuccess(message);
+          this.getList();
+        }).catch((err) => {
+          
+        }) 
+      }).catch((err) => {
+        
+      })
+    }
     // handleStopGrant(ids){
     //   if(this.selectionData[0].cardGrantStatus === '0'){
     //     this.updateGrantStatus(this.selectionData[0].id,'1');

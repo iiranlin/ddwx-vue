@@ -91,3 +91,12 @@ export function resetPwd(data) {
     data
   })
 }
+
+//修改短信状态
+export function userModifys(data) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/user/modifys`,
+    method: 'post',
+    data
+  })
+}

@@ -73,14 +73,8 @@ export default {
             form:{},
         };
     },            
-    computed: {
-        visitedViews() {
-            return this.$store.state.tagsView.visitedViews
-        },
-    },
     created(){
         this.form = Object.assign({}, this.$route.params.detail);
-        console.log(this.form)
     },
     methods: {
 
