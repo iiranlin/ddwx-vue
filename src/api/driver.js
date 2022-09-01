@@ -7,7 +7,8 @@ export const vehicleInfoExportUrl = `${path}${VUE_APP_BASE_prefix}/vehicleInfo/e
 export const drivingRecordTemplateUrl = `${path}${VUE_APP_BASE_prefix}/gcywVehicleRequest/template`
 // 出行信息补录模板导入
 export const drivingRecordImportUrl = `${process.env.VUE_APP_BASE_API}/${VUE_APP_BASE_prefix}/gcywVehicleRequest/import`
-
+// 车辆费用统计导出地址
+export const carFeeExportUrl = `${path}${VUE_APP_BASE_prefix}/vehicleInfo/getStatList/export`
 
 //班次字典-班次列表-分页
 export function gcjcClassListPage(params) {
@@ -459,5 +460,14 @@ export function vehicleInfoDetail(vinNumber) {
   return request({
     url: `${VUE_APP_BASE_prefix}/vehicleInfo/detail/${vinNumber}`,
     method: 'get',
+  })
+}
+
+///车辆费用统计-列表
+export function vehicleInfoGetStatList(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/vehicleInfo/getStatList`,
+    method: 'get',
+    params
   })
 }
