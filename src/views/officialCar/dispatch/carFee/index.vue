@@ -81,6 +81,7 @@
                 />
             </el-col>
         </el-row>
+        <export-dialog ref="export" :page-num="listQuery.pageNum" :page-size="listQuery.pageSize" :total="total" @exportFile="exportFile"/>
     </div>
 </template>
 <script>
@@ -91,10 +92,11 @@ import{vehicleInfoGetStatList,carFeeExportUrl} from "@/api/driver"
 import {allUnit} from "@/api/system/unit";
 import { axiosDownloadExcel } from '@/api/download'
 import indexMixin from "@/views/mixins"
+import exportDialog from '@/components/ExportDialog'
 
 export default {
     name:"carFee",
-    components:{buttonTop,formData,tableIndex},
+    components:{buttonTop,formData,tableIndex,exportDialog},
     mixins: [indexMixin],
     data() {
         return {
@@ -177,11 +179,13 @@ export default {
         //页面按钮点击事件
         handleButton(ids,buttonCode){
             if(buttonCode==='export'){
-                this.$modal.confirm("是否导出页面信息?").then(()=>{
-                    let params = Object.assign(this.formData, this.listQuery);
-                    axiosDownloadExcel(carFeeExportUrl,params);
-                })
+                this.$refs.export.init()
             }
+        },
+        // 导出文件
+        exportFile(pageInfo) {
+            // 整合page信息
+            axiosDownloadExcel(carFeeExportUrl, Object.assign({}, pageInfo, this.listQuery, this.formData))
         },
         //顶部列字段展示
         handleCheckAllChange(columns){
