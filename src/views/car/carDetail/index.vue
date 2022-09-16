@@ -97,7 +97,10 @@
                             <el-form-item label="指派司机："><span>{{item.driver}}</span></el-form-item>
                         </el-col>
                         <el-col :span="8">
-                            <el-form-item label="指派车辆："><span>{{item.carNumber}}</span></el-form-item>
+                            <el-form-item label="指派车辆：">
+                                <a href="#" v-if="item.status===5 || item.status===7" class="custom-link" @click="handleCarNumberClick(item)">{{item.carNumber}}</a>
+                                <span v-else>{{item.carNumber}}</span>
+                            </el-form-item>
                         </el-col>
                         <el-col :span="8">
                             <el-form-item label="出场里程："><span>{{item.beginMiles}}</span></el-form-item>
@@ -148,6 +151,7 @@
 </template>
 <script>
 import {gcywVehicleRequestDispatchList,gcywVehicleRequestLogList} from "@/api/car"
+import {logisticsGetDrivingRecord} from '@/api/driver'
 import {getListByParentId} from "@/api/system/dict"
 export default {
   name: "carDetail",
@@ -182,7 +186,6 @@ export default {
                 this.vehicleData = data.list[0] || {};
                 this.loading = false;
                 this.getHopeBrandInfo();
-                console.log(this.vehicleData)
             }).catch((err) => {
                 this.loading = false;
             })
@@ -210,6 +213,40 @@ export default {
             }).catch((err) => {
                 this.loading = false;
             })
+    },
+    //车牌号点击跳转北斗设备
+    handleCarNumberClick(item){
+        this.loading = true;
+        let params = {
+            vinNumber:item.vinNumber,
+            reqfoId:item.reqId,
+        }
+        logisticsGetDrivingRecord(params).then(({data}) => {
+            this.loading = false;
+            if(data.length===0){
+                this.$modal.msgWarning('该车辆没有绑定北斗设备!')
+                return
+            }
+            if(!data[0].simNumber){
+                this.$modal.msgWarning('该车辆没有绑定北斗设备!')
+                return
+            }
+            let carDetail = {
+                carNumber:item.carNumber,
+                miles:Number(item.endMiles)-Number(item.beginMiles),
+                simNumber: data[0].simNumber,
+                startTime: data[0].departureDate,
+                endTime: data[0].returnTime,
+            }
+            this.$router.push({
+                    name:'arcgisMap',
+                    params: {
+                    carInfo:carDetail,
+                },
+            })
+        }).catch((err) => {
+            this.loading = false;
+        })
     }
   }
 };
@@ -225,5 +262,9 @@ export default {
 .title-icon {
     color: rgb(64, 158, 255);
     margin-right: 5px;
+}
+.custom-link {
+    color: rgb(64, 158, 255);
+    text-decoration: underline;
 }
 </style>

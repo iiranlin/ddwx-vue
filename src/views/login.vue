@@ -147,6 +147,11 @@
             <span v-else>登 录 中...</span>
           </el-button>
         </el-form-item>
+
+        <el-form-item style="width: 100%;text-align:center">
+          <a href="#" style="color:#00a0ff;text-decoration:underline" @click="handleOldLogin">老版入口</a>
+        </el-form-item>
+        
       </el-form>
     </div>
     <!-- </div> -->
@@ -304,6 +309,10 @@ export default {
         }
       })
     },
+    //老版入口
+    handleOldLogin(){
+        window.open(process.env.VUE_APP_OLD_VERSION_URL, "_blank");
+    },
     /**获取单位 */
     getList() {
       getList().then((res) => {
@@ -436,7 +445,7 @@ export default {
       font-size: 14px;
     }
   }
-
+// .login-right-box .login-form .el-form-item
   .login-form {
     width: 336px;
     border-radius: 6px;
@@ -444,7 +453,7 @@ export default {
     background: #ffffff;
 
     .el-form-item {
-      margin-bottom: 30px;
+      // margin-bottom: 30px;
     }
 
     .el-select {
@@ -478,9 +487,9 @@ export default {
     }
 
     .loginButton {
-      margin-top: 10px;
+      // margin-top: 10px;
       width: 336px;
-      height: 52px;
+      height: 30px;
       border-radius: 5px;
     }
 
@@ -625,7 +634,7 @@ export default {
       background: #ffffff;
 
       .el-form-item {
-        margin-bottom: 30px;
+        // margin-bottom: 30px;
       }
 
       .el-input {

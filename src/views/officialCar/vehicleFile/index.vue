@@ -61,6 +61,7 @@
           @handleButton="handleButton"
           @selectChange="selectChange"
           @emitAblFilter="emitAblFilter"
+          @clickLink="clickLink"
         >
         </table-index>
         <!--分页器-->
@@ -240,6 +241,15 @@ export default {
     //清空状态数据
     handleResetDept() {
       this.formData.carStatus = ''
+    },
+    //北斗设备点击
+    clickLink(row){
+      this.$router.push({
+        name:'arcgisMap',
+        params: {
+          carInfo:row,
+        },
+      })
     },
     tableRowClassName({ row, rowIndex }) {
       row.index = rowIndex + 1

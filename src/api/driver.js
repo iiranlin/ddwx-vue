@@ -471,3 +471,39 @@ export function vehicleInfoGetStatList(params) {
     params
   })
 }
+
+//车辆行程列表
+export function gcywVehicleReqAssignmenntListPageForVinNumber(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywVehicleReqAssignmennt/listPageForVinNumber`,
+    method: 'get',
+    params
+  })
+}
+
+//车载设备轨迹信息数据接口
+export function logisticsTrajectoryAll(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/logistics/trajectoryAll`,
+    method: 'get',
+    params
+  })
+}
+
+//车载设备基础信息数据接口
+export function logisticsListAll(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/logistics/listAll`,
+    method: 'get',
+    params
+  })
+}
+
+export function logisticsGetDrivingRecord(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/logistics/getDrivingRecord`,
+    method: 'get',
+    params
+  })
+}
+
