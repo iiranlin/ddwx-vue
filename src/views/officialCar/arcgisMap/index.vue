@@ -106,9 +106,6 @@ export default {
                 simNumber: simNumber,
                 startTime: startTime,
                 endTime: endTime,
-                // simNumber: '121901105000',
-                // startTime: '2022-08-26 15:59:55',
-                // endTime: '2022-09-02 16:00:09',
             }
             await logisticsTrajectoryAll(params).then(({data}) => {
                 this.loading = false;
@@ -124,8 +121,6 @@ export default {
             let params = {
                 simNumber: simNumber,
                 type: type,
-                // simNumber: '121901105000',
-                // type: '2',
             }
             await logisticsListAll(params).then(({data}) => {
                 this.loading = false;
