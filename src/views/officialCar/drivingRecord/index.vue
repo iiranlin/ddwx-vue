@@ -132,7 +132,15 @@ export default {
         },
         //页面按钮点击事件
         handleButton(ids,buttonCode){
-
+            if(buttonCode==='print'){
+                let routeData = this.$router.resolve({
+                    name: "drivingRecordPrint",
+                    params:{
+                        obj:JSON.stringify(this.selectionData[0]),
+                    }
+                });
+                window.open(routeData.href, '_blank');
+            }
         },
         //顶部列字段展示
         handleCheckAllChange(columns){

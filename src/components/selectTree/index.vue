@@ -88,9 +88,11 @@ export default {
         initHandle(){
             if(this.valueId){
                 this.$nextTick(() => {
-                    this.valueTitle = this.$refs.selectTree.getNode(this.valueId).data[this.props.label]     // 初始化显示
-                    this.$refs.selectTree.setCurrentKey(this.valueId)       // 设置默认选中
-                    this.defaultExpandedKey = [this.valueId]      // 设置默认展开
+                    if(!!this.$refs.selectTree.getNode(this.valueId)){
+                        this.valueTitle = this.$refs.selectTree.getNode(this.valueId).data[this.props.label]     // 初始化显示
+                        this.$refs.selectTree.setCurrentKey(this.valueId)       // 设置默认选中
+                        this.defaultExpandedKey = [this.valueId]      // 设置默认展开
+                    }
                 })
             }else{
                 this.filterText = '';

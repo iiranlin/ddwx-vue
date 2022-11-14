@@ -1,8 +1,19 @@
 import Cookies from 'js-cookie'
+import { param2Obj } from "./index";
 const TokenKey = 'TokenKey';
+const IdTokenKey = 'id_token'
 const expires = {
 	expires: new Date(new Date().getTime() + 1000 * 60 *60 * 24 *30)
 }
+
+export function getIdToken() {
+	let query = param2Obj(window.location.search);
+
+	if (query[IdTokenKey]) {
+	  return query[IdTokenKey];
+	} 
+	return null;
+  }
 
 export function getToken() {
 	return window.sessionStorage.getItem(TokenKey)

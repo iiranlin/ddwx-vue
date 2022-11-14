@@ -66,3 +66,9 @@ export function getList() {
   })
 }
 
+export function loginByTicket(snapTicket) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/auth/loginByTicket/${snapTicket}`,
+    method: 'get',
+  })
+}

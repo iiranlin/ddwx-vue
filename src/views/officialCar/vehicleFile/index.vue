@@ -78,6 +78,9 @@
     <!--图片弹出框-->
     <operate ref="operate"></operate>
     <car-model ref="model"></car-model>
+    <!--绑定弹框-->
+    <binding ref="binding"></binding>
+    <export-dialog ref="export" :page-num="listQuery.pageNum" :page-size="listQuery.pageSize" :total="total" @exportFile="exportFile"/>
   </div>
 </template>
 <script>
@@ -85,15 +88,19 @@ import buttonTop from '@/components/buttonTop'
 import formData from '@/components/formData'
 import tableIndex from '@/components/tableIndex'
 import operate from './components/operate'
+import binding from './components/binding'
+import exportDialog from '@/components/ExportDialog'
 import { vehicleInfoListPage, vehicleInfoGetVehicleFile } from '@/api/driver'
 import { getListByParentCode } from '@/api/system/dict'
 import indexMixin from '@/views/mixins'
 import carModel from '@/views/officialCar/vehicleFile/components/carModel'
+import { VehicleFileExportUrl } from '@/api/vehicleInfo'
+import { axiosDownloadExcel } from '@/api/download'
 
 export default {
   name: 'vehicleFile',
   mixins: [indexMixin],
-  components: { buttonTop, formData, tableIndex, operate, carModel },
+  components: { buttonTop, formData, tableIndex, operate, carModel,exportDialog,binding },
 
   data() {
     return {
@@ -133,12 +140,6 @@ export default {
       this.formData = this.$route.params
     }
     this.getList()
-  },
-  activated() {
-    if (this.$route.params) {
-      this.formData = this.$route.params
-      this.getList()
-    }
   },
   methods: {
     numberChange(val) {
@@ -199,7 +200,15 @@ export default {
         })
       } else if (buttonCode === 'model') {
         this.$refs.model.init(row.carBrand + row.carSeries)
+      } else if(buttonCode === 'export'){
+        this.$refs.export.init()
+      }else if(buttonCode==='binding'){
+        this.$refs.binding.init(this.selectionData[0].usageUnitCode,this.selectionData[0].vinNumber);
       }
+    },
+    // 导出文件
+    exportFile(pageInfo) {
+      axiosDownloadExcel(VehicleFileExportUrl, Object.assign({}, pageInfo, this.listQuery, this.formData,{ type: '1' }))
     },
     //顶部列字段展示
     handleCheckAllChange(columns) {

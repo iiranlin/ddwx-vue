@@ -147,11 +147,6 @@
             <span v-else>登 录 中...</span>
           </el-button>
         </el-form-item>
-
-        <el-form-item style="width: 100%;text-align:center">
-          <a href="#" style="color:#00a0ff;text-decoration:underline" @click="handleOldLogin">老版入口</a>
-        </el-form-item>
-        
       </el-form>
     </div>
     <!-- </div> -->
@@ -308,10 +303,6 @@ export default {
             })
         }
       })
-    },
-    //老版入口
-    handleOldLogin(){
-        window.open(process.env.VUE_APP_OLD_VERSION_URL, "_blank");
     },
     /**获取单位 */
     getList() {

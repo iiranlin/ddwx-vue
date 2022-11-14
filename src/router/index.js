@@ -83,7 +83,13 @@ export const constantRoutes = [
       }
     ],
     hidden: true,
-  }
+  },
+  {
+    path: '/drivingRecordPrint/:obj',
+    name:'drivingRecordPrint',
+    component: () => import('@/views/officialCar/drivingRecordPrint'),
+    hidden: true,
+  },
   
 ]
 

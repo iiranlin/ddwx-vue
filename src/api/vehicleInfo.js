@@ -7,6 +7,8 @@ export const VehicleUsageStatExportUrl = `${path}${VUE_APP_BASE_prefix}/vehicleI
 export const VehicleTypeStatExportUrl = `${path}${VUE_APP_BASE_prefix}/vehicleInfo/unit/2/carType/export`
 // 车辆信息统计导出地址
 export const VehicleInfoStatExportUrl = `${path}${VUE_APP_BASE_prefix}/vehicleInfo/unit/2/info/export`
+// 车辆档案导出地址
+export const VehicleFileExportUrl = `${VUE_APP_BASE_prefix}/vehicleInfo/exportList`
 
 
 //最近三周用车情况汇总

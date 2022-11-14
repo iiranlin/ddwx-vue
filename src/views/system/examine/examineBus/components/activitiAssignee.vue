@@ -1,12 +1,19 @@
 <template>
     <el-dialog title="下一级审批人" :visible.sync="openWorkflow" width="600px" :close-on-click-modal="false" append-to-body>
-        <el-form ref="elForm" :model="form" label-width="110px">
+        <el-form ref="elForm" :model="form" :rules="rules" label-width="150px">
             <el-row>
                 <el-col :span="24">
                     <el-form-item label="下一级审批人:" prop="id">
-                        <el-select multiple v-model="form.id" placeholder="请选择下一级审批人" style="width:100%;">
-                            <el-option v-for="item in deptOptions" 
-                                :key="item.code" 
+                        <el-select 
+                            multiple 
+                            filterable
+                            v-model="form.id" 
+                            placeholder="请选择下一级审批人" 
+                            style="width:100%;"
+                            ref="template"
+                            @visible-change="(v) => visibleChange(v, 'template')">
+                            <el-option v-for="(item,index) in deptOptions" 
+                                :key="index" 
                                 :label="item.name" 
                                 :value="item.code">
                             </el-option>
@@ -27,13 +34,20 @@ import { activitiAssigneeList } from '@/api/system/activiti'
 import { activitiStart, activitiComplete } from '@/api/system/activiti'
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import { mapGetters } from 'vuex'
 export default {
     components: { Treeselect },
+    computed: {
+        ...mapGetters(['deptCode'])
+    },
+
     data() {
         return {
             loading: false,
             openWorkflow: false,
             row: {},
+            //原始数据
+            originDeptOptions: [],
             deptOptions: undefined,
             ids: [],
             form: {
@@ -41,6 +55,12 @@ export default {
             },
             selectChangeData: {},
             comment: '',
+
+            rules: {
+                id: [
+                    { required: true, message: '审批人不能为空', trigger: 'change' }
+                ],
+            }
         }
     },
     methods: {
@@ -72,12 +92,18 @@ export default {
             };
             activitiAssigneeList(obj).then( ({data}) => {
                 if(data.assignee){
-                    this.form.id = data.assignee;
+                    let arrTemp = [];
+                    arrTemp.push(data.assignee);
+                    this.form.id = arrTemp;
                     this.activitiComplete();
                 }else{
                     this.form.id = undefined;
                     if(data.assigneeList && data.assigneeList.length > 0){
-                        this.deptOptions = data.assigneeList;
+                        this.originDeptOptions = data.assigneeList;
+                        //隐藏数据
+                        this.deptOptions = this.originDeptOptions.filter((item) => {
+                             return item.hide === '0';
+                        })
                         this.form.id = [data.assigneeList[0].code];
                         this.openWorkflow = true;
                     }else{
@@ -89,6 +115,7 @@ export default {
         activitiComplete () {
             let { id, procInstId, taskId } = this.row;
             let comment = this.comment;
+
             activitiComplete({comment: comment, businessId: id, procInstId: procInstId, taskId: taskId, candidateUser: this.form.id}).then(({message}) => {
                 this.$modal.msgSuccess(message);
                 this.openWorkflow = false;
@@ -100,29 +127,56 @@ export default {
             this.selectChangeData = node;
         },
         submitDataScope () {
-            this.$modal.confirm('是否确认该审批人?').then(() => {
-                this.loading = true;
-                if(this.row.workflowId){
-                    this.activitiComplete();
-                }else{
-                    let obj = {
-                        candidateUser: this.form.id,
-                        procDefId: this.ids[0] || this.row.procDefId,
-                        businessId: this.row.id
-                    };
-                    activitiStart(obj).then( ({message}) => {
-                        this.$modal.msgSuccess(message);
-                        this.openWorkflow = false;
-                        this.loading = false;
-                        this.$emit('carSuccess');
-                    })
+            this.$refs.elForm.validate((result) => {
+                if (result) {
+                    this.$modal.confirm('是否确认该审批人?').then(() => {
+                         this.loading = true;
+                        if(this.row.workflowId){
+                            this.activitiComplete();
+                        }else{
+                            let obj = {
+                                candidateUser: this.form.id,
+                                procDefId: this.ids[0] || this.row.procDefId,
+                                businessId: this.row.id
+                            };
+                            activitiStart(obj).then( ({message}) => {
+                                this.$modal.msgSuccess(message);
+                                this.openWorkflow = false;
+                                this.loading = false;
+                                this.$emit('carSuccess');
+                            })
+                        }
+                    }).catch(() => {
+
+                    });
                 }
-            }).catch(() => {});
+            })
         },
         carSuccess () {
             this.openWorkflow = false;
             this.$emit('carSuccess');
-        }
+        },
+        handleMoreClick(){
+            this.deptOptions = this.originDeptOptions;
+        },
+        visibleChange(visible, refName) {
+            if (visible) {
+                const ref = this.$refs[refName];
+                let popper = ref.$refs.popper;
+                if (popper.$el) popper = popper.$el;
+                if (!Array.from(popper.children).some(v => v.className === 'el-template-more')){
+                    const el = document.createElement("div");
+                    el.className = "el-template-more";
+                    el.style ="line-height:50px;padding:0; color:#ffffff;";
+                    el.innerHTML =`<span id='more' style="color:#409EFF;font-size:14px;font-weight:600;float:right;margin-right:20px;cursor:pointer;">更多审核人</span>`;
+                    popper.appendChild(el);
+                    let element = el.firstChild;
+                    element.onclick = () => {
+                        this.handleMoreClick();
+                    };
+                }
+            }
+        },
     }
 };
 </script>

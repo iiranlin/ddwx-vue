@@ -14,24 +14,6 @@
                 </el-row>
                 <el-row :gutter="24">
                     <el-col :span="8">
-                        <el-form-item label="指派司机" :prop="`list.${index}.driver`" :rules="rules.driver">
-                            <el-select
-                                v-model="item.driver"
-                                placeholder="请选择司机"
-                                clearable
-                                filterable
-                                value-key="driverCode"
-                                :disabled="item.id?true : false"
-                            >
-                                <el-option v-for="item in driverList" 
-                                :key="item.driverCode" 
-                                :label="item.driver" 
-                                :value="item">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
                         <el-form-item label="指派车辆" :prop="`list.${index}.car`" :rules="rules.car">
                             <el-select
                                 v-model="item.car"
@@ -45,6 +27,24 @@
                                 <el-option v-for="item in vehicleList"
                                 :key="item.carNumber" 
                                 :label="item.carNumber" 
+                                :value="item">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="指派司机" :prop="`list.${index}.driver`" :rules="rules.driver">
+                            <el-select
+                                v-model="item.driver"
+                                placeholder="请选择司机"
+                                clearable
+                                filterable
+                                value-key="driverCode"
+                                :disabled="item.id?true : false"
+                            >
+                                <el-option v-for="item in driverList" 
+                                :key="item.driverCode" 
+                                :label="item.driver" 
                                 :value="item">
                                 </el-option>
                             </el-select>
@@ -164,7 +164,6 @@ export default {
             if(this.buttonCode == 'sendVehicle'){
                 this.addCarButton();
             }
-            this.getAvailableDriver(row.reassignUnitCode || row.assignUnitCode || row.deptId, row.usageDate);
             this.vehicleInfoGetAvailableCar(row);
         }
     },
@@ -179,13 +178,14 @@ export default {
                 this.formData.list.splice(index, 1);
             }
         },
-        getAvailableDriver (unitCode, usageDate) {
+        getAvailableDriver (unitCode, usageDate,vinNumber) {
             let obj = {
                 classDateEnd: usageDate,
                 classDateStart: usageDate,
                 classId: 'none',
                 flag:  0,
                 unitCode: unitCode,
+                vinNumber:vinNumber,
             }
             getAvailableDriver(obj).then(({data}) => {
                 this.driverList = data
@@ -221,6 +221,13 @@ export default {
             }else{
                 this.formData.list[index].carName = '';
             }
+            //获取可选司机
+            this.formData.list[index].driver = {};
+
+            let vinNumber = this.formData.list[index].car.vinNumber;
+            if(!!vinNumber){
+                this.getAvailableDriver(this.row.reassignUnitCode || this.row.assignUnitCode || this.row.deptId, this.row.usageDate,vinNumber);
+            }
         },
         addRequest () {
             this.$refs.elForm.validate( (valid) => {
@@ -250,7 +257,6 @@ export default {
                         this.$modal.msgWarning('至少有一条数据！');
                         return
                     }
-                    console.log(formList)
                     //检查是否有重复司机
                     for (let i = 0; i < formList.length; i++) {
                         if(formList[i].restatus!='1'){

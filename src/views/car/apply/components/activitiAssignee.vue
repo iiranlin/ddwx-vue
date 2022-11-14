@@ -1,12 +1,19 @@
 <template>
     <el-dialog title="下一级审批人" :visible.sync="openWorkflow" width="600px" :close-on-click-modal="false" append-to-body>
-        <el-form ref="elForm" :model="form" label-width="110px">
+        <el-form ref="elForm" :model="form" :rules="rules" label-width="150px">
             <el-row>
                 <el-col :span="24">
                     <el-form-item label="下一级审批人:" prop="id">
-                        <el-select multiple v-model="form.id" placeholder="请选择下一级审批人" style="width:100%;">
-                            <el-option v-for="item in deptOptions" 
-                                :key="item.code" 
+                        <el-select 
+                            multiple 
+                            filterable
+                            v-model="form.id" 
+                            placeholder="请选择下一级审批人" 
+                            style="width:100%;"
+                            ref="template"
+                            @visible-change="(v) => visibleChange(v, 'template')">
+                            <el-option v-for="(item,index) in deptOptions" 
+                                :key="index" 
                                 :label="item.name" 
                                 :value="item.code">
                             </el-option>
@@ -25,26 +32,41 @@
 <script>
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import { mapGetters } from 'vuex'
 export default {
     components: { Treeselect },
+    computed: {
+        ...mapGetters(['deptCode'])
+    },
+
     data() {
         return {
             loading: false,
             openWorkflow: false,
-            row: {},
-            deptOptions: undefined,
-            ids: [],
+            //原始数据
+            originDeptOptions: [],
+            //显示数据
+            deptOptions:[],
             form: {
                 id: undefined
             },
             selectChangeData: {},
-            comment: '',
+
+            rules: {
+                id: [
+                    { required: true, message: '审批人不能为空', trigger: 'change' }
+                ],
+            }
         }
     },
     methods: {
         init (row) {
             this.openWorkflow = true;
-            this.deptOptions = row;
+            this.originDeptOptions = row;
+            //隐藏数据
+            this.deptOptions = this.originDeptOptions.filter((item) => {
+                return item.hide === '0';
+            })
             this.form.id = [this.deptOptions[0].code];
         },
         /** 转换部门数据结构 */
@@ -62,11 +84,38 @@ export default {
             this.selectChangeData = node;
         },
         submitDataScope () {
-            this.$modal.confirm('是否确认该审批人?').then(() => {
-                this.openWorkflow = false;
-                this.$emit('carSuccess', this.form.id);
-            }).catch(() => {});
-        }
+            this.$refs.elForm.validate((result) => {
+                if (result) {
+                    this.$modal.confirm('是否确认该审批人?').then(() => {
+                        this.openWorkflow = false;
+                        this.$emit('carSuccess', this.form.id);
+                    }).catch(() => {
+
+                    });
+                }
+            })
+        },
+        handleMoreClick(){
+            this.deptOptions = this.originDeptOptions;
+        },
+        visibleChange(visible, refName) {
+            if (visible) {
+                const ref = this.$refs[refName];
+                let popper = ref.$refs.popper;
+                if (popper.$el) popper = popper.$el;
+                if (!Array.from(popper.children).some(v => v.className === 'el-template-more')){
+                    const el = document.createElement("div");
+                    el.className = "el-template-more";
+                    el.style ="line-height:50px;padding:0; color:#ffffff;";
+                    el.innerHTML =`<span id='more' style="color:#409EFF;font-size:14px;font-weight:600;float:right;margin-right:20px;cursor:pointer;">更多审核人</span>`;
+                    popper.appendChild(el);
+                    let element = el.firstChild;
+                    element.onclick = () => {
+                        this.handleMoreClick();
+                    };
+                }
+            }
+        },
     }
 };
 </script>

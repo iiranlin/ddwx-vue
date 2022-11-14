@@ -57,18 +57,21 @@
                 />
             </el-col>
         </el-row>
+        <!--绑定弹框-->
+        <binding ref="binding"></binding>
     </div>
 </template>
 <script>
 import buttonTop from "@/components/buttonTop"
 import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
+import binding from './components/binding'
 import{gcjcDriverListPage,gcjcDriverDeleteBatch} from "@/api/driver"
 import indexMixin from "@/views/mixins";
 
 export default {
     name:"driverFile",
-    components:{buttonTop,formData,tableIndex},
+    components:{buttonTop,formData,tableIndex,binding},
     mixins: [indexMixin],
 
     data() {
@@ -145,6 +148,8 @@ export default {
                 })
             }else if(buttonCode==='update'){
                 this.$router.push({name:"driverFileEdit",params:{id:ids}})
+            }else if(buttonCode==='binding'){
+                this.$refs.binding.init(this.selectionData[0].unitCode,this.selectionData[0].id);
             }
         },
         //顶部列字段展示

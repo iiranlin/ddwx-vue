@@ -37,13 +37,16 @@
           style="margin-top:-12px;margin-bottom:6px"
         >
           <template slot="customItem">
-            <el-form-item label="统计月份" prop="statMonth">
+            <el-form-item label="统计月份">
               <el-date-picker
-                v-model="formData.statMonth"
+                v-model="monthRange"
+                type="monthrange"
                 :clearable="false"
-                type="month"
                 format="yyyy-MM"
                 value-format="yyyy-MM"
+                range-separator="至"
+                start-placeholder="开始月份"
+                end-placeholder="结束月份"
                 :picker-options="datePicker"
               >
               </el-date-picker>
@@ -114,10 +117,13 @@ export default {
       property: {},
       //用车部门数据
       deptOptions: [],
+      //月份范围
+      monthRange: [],
       //查询参数
       formData: {
         deptId: '',
-        statMonth: ''
+        statMonth:'',
+        endMonth:'',
       },
       //已选中条目
       selectionData: [],
@@ -128,7 +134,6 @@ export default {
     }
   },
   created() {
-    this.formData.statMonth = this.lastMonth
     this.menuProperty()
     this.getList()
   },
@@ -140,7 +145,7 @@ export default {
       let date = new Date()
       let year = date.getFullYear()
       let month = date.getMonth()
-      if (month > 9) {
+      if (month < 9) {
         month = '0' + month
       } else if (month === 0) {
         year -= 1
@@ -183,10 +188,14 @@ export default {
     },
     //获取分页数据
     getList() {
-      this.loading = true
-      if (this.formData.statMonth === null) {
-        this.$message.warning('请选择统计月份')
-      } else {
+        this.loading = true;
+        if(this.monthRange.length!==0){
+          this.formData.statMonth = this.monthRange[0];
+          this.formData.endMonth = this.monthRange[1];
+        }else{
+          this.formData.statMonth = this.lastMonth
+          this.formData.endMonth = this.lastMonth
+        }
         getUsageByPage(Object.assign({}, this.listQuery, this.formData)).then(({ data }) => {
           this.dataList = data.list
           this.total = data.total
@@ -194,7 +203,6 @@ export default {
         }).catch(() => {
           this.loading = false
         })
-      }
     },
     //顶部按钮点击
     newButton(buttonCode, row) {
@@ -209,10 +217,10 @@ export default {
     // 导出文件
     exportFile(pageInfo) {
       // 整合page信息
-      if (this.formData.statMonth === null) {
-        this.$message.warning('请选择统计月份')
-      } else {
+      if (!!this.formData.statMonth && !!this.formData.endMonth) {
         axiosDownloadExcel(VehicleUsageStatExportUrl, Object.assign({}, pageInfo, this.listQuery, this.formData))
+      } else {
+        this.$message.warning('请选择统计月份')
       }
     },
     //顶部列字段展示
@@ -256,8 +264,9 @@ export default {
     },
     //清空部门数据
     handleResetDept() {
-      this.formData.deptId = ''
-      this.deptOptions = []
+      this.formData.deptId = '';
+      this.monthRange = [];
+      this.deptOptions = [];
     },
     //
     clickLink(row, fieldCode, linkText) {

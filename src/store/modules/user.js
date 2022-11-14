@@ -1,4 +1,5 @@
 import { login, logout, info } from '@/api/login'
+import { authAuth } from '@/api/auth'
 
 import { getToken, setToken, removeToken, setCookie } from '@/utils/auth'
 import md5 from "js-md5";
@@ -12,6 +13,7 @@ const user = {
         unitCode:"",
         deptName:"",
         deptId:"",
+        deptCode:'',
         avatar: '',
         roles: false,
         permissions: []
@@ -39,6 +41,9 @@ const user = {
         SET_DEPT_ID: (state, deptId) => {
             state.deptId = deptId
         },
+        SET_DEPT_CODE: (state, deptCode) => {
+            state.deptCode = deptCode
+        },
         SET_AVATAR: (state, avatar) => {
             state.avatar = avatar
         },
@@ -51,7 +56,21 @@ const user = {
     },
 
     actions: {
-        // 登录
+        //url登录
+        UrlLogin({ commit },id_token){
+            return new Promise((resolve, reject) => {
+                authAuth({id_token:id_token}).then(res => {
+                    console.log(res)
+                  setToken(res.data.token)
+                  commit('SET_TOKEN', res.data.token)
+                  resolve(res)
+                }).catch(error => {
+                  reject(error)
+                })
+            })
+        },
+
+        // 正常登录
         Login({ commit }, userInfo) {
             const username = userInfo.username.trim()
             const password = md5(userInfo.password)
@@ -84,6 +103,7 @@ const user = {
                         commit('SET_UNIT_CODE',user.unitCode)
                         commit('SET_DEPT_NAME',user.deptName)
                         commit('SET_DEPT_ID',user.deptId)
+                        commit('SET_DEPT_CODE',user.deptCode)
                         commit('SET_REAL_NAME', user.realName)
                         
                         setCookie("unitCode", user.unitCode);

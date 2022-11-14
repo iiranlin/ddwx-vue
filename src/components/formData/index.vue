@@ -15,7 +15,7 @@
     >
       <!--字典单选框-->
       <el-select
-        v-if="item.fieldType === 'dict' && item.isMultiple===0"
+        v-if="item.fieldType === 'dict' && (item.isMultiple===0 || item.isMultiple===null)"
         v-model="formData[item.fieldCode]"
         :placeholder="'请选择' + item.fieldName"
         clearable

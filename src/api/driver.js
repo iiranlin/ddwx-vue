@@ -507,3 +507,47 @@ export function logisticsGetDrivingRecord(params) {
   })
 }
 
+//司机档案-获取可绑定车辆
+export function vehicleInfoGetAvailableCarForDriver(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/vehicleInfo/getAvailableCarForDriver`,
+    method: 'get',
+    params
+  })
+}
+
+//车辆档案-获取可绑定司机
+export function gcjcDriverClassGetAvailableDriver(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcjcDriverClass/getAvailableDriver`,
+    method: 'get',
+    params
+  })
+}
+
+//司机车辆绑定-增加
+export function gcjcDriverVehicleAdd(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcjcDriverVehicle/add`,
+    method: 'post',
+    data
+  })
+}
+
+//司机车辆绑定-删除
+export function gcjcDriverVehicleDel(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcjcDriverVehicle/del`,
+    method: 'post',
+    data
+  })
+}
+
+//司机车辆绑定-查询
+export function gcjcDriverVehicleList(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcjcDriverVehicle/list`,
+    method: 'get',
+    params
+  })
+}

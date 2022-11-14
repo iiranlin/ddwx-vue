@@ -14,23 +14,6 @@
                 </el-row>
                 <el-row :gutter="24">
                     <el-col :span="8">
-                        <el-form-item label="指派司机" :prop="`list.${index}.driver`" :rules="rules.driver">
-                            <el-select
-                                v-model="item.driver"
-                                placeholder="请选择司机"
-                                clearable
-                                filterable
-                                value-key="driverCode"
-                            >
-                                <el-option v-for="item in driverList" 
-                                :key="item.driverCode" 
-                                :label="item.driver" 
-                                :value="item">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
                         <el-form-item label="指派车辆" :prop="`list.${index}.car`" :rules="rules.car">
                             <el-select
                                 v-model="item.car"
@@ -43,6 +26,23 @@
                                 <el-option v-for="item in vehicleList"
                                 :key="item.carNumber" 
                                 :label="item.carNumber" 
+                                :value="item">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="指派司机" :prop="`list.${index}.driver`" :rules="rules.driver">
+                            <el-select
+                                v-model="item.driver"
+                                placeholder="请选择司机"
+                                clearable
+                                filterable
+                                value-key="driverCode"
+                            >
+                                <el-option v-for="item in driverList" 
+                                :key="item.driverCode" 
+                                :label="item.driver" 
                                 :value="item">
                                 </el-option>
                             </el-select>
@@ -128,7 +128,6 @@ export default {
     methods: {
         init (row) {
             this.row = row;
-            this.getAvailableDriver(row.unitCode, row.usageDate);
             this.vehicleInfoGetAvailableCar(row.unitCode, row.deptId);
         },
         addCarButton () {
@@ -141,13 +140,14 @@ export default {
                 this.$modal.msgWarning('至少有一条数据！');
             }
         },
-        getAvailableDriver (unitCode, usageDate) {
+        getAvailableDriver (unitCode, usageDate,vinNumber) {
             let obj = {
                 classDateEnd: usageDate,
                 classDateStart: usageDate,
                 classId: 'none',
                 flag:  0,
                 unitCode: unitCode,
+                vinNumber:vinNumber,
             }
             getAvailableDriver(obj).then(({data}) => {
                 this.driverList = data
@@ -180,6 +180,14 @@ export default {
             }else{
                 this.formData.list[index].carName = '';
             }
+            //获取可选司机
+            this.formData.list[index].driver = {};
+
+            let vinNumber = this.formData.list[index].car.vinNumber;
+            if(!!vinNumber){
+                this.getAvailableDriver(this.row.unitCode, this.row.usageDate,vinNumber);
+            }
+           
         },
     }
 };
