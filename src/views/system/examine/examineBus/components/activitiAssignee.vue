@@ -104,7 +104,7 @@ export default {
                         this.deptOptions = this.originDeptOptions.filter((item) => {
                              return item.hide === '0';
                         })
-                        this.form.id = [data.assigneeList[0].code];
+                        this.form.id = [this.deptOptions[0].code];
                         this.openWorkflow = true;
                     }else{
                         this.activitiComplete();

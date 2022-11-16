@@ -23,7 +23,10 @@ export function axiosDownloadExcel(downloadPath, params = {}) {
   }).then((result) => {
     let fileName
     if (!result.headers['content-disposition']) {
-      fileName = '未知文件名.xlsx'
+      fileName = result.headers['FILENAME'];
+      if(!fileName){
+        fileName = '未知文件名.xlsx'
+      }
     } else {
       fileName = decodeURIComponent(result.headers['content-disposition'].split('attachment; filename=')[1])
     }

@@ -71,6 +71,8 @@
         </el-row>
         <!--审核弹出框-->
         <assignee ref="assignee" @assingeeSuccess="assingeeSuccess"></assignee>
+        <!--处理弹出框-->
+        <handle ref="handle" @handleSuccess="handleSuccess"></handle>
     </div>
 </template>
 <script>
@@ -78,9 +80,9 @@ import buttonTop from "@/components/buttonTop"
 import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
 import assignee from "./components/assignee";
+import handle from "./components/handle";
 import{ gcywChangeRequestListPage,
 gcywChangeRequestUpdate,
-gcywChangeRequestUpdateRes,
 dataChangeOrderExportUrl } from "@/api/system/dataChange"
 import { activitiAssigneeListByType } from "@/api/driver";
 import { getAllAvailableUnit } from '@/api/system/unit'
@@ -89,7 +91,7 @@ import { axiosDownloadExcel } from '@/api/download'
 
 export default {
     name:"dataChangeOrder",
-    components:{buttonTop,formData,tableIndex,assignee},
+    components:{buttonTop,formData,tableIndex,assignee,handle},
     mixins: [indexMixin],
     data() {
         return {
@@ -240,22 +242,7 @@ export default {
                     this.$modal.msgWarning('已处理数据无法重复处理，请重新选择!');
                     return;
                 }
-                this.$modal.confirm("是否处理所选信息?").then(()=>{
-                    this.loading = true;
-                    let params = {
-                        resStatus:'1',
-                        id:this.selectionData[0].id,
-                    }
-                    gcywChangeRequestUpdateRes(params).then(({message}) => {
-                        this.loading = false;
-                        this.$modal.msgSuccess(message);
-                        this.getList();
-                    }).catch((err) => {
-                        this.loading = false;
-                    })
-                }).catch((err) => {
-                    
-                })
+                this.$refs.handle.init(this.selectionData[0].id);
             }else if(buttonCode==='export'){
                 this.exportFile();
             }
@@ -295,6 +282,10 @@ export default {
                     obj:row
                 },
             })
+        },
+        //处理意见回调
+        handleSuccess(){
+           this.getList();
         },
         //顶部列字段展示
         handleCheckAllChange(columns){

@@ -378,6 +378,33 @@
                 :lg="8"
               >
                 <el-form-item
+                  label="指派车辆"
+                  :prop="`reqAssignments.${index}.carNumber`"
+                >
+                  <el-select
+                    v-model="item.carNumber"
+                    placeholder="请选择指派车辆"
+                    clearable
+                    filterable
+                    @change="carNumberChange(item.carNumber, item.uniqueId, index)"
+                  >
+                    <el-option
+                      v-for="dataItem in carNumberOptions"
+                      :key="dataItem.carId"
+                      :label="dataItem.carNumber"
+                      :value="dataItem.carNumber"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col
+                :xs="24"
+                :sm="12"
+                :md="8"
+                :lg="8"
+              >
+                <el-form-item
                   label="指派司机"
                   :prop="`reqAssignments.${index}.driverId`"
                 >
@@ -394,33 +421,6 @@
                       :key="dataItem.driverCode"
                       :label="dataItem.driver"
                       :value="dataItem.driverCode"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col
-                :xs="24"
-                :sm="12"
-                :md="8"
-                :lg="8"
-              >
-                <el-form-item
-                  label="指派车辆"
-                  :prop="`reqAssignments.${index}.carNumber`"
-                >
-                  <el-select
-                    v-model="item.carNumber"
-                    placeholder="请选择指派车辆"
-                    clearable
-                    filterable
-                    @change="carNumberChange(item.carNumber, item.uniqueId, index)"
-                  >
-                    <el-option
-                      v-for="dataItem in carNumberOptions"
-                      :key="dataItem.carId"
-                      :label="dataItem.carNumber"
-                      :value="dataItem.carNumber"
                     >
                     </el-option>
                   </el-select>
@@ -528,7 +528,7 @@
 <script>
 import { getAllAvailableUnit } from "@/api/system/unit";
 import { getAllAvailableDept } from "@/api/dept";
-import { gcjcDriverClassList } from "@/api/driver";
+import { getAvailableDriver } from "@/api/gcjcDriverClass";
 import { getAllAvailableCar } from "@/api/car";
 import { vehicleInfoGetAssignCount } from "@/api/vehicleInfo";
 import { saveOrderDispatch } from "@/api/gcywVehicleRequest";
@@ -865,62 +865,29 @@ export default {
     },
     // 用车单位发生变化时
     async unitCodeChange(val) {
-      // 清除部门数据
-      this.formData.reqAssignments.forEach(item => {
-        item['driver'] = '';
-        item['driverPhone'] = '';
-        item['driverId'] = '';
-        item['carNumber'] = '';
-        item['beginMiles'] = '';
-        item['endMiles'] = '';
-        item['maintainDate'] = '';
-        item['maintainMiles'] = '';
-        item['vinNumber'] = '';
-      });
       this.formData.unitName = '';
-      if (!val) {
-        this.deptData = [];
-        this.driverData = [];
-        this.carNumberOptions = [];
-        return;
-      }
+      this.formData.deptId = '';
+
+      this.deptData = [];
+      this.driverData = [];
+      this.carNumberOptions = [];
+
       const selectUnit = (this.unitData.find(item => item.unitCode === val) ?? {}) || {};
       this.formData.unitName = selectUnit.unitName ?? '';
       this.getDeptDictList(val);
-      this.getAllDriverData();
       this.getAllAvailableCarData();
     },
     // 用车部门发生变化时
     async deptIdChange(val) {
-      this.formData.reqAssignments.forEach(item => {
-        item['carNumber'] = '';
-        item['beginMiles'] = '';
-        item['endMiles'] = '';
-        item['maintainDate'] = '';
-        item['maintainMiles'] = '';
-        item['vinNumber'] = '';
-      });
-      // this.$nextTick(() => {
-      //   this.$refs.elForm.clearValidate('carNumber')
-      // })
-      if (!val) {
-        this.carNumberOptions = [];
-        return;
-      }
+      this.driverData = [];
+      this.carNumberOptions = [];
       this.getAllAvailableCarData();
     },
     // 用车时间发生变化时
     async usageDateChange(val) {
-      this.formData.reqAssignments.forEach(item => {
-        item['driver'] = '';
-        item['driverPhone'] = '';
-        item['driverId'] = '';
-      });
-      if (!val) {
-        this.driverData = [];
-        return;
-      }
-      this.getAllDriverData()
+      this.driverData = [];
+      this.carNumberOptions = [];
+      this.getAllAvailableCarData();
     },
     // 司机发生变化时
     driverChange(driverCode, _uniqueId, index) {
@@ -941,9 +908,15 @@ export default {
       this.formData.reqAssignments[index]['maintainMiles'] = selectedCar?.maintainMiles ?? '';
       // 车架号
       this.formData.reqAssignments[index]['vinNumber'] = selectedCar?.vinNumber ?? '';
+
+      this.formData.reqAssignments[index]['driver']  = '';
+      this.formData.reqAssignments[index]['driverPhone']  = '';
+      this.formData.reqAssignments[index]['driverId']  = '';
+      this.driverData = [];
+      this.getAllDriverData(selectedCar.vinNumber);
     },
     // 获取指派司机列表
-    async getAllDriverData() {
+    async getAllDriverData(vinNumber) {
       try {
         if (!this.formData.unitCode || !this.formData.usageDate) {
           return;
@@ -954,15 +927,28 @@ export default {
           unitCode: this.formData.unitCode,
           classDateStart: this.formData.usageDate,
           classDateEnd: this.formData.usageDate,
+          vinNumber:vinNumber,
         }
-        const { data: { list = [] } = {} } = await gcjcDriverClassList(params);
-        this.driverData = list || [];
+        const { data } = await getAvailableDriver(params);
+        this.driverData = data || [];
       } catch (e) {
       } finally {
       }
     },
     // 获取指派车辆列表
     async getAllAvailableCarData() {
+      //清空车辆和司机数据
+      this.formData.reqAssignments.forEach(item => {
+        item['driver'] = '';
+        item['driverPhone'] = '';
+        item['driverId'] = '';
+        item['carNumber'] = '';
+        item['beginMiles'] = '';
+        item['endMiles'] = '';
+        item['maintainDate'] = '';
+        item['maintainMiles'] = '';
+        item['vinNumber'] = '';
+      });
       try {
         if (!this.formData.unitCode || !this.formData.deptId) {
           return;
