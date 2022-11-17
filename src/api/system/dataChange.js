@@ -1,6 +1,10 @@
 import request from '@/utils/request'
 let VUE_APP_BASE_PREFIX = process.env.VUE_APP_AUTH_SERVER;
 
+//上传附件
+export const appendixInfoImportUrl = `${process.env.VUE_APP_BASE_API}/${VUE_APP_BASE_PREFIX}/minio/upload`
+//下载附件
+export const appendixInfoExporttUrl = `${VUE_APP_BASE_PREFIX}/minio/download`
 // 数据变更工单导出地址
 export const dataChangeOrderExportUrl = `${VUE_APP_BASE_PREFIX}/gcywChangeRequest/download`
 
@@ -17,6 +21,23 @@ export function gcywChangeRequestListPage(params) {
 export function gcywChangeRequestAdd(data) {
     return request({
         url: `${VUE_APP_BASE_PREFIX}/gcywChangeRequest/add`,
+        method: 'post',
+        data
+    })
+}
+// 数据变更工单-获取附件
+export function gcywChangeRequestListFile(params) {
+    return request({
+        url: `${VUE_APP_BASE_PREFIX}/gcywChangeRequest/listFile`,
+        method: 'get',
+        params
+    })
+}
+
+// 数据变更工单-删除附件
+export function gcywChangeRequestUpdFile(data) {
+    return request({
+        url: `${VUE_APP_BASE_PREFIX}/gcywChangeRequest/updFile`,
         method: 'post',
         data
     })

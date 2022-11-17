@@ -34,6 +34,24 @@
             </el-col>
         </el-row>
         </el-form>
+        <!--附件-->
+        <el-row :gutter="20">
+            <el-col style="width:90%;margin: 15px 10px;">
+                <i class="el-icon-caret-right title-icon"></i><span>附件</span>
+            </el-col>
+        </el-row>
+         <el-row>
+            <el-col :span="24" :xs="24" style="width:90%;padding: 0px 0px 20px 40px">
+                <el-table ref="eltableSecond" :data="appendixList" stripe border class="container_table">
+                    <el-table-column label="序号" align="center" type="index" width="50px"></el-table-column>
+                    <el-table-column label="附件名称" align="center" prop="oldFileName">
+                        <template slot-scope="scope">
+                            <a class='custom-a' href="#" @click="handleImageClick(appendixList[scope.$index])">{{appendixList[scope.$index].oldFileName}}</a>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-col>
+        </el-row>
         <!--审核信息-->
         <el-row :gutter="20">
             <el-col style="width:90%;margin: 15px 10px;">
@@ -41,7 +59,7 @@
             </el-col>
         </el-row>
         <el-row>
-            <el-col :span="24" :xs="24" style="width:90%;padding: 0px 0px 40px 40px">
+            <el-col :span="24" :xs="24" style="width:90%;padding: 0px 0px 20px 40px">
                 <el-table ref="eltable" max-height="300px" :data="activittList" stripe border>
                     <el-table-column label="序号" align="center" type="index"></el-table-column>
                     <el-table-column label="审批日期" align="center" prop="endTime"></el-table-column>
@@ -81,8 +99,9 @@
   </div>
 </template>
 <script>
-import { gcywChangeRequestActivitiLog } from "@/api/system/dataChange"
+import { gcywChangeRequestActivitiLog,gcywChangeRequestListFile,appendixInfoExporttUrl } from "@/api/system/dataChange"
 import { getListByParentCode } from '@/api/system/dict'
+import { axiosDownloadExcel } from '@/api/download'
 export default {
     name: "dataChangeOrderDetail",
     data() {
@@ -91,6 +110,8 @@ export default {
             loading:false,
             //表单数据
             form:{},
+            //附件信息
+            appendixList:[],
             //审核日志
             activittList:[],
             //处理状态数据
@@ -100,9 +121,20 @@ export default {
     activated(){
         this.form = Object.assign({}, this.$route.params.obj);
         this.getResStatusOptions();
+        this.getFileList();
         this.getActivitiList();
     },
     methods: {
+        //获取附件数据
+        async getFileList(){
+            this.loading = true;
+            await gcywChangeRequestListFile({id:this.form.id}).then(({ data }) => {
+                this.loading = false;
+                this.appendixList = data;
+            }).catch((err) => {
+                this.loading = false;
+            })
+        },
         //获取审批日志
         async getActivitiList(id){
             this.loading = true;
@@ -139,7 +171,14 @@ export default {
                return item.code === status;
             })
             return !!obj?obj.name:'';
-        }
+        },
+        //附件点击
+        handleImageClick(item){
+            let params = {
+                fileName: item.fileName,
+            }
+            axiosDownloadExcel(appendixInfoExporttUrl,params);
+        },
     },
 };
 </script>
@@ -156,5 +195,9 @@ export default {
     width: 100px;
     height: 100px;
     display: block;
+}
+.custom-a, .custom-a:focus, .custom-a:hover {
+    color: #00a0ff !important;
+    text-decoration: underline;
 }
 </style>

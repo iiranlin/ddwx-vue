@@ -1,5 +1,5 @@
 <template>
-    <div class="app-container">
+    <div class="app-container" v-loading="loading">
         <el-row :gutter="20">
             <el-col :span="1.5">
                 <el-button type="primary" size="small" @click="handleSave">保存</el-button>
@@ -68,17 +68,42 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
+                <el-row>
+                    <el-col :span="24">
+                        <el-form-item label="上传附件">
+                            <el-upload
+                                ref="elupload"
+                                drag
+                                :data='uploadData'
+                                :action="uploadUrl" 
+                                :show-file-list="true"
+                                :on-success="appendixUploadOnSuccess" 
+                                :on-error="appendixUploadOnError" 
+                                :on-remove="appendixRemove"
+                                :headers="uploadHaders" 
+                                :before-upload="appendixBeforeUpload" 
+                                :auto-upload="true">
+                                <i class="el-icon-upload">
+                                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em>
+                                        <span class="upload_span">支持扩展名:.rar .zip .doc .docx .pdf .jpg...</span>
+                                    </div>
+                                </i>
+                            </el-upload>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
             </el-form>
         </el-row>
     </div>
 </template>
 <script>
-import { gcywChangeRequestAdd,userListAll } from '@/api/system/dataChange'
+import { gcywChangeRequestAdd,userListAll,appendixInfoImportUrl } from '@/api/system/dataChange'
 import { handleNumberLimit } from '@/utils'
 import { getAllAvailableUnit } from '@/api/system/unit'
 import { deptTree } from "@/api/system/dept";
 import selectTree from "@/components/selectTree";
 import { getListByParentCode } from '@/api/system/dict'
+import { uploadHaders } from '@/utils/auth'
 export default {
     name: 'dataChangeOrderCreate',
     components: { selectTree },
@@ -96,6 +121,16 @@ export default {
             userOptions:[],
             //系统类型数据
             systemOptions:[],
+             //附件数据
+            appendixList:[],
+            //上传文件地址
+            uploadUrl: appendixInfoImportUrl,
+            //上传文件请求头
+            uploadHaders: uploadHaders(),
+            //上传文件参数
+            uploadData:{
+                type:'6',
+            },
             //表单数据
             form: {
                 unitCode: '',    //申请单位编码
@@ -128,7 +163,6 @@ export default {
                 reqDesc: [
                     { required: true, message: '问题描述不能为空', trigger: 'blur' }
                 ],
-
             },
         }
     },
@@ -211,12 +245,64 @@ export default {
             this.form.reqUserName = item.realName;
             this.form.reqphone = item.phone;
         },
+        //上传附件前
+        appendixBeforeUpload(file){
+            if(this.appendixList.length===3){
+                this.$modal.msgWarning("最多上传3个附件！")
+                return false;
+            }
+            // const isJPG = file.type === 'image/jpeg';
+            // const isPNG = file.type === 'image/png'
+            // const isPDF = file.type === 'application/pdf'
+            const isLt10M = file.size / 1024 / 1024 < 10;
+            const isFileName = file.name.length<90;
+
+            if (!isLt10M) {
+                this.$modal.msgWarning('上传文件大小不能超过 10MB!');
+                return false;
+            }
+            if (!isFileName) {
+                this.$modal.msgWarning('上传文件名过长!');
+                return false;
+            }
+            this.loading = true;
+            return true;
+        },
+        //附件上传成功
+        appendixUploadOnSuccess(code, data, message){
+            this.loading = false;
+            this.$modal.msgSuccess(data.response.message);
+            this.appendixList.push(data.response.data);
+        },
+        //附件上传失败
+        appendixUploadOnError(){
+            this.loading = false;
+            this.$modal.msgError("上传失败, 请重试");
+        },
+        //删除上传文件
+        appendixRemove(file){
+            let fileObj = file.response.data;
+
+            let index = this.appendixList.findIndex((item) => {
+                return item.oldFileName===fileObj.oldFileName;
+            })
+            this.appendixList.splice(index, 1);
+        },
         //保存数据
         handleSave() {
             this.$refs.elform.validate((result) => {
                 if (result) {
                     this.$modal.confirm("是否保存信息?").then(()=>{
                         this.loading = true
+
+                        let files = [];
+                        this.appendixList.forEach((item) => {
+                            let obj = {};
+                            this.$set(obj, 'fileName', item.fileName);
+                            this.$set(obj, 'oldFileName', item.originalFileName);
+                            files.push(obj);
+                        })
+                        this.$set(this.form, 'files', files)
                         gcywChangeRequestAdd(Object.assign({}, this.form)).then(({ message }) => {
                             this.loading = false
                             this.$modal.msgSuccess(message)
@@ -251,5 +337,14 @@ export default {
 .title-icon {
   color: rgb(64, 158, 255);
   margin-right: 5px;
+}
+.upload_span {
+    display: block;
+    margin-top: -20px;
+    font-size: 10px;
+    color: #ccc;
+}
+::v-deep .el-upload-list.el-upload-list--text {
+    width:360px;
 }
 </style>
