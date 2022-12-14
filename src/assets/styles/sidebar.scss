@@ -12,6 +12,7 @@
     transition: width 0.28s;
     width: $base-sidebar-width !important;
     background-color: $base-menu-background;
+    background-image: $base-menu-background-image;
     height: 100%;
     position: fixed;
     font-size: 0px;
@@ -42,8 +43,10 @@
 
     &.has-logo {
       .el-scrollbar {
-        height: calc(100% - 50px);
+        height: calc(100% - 80px);
+        overflow-y: scroll;
       }
+      .el-scrollbar::-webkit-scrollbar {display: none;}
     }
 
     .is-horizontal {
@@ -57,7 +60,10 @@
     }
 
     .svg-icon {
-      margin-right: 16px;
+      color: $base-menu-icon-color;
+      font-size: 16px;
+      transform: translate(-2px, 2px);
+      margin-right: 5px;
     }
 
     .el-menu {
@@ -70,13 +76,34 @@
       overflow: hidden !important;
       text-overflow: ellipsis !important;
       white-space: nowrap !important;
+      margin: 0 4px 12px 4px !important;
+      border-radius:4px !important;
+      color: $base-menu-color !important;
+      height: 42px !important;
+      line-height: 42px !important;
+    }
+    .el-menu-item{
+      padding-right: 24px;
+    }
+    .el-menu-item:hover{
+      padding-right: 0px;
+    }
+    .el-menu-item.is-active{
+      background-image: $base-menu-active-background;
+    }
+    .el-menu-item.is-active .svg-icon{
+      color: $base-menu-color;
+    }
+    .el-submenu li.el-menu-item{
+      min-width: 0;
     }
 
     // menu hover
     .submenu-title-noDropdown,
     .el-submenu__title {
       &:hover {
-        background-color: rgba(0, 0, 0, 0.06) !important;
+        background-color: #373888 !important;
+        transition: all 0.2s ease-in-out 0s;
       }
     }
 
@@ -86,19 +113,19 @@
 
     & .nest-menu .el-submenu>.el-submenu__title,
     & .el-submenu .el-menu-item {
-      min-width: $base-sidebar-width !important;
-
       &:hover {
-        background-color: rgba(0, 0, 0, 0.06) !important;
+        background-color: #373888 !important;
+        transition: all 0.2s ease-in-out 0s;
       }
     }
 
     & .theme-dark .nest-menu .el-submenu>.el-submenu__title,
     & .theme-dark .el-submenu .el-menu-item {
-      background-color: $base-sub-menu-background !important;
+      // background-color: $base-sub-menu-background !important;
 
       &:hover {
-        background-color: $base-sub-menu-hover !important;
+        background-color: #373888 !important;
+        transition: all 0.2s ease-in-out 0s;
       }
     }
   }
@@ -120,7 +147,7 @@
         padding: 0 !important;
 
         .svg-icon {
-          margin-left: 20px;
+          margin-left: 18px;
         }
       }
     }
@@ -140,6 +167,9 @@
 
     .el-menu--collapse {
       .el-submenu {
+        .el-menu {
+          border-radius: 5px;
+        }
         &>.el-submenu__title {
           &>span {
             height: 0;
@@ -150,6 +180,10 @@
           }
         }
       }
+    }
+    .el-menu-item {
+      height: 48px;
+      line-height: 48px; 
     }
   }
 
@@ -198,7 +232,8 @@
   .el-menu-item {
     &:hover {
       // you can use $subMenuHover
-      background-color: rgba(0, 0, 0, 0.06) !important;
+      background-color: #373888 !important;
+      transition: all 0.2s ease-in-out 0s;
     }
   }
 
@@ -220,4 +255,60 @@
       border-radius: 20px;
     }
   }
+}
+.el-submenu.is-opened {
+  position: relative;
+}
+.el-submenu.is-opened::before {
+  position: absolute;
+  content: "";
+  left: 30px;
+  top: 34px;
+  width: 0;
+  height: calc(100% - 65px);
+  border-left: 1px dashed #6A6A93;
+  z-index: 9;
+  opacity: 0.4;
+}
+.nest-menu .el-submenu.is-opened{
+  position: relative;
+}
+.nest-menu .el-submenu.is-opened::before {
+  position: absolute;
+  content: "";
+  left: 49px;
+  top: 34px;
+  width: 0;
+  height: calc(100% - 65px);
+  border-left: 1px dashed #6A6A93;
+  z-index: 9;
+  opacity: 0.4;
+}
+.el-menu--inline .el-submenu__title{
+  position: relative;
+}
+.el-menu--inline .el-submenu__title::before{
+  position: absolute;
+  content: "";
+  border-top: 1px dashed #6A6A93;
+  z-index: 9;
+  width: 9px;
+  height: 0;
+  left: 28px;
+  top: 22px;
+  opacity: 0.4;
+}
+.el-submenu .el-menu-item span{
+  position: relative;
+}
+.el-submenu .el-menu-item span::before{
+  position: absolute;
+  content: "";
+  border-top: 1px dashed #6A6A93;
+  z-index: 9;
+  width: 9px;
+  height: 0;
+  left: -37px;
+  top: 8px;
+  opacity: 0.4;
 }

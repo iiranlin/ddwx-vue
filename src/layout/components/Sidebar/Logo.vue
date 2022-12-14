@@ -2,19 +2,19 @@
   <div class="sidebar-logo-container" :class="{'collapse':collapse}" :style="{ backgroundColor: sideTheme === 'theme-dark' || sideTheme === 'theme-dark-top' ? variables.menuBackground : variables.menuLightBackground }">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo" />
-        <h1 v-else class="sidebar-title" :style="{ color: sideTheme === 'theme-dark' || sideTheme === 'theme-dark-top' ? variables.logoTitleColor : variables.logoLightTitleColor }">{{ title }} </h1>
+        <img v-if="logo" :src="logo" class="collapse-logo sidebar-logo" />
+        <!-- <h1 v-else class="sidebar-title" :style="{ color: sideTheme === 'theme-dark' || sideTheme === 'theme-dark-top' ? variables.logoTitleColor : variables.logoLightTitleColor }">{{ title }} </h1> -->
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
         <img v-if="logo" :src="logo" class="sidebar-logo" />
-        <h1 class="sidebar-title" :style="{ color: sideTheme === 'theme-dark' || sideTheme === 'theme-dark-top' ? variables.logoTitleColor : variables.logoLightTitleColor }">{{ title }} </h1>
+        <!-- <h1 class="sidebar-title" :style="{ color: sideTheme === 'theme-dark' || sideTheme === 'theme-dark-top' ? variables.logoTitleColor : variables.logoLightTitleColor }">{{ title }} </h1> -->
       </router-link>
     </transition>
   </div>
 </template>
 
 <script>
-import logoImg from '@/assets/logo/LogoTKY.svg'
+import logoImg from '@/assets/logo/Logo@3x.webp'
 import variables from '@/assets/styles/variables.scss'
 
 export default {
@@ -55,8 +55,8 @@ export default {
 .sidebar-logo-container {
   position: relative;
   width: 100%;
-  height: 50px;
-  line-height: 50px;
+  height: 80px;
+  line-height: 80px;
   background: #2b2f3a;
   text-align: center;
   overflow: hidden;
@@ -64,12 +64,14 @@ export default {
   & .sidebar-logo-link {
     height: 100%;
     width: 100%;
-
+    & .collapse-logo{
+      transform: translateX(-136px);
+    }
     & .sidebar-logo {
-      width: 62px;
-      height: 30px;
+      width: 200px;
+      height: 80px;
       vertical-align: middle;
-      margin-right: 12px;
+      filter: saturate(1.3);
     }
 
     & .sidebar-title {
