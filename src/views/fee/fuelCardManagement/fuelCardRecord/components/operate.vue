@@ -256,7 +256,7 @@
 import { numToFixed2 } from '@/utils/index'
 import { searchCarSelectInfo } from '@/api/car'
 import {
-  getFuelCardByCarNumber
+  getFuelCardByCarNumber,getAllFuelMainCard
 } from '@/api/fuelCardManagement/fuelCard'
 import {
   createFuelCardRecord
@@ -325,9 +325,6 @@ export default {
       unitData: [],
       //表单校验
       rules: {
-        carNumber: [
-          { required: true, message: '所属车辆不能为空', trigger: 'change' }
-        ],
         // 卡号
         cardNumber: [
           { required: true, message: '卡号不能为空', trigger: 'change' }
@@ -414,6 +411,7 @@ export default {
       this.$nextTick(async() => {
         if (type === 'create') {
           this.title = '新建加油卡交易记录'
+          this.getAllFuelMainCard();
         }
         // else if (type === "update") {
         //   this.title = "修改ETC交易记录"
@@ -421,6 +419,14 @@ export default {
         // }
         await this.handleSystemCardDict(Object.keys(this.selectOptions))
         await this.remoteMethod('')
+      })
+    },
+    //获取所有卡号
+    async getAllFuelMainCard(){
+      await getAllFuelMainCard().then(({data}) => {
+        this.cardNumberOptions = data;
+      }).catch((err) => {
+        
       })
     },
     // 获取当前页面的通用字典下拉数据
@@ -459,7 +465,11 @@ export default {
       this.$nextTick(() => {
         this.$refs.elForm.clearValidate('cardNumber')
       })
-      this.getFuelCard(val)
+      if(!!val){
+        this.getFuelCard(val)
+      }else{
+        this.getAllFuelMainCard();
+      }
     },
     // 根据车牌号码获取油卡
     async getFuelCard(cardNumber = '') {

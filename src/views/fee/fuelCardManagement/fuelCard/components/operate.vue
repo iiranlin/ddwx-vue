@@ -43,29 +43,6 @@
         </el-col>
         <el-col :span="24">
           <el-form-item
-            label="所属车辆"
-            prop="carNumber"
-          >
-            <el-select
-              v-model="form.carNumber"
-              placeholder="请选择所属车辆"
-              clearable
-              size="small"
-              filterable
-              style="width:100%"
-            >
-              <el-option
-                v-for="item in carNumberOptions"
-                :key="item.carId"
-                :label="item.carNumber"
-                :value="item.carNumber"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="24">
-          <el-form-item
             label="卡类型"
             prop="isMcard"
           >
@@ -133,6 +110,29 @@
               clearable
               size="small"
             ></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item
+            label="所属车辆"
+            prop="carNumber"
+          >
+            <el-select
+              v-model="form.carNumber"
+              placeholder="请选择所属车辆"
+              clearable
+              size="small"
+              filterable
+              style="width:100%"
+            >
+              <el-option
+                v-for="item in carNumberOptions"
+                :key="item.carId"
+                :label="item.carNumber"
+                :value="item.carNumber"
+              >
+              </el-option>
+            </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="24">
@@ -249,9 +249,6 @@ export default {
         isMcard: [
           { required: true, message: "加油卡类型不能为空", trigger: "change" }
         ],
-        carNumber: [
-          { required: true, message: "所属车辆不能为空", trigger: "change" }
-        ],
         mCardNumber: [
           { required: true, message: "主卡号不能为空", trigger: "change" }
         ],
@@ -297,6 +294,18 @@ export default {
   mounted() {
   },
   methods: {
+    //添加所属车辆验证
+    addRules() {
+      const newRules = [{ required: true, trigger: "change", message: "所属车辆不能为空" }];
+      this.rules = { ...this.rules, carNumber: newRules };
+    },
+    //删除所属车辆验证
+    removeRules() {
+      // 清除指定校验规则
+      this.$refs.elForm.clearValidate("carNumber");
+      // 这行必须 
+      this.rules = { ...this.rules, carNumber: [] };
+    },
     //初始化
     init(type, id) {
       this.type = type;
@@ -358,8 +367,10 @@ export default {
     async cardTypeChange(val) {
       if (val !== '1') {
         this.form.mCardNumber = null;
+        this.removeRules();
         return;
       }
+      this.addRules();
       this.getAllMotherCard()
     },
     // 获取所有的主卡
