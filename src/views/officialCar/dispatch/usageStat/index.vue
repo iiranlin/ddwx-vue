@@ -145,12 +145,14 @@ export default {
       let date = new Date()
       let year = date.getFullYear()
       let month = date.getMonth()
-      if (month < 9) {
-        month = '0' + month
-      } else if (month === 0) {
+
+      if(month === 0){
         year -= 1
         month = 12
       }
+      if (month < 9) {
+        month = '0' + month
+      } 
       return year + '-' + month
     }
   },

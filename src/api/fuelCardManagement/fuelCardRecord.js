@@ -5,7 +5,7 @@ let VUE_APP_BASE_PREFIX = process.env.VUE_APP_AUTH_SERVER;
 let path = process.env.NODE_ENV === 'development'? process.env.VUE_APP_BASE_API : '';
 // let uploadPath = process.env.NODE_ENV === 'development'? path : '/api';
 
-export const fuelRecordTemplateUrl = `${path}${VUE_APP_BASE_PREFIX}/gcywFuelRecord/template`
+export const fuelRecordTemplateUrl = `${VUE_APP_BASE_PREFIX}/gcywFuelRecord/template`
 export const fuelRecordImportUrl = `${process.env.VUE_APP_BASE_API}/${VUE_APP_BASE_PREFIX}/gcywFuelRecord/import`
 
 /**

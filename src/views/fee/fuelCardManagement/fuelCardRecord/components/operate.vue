@@ -87,6 +87,7 @@
                 :key="item.code"
                 :label="item.name"
                 :value="item.code"
+                @click.native="handleCalculatePrice()"
               >
               </el-option>
             </el-select>
@@ -112,7 +113,7 @@
                 v-for="item in selectOptions.gasGrade"
                 :key="item.code"
                 :label="item.name"
-                :value="item.code"
+                :value="item.name"
               >
               </el-option>
             </el-select>
@@ -130,6 +131,7 @@
               clearable
               size="small"
               @change="inputNumberChange(form.transFee, 'transFee')"
+              @blur="handleCalculatePrice()"
             ></el-input>
           </el-form-item>
         </el-col>
@@ -197,6 +199,7 @@
               placeholder="请输入数量"
               size="small"
               @change="inputNumberChange(form.oilVolume, 'oilVolume')"
+              @blur="handleCalculatePrice()"
             ></el-input>
           </el-form-item>
         </el-col>
@@ -258,7 +261,7 @@ import { searchCarSelectInfo } from '@/api/car'
 import {
   getFuelCardByCarNumber,getAllFuelMainCard
 } from '@/api/fuelCardManagement/fuelCard'
-import {
+import {  
   createFuelCardRecord
 } from '@/api/fuelCardManagement/fuelCardRecord'
 import { FUEL_CARD_RECORD_DICT } from '@/views/fee/fuelCardManagement/constants/index'
@@ -531,6 +534,19 @@ export default {
     // 处理输入的数字
     inputNumberChange(val, label) {
       this.form[label] = numToFixed2(val)
+    },
+    // 计算单价
+    handleCalculatePrice(){
+      if(this.form.incomeOrExp !== 'N'){
+        return;
+      }
+      if(!this.form.transFee){
+        return;
+      }
+      if(!this.form.oilVolume){
+        return;
+      }
+      this.form.oilPrice = parseFloat((Number(this.form.transFee)/Number(this.form.oilVolume))).toFixed(2);
     }
   }
 }
