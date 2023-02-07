@@ -1,81 +1,89 @@
 <template>
-  <div class="app-container_list">
-    <el-row :gutter="20" class="container_h">
-
-      <!--用户数据-->
-      <el-col :span="24" :xs="24" class="container_flex">
-        <el-row :gutter="24" class="container_flex-right_list">
-          <el-col :span="1.5"  v-for="item in property.buttonTop" :key="item.id" style="margin-top:2px;padding:0px;">
-           <button-top
-              :item="item"
-              :multiple="multiple"
-              :single="single"
-              @newButton="newButton"
-              class="cume-button"
-            ></button-top>
-            </el-col>
-            <right-toolbar
-            ref="rightToolbar"
-            style="margin-top:4px; padding-right:20px"
-            :showSearch.sync="showSearch"
-            :columns="property.fields"
-            @numberChange="numberChange"
-            @queryTable="handleQuery"
-            @handleCheckAllChange="handleCheckAllChange"
-            @clickReset="clickReset"
-          ></right-toolbar>
+  <div class="app-container_tree">
+      <el-row :gutter="20" class="container_h">
+          <el-col :span="4" :xs="24" class="container_flex_overflow">
+              <div class="head-container">
+                  <el-tree
+                    class="drawer-tree"
+                    :indent="0"
+                    :data="deptOptions"
+                    :props="defaultProps"
+                    :expand-on-click-node="false"
+                    ref="tree"
+                    :highlight-current="true"
+                    :default-expand-all="false"
+                    @node-click="handleNodeClick"/>
+                </div>
+          </el-col>
+          <el-col :span="20" :xs="24" class="container_flex">
+              <el-row :gutter="24" class="container_flex-right_tree">
+              <el-col :span="1.5"  v-for="item in property.buttonTop" :key="item.id" style="margin-top:2px;padding:0px;">
+                  <button-top
+                      :item="item"
+                      :multiple="multiple"
+                      :single="single"
+                      @newButton="newButton"
+                      class="cume-button"/>
+              </el-col>
+              <right-toolbar
+                  ref="rightToolbar"
+                  style="margin-top:4px; padding-right:20px"
+                  :showSearch.sync="showSearch"
+                  :columns="property.fields"
+                  @numberChange="numberChange"
+                  @queryTable="handleQuery"
+                  @handleCheckAllChange="handleCheckAllChange"
+                  @clickReset="clickReset"/>
           </el-row>
           <form-data
-          :formData="formData"
-          :showSearch="showSearch"
-          :searchArr="property.search || []"
-          @handleQuery="handleQuery"
-          style="margin-top:-12px;margin-bottom: 6px;"
-        />
+              :formData='formData'
+              :showSearch="showSearch"
+              :searchArr="property.search || []"
+              @handleQuery="handleQuery"
+              style="margin-top:-12px;margin-bottom: 6px;"/>
           <table-index
-        ref="tableIndex"
-        style="margin-top:-8px"
-        pageName="commonDict"
-        :tableIndexs="tableIndex"
-        :loading="loading"
-        :tableData="dataList"
-        :property="property"
-        :numberShow="numberShow"
-        @handleSelectionChange="handleSelectionChange"
-        @handleButton="handleButton"
-        @selectChange="selectChange"
-        @emitAblFilter="emitAblFilter"
-      />
-        <pagination
-          v-show="pageInfo.total>0"
-          :total="pageInfo.total"
-          :page.sync="pageInfo.pageNum"
-          :limit.sync="pageInfo.pageSize"
-          @pagination="getList"
-        />
-      </el-col>
-    </el-row>
+              ref="tableIndex"
+              style="margin-top:-8px"
+              pageName="commonDict"
+              :tableIndexs="tableIndex"
+              :loading="loading"
+              :tableData="dataList"
+              :property="property"
+              :numberShow="numberShow"
+              @handleSelectionChange="handleSelectionChange"
+              @handleButton="handleButton"
+              @selectChange="selectChange"
+              @emitAblFilter="emitAblFilter"/>
+          <pagination
+               v-show="total > 0"
+              :total="total"
+              :page.sync="listQuery.pageNum"
+              :limit.sync="listQuery.pageSize"
+              @pagination="getList"/>
+          </el-col>
+      </el-row>
     <operate ref="operate" @operateSuccess="operateSuccess" :deptOptions="deptOptions" />
   </div>
 </template>
 
 <script>
-import {commonPage,commonTree,commonDeleteBatch} from '@/api/system/dict/common'
-import operate from "./components/operate";
-import indexMixin from '@/views/mixins';
-import tableIndex from "@/components/tableIndex";
-import formData from "@/components/formData";
-import buttonTop from "@/components/buttonTop";
+import { commonPage, commonTree, commonDeleteBatch } from '@/api/system/dict'
+import operate from './components/operate'
+import tableIndex from '@/components/tableIndex'
+import formData from '@/components/formData'
+import buttonTop from '@/components/buttonTop'
+import indexMixin from '@/views/mixins'
+
 export default {
-  name: "dept",
   mixins: [indexMixin],
-  components: { operate,tableIndex, formData, buttonTop },
+  name: 'dept',
+  components: { operate, tableIndex, formData, buttonTop },
   data() {
     return {
       // 遮罩层
       loading: false,
-      // 选中数组
-      ids: [],
+      treeLoading: false,
+      treeCurrentKey: '',
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -84,174 +92,143 @@ export default {
       showSearch: true,
       // 用户表格数据
       dataList: [],
-      property:{},
       // 弹出层标题
-      title: "",
+      title: '',
       // 部门树选项
       deptOptions: undefined,
-      // 日期范围
-      dateRange: [],
-      defaultProps: {
-        children: "children",
-        label: "deptName"
-      },
+      // 表格序号是否展示
+      numberShow: false,
+      // 列表字段判断是否可操作
+      isButtonObj: { name: 'isSystem', val: 1, type: 'delete, update' },
       // 查询参数
       formData: {
-        name: '',
-        // status: '',
-        // parentId: '',
-        // startTime: '',
-        // endTime: '',
-
+        parentId: ''
       },
-      pageInfo: {
-        total: 0,
-        pageNum: 1,
-        pageSize: 30,
-      },
-      statusArr: [
-        {
-          value: "0",
-          label: "正常"
-        },
-        {
-          value: "1",
-          label: "停用"
-        },
-      ],
-      numberShow: false
-    };
+      total: 0,
+      property: {},
+      defaultProps: {
+        children: 'children',
+        label: 'name'
+      }
+    }
   },
-  watch: {
-  },
+  watch: {},
   created() {
-    this.menuProperty();
-    this.getList();
+    this.commonTree()
+    this.menuProperty()
+    this.getList()
   },
   methods: {
+    // 节点单击事件
+    handleNodeClick(data) {
+      if (data.id === this.treeCurrentKey) {
+        // 再次点击当前节点取消选中,查询全部
+        this.formData.parentId = ''
+        this.$refs.tree.setCurrentKey(null)
+        this.treeCurrentKey = ''
+      } else {
+        this.treeCurrentKey = data.id
+        this.formData.parentId = data.id
+      }
+      this.handleQuery()
+    },
+    //选择框回调
+    selectChange(row) {
+      let { formData, isWatch } = row
+      if (!isWatch) {
+        this.handleQuery(formData)
+      } else {
+        this.formData = Object.assign({}, this.formData, formData)
+      }
+    },
     numberChange(val) {
       this.numberShow = val
     },
     newButton(buttonCode) {
-      this.$refs.tableIndex.newButton(buttonCode);
+      this.$refs.tableIndex.newButton(buttonCode)
     },
-     handleButton(row, buttonCode) {
+    handleCheckAllChange(columns) {
+      this.$refs.tableIndex.init(columns)
+    },
+    clickReset() {
+      this.menuProperty()
+      this.handleQuery()
+    },
+    commonTree() {
+      commonTree().then(({ data }) => {
+        this.deptOptions = data
+      })
+    },
+    menuProperty() {
+      let id = this.$route.meta.id
+      this.$store.dispatch('menuProperty', id).then((data) => {
+        this.property = data
+      })
+    },
+    emitAblFilter(listQuery) {
+      this.listQuery = Object.assign({}, this.listQuery, listQuery)
+      this.handleQuery()
+    },
+    handleQuery(row = {}) {
+      this.listQuery.pageNum = 1
+      this.formData = Object.assign({}, this.formData, row)
+      this.getList()
+    },
+    getList() {
+      this.loading = true
+      commonPage(Object.assign({}, this.listQuery, this.formData)).then(res => {
+        this.dataList = res.data.list
+        this.total = res.data.total
+        this.loading = false
+      })
+    },
+    handleSelectionChange(ids, single, multiple) {
+      this.single = single
+      this.multiple = multiple
+    },
+    handleCreate() {
+      this.$refs.operate.init('create', this.formData.parentId)
+    },
+    handleUpdate(ids) {
+      this.$refs.operate.init('update', ids)
+    },
+    handleDelete(ids) {
+      let count = 0
+      this.dataList.forEach(row => {
+        ids.forEach(id => {
+          if (row.id === id && row.isSystem === 1) {
+            count += 1
+          }
+        })
+      })
+      if (count > 0) {
+        this.$modal.msgWarning('不能删除系统内置字典')
+      } else {
+        this.$modal.confirm('是否确认删除字典?').then(function() {
+          return commonDeleteBatch({ ids })
+        }).then(() => {
+          this.commonTree()
+          this.handleQuery()
+          this.$modal.msgSuccess('删除成功')
+        }).catch(() => {
+        })
+      }
+    },
+    handleButton(id, buttonCode, row) {
       if (buttonCode === 'update') {
-        this.handleUpdate(row)
+        this.handleUpdate(id)
       } else if (buttonCode === 'delete') {
-        this.handleDelete(row)
+        this.handleDelete(id)
       } else if (buttonCode === 'create') {
         this.handleCreate()
       }
     },
-    handleCheckAllChange(columns) {
-      this.$refs.tableIndex.init(columns);
-    },
-    selectChange(type, value) {
-      if (type === "createTime") {
-        this.dateRange = value;
-      } else {
-        this.formData[type] = value;
-      }
-      this.handleQuery();
-    },
-    emitAblFilter(listQuery) {
-      this.listQuery = Object.assign({}, this.listQuery, listQuery);
-      this.handleQuery();
-    },
-    handleQuery(row = {}) {
-      this.formData = Object.assign({}, this.formData, row);
-      this.getList();
-    },
-    menuProperty () {
-      const id = this.$route.meta.id;
-      this.$store.dispatch('menuProperty', id).then( (data) => {
-        this.property = data;
-      });
-    },
-    getList () {
-      this.loading = true;
-      commonPage(Object.assign({}, this.pageInfo, this.formData)).then( ({data}) => {
-        this.dataList = data.list;
-        this.pageInfo.total = data.total;
-        this.loading = false;
-      })
-    },
-    commonTree () {
-      commonTree().then( ({data}) => {
-        this.deptOptions = data;
-      })
-    },
-    handleSelectionChange(ids, single, multiple, selection) {
-      this.single = single;
-      this.multiple = multiple;
-      this.selectionData = selection;
-    },
-    clickReset() {
-      this.menuProperty();
-      this.handleQuery();
-    },
-    // 节点单击事件
-    // handleNodeClick(data) {
-    //   this.formData.parentId = data.id;
-    //   this.handleQuery();
-    // },
-    /** 重置按钮操作 */
-    // resetQuery() {
-    //   this.resetForm("queryForm");
-    //   this.formData.parentId = '';
-    //   this.dateRange = [];
-    //   this.formData.startTime = '';
-    //   this.formData.endTime = '';
-    //   this.handleQuery();
-    // },
-    // emitAblFilter () {
-    //   this.handleQuery();
-    // },
-    // handleQuery () {
-    //   this.getList();
-    // },
-
-    //序号
-    // rowOnlineTableColumIndex({row,rowIndex}){
-    //   row.index=rowIndex+1
-    // },
-    // handleSelectionChange (selection) {
-    //   this.ids = selection.map(item => item.id)
-    //   this.single = selection.length!=1
-    //   this.multiple = !selection.length
-    // },
-    handleCreate () {
+    operateSuccess() {
       this.commonTree()
-      this.$refs.operate.init('create', this.formData.parentId);
-    },
-    handleUpdate (id) {
-      // let id = '';
-      // if(row){
-      //   id = row.id;
-      // }else{
-      //   id = this.ids[0];
-      // }
-      this.commonTree()
-      this.$refs.operate.init('update', id);
-    },
-    handleDelete (ids) {
-      // let ids = row.id || this.ids;
-      // if(!(ids instanceof Array)){
-      //   ids = [ids];
-      // }
-      this.$modal.confirm('是否确认删除字典?').then(function() {
-        return commonDeleteBatch({ids});
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
-    },
-    operateSuccess () {
-      this.handleQuery();
+      this.handleQuery()
     }
   }
-};
+}
 </script>
 <style lang="css" scoped>
 ::v-deep.el-table tbody tr.current-row>td{
