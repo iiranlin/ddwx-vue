@@ -90,6 +90,7 @@
       <el-button type="primary" @click="handleConfirm()">确定</el-button>
       <el-button @click="handleCancel">取消</el-button>
     </div>
+    <confirm-dialog ref="confirmDialog" @confirmDialogSuccess="confirmDialogSuccess" />
   </el-dialog>
 </template>
 <script>
@@ -97,8 +98,11 @@ import { getToken } from '@/utils/auth'
 import { gcywVehicleRequesReturning } from '@/api/driver'
 import { calFloat, handleNumberLimit } from '@/utils'
 import { userDeleteBatch } from '@/api/system/user'
+import confirmDialog from "./confirmDialog";
 
 export default {
+  components: { confirmDialog },
+
   data() {
     let validateImageUrl = (rule, value, callback) => {
       if (this.form.imageUrl === '') {
@@ -138,6 +142,8 @@ export default {
       uploadData: {
         type: '4'
       },
+      //车辆信息
+      carInfo:{},
       //表单数据
       form: {
         beginMiles: '0',
@@ -189,6 +195,7 @@ export default {
   methods: {
     //初始化
     init(data) {
+      this.carInfo = data;
       this.assignmentId = data.assignmentId
       if (!data.beginMiles) {
         this.form.beginMiles = 0
@@ -235,14 +242,17 @@ export default {
         if (result) {
           if (this.longDistanceTag === 0 && calFloat(this.form.endMiles, this.form.beginMiles, 'subtract') > 100) {
             this.$modal.confirm('本次用车里程超过100千米，请确认还车里程是否输入正确?').then(() => {
-              this.vehicleRequestReturning()
+              this.$refs.confirmDialog.init(this.form.endMiles,this.form.beginMiles);
             }).catch(() => {
             })
           } else {
-            this.vehicleRequestReturning()
+            this.$refs.confirmDialog.init(this.form.endMiles,this.form.beginMiles);
           }
         }
       })
+    },
+    confirmDialogSuccess(){
+      this.vehicleRequestReturning();
     },
     //还车
     vehicleRequestReturning() {

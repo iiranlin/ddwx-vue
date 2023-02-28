@@ -522,6 +522,7 @@
       >确 定</el-button>
       <el-button @click="closePush">取 消</el-button>
     </div>
+     <confirm-dialog ref="confirmDialog" @confirmDialogSuccess="confirmDialogSuccess" />
   </div>
 </template>
 
@@ -538,11 +539,12 @@ import { limitInput, numToFixed2 } from '@/utils/index';
 import { getCookie } from '@/utils/auth';
 import { numberInput } from '@/utils/index';
 import { mapGetters } from 'vuex';
+import confirmDialog from "./components/confirmDialog";
 
 export default {
   name: "editDrivingRecord",
   mixins: [getDict],
-  components: { formAddress },
+  components: { formAddress,confirmDialog },
   data() {
     var checkfromAddr = (rule, value, callback) => {
       if (value.indexOf('null') == -1 && value) {
@@ -778,28 +780,41 @@ export default {
                   }
               }
           }
-          const loading = this.$loading({
-            lock: true,
-            text: "加载中...",
-          });
-          try {
-            const params = { ...this.formData, createType: '2' };
-            params.reason = this.dictionariesObj['1016'].find(item => item.code === params.reasonCode)?.name || '';
-            params.demand = this.dictionariesObj['10018'].find(item => item.code === params.demandCode)?.name || '';
-            const res = await saveOrderDispatch(params);
-            if (res?.code !== 0) {
-              this.$message.error(res?.message || '操作失败，请稍后重试');
-              return;
-            }
-            this.$message.success(res?.message || '操作成功');
-            this.$router.push({ name: 'supplementDrivingRecord' });
-          } catch (e) {
+          //还车公里数不低于出车公里数
+          for (let i = 0; i < formList.length; i++) {
+              let beginMiles = formList[i].beginMiles;
+              let endMiles = formList[i].endMiles;
 
-          } finally {
-            loading.close()
+              if (parseFloat(endMiles) <= parseFloat(beginMiles)) {
+                  this.$modal.msgWarning('还车里程不能小于出车里程!');
+                  return 
+              }
           }
+          this.$refs.confirmDialog.init(formList);
         }
       })
+    },
+    async confirmDialogSuccess(){
+      const loading = this.$loading({
+        lock: true,
+        text: "加载中...",
+      });
+      try {
+        const params = { ...this.formData, createType: '2' };
+        params.reason = this.dictionariesObj['1016'].find(item => item.code === params.reasonCode)?.name || '';
+        params.demand = this.dictionariesObj['10018'].find(item => item.code === params.demandCode)?.name || '';
+        const res = await saveOrderDispatch(params);
+        if (res?.code !== 0) {
+          this.$message.error(res?.message || '操作失败，请稍后重试');
+          return;
+        }
+        this.$message.success(res?.message || '操作成功');
+        this.$router.push({ name: 'supplementDrivingRecord' });
+      } catch (e) {
+
+      } finally {
+        loading.close()
+      }
     },
     closePush() {
       this.$router.push({ name: 'supplementDrivingRecord' });

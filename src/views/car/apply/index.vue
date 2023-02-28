@@ -93,7 +93,8 @@
                     :picker-options="{
                         start: '00:00',
                         step: '00:15',
-                        end: '24:00'
+                        end: '24:00',
+                        minTime:checkMinTime(),
                     }"
                     placeholder="请选择出发时间">
                 </el-time-select>
@@ -204,7 +205,7 @@ export default {
         usagePersons: '1',
         userName: '',
         phone: getCookie('phone') || '',
-        usageDate: '',
+        usageDate: this.parseTime(new Date().getTime(),'{y}-{m}-{d}'),
         usageTime: '',
         timeLength: '2',
         fromAddr: '',
@@ -266,6 +267,7 @@ export default {
     }
   },  
   created() {
+    this.initUsageTime();
     this.vehicleInfoGetAssignCount();
     for(const item of this.dictionariesCode){
       this.getOperateDict(item);
@@ -281,19 +283,20 @@ export default {
           usagePersons: row.usagePersons,
           userName: row.userName,
           phone: row.phone,
-          usageDate: row.usageDate,
-          usageTime: row.usageTime,
+          usageDate: this.parseTime(new Date().getTime(),'{y}-{m}-{d}'),
+          usageTime: '',
           timeLength: row.timeLength,
           fromAddr: row.fromAddr,
           fromAreaId: row.fromAreaId,
           toAddr: row.toAddr,
           toAreaIdd: row.toAreaIdd,
-          hopeBrand: row.hopeBrand,
+          hopeBrand: '2',
           remark: row.remark,
           source: 1,
           procDefId: '',
           assignee: ''
         }
+        this.initUsageTime();
         this.$refs.formAddress1.init(row.fromAddr);
         this.$refs.formAddress2.init(row.toAddr);
       }
@@ -303,6 +306,38 @@ export default {
     async getOperateDict (code) {
       const res = await this.getOperateDictList(code);
       this.dictionariesObj[code] = res;
+    },
+    //初始化出发时间
+    initUsageTime(){
+      let hh = new Date().getHours();
+      let mf = new Date().getMinutes();
+
+      hh = hh +1;
+
+      if(mf >= 0 && mf <= 15){
+          mf = '30';
+      }else if(mf > 15 && mf <= 30){
+          mf = '45';
+      }else if(mf > 30 && mf <= 45){
+          mf = '00';
+          hh = hh +1 ;
+      }else if(mf > 45){
+          mf = '15';
+          hh = hh +1 ;
+      }
+      if(hh < 10){
+          hh = '0'+hh;
+      }
+      if(hh == 25){
+          hh = '00'
+      }
+      this.formData.usageTime = hh +':'+ mf;
+    },
+    checkMinTime(){
+        if(this.formData.usageDate === this.parseTime(new Date().getTime(),'{y}-{m}-{d}')){
+             return new Date().getHours()+':'+new Date().getMinutes();
+        }
+        return ''
     },
     weekCheckingIn(assignTime, type){
       this.weekChecking_inloading = true

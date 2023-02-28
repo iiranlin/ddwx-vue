@@ -168,7 +168,19 @@ export default {
         handleButton(ids,buttonCode){
             if(buttonCode==='examine'){
                 if(this.selectionData[0].reqStatus === '1' || this.selectionData[0].reqStatus === '2'){
-                    this.$refs.operate.init(this.selectionData[0]);
+                    if(this.selectionData[0].workflowId){
+                        if(this.selectionData[0].procInstId){
+                            if(this.selectionData[0].endTimeMe){
+                                this.$modal.msgWarning('你不是审批人！');
+                            }else{
+                                this.$refs.operate.init(this.selectionData[0]);
+                            }
+                        }else{
+                            this.$modal.msgWarning('你不是审批人！');
+                        }
+                    }else{
+                        this.$refs.operate.init(this.selectionData[0]);
+                    }
                 }else{
                     this.$modal.msgWarning('已审核数据无法重新审核，请重新选择!');
                     return;

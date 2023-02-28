@@ -3,15 +3,17 @@
         <div slot="dateCell" slot-scope="{data}" @click="calendarClick(data)">
             <div v-for="item in dateList" :key="item.assignTime" >
                 <template v-if="item.assignTime.indexOf(data.day) != -1">
-                    <p :class="[data.isSelected || usageDate == data.day ? 'is-selected' : '','date_default']">
+                    <div :class="[usageDate == data.day ? 'container-date-default' : 'container-date-normal']"> 
+                        <p class="date_default">
                         {{ data.day.split('-').slice(1).join('-') }} {{ data.isSelected || usageDate == data.day ? '✔️' : ''}}
-                    </p>
-                    <p class="calendar-p-span">
-                        <span>{{item.tasscount - item.nasscount - item.sasscount}} 辆</span>
-                        <span>{{item.nasscount}} 辆</span>
-                        <span>{{item.sasscount}} 辆</span>
-                        <span>{{item.tasscount}} 辆</span>
-                    </p>
+                        </p>
+                        <p class="calendar-p-span">
+                            <span>{{item.tasscount - item.nasscount - item.sasscount}} 辆</span>
+                            <span>{{item.nasscount}} 辆</span>
+                            <span>{{item.sasscount}} 辆</span>
+                            <span>{{item.tasscount}} 辆</span>
+                        </p>
+                    </div>
                 </template>
             </div>
         </div>
@@ -89,4 +91,16 @@ export default {
 .el-calendar-table td.is-selected,.el-calendar-table td.is-selected :hover{
     background-color:rgb(254, 237, 166) !important;
 }
+.container-date-default {
+    height: 65px;
+    margin: -8px;
+    padding-top: 5px;
+    background-color:rgb(254, 237, 166) !important;
+}
+.container-date-normal {
+    height: 65px;
+    margin: -8px;
+    padding-top: 5px;
+}
+
 </style>

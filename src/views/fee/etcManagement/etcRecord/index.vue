@@ -190,7 +190,7 @@ export default {
       this.$modal.msgError('上传失败, 数据格式有误')
     },
     //页面按钮点击事件
-    handleButton(ids, buttonCode) {
+    handleButton(ids, buttonCode,row) {
       this.rowId = ids
       this.buttonCode = buttonCode
       if (buttonCode === 'create') {
@@ -200,6 +200,13 @@ export default {
         this.operateDialogFlag = true
       } else if (buttonCode === 'template') {
         axiosDownloadExcel(etcRecordTemplateUrl)
+      }else if (buttonCode === 'detail') {
+        this.$router.push({
+            name: 'etcRecordDetail',
+            params: {
+                obj:row,
+            },
+        })
       }
       // if (buttonCode === 'distribute') {
       //   this.distributeDialogFlag = true

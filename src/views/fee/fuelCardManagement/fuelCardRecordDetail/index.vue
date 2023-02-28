@@ -1,0 +1,121 @@
+<template>
+    <div class="app-container">
+        <div>
+            <div class="table-title">
+                <span>公务用车加油记录单</span>
+            </div>
+            <div class="table-title-column">
+                <div style="width:40%;float:left">
+                    <span>单位名称：{{tableData.unitName}}</span>
+                </div>
+                <div style="width:20%;float:left">
+                     <span>交易日期：{{parseTime(tableData.transDate,'{y}-{m}-{d}')}}</span>
+                </div>
+                <div style="width:20%;float:right;text-align:right;">
+                     <span>{{tableData.cardNumber}}</span>
+                </div>
+            </div>
+            <table class="talbe-container" border="1" style="text-align:center">
+                <tr>
+                    <td class="td1">车牌号</td>
+                    <td class="td2">{{tableData.carNumber}}</td>
+                    <td class="td3">车架号</td>
+                    <td class="td4">{{tableData.vinNumber}}</td>
+                    <td class="td5">交易类型</td>
+                    <td class="td6">{{tableData.incomeOrExp === 'Y'?'充值':'消费'}}</td>
+                </tr>
+                <tr>
+                    <td class="td1">交易金额（元）</td>
+                    <td class="td2">{{tableData.transFee}}</td>
+                    <td class="td3">余额（元）</td>
+                    <td class="td4">{{tableData.balance}}</td>
+                    <td class="td5"></td>
+                    <td class="td6"></td>
+                </tr>
+                <tr>
+                    <td class="td1">油品</td>
+                    <td class="td2">{{tableData.gasGrade}}</td>
+                    <td class="td3">油价（元）</td>
+                    <td class="td4">{{tableData.oilPrice}}</td>
+                    <td class="td3">数量（升）</td>
+                    <td class="td4">{{tableData.oilNum}}</td>
+                </tr>
+                <tr >
+                    <td class="remark-td">摘要</td>
+                    <td class="remark-td" colspan="5">{{tableData.remark}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</template>
+<script>
+export default {
+    name:'fuelCardRecordDetail',
+
+    data () {
+        return {
+            tableData:{},
+        }
+    },
+    created() {
+        this.tableData = this.$route.params.obj;
+        console.log(this.tableData)
+    },
+    methods: {
+        
+    },
+}
+</script>
+<style scoped>
+/* @page {
+    size: auto; 
+    margin: 20px 40px 20px 40px; 
+} */
+.app-container {
+    box-sizing: border-box;
+    padding: 20px 40px 20px 40px;
+}
+.table-title {
+    margin-top: 30px;
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+}
+.table-title-column {
+    margin: 60px 0px 5px 0px;
+    font-size: 14px;
+}
+.talbe-container {
+    margin-top: 10px;
+    width: 100%;
+    font-size: 14px;
+    line-height: 40px;
+    border-collapse: collapse;
+}
+
+td {
+    padding: 0 5px;
+    height: 40px;
+}
+.remark-td {
+    height: 120px;
+}
+.td1 {
+    width: 15%;
+}
+.td2 {
+    width: 15%;
+}
+.td3 {
+    width: 15%;
+}
+.td4 {
+    width: 20%;
+}
+.td5 {
+    width: 15%;
+}
+.td6 {
+    width: 20%;
+}
+</style>

@@ -131,7 +131,7 @@ export default {
             this.$refs.tableIndex.newButton(buttonCode,row);
         },
         //页面按钮点击事件
-        handleButton(ids,buttonCode){
+        handleButton(ids, buttonCode, row){
             if(buttonCode==='print'){
                 let routeData = this.$router.resolve({
                     name: "drivingRecordPrint",
@@ -140,6 +140,13 @@ export default {
                     }
                 });
                 window.open(routeData.href, '_blank');
+            }else if (buttonCode === 'detail') {
+                this.$router.push({
+                    name: 'drivingRecordDetail',
+                    params: {
+                        obj:row,
+                    },
+                })
             }
         },
         //顶部列字段展示
