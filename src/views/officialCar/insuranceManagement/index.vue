@@ -69,7 +69,7 @@
 import buttonTop from '@/components/buttonTop'
 import formData from '@/components/formData'
 import tableIndex from '@/components/tableIndex'
-import { gcywInsuranceRecordListPage } from '@/api/driver'
+import { gcywInsuranceRecordListPage,gcywInsuranceRecordSubmit } from '@/api/driver'
 import indexMixin from '@/views/mixins'
 
 export default {
@@ -141,17 +141,86 @@ export default {
     handleButton(ids, buttonCode, row) {
       if (buttonCode === 'create') {
         this.$router.push({ name: 'insuranceCreate' })
+      }else if(buttonCode === 'edit'){
+        if(this.selectionData[0].status !== '0'){
+          this.$modal.msgWarning('已提交数据无法修改，请重新选择!');
+          return;
+        }
+        this.$router.push({
+          name: 'insuranceEdit',
+          params: {
+            id:this.selectionData[0].id,
+          },
+        })
+      }else if(buttonCode === 'delete'){
+        this.handleDelete();
+      }else if(buttonCode === 'submit'){
+        this.handleSubmit();
       }
+    },
+    //删除
+    handleDelete(){
+      let obj = this.selectionData.some((item) => {
+        return item.status !== '0';
+      })
+      if(!!obj){
+        this.$modal.msgWarning('已提交数据无法删除，请重新选择!');
+        return;
+      }
+
+      this.$modal.confirm('是否删除所选数据?').then(() => {
+        let paramsArr = [];
+        this.selectionData.forEach((item) => {
+            let obj = {};
+            this.$set(obj, 'id', item.id);
+            this.$set(obj, 'enableTag', 'N');
+            paramsArr.push(obj)
+        })
+        this.loading = true;
+        gcywInsuranceRecordSubmit(paramsArr).then(({message}) => {
+          this.loading = false;
+          this.$modal.msgSuccess(message);
+          this.handleQuery();
+        }).catch((err) => {
+          this.loading = false;
+        })
+      }).catch(() => {
+
+      });
+    },
+    //提交
+    handleSubmit(){
+      let obj = this.selectionData.some((item) => {
+        return item.status !== '0';
+      })
+      if(!!obj){
+        this.$modal.msgWarning('已提交数据无法重复提交，请重新选择!');
+        return;
+      }
+
+      this.$modal.confirm('是否提交所选数据?').then(() => {
+        let paramsArr = [];
+        this.selectionData.forEach((item) => {
+            let obj = {};
+            this.$set(obj, 'id', item.id);
+            this.$set(obj, 'status', '1');
+            paramsArr.push(obj)
+        })
+        this.loading = true;
+        gcywInsuranceRecordSubmit(paramsArr).then(({message}) => {
+          this.loading = false;
+          this.$modal.msgSuccess(message);
+          this.handleQuery();
+        }).catch((err) => {
+          this.loading = false;
+        })
+      }).catch(() => {
+
+      });
     },
     //页面链接点击
     clickLink(row, fieldCode, linkText) {
-      let name = linkText.substring(linkText.indexOf('/') + 1)
-      this.$router.push({
-        name: name,
-        params: {
-          id: row.id
-        }
-      })
+      this.$router.push({ name: 'insuranceDetail', query: { id: row.id } })
     },
     //顶部列字段展示
     handleCheckAllChange(columns) {

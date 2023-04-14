@@ -23,6 +23,7 @@
                     :key="item.id"
                     :label="item.unitName"
                     :value="item.unitCode"
+                    @click="handleUnitChange(item)"
                   >
                   </el-option>
                 </el-select>
@@ -58,7 +59,7 @@
                   >
                   </el-option>
                 </el-select>
-                <span v-else>{{ form.maintainType }}</span>
+                <span v-else>{{ checkMaintainType(form.maintainType) }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -285,6 +286,8 @@ export default {
       status: true,
       //loading框
       loading: false,
+      //id
+      id:'',
       // 根据使用单位获取的车辆数据
       carList: [],
       //使用单位数据
@@ -423,18 +426,23 @@ export default {
       }
     }
   },
-  mounted() {
+  activated() {
     let id = this.$route.query.id
-    if (id) {
+
+    if(!!id){
       this.status = false
-      getMaintenanceDetailById(id).then(res => {
-        let data = res.data
-        Object.keys(this.form).forEach(key => {
-          this.form[key] = data[key]
+
+      if(this.id !== id){
+        this.id = id;
+        getMaintenanceDetailById(this.id).then(res => {
+          let data = res.data
+          Object.keys(this.form).forEach(key => {
+            this.form[key] = data[key]
+          })
+          this.maintenanceData = data.items
         })
-        this.maintenanceData = data.items
-      })
-    } else {
+      }
+    }else{
       this.status = true
       this.form = {
         unitName: '',
@@ -462,6 +470,43 @@ export default {
       }
       this.maintenanceData = []
     }
+    // if (id) {
+    //   this.status = false
+    //   getMaintenanceDetailById(id).then(res => {
+    //     let data = res.data
+    //     Object.keys(this.form).forEach(key => {
+    //       this.form[key] = data[key]
+    //     })
+    //     this.maintenanceData = data.items
+    //   })
+    // } else {
+    //   this.status = true
+    //   this.form = {
+    //     unitName: '',
+    //     unitCode: '',    //使用单位
+    //     carNumber: '',    //车牌号
+    //     vinNumber: '',
+    //     driver: '',  //驾驶员
+    //     creator: '',
+    //     createTime: '',
+    //     sdesc: '',//维保项目描述
+    //     remark: '',  //备注
+    //     maintainType: '',    //维保类型
+    //     maintainDate: '',       //保养日期
+    //     maintainMiles: '', //保养里程
+    //     totalCost: '', //总费用
+    //     materialCost: '',  //材料费
+    //     hourlyCost: '',      //工时费
+    //     otherCost: '',     //其他费
+    //     maintainShopId: '',         //店铺ID
+    //     maintainShop: '',    //其他店铺
+    //     maintainAddress: '',  //维保地点
+    //     nextMaintainDate: '',    //下次维保日期
+    //     nextMaintainMiles: '',    //下次维保里程
+    //     items: []
+    //   }
+    //   this.maintenanceData = []
+    // }
     this.initMaintenanceCreate()
   },
   methods: {
@@ -496,6 +541,10 @@ export default {
           this.maintenanceData[index].itemId = item.id
         }
       })
+    },
+    //选择单位回调
+    handleUnitChange() {
+      this.form.carNumber = "";
     },
     //添加维保明细数据
     handleAddClick() {
@@ -556,6 +605,13 @@ export default {
     },
     inputNumberChange(label) {
       this.form[label] = numToFixed2(this.form[label])
+    },
+    //处理维保类型
+    checkMaintainType(maintainTye){
+      let obj = this.maintenanceTypeOptions.find((item) => {
+        return item.code === maintainTye;
+      })
+      return !!obj?obj.name:'';
     },
     //关闭当前页面
     closeCurrentPage() {

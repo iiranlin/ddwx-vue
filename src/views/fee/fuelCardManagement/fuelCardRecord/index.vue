@@ -25,8 +25,6 @@
               :multiple="multiple"
               :single="single"
               :upload-url="uploadUrl"
-              @uploadOnSuccess="uploadOnSuccess"
-              @uploadOnError="uploadOnError"
               @newButton="newButton"
               class="cume-button"
             >
@@ -86,6 +84,11 @@
       :operate-dialog-flag.sync="operateDialogFlag"
       @operateSuccess="operateSuccess"
     ></operate>
+     <!--选择模板 弹出框-->
+    <select-template ref="selectTemplate"></select-template>
+
+    <!--导入 弹出框-->
+    <import-template ref="importTemplate" @importTemplateSuccess="importTemplateSuccess"></import-template>
   </div>
 </template>
 
@@ -95,12 +98,16 @@ import indexMixin from '@/views/mixins'
 import { fuelRecordImportUrl, fuelRecordTemplateUrl, getFuelRecordPageList } from '@/api/fuelCardManagement/fuelCardRecord'
 import operate from './components/operate'
 import { axiosDownloadExcel } from '@/api/download'
+import selectTemplate from './components/selectTemplate'
+import importTemplate from './components/importTemplate'
 
 export default {
-  name: 'RefuelingRecord',
+  name: 'fuelCardRecord',
   mixins: [indexMixin],
   components: {
-    operate
+    operate,
+    selectTemplate,
+    importTemplate,
   },
   filters: {},
   props: {},
@@ -131,7 +138,7 @@ export default {
       // 按钮类型 增删更新
       buttonCode: '',
       rowId: '',
-      uploadUrl: fuelRecordImportUrl,
+      uploadUrl: '',
       numberShow: false,
     }
   },
@@ -150,18 +157,6 @@ export default {
   methods: {
     numberChange(val) {
       this.numberShow = val;
-    },
-    // 上传成功
-    uploadOnSuccess(code, data, message) {
-      if (code === 0) {
-        this.$modal.msgSuccess('导入成功')
-        this.handleQuery()
-      } else {
-        this.$modal.msgError(message)
-      }
-    },
-    uploadOnError() {
-      this.$modal.msgError('上传失败, 数据格式有误')
     },
     //查询菜单数据
     async menuProperty() {
@@ -196,14 +191,16 @@ export default {
         this.rowId = ''
         this.operateDialogFlag = true
       } else if (buttonCode === 'template') {
-        axiosDownloadExcel(fuelRecordTemplateUrl)
+        this.handleDownload();
       }else if (buttonCode === 'detail') {
         this.$router.push({
             name: 'fuelCardRecordDetail',
-            params: {
-                obj:row,
+            query: {
+                obj:JSON.stringify(row),
             },
         })
+      }else if(buttonCode === 'daoru'){
+        this.handleImport();
       }
       // if (buttonCode === 'update') {
       //   this.operateDialogFlag = true
@@ -271,6 +268,23 @@ export default {
     },
     tableRowClassName({ row, rowIndex }) {
       row.index = rowIndex + 1
+    },
+    //模板下载
+    handleDownload(){
+      this.$refs.selectTemplate.init();
+    },
+    //导入
+    handleImport(){
+      this.$refs.importTemplate.init();
+    },
+    //导入成功回调
+    importTemplateSuccess(data){
+      this.$router.push({
+        name: 'fuelCardImport',
+        params: {
+          obj:data,        
+        },
+      })
     }
   }
 }

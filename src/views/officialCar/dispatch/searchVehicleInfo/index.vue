@@ -231,13 +231,7 @@ export default {
         },
         //
         clickLink(row, fieldCode, linkText){
-            let name = linkText.substring(linkText.indexOf("/")+1);
-            this.$router.push({
-                name: name,
-                params: {
-                    id:row.id
-                },
-            })
+            this.$router.push({ name: 'carDetail', query: { id: row.id } })
         },
         //刷新列表数据
         handleQuery(row = {}){

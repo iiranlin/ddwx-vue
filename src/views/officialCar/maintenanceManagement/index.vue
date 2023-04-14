@@ -68,7 +68,7 @@
 import buttonTop from '@/components/buttonTop'
 import formData from '@/components/formData'
 import tableIndex from '@/components/tableIndex'
-import { getMaintenanceRecordByPage } from '@/api/maintenanceRecord'
+import { getMaintenanceRecordByPage,maintenanceRecordSubmit,maintenanceRecordDelete } from '@/api/maintenanceRecord'
 import indexMixin from "@/views/mixins"
 
 export default {
@@ -146,7 +146,83 @@ export default {
         this.$router.push({ name: 'maintenanceCreate' })
       } else if (buttonCode === 'detail') {
         this.$router.push({ name: 'maintenanceCreate', query: { id: ids } })
+      } else if (buttonCode === 'edit') {
+        if(this.selectionData[0].status !== '0'){
+          this.$modal.msgWarning('已提交数据无法修改，请重新选择!');
+          return;
+        }
+        this.$router.push({ name: 'maintenanceEdit', query: { id: this.selectionData[0].id } })
+      } else if(buttonCode === 'delete'){
+        this.handleDelete();
+      }else if (buttonCode === 'submit') {
+        this.handleSubmit();
       }
+    },
+    //删除
+    handleDelete(){
+      let obj = this.selectionData.some((item) => {
+        return item.status !== '0';
+      })
+      if(!!obj){
+        this.$modal.msgWarning('已提交数据无法删除，请重新选择!');
+        return;
+      }
+
+      this.$modal.confirm('是否删除所选数据?').then(() => {
+        let paramsArr = [];
+        this.selectionData.forEach((item) => {
+            let obj = {};
+            this.$set(obj, 'id', item.id);
+            this.$set(obj, 'enableTag', 'N');
+            paramsArr.push(obj)
+        })
+        this.loading = true;
+        maintenanceRecordDelete(paramsArr).then(({message}) => {
+          this.loading = false;
+          this.$modal.msgSuccess(message);
+          this.handleQuery();
+        }).catch((err) => {
+          this.loading = false;
+        })
+      }).catch(() => {
+
+      });
+    },
+    //提交
+    handleSubmit(){
+      let obj = this.selectionData.some((item) => {
+        return item.status !== '0';
+      })
+      if(!!obj){
+        this.$modal.msgWarning('已提交数据无法重复提交，请重新选择!');
+        return;
+      }
+
+      this.$modal.confirm('是否提交所选数据?').then(() => {
+        let paramsArr = [];
+        this.selectionData.forEach((item) => {
+            let obj = {};
+            this.$set(obj, 'id', item.id);
+            this.$set(obj, 'status', '1');
+            this.$set(obj, 'maintainType', item.maintainType);
+            this.$set(obj, 'maintainDate', item.maintainDate);
+            this.$set(obj, 'maintainMiles', item.maintainMiles);
+            this.$set(obj, 'nextMaintainMiles', item.nextMaintainMiles);
+            this.$set(obj, 'nextMaintainMiles', item.nextMaintainMiles);
+            this.$set(obj, 'carNumber', item.carNumber);
+            paramsArr.push(obj)
+        })
+        this.loading = true;
+        maintenanceRecordSubmit(paramsArr).then(({message}) => {
+          this.loading = false;
+          this.$modal.msgSuccess(message);
+          this.handleQuery();
+        }).catch((err) => {
+          this.loading = false;
+        })
+      }).catch(() => {
+
+      });
     },
     //顶部列字段展示
     handleCheckAllChange(columns) {
@@ -188,7 +264,8 @@ export default {
     },
     tableRowClassName({ row, rowIndex }) {
       row.index = rowIndex + 1
-    }
+    },
+    
   }
 
 }

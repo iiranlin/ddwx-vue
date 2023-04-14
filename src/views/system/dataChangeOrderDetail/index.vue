@@ -1,102 +1,107 @@
 <template >
-  <div class="app-container">
-    <el-row :gutter="20">
-        <el-form :model="form" ref="elform" label-width="120px" style="width:90%">
-        <!--申请信息-->
+    <div class="app-container">
         <el-row :gutter="20">
-            <el-col style="margin: 15px 10px">
-                <i class="el-icon-caret-right title-icon"></i><span>申请信息</span>
+            <el-col :span="1.5">
+                <el-button type="primary" size="mini" @click="handleBack()">返回</el-button>
             </el-col>
         </el-row>
-        <el-row>
-            <el-col :span="24" :xs="24">
-                <el-col :span="8">
-                    <el-form-item label="工单号："><span>{{form.reqNo}}</span></el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="申请单位："><span>{{form.unitName}}</span></el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="申请部门：" ><span>{{form.deptName}}</span></el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="系统类型："><span>{{form.sysSort}}</span></el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="申请人："><span>{{form.reqUserName}}</span></el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="联系电话："><span>{{form.reqphone}}</span></el-form-item>
-                </el-col>
-                <el-col :span="24">
-                    <el-form-item label="问题描述："><span>{{form.reqDesc}}</span></el-form-item>
-                </el-col>
-            </el-col>
-        </el-row>
-        </el-form>
-        <!--附件-->
         <el-row :gutter="20">
-            <el-col style="width:90%;margin: 15px 10px;">
-                <i class="el-icon-caret-right title-icon"></i><span>附件</span>
-            </el-col>
-        </el-row>
-         <el-row>
-            <el-col :span="24" :xs="24" style="width:90%;padding: 0px 0px 20px 40px">
-                <el-table ref="eltableSecond" :data="appendixList" stripe border class="container_table">
-                    <el-table-column label="序号" align="center" type="index" width="50px"></el-table-column>
-                    <el-table-column label="附件名称" align="center" prop="oldFileName">
-                        <template slot-scope="scope">
-                            <a class='custom-a' href="#" @click="handleImageClick(appendixList[scope.$index])">{{appendixList[scope.$index].oldFileName}}</a>
-                        </template>
-                    </el-table-column>
-                </el-table>
-            </el-col>
-        </el-row>
-        <!--审核信息-->
-        <el-row :gutter="20">
-            <el-col style="width:90%;margin: 15px 10px;">
-                <i class="el-icon-caret-right title-icon"></i><span>审核信息</span>
-            </el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="24" :xs="24" style="width:90%;padding: 0px 0px 20px 40px">
-                <el-table ref="eltable" max-height="300px" :data="activittList" stripe border>
-                    <el-table-column label="序号" align="center" type="index"></el-table-column>
-                    <el-table-column label="审批日期" align="center" prop="endTime"></el-table-column>
-                    <el-table-column label="审批人" align="center" prop="realName"></el-table-column>
-                    <el-table-column label="审批意见" align="center" prop="message"></el-table-column>
-                </el-table>
-            </el-col>
-        </el-row>
-        <el-form :model="form" ref="elform" label-width="120px" style="width:90%">
-        <!--运维处理-->
-        <el-row :gutter="20">
-            <el-col style="margin: 15px 10px">
-                <i class="el-icon-caret-right title-icon"></i><span>运维处理</span>
-            </el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="24" :xs="24">
-                <el-col :span="8">
-                    <el-form-item label="处理人："><span>{{form.resUserName}}</span></el-form-item>
+            <el-form :model="form" ref="elform" label-width="120px">
+                <!--申请信息-->
+                <el-row :gutter="20">
+                    <el-col style="margin: 15px 10px">
+                        <i class="el-icon-caret-right title-icon"></i><span>申请信息</span>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="24" :xs="24">
+                        <el-col :span="8">
+                            <el-form-item label="工单号："><span>{{form.reqNo}}</span></el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="申请单位："><span>{{form.unitName}}</span></el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="申请部门：" ><span>{{form.deptName}}</span></el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="系统类型："><span>{{form.sysSort}}</span></el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="申请人："><span>{{form.reqUserName}}</span></el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="联系电话："><span>{{form.reqphone}}</span></el-form-item>
+                        </el-col>
+                        <el-col :span="24">
+                            <el-form-item label="问题描述："><span>{{form.reqDesc}}</span></el-form-item>
+                        </el-col>
+                    </el-col>
+                </el-row>
+            </el-form>
+            <!--附件-->
+            <el-row :gutter="20">
+                <el-col style="width:90%;margin: 15px 10px;">
+                    <i class="el-icon-caret-right title-icon"></i><span>附件</span>
                 </el-col>
-                <el-col :span="8">
-                    <el-form-item label="处理日期："><span>{{form.resTimeStr}}</span></el-form-item>
+            </el-row>
+            <el-row>
+                <el-col :span="24" :xs="24" style="width:90%;padding: 0px 0px 20px 40px">
+                    <el-table ref="eltableSecond" :data="appendixList" stripe border class="container_table">
+                        <el-table-column label="序号" align="center" type="index" width="50px"></el-table-column>
+                        <el-table-column label="附件名称" align="center" prop="oldFileName">
+                            <template slot-scope="scope">
+                                <a class='custom-a' href="#" @click="handleImageClick(appendixList[scope.$index])">{{appendixList[scope.$index].oldFileName}}</a>
+                            </template>
+                        </el-table-column>
+                    </el-table>
                 </el-col>
-                <el-col :span="8">
-                    <el-form-item label="处理状态："><span>{{checkResStatus(form.resStatus)}}</span></el-form-item>
+            </el-row>
+            <!--审核信息-->
+            <el-row :gutter="20">
+                <el-col style="width:90%;margin: 15px 10px;">
+                    <i class="el-icon-caret-right title-icon"></i><span>审核信息</span>
                 </el-col>
-                <el-col :span="24">
-                    <el-form-item label="处理过程："><span>{{form.resProcess}}</span></el-form-item>
+            </el-row>
+            <el-row>
+                <el-col :span="24" :xs="24" style="width:90%;padding: 0px 0px 20px 40px">
+                    <el-table ref="eltable" max-height="300px" :data="activittList" stripe border>
+                        <el-table-column label="序号" align="center" type="index"></el-table-column>
+                        <el-table-column label="审批日期" align="center" prop="endTime"></el-table-column>
+                        <el-table-column label="审批人" align="center" prop="realName"></el-table-column>
+                        <el-table-column label="审批意见" align="center" prop="message"></el-table-column>
+                    </el-table>
                 </el-col>
-                <el-col :span="24">
-                    <el-form-item label="备注："><span>{{form.remark}}</span></el-form-item>
-                </el-col>
-            </el-col>
+            </el-row>
+            <el-form :model="form" ref="elform" label-width="120px" style="width:90%">
+                <!--运维处理-->
+                <el-row :gutter="20">
+                    <el-col style="margin: 15px 10px">
+                        <i class="el-icon-caret-right title-icon"></i><span>运维处理</span>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="24" :xs="24">
+                        <el-col :span="8">
+                            <el-form-item label="处理人："><span>{{form.resUserName}}</span></el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="处理日期："><span>{{form.resTimeStr}}</span></el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="处理状态："><span>{{checkResStatus(form.resStatus)}}</span></el-form-item>
+                        </el-col>
+                        <el-col :span="24">
+                            <el-form-item label="处理过程："><span>{{form.resProcess}}</span></el-form-item>
+                        </el-col>
+                        <el-col :span="24">
+                            <el-form-item label="备注："><span>{{form.remark}}</span></el-form-item>
+                        </el-col>
+                    </el-col>
+                </el-row>
+            </el-form>
         </el-row>
-        </el-form>
-    </el-row>
-  </div>
+    </div>
 </template>
 <script>
 import { gcywChangeRequestActivitiLog,gcywChangeRequestListFile,appendixInfoExporttUrl } from "@/api/system/dataChange"
@@ -118,11 +123,20 @@ export default {
             resStatusOptions:[],
         };
     },     
+    computed: {
+        visitedViews() {
+            return this.$store.state.tagsView.visitedViews
+        }
+    },
     activated(){
-        this.form = Object.assign({}, this.$route.params.obj);
-        this.getResStatusOptions();
-        this.getFileList();
-        this.getActivitiList();
+        let obj = JSON.parse(this.$route.query.obj);
+
+        if(this.form.id !== obj.id){
+            this.form = Object.assign({}, obj);
+            this.getResStatusOptions();
+            this.getFileList();
+            this.getActivitiList();
+        }
     },
     methods: {
         //获取附件数据
@@ -178,6 +192,20 @@ export default {
                 fileName: item.fileName,
             }
             axiosDownloadExcel(appendixInfoExporttUrl,params);
+        },
+        //返回按钮
+        handleBack(){
+            this.closeCurrentPage();
+        },
+        //关闭当前页面
+        closeCurrentPage() {
+            this.visitedViews.forEach((item) => {
+                if (item.name === this.$route.name) {
+                    this.$tab.closePage(item).then(({ visitedViews }) => {
+                        this.$router.back();
+                    })
+                }
+            })
         },
     },
 };

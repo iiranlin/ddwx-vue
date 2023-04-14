@@ -395,10 +395,10 @@ export default {
             this.formData.usageTime = hh +':'+ mf;
         },
         checkMinTime(){
-            if(this.formData.usageDate === this.parseTime(new Date().getTime(),'{y}-{m}-{d}')){
-                return new Date().getHours()+':'+new Date().getMinutes();
-            }
-            return ''
+            // if(this.formData.usageDate === this.parseTime(new Date().getTime(),'{y}-{m}-{d}')){
+            //     return new Date().getHours()+':'+new Date().getMinutes();
+            // }
+            // return ''
         },
         calcIconClass(name) {
             return this.activeNames.includes(name) ? `el-icon-caret-bottom` : `el-icon-caret-right`;

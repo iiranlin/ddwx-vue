@@ -1,5 +1,10 @@
 <template>
     <div class="app-container">
+        <el-row :gutter="20">
+            <el-col :span="1.5">
+                <el-button type="primary" size="mini" @click="handleBack()">返回</el-button>
+            </el-col>
+        </el-row>
         <div>
             <div class="table-title">
                 <span>公务用车加油记录单</span>
@@ -57,12 +62,33 @@ export default {
             tableData:{},
         }
     },
-    created() {
-        this.tableData = this.$route.params.obj;
-        console.log(this.tableData)
+    computed: {
+        visitedViews() {
+            return this.$store.state.tagsView.visitedViews
+        },
+    },
+    activated() {
+        let obj = JSON.parse(this.$route.query.obj);
+
+        if(this.tableData.id !== obj.id){
+            this.tableData = Object.assign({}, obj)
+        }
     },
     methods: {
-        
+        //返回按钮
+        handleBack(){
+            this.closeCurrentPage();
+        },
+        //关闭当前页面
+        closeCurrentPage() {
+            this.visitedViews.forEach((item) => {
+                if (item.name === this.$route.name) {
+                    this.$tab.closePage(item).then(({ visitedViews }) => {
+                        this.$router.back();
+                    })
+                }
+            })
+        },
     },
 }
 </script>

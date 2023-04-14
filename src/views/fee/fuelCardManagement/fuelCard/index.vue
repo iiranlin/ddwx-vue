@@ -87,7 +87,6 @@
 
     <!--分配金额 弹出框-->
     <distribute ref="distribute" @operateSuccess="operateSuccess"></distribute>
-
   </div>
 </template>
 <script>
@@ -104,7 +103,7 @@ export default {
   mixins: [indexMixin],
   components: {
     operate,
-    distribute
+    distribute,
   },
 
   data() {
@@ -202,7 +201,7 @@ export default {
         }
         buttonCode === 'stop' ? params.enabled = 'N' : params.enabled = 'Y'
         await this.editFuelStatus(params, buttonCode)
-      }
+      } 
     },
     //顶部列字段展示
     handleCheckAllChange(columns) {
@@ -269,7 +268,7 @@ export default {
       } finally {
         loading.close()
       }
-    }
+    },
   }
 }
 </script>

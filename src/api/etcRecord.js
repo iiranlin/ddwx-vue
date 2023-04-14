@@ -65,3 +65,11 @@ export function updateETCCardRecord(params = {}) {
     data: params
   })
 }
+
+export function gcywEtcRecordImportSave(params = {}) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/gcywEtcRecord/importSave`,
+    method: 'post',
+    data: params
+  })
+}

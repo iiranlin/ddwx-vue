@@ -278,8 +278,8 @@ export default {
         clickLink (row, fieldCode, linkText) {
             this.$router.push({
                 name: 'dataChangeOrderDetail',
-                params: {
-                    obj:row
+                query: {
+                    obj:JSON.stringify(row),
                 },
             })
         },

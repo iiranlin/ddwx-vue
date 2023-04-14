@@ -64,3 +64,12 @@ export function getFuelRecordPageList(params = {}) {
     data: params,
   });
 }
+
+//加油卡记录-导入保存
+export function gcywFuelRecordImportSave(params = {}) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/gcywFuelRecord/importSave`,
+    method: "post",
+    data: params,
+  });
+}

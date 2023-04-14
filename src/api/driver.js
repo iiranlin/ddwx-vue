@@ -9,6 +9,8 @@ export const drivingRecordTemplateUrl = `${path}${VUE_APP_BASE_prefix}/gcywVehic
 export const drivingRecordImportUrl = `${process.env.VUE_APP_BASE_API}/${VUE_APP_BASE_prefix}/gcywVehicleRequest/import`
 // 车辆费用统计导出地址
 export const carFeeExportUrl = `${path}${VUE_APP_BASE_prefix}/vehicleInfo/getStatList/export`
+// 行车记录导出地址
+export const gcywDrivingRecordExportList = `${VUE_APP_BASE_prefix}/gcywDrivingRecord/exportList`
 
 //班次字典-班次列表-分页
 export function gcjcClassListPage(params) {
@@ -392,6 +394,24 @@ export function gcywInsuranceRecordCreate(data) {
   })
 }
 
+//车辆保险-编辑保存
+export function gcywInsuranceRecordModify(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywInsuranceRecord/modify`,
+    method: 'post',
+    data
+  })
+}
+
+//车辆保险-删除
+export function gcywInsuranceRecordSubmit(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywInsuranceRecord/submit     `,
+    method: 'post',
+    data
+  })
+}
+
 //车辆保险-详细信息
 export function gcywInsuranceRecordDetail(id) {
   return request({
@@ -549,5 +569,14 @@ export function gcjcDriverVehicleList(params) {
     url: `${VUE_APP_BASE_prefix}/gcjcDriverVehicle/list`,
     method: 'get',
     params
+  })
+}
+
+///行车记录-修改回车里程
+export function gcywDrivingRecordUpdateReturnMiles(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywDrivingRecord/updateReturnMiles`,
+    method: 'post',
+    data
   })
 }

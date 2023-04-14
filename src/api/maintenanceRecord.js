@@ -14,6 +14,32 @@ export function addMaintenanceRecord(data) {
   })
 }
 
+//维保记录-修改
+export function maintenanceRecordUpdate(data) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/maintenanceRecord/update`,
+    method: 'post',
+    data
+  })
+}
+
+//维保记录-删除
+export function maintenanceRecordDelete(data) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/maintenanceRecord/delete`,
+    method: 'post',
+    data
+  })
+}
+//维保记录-提交
+export function maintenanceRecordSubmit(data) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/maintenanceRecord/submit`,
+    method: 'post',
+    data
+  })
+}
+
 /**
  * 获取分页数据
  * @param params 查询参数

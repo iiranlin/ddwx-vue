@@ -178,7 +178,7 @@ export default {
       this.handleQuery();
     },
     clickLink (row, fieldCode, linkText) {
-      this.$router.push({name: linkText,params: {id: row.id}});
+      this.$router.push({name:'carDetail',query: {id: row.id}});
     }
   },
 };

@@ -168,8 +168,8 @@ export default {
       } else if(buttonCode==='detail'){
         this.$router.push({
           name: 'operateDetail',
-          params: {
-            detail:row            
+          query: {
+            detail:JSON.stringify(row)            
           },
         })
       }

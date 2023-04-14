@@ -181,7 +181,12 @@ export default {
     uploadOnSuccess(code, data, message) {
       if (code === 0) {
         this.$modal.msgSuccess('导入成功')
-        this.handleQuery()
+        this.$router.push({
+          name: 'etcRecordImport',
+          params: {
+            obj:data,         
+          },
+        })
       } else {
         this.$modal.msgError(message)
       }
@@ -203,8 +208,8 @@ export default {
       }else if (buttonCode === 'detail') {
         this.$router.push({
             name: 'etcRecordDetail',
-            params: {
-                obj:row,
+            query: {
+                obj:JSON.stringify(row),
             },
         })
       }

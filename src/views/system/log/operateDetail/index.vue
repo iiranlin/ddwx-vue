@@ -74,7 +74,11 @@ export default {
         };
     },            
     created(){
-        this.form = Object.assign({}, this.$route.params.detail);
+        let obj = JSON.parse(this.$route.query.detail);
+
+        if(this.form.id !== obj.id){
+            this.form = Object.assign({}, obj);
+        }
     },
     methods: {
 

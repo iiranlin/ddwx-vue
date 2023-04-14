@@ -57,18 +57,25 @@
                 />
             </el-col>
         </el-row>
+         <!--弹出框-->
+        <operate ref="operate" @operateSuccess="operateSuccess"></operate>
+        <!--导出弹框-->
+        <export-dialog ref="export" :page-num="listQuery.pageNum" :page-size="listQuery.pageSize" :total="total" @exportFile="exportFile"/>
     </div>
 </template>
 <script>
 import buttonTop from "@/components/buttonTop"
 import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
-import{gcywDrivingRecordListPage} from "@/api/driver"
+import operate from "./components/operate"
+import { axiosDownloadExcel } from '@/api/download'
+import exportDialog from '@/components/ExportDialog'
+import{gcywDrivingRecordListPage,gcywDrivingRecordExportList} from "@/api/driver"
 import indexMixin from "@/views/mixins";
 
 export default {
     name:"drivingRecord",
-    components:{buttonTop,formData,tableIndex},
+    components:{buttonTop,formData,tableIndex,operate,exportDialog},
     mixins:[indexMixin],
 
     data() {
@@ -88,12 +95,14 @@ export default {
             //列表显示字段
             property:{},
             //查询参数
-            formData:{},
+            formData:{
+                returnType:'1',
+            },
             //已选中条目
             selectionData:[],
             //数据总数
             total:0,
-          numberShow: false
+            numberShow: false
         }
     },
     created(){
@@ -143,10 +152,18 @@ export default {
             }else if (buttonCode === 'detail') {
                 this.$router.push({
                     name: 'drivingRecordDetail',
-                    params: {
-                        obj:row,
+                    query: {
+                        obj:JSON.stringify(row),
                     },
                 })
+            }else if (buttonCode === 'export') {
+                this.$refs.export.init()
+            }else if (buttonCode === 'change') {
+                if(!!this.selectionData[0].endMiles){
+                    this.$refs.operate.init(this.selectionData[0]);
+                }else{
+                    this.$modal.msgWarning('当前条目不能修改回库里程，请重新选择!')
+                }
             }
         },
         //顶部列字段展示
@@ -184,6 +201,15 @@ export default {
         },
         tableRowClassName({row,rowIndex}){
             row.index = rowIndex + 1;
+        },
+        // 导出文件
+        exportFile(pageInfo) {
+            // 整合page信息
+            axiosDownloadExcel(gcywDrivingRecordExportList, Object.assign({}, pageInfo, this.listQuery, this.formData))
+        },
+        //修改回库里程回调
+        operateSuccess(){
+            this.handleQuery();
         }
     }
 }

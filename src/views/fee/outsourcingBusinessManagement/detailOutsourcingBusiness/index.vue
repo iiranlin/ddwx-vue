@@ -104,6 +104,8 @@ export default {
         return {
             //loading框
             loading:false,
+            //id
+            id:'',
             //使用单位数据
             unitOptions:[],
             //车辆用途数据
@@ -124,17 +126,16 @@ export default {
         };
     },
     activated(){
-        this.$nextTick(() => {
-            this.$refs.elform.resetFields();
-            this.form.details = [];
-            this.form.contractBegindate = "";
-            this.form.contractEnddate = "";
-        })
-        let id = this.$route.params.id;
-        this.getUnitDictList();
-        this.getDetailOutsourcingBusiness(id);
-        this.getCarTypeOptions();
-        this.getUseTypeOptions();
+        let id = this.$route.query.id;
+
+        if(this.id !== id){
+            this.id = id;
+            this.getUnitDictList();
+            this.getDetailOutsourcingBusiness();
+            this.getCarTypeOptions();
+            this.getUseTypeOptions();
+        }
+      
     },
     methods:{
         // 获取使用单位列表 当前用户有权限的单位
@@ -168,9 +169,9 @@ export default {
             });
         },
         //获取详情数据
-        async getDetailOutsourcingBusiness(id){
+        async getDetailOutsourcingBusiness(){
             this.loading = true;
-            await gcywCarContractDetail(id).then(({data}) => {
+            await gcywCarContractDetail(this.id).then(({data}) => {
                 this.loading = false;
                 this.form = Object.assign(this.form, data);
             }).catch((err) => {

@@ -239,7 +239,7 @@ export default {
       row.index = rowIndex + 1
     },
     clickLink(row, _fieldCode, linkText) {
-      this.$router.push({ name: linkText, params: { id: row.id } })
+      this.$router.push({ name: 'carDetail', query: { id: row.id } })
     }
   }
 }

@@ -238,7 +238,7 @@ export default {
     clickLink (row, fieldCode, linkText) {
       this.$router.push({
           name: 'detailOutsourcingBusiness',
-          params: {
+          query: {
               id:row.id
           },
       })
