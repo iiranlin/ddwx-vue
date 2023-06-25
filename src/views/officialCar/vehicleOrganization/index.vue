@@ -435,6 +435,7 @@ export default {
             this.selectionData.forEach((item) => {
                 let obj = {};
                 this.$set(obj, 'unitId', item.unitId);
+                this.$set(obj, 'strengthCount', item.strengthCount);
                 params.push(obj);
             })
             this.$modal.confirm("下发后将清除页面上所有未保存数据，是否下发所选信息?").then(()=>{
