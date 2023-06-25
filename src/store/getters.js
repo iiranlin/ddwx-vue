@@ -13,6 +13,7 @@ const getters = {
   deptName: state => state.user.deptName,
   deptId: state => state.user.deptId,
   deptCode: state => state.user.deptCode,
+  rank: state => state.user.rank,
   introduction: state => state.user.introduction,
   roles: state => state.user.roles,
   permissions: state => state.user.permissions,

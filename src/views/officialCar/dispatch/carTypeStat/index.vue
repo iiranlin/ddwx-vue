@@ -32,8 +32,21 @@
           :showSearch="showSearch"
           :searchArr="property.search || []"
           @handleQuery="handleQuery"
+          @handleResetDept="handleResetDept"
           style="margin-top:-12px;margin-bottom:6px"
         >
+          <template slot="customItem">
+            <el-form-item label="车辆属性" prop="value">
+              <el-select v-model="formData.vehicleProperties" placeholder="请选择车辆属性" clearable style="width:240px" size="small">
+                <el-option v-for="item in vehiclePropertiesOptions"
+                           :key="item.value"
+                           :label="item.name"
+                           :value="item.code"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </template>
         </form-data>
         <!--表格数据-->
         <table-index
@@ -44,10 +57,14 @@
           :tableData="dataList"
           :property="property"
           :numberShow="numberShow"
+          :showSummary='true'
+          :getSummaries="getSummaries"
+          @clickLink="clickLink"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
           @selectChange="selectChange"
           @emitAblFilter="emitAblFilter"
+          
         >
         </table-index>
         <!--分页器-->
@@ -71,6 +88,7 @@ import tableIndex from '@/components/tableIndex'
 import indexMixin from '@/views/mixins'
 import { getCarTypeStatByUnitLevel, VehicleTypeStatExportUrl } from '@/api/vehicleInfo'
 import { axiosDownloadExcel } from '@/api/download'
+import { getListByParentId } from '@/api/system/dict'
 import exportDialog from '@/components/ExportDialog'
 
 export default {
@@ -96,7 +114,10 @@ export default {
       property: {},
       //查询参数
       formData: {
+        vehicleProperties:'',
       },
+      //车辆属性数据
+      vehiclePropertiesOptions:[],
       //已选中条目
       selectionData: [],
       //数据总数
@@ -107,6 +128,7 @@ export default {
   created() {
     this.menuProperty()
     this.getList()
+    this.getVehicleProperties();
   },
   activated() {
   },
@@ -134,6 +156,17 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    },
+    //获取车辆属性
+    async getVehicleProperties(){
+        this.loading = true
+
+        await getListByParentId('1528567883638267904').then(({ data }) => {
+          this.loading = false
+          this.vehiclePropertiesOptions = data
+        }).catch(() => {
+          this.loading = false
+        })
     },
     //顶部按钮点击
     newButton(buttonCode, row) {
@@ -182,9 +215,160 @@ export default {
       this.formData = Object.assign({}, this.formData, row)
       this.getList()
     },
+    //清空状态数据
+    handleResetDept() {
+      this.formData.vehicleProperties = ''
+    },
     tableRowClassName({ row, rowIndex }) {
       row.index = rowIndex + 1
-    }
+    },
+    //合计显示规则
+    getSummaries(param){
+        const { columns, data } = param;
+        const sums = [];
+        let targetColumenIndex = this.numberShow ? 2:1;
+
+        columns.forEach((column, index) => {
+            if (index === targetColumenIndex) {
+                sums[index] = '合计';
+                return;
+            }
+            const values = data.map(item => Number(item[column.property]));
+
+            if (!values.every(value => isNaN(value))) {
+                sums[index] = values.reduce((prev, curr) => {
+                    const value = Number(curr);
+                    if (!isNaN(value)) {
+                        return prev + curr;
+                    } else {
+                        return prev;
+                    }
+                }, 0);
+                sums[index] += '';
+            } else {
+                sums[index] = '';
+            }
+        });
+        return sums;
+    },
+    // 链接跳转
+    clickLink(row, fieldCode, linkText) {
+      console.log(row)
+      console.log(fieldCode)
+      console.log(linkText)
+      console.log(this.property)
+
+      let name = linkText.substring(linkText.indexOf('/') + 1)
+      let obj = this.property.fields.find((item) => {
+          return item.fieldCode === fieldCode;
+      })
+      let params = null
+
+      if (fieldCode === 'total') {
+        params = {
+          unitCode: row.unitCode,
+          enableTag:'Y'
+        }
+      } else if (fieldCode === 'passengerCar1') {
+        params = {
+          unitCode: row.unitCode,
+          enableTag:'Y',
+          carType:'客车',
+          carType2:obj.fieldName,
+        }
+      } else if (fieldCode === 'passengerCar2') {
+        params = {
+          unitCode: row.unitCode,
+          enableTag:'Y',
+          carType:'客车',
+          carType2:obj.fieldName,
+        }
+      } else if (fieldCode === 'passengerCar3') {
+        params = {
+          unitCode: row.unitCode,
+          enableTag:'Y',
+          carType:'客车',
+          carType2:obj.fieldName,
+        }
+      } else if (fieldCode === 'passengerCar4') {
+        params = {
+          unitCode: row.unitCode,
+          enableTag:'Y',
+          carType:'客车',
+          carType2:obj.fieldName,
+        }
+      } else if (fieldCode === 'passengerCar5') {
+        params = {
+          unitCode: row.unitCode,
+          enableTag:'Y',
+          carType:'客车',
+          carType2:obj.fieldName,
+        }
+      } else if (fieldCode === 'passengerCar6') {
+        params = {
+          unitCode: row.unitCode,
+          enableTag:'Y',
+          carType:'客车',
+          carType2:obj.fieldName,
+        }
+      } else if (fieldCode === 'passengerCar7') {
+        params = {
+          unitCode: row.unitCode,
+          enableTag:'Y',
+          carType:'客车',
+          carType2:obj.fieldName,
+        }
+      } else if (fieldCode === 'passengerCar8') {
+        params = {
+          unitCode: row.unitCode,
+          enableTag:'Y',
+          carType:'客车',
+          carType2:obj.fieldName,
+        }
+      } else if (fieldCode === 'passengerCar9') {
+        params = {
+          unitCode: row.unitCode,
+          enableTag:'Y',
+          carType:'客车',
+          carType2:obj.fieldName,
+        }
+      } else if (fieldCode === 'passengerCar10') {
+        params = {
+          unitCode: row.unitCode,
+          enableTag:'Y',
+          carType:'客车',
+          carType2:obj.fieldName,
+        }
+      } else if (fieldCode === 'truck') {
+        params = {
+          unitCode: row.unitCode,
+          enableTag:'Y',
+          carType:obj.fieldName,
+        }
+      } else if (fieldCode === 'specialCar') {
+        params = {
+          unitCode: row.unitCode,
+          enableTag:'Y',
+          carType:obj.fieldName,
+        }
+      } else if (fieldCode === 'pickUpTruck') {
+        params = {
+          unitCode: row.unitCode,
+          enableTag:'Y',
+          carType:obj.fieldName,
+        }
+      } else if (fieldCode === 'other') {
+        params = {
+          unitCode: row.unitCode,
+          enableTag:'Y',
+          otherType:obj.fieldName,
+        }
+      }
+      this.$router.push({
+        name: name,
+        params
+      })
+    },
   }
 }
 </script>

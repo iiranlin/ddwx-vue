@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import { getAvailableDriver } from "@/api/gcjcDriverClass";
+import { getRGAvailableDriver } from "@/api/gcjcDriverClass";
 import { vehicleInfoGetAvailableCar, vehicleInfoIsRestriction } from "@/api/vehicleInfo";
 export default {
     data() {
@@ -140,7 +140,7 @@ export default {
                 this.$modal.msgWarning('至少有一条数据！');
             }
         },
-        getAvailableDriver (unitCode, usageDate,vinNumber) {
+        getRGAvailableDriver (unitCode, usageDate,vinNumber) {
             let obj = {
                 classDateEnd: usageDate,
                 classDateStart: usageDate,
@@ -149,7 +149,7 @@ export default {
                 unitCode: unitCode,
                 vinNumber:vinNumber,
             }
-            getAvailableDriver(obj).then(({data}) => {
+            getRGAvailableDriver(obj).then(({data}) => {
                 this.driverList = data
             })
         },
@@ -185,7 +185,7 @@ export default {
 
             let vinNumber = this.formData.list[index].car.vinNumber;
             if(!!vinNumber){
-                this.getAvailableDriver(this.row.unitCode, this.row.usageDate,vinNumber);
+                this.getRGAvailableDriver(this.row.unitCode, this.row.usageDate,vinNumber);
             }
            
         },

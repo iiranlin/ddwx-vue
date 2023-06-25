@@ -16,6 +16,7 @@ const user = {
         deptCode:'',
         avatar: '',
         roles: false,
+        rank:'',
         permissions: []
     },
 
@@ -49,6 +50,9 @@ const user = {
         },
         SET_ROLES: (state, roles) => {
             state.roles = roles
+        },
+        SET_RANK: (state, rank) => {
+            state.rank = rank
         },
         SET_PERMISSIONS: (state, permissions) => {
             state.permissions = permissions
@@ -105,6 +109,7 @@ const user = {
                         commit('SET_DEPT_ID',user.deptId)
                         commit('SET_DEPT_CODE',user.deptCode)
                         commit('SET_REAL_NAME', user.realName)
+                        commit('SET_RANK', user.rank)
                         
                         setCookie("unitCode", user.unitCode);
                         setCookie("phone", user.phone || '');

@@ -10,6 +10,8 @@
     highlight-current-row
     stripe
     :row-key="id"
+    :show-summary='showSummary'
+    :summary-method="getSummaries"
     @selection-change="handleSelectionChange"
     @sort-change="sortableColumnChange"
   >
@@ -165,6 +167,16 @@ export default {
     numberShow: {
       type: Boolean,
       default: false
+    },
+    //合计是否展示
+    showSummary: {
+      type: Boolean,
+      default: false
+    },
+    //合计显示规则
+    getSummaries:{
+      type:Function,
+      required:false,
     },
     //表格序号
     tableIndexs: {

@@ -1,5 +1,9 @@
 import request from '@/utils/request'
 let VUE_APP_BASE_PREFIX = process.env.VUE_APP_AUTH_SERVER;
+
+// 用车信息查询导出地址
+export const gcywVehicleRequestExportRequestInfo = `${VUE_APP_BASE_PREFIX}/gcywVehicleRequest/exportRequestInfo`
+
 // 车辆租赁
 export function rentPage(params, roleId) {
     return request({
@@ -53,7 +57,7 @@ export function gcywVehicleRequestDispatchList(params) {
 //用车信息查询-分页
 export function gcywVehicleRequestDispatchListInfo(params) {
   return request({
-    url: `${VUE_APP_BASE_PREFIX}/gcywVehicleRequest/dispatchListInfo`,
+    url: `${VUE_APP_BASE_PREFIX}/gcywVehicleRequest/dispatchQueryInfo`,
     method: 'get',
     params
   })

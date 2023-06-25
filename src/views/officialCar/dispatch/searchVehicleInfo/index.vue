@@ -82,20 +82,23 @@
                 />
             </el-col>
         </el-row>
+        <export-dialog ref="export" :page-num="listQuery.pageNum" :page-size="listQuery.pageSize" :total="total" @exportFile="exportFile"/>
     </div>
 </template>
 <script>
 import buttonTop from "@/components/buttonTop"
 import formData from "@/components/formData"
 import tableIndex from "@/components/tableIndex"
-import {gcywVehicleRequestDispatchListInfo} from "@/api/car"
+import {gcywVehicleRequestDispatchListInfo,gcywVehicleRequestExportRequestInfo} from "@/api/car"
 import {getAllAvailableDept} from "@/api/dept"
 import { getDisAvailableUnit } from '@/api/system/unit'
 import indexMixin from "@/views/mixins"
+import exportDialog from '@/components/ExportDialog'
+import { axiosDownloadExcel } from '@/api/download'
 
 export default {
     name:"searchVehicleInfo",
-    components:{buttonTop,formData,tableIndex},
+    components:{buttonTop,formData,tableIndex,exportDialog},
     mixins: [indexMixin],
 
     data() {
@@ -127,7 +130,7 @@ export default {
             selectionData:[],
             //数据总数
             total:0,
-          numberShow: false
+            numberShow: false
         }
     },
     created(){
@@ -178,7 +181,9 @@ export default {
         },
         //页面按钮点击事件
         handleButton(ids,buttonCode){
-
+            if(buttonCode === 'export'){
+                this.$refs.export.init()
+            }
         },
         //顶部列字段展示
         handleCheckAllChange(columns){
@@ -229,9 +234,13 @@ export default {
             this.formData.unitCode = "";
             this.deptOptions = [];
         },
-        //
+        //跳转详情
         clickLink(row, fieldCode, linkText){
             this.$router.push({ name: 'carDetail', query: { id: row.id } })
+        },
+        // 导出文件
+        exportFile(pageInfo) {
+            axiosDownloadExcel(gcywVehicleRequestExportRequestInfo, Object.assign({}, pageInfo, this.listQuery, this.formData))
         },
         //刷新列表数据
         handleQuery(row = {}){

@@ -62,6 +62,8 @@
           :tableData="dataList"
           :property="property"
           :numberShow="numberShow"
+          :showSummary="true"
+          :getSummaries="getSummaries"
           @clickLink="clickLink"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
@@ -130,7 +132,9 @@ export default {
       //数据总数
       total: 0,
       datePicker: this.datePickerHandler(),
-      numberShow: false
+      numberShow: false,
+      //合计数据
+      sumTotal:{},
     }
   },
   created() {
@@ -199,8 +203,9 @@ export default {
           this.formData.endMonth = this.lastMonth
         }
         getUsageByPage(Object.assign({}, this.listQuery, this.formData)).then(({ data }) => {
-          this.dataList = data.list
-          this.total = data.total
+          this.dataList = data.page.list
+          this.total = data.page.total
+          this.sumTotal = data.total
           this.loading = false
         }).catch(() => {
           this.loading = false
@@ -287,7 +292,38 @@ export default {
     },
     tableRowClassName({ row, rowIndex }) {
       row.index = rowIndex + 1
-    }
+    },
+    //合计显示规则
+    getSummaries(param){
+        const { columns, data } = param;
+        const sums = [];
+        let targetColumenIndex = this.numberShow ? 2:1;
+
+        columns.forEach((column, index) => {
+            if (index === targetColumenIndex) {
+                sums[index] = '合计';
+                return;
+            }
+            if(column.property === 'usageCount'){
+                sums[index] = this.sumTotal.usageCount;
+            }else if(column.property === 'usageMiles'){
+                sums[index] = this.sumTotal.usageMiles;
+            }else if(column.property === 'fuelFee'){
+                sums[index] = this.sumTotal.fuelFee;
+            }else if(column.property === 'oilConsumption'){
+                sums[index] = this.sumTotal.oilConsumption;
+            }else if(column.property === 'maintenanceFee'){
+                sums[index] = this.sumTotal.maintenanceFee;
+            }else if(column.property === 'insuranceFee'){
+                sums[index] = this.sumTotal.insuranceFee;
+            }else if(column.property === 'otherItemFee'){
+                sums[index] = this.sumTotal.otherItemFee;
+            }else {
+                sums[index] = '';
+            }
+        });
+        return sums;
+    },
   }
 }
 </script>

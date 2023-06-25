@@ -44,6 +44,8 @@
           :tableData="dataList"
           :property="property"
           :numberShow="numberShow"
+          :showSummary='true'
+          :getSummaries="getSummaries"
           @clickLink="clickLink"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
@@ -184,37 +186,44 @@ export default {
       if (fieldCode === 'ownCar') {
         params = {
           unitCode: row.unitCode,
-          vehiclePropertiesList: ['1']
+          vehiclePropertiesList: ['1'],
+          enableTag:'Y'
         }
       } else if (fieldCode === 'leaseCar') {
         params = {
           unitCode: row.unitCode,
           // 后台约定:传4时查询所有租赁车辆,包含短租和长租
-          vehiclePropertiesList: ['2', '3']
+          vehiclePropertiesList: ['2', '3'],
+          enableTag:'Y'
         }
       } else if (fieldCode === 'overStandardCar') {
         params = {
           unitCode: row.unitCode,
-          overStandardTag: 'Y'
+          overStandardTag: 'Y',
+          enableTag:'Y'
         }
       } else if (fieldCode === 'specialCar') {
         params = {
           unitCode: row.unitCode,
-          carStatus: '0'
+          carStatus: '0',
+          enableTag:'Y'
         }
       } else if (fieldCode === 'mainFuelCard') {
         params = {
           unitCode: row.unitCode,
-          isMcard: '0'
+          isMcard: '0',
+          enableTag:'Y'
         }
       } else if (fieldCode === 'childFuelCard') {
         params = {
           unitCode: row.unitCode,
-          isMcard: '1'
+          isMcard: '1',
+          enableTag:'Y'
         }
       } else if (fieldCode === 'etcCard') {
         params = {
-          unitCode: row.unitCode
+          unitCode: row.unitCode,
+          enableTag:'Y'
         }
       }
       this.$router.push({
@@ -229,7 +238,36 @@ export default {
     },
     tableRowClassName({ row, rowIndex }) {
       row.index = rowIndex + 1
-    }
+    },
+    //合计显示规则
+    getSummaries(param){
+        const { columns, data } = param;
+        const sums = [];
+        let targetColumenIndex = this.numberShow ? 2:1;
+
+        columns.forEach((column, index) => {
+            if (index === targetColumenIndex) {
+                sums[index] = '合计';
+                return;
+            }
+            const values = data.map(item => Number(item[column.property]));
+
+            if (!values.every(value => isNaN(value))) {
+                sums[index] = values.reduce((prev, curr) => {
+                    const value = Number(curr);
+                    if (!isNaN(value)) {
+                        return prev + curr;
+                    } else {
+                        return prev;
+                    }
+                }, 0);
+                sums[index] += '';
+            } else {
+                sums[index] = '';
+            }
+        });
+        return sums;
+    },
   }
 }
 </script>

@@ -122,7 +122,7 @@ export default {
       property: {},
       //查询参数
       formData: {
-        carStatus: ''
+        carStatus: '',
       },
       //已选中条目
       selectionData: [],
