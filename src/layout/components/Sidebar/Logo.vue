@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import logoImg from '@/assets/logo/Logo@3x.webp'
+import logoImg from '@/assets/logo/Logo@2x.webp'
 import variables from '@/assets/styles/variables.scss'
 
 export default {

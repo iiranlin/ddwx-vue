@@ -59,7 +59,7 @@ export default {
                 total:0,
                 pageNum:1,
                 pageSize:5,
-            }
+            },
         }
     },
     mounted() {
@@ -103,24 +103,32 @@ export default {
         async getLogisticsTrajectoryAll(simNumber,startTime,endTime){
             this.loading = true;
             let params = {
-                simNumber: simNumber,
+                deviceId: simNumber,
                 startTime: startTime,
                 endTime: endTime,
             }
-            await logisticsTrajectoryAll(params).then(({data}) => {
+            await logisticsTrajectoryAll(params).then(({message}) => {
                 this.loading = false;
-                this.replayList = data;
+                this.replayList = [];
+
+                let tempArr = JSON.parse(message);
+
+                tempArr.forEach((item) => {
+                    if(new Date(item.locTime).getTime() > new Date(startTime).getTime() && 
+                        new Date(item.locTime).getTime() < new Date(endTime).getTime()){
+                        this.replayList.push(item)
+                    }
+                })
                 this.drawRoute();
             }).catch((err) => {
                 this.loading = false;
             })
         },
         //获取车辆基础数据
-        async getLogisticsListAll(simNumber,type){
+        async getLogisticsListAll(simNumber){
             this.loading = true;
             let params = {
-                simNumber: simNumber,
-                type: type,
+                deviceId:simNumber,
             }
             await logisticsListAll(params).then(({data}) => {
                 this.loading = false;
@@ -138,7 +146,7 @@ export default {
         },
         //车辆定位
         handleLocationClick(){
-            this.getLogisticsListAll(this.carInfo.simNumber,'2');
+            this.getLogisticsListAll(this.carInfo.simNumber);
         },
         //显示行程轨迹
         drawRoute(){

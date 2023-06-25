@@ -16,14 +16,16 @@
         muted
       ></video>
     </div>
-    <!-- <div style="position:absolute;top:30px;color:red;z-index: 10;right: 110px;font-weight: bold;font-size: 24px;">本系统为测试系统，均为测试数据</div> -->
+    <div style="position:absolute;top:30px;color:red;z-index: 10;right: 110px;font-weight: bold;font-size: 24px;">本系统为测试系统，均为测试数据</div>
     <div class="login-right-box">
-      <img src="../assets/logo/logo.svg" alt="" class="logo">
-      <div class="right-title">
-
-        <h2 class="title-h2">公务用车管理信息系统</h2>
-        <!-- <p class="title-p">中国铁路广州局集团有限公司</p> -->
+      <div class="login-right-box-title">
+        <img src="../assets/logo/StationLogo.svg" alt="" class="logo">
+        <div class="right-title">
+          <h2 class="title-h2">公务用车管理系统</h2>
+          <!-- <p class="title-p">中国铁路广州局集团有限公司</p> -->
+        </div>
       </div>
+     
       <el-form
         ref="loginForm"
         :model="loginForm"
@@ -413,10 +415,12 @@ export default {
   border-radius: 8px;
   z-index: 6;
 
+  .login-right-box-title {
+    display: flex;
+  }
+
   .logo {
-    position: absolute;
-    left: 10px;
-    top: 30px;
+    margin-top: 85px;
     width: 105px;
     height: 50px;
   }
@@ -427,7 +431,6 @@ export default {
       line-height: 80px;
       font-size: 30px;
       text-align: center;
-      color: #2A2E33;
     }
 
     .title-p {
