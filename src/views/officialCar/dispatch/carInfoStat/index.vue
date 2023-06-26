@@ -64,7 +64,6 @@
         />
       </el-col>
     </el-row>
-    <export-dialog ref="export" :page-num="listQuery.pageNum" :page-size="listQuery.pageSize" :total="total" @exportFile="exportFile"/>
   </div>
 </template>
 <script>
@@ -73,12 +72,11 @@ import formData from '@/components/formData'
 import tableIndex from '@/components/tableIndex'
 import indexMixin from '@/views/mixins'
 import { getCarStatInfo, VehicleInfoStatExportUrl } from '@/api/vehicleInfo'
-import exportDialog from '@/components/ExportDialog'
 import { axiosDownloadExcel } from '@/api/download'
 
 export default {
   name: 'searchVehicleInfo',
-  components: { buttonTop, formData, tableIndex, exportDialog },
+  components: { buttonTop, formData, tableIndex },
   mixins: [indexMixin],
 
   data() {
@@ -144,12 +142,12 @@ export default {
     //页面按钮点击事件
     handleButton(ids, buttonCode) {
       if (buttonCode === 'export') {
-        this.$refs.export.init()
+        this.exportFile()
       }
     },
     // 导出文件
-    exportFile(pageInfo) {
-      axiosDownloadExcel(VehicleInfoStatExportUrl, Object.assign({}, pageInfo, this.listQuery, this.formData))
+    exportFile() {
+      axiosDownloadExcel(VehicleInfoStatExportUrl, Object.assign({}, this.listQuery, this.formData))
     },
     //顶部列字段展示
     handleCheckAllChange(columns) {

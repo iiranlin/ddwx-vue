@@ -69,7 +69,7 @@ export default {
                     let { id, procInstId, taskId } = this.row;
                     let { comment } = this.form;
                     this.loadingA = true;
-                    gcywBudgetActivitiReject({comment: comment, businessId: id, procInstId: procInstId, taskId: taskId}).then(({message}) => {
+                    gcywBudgetActivitiReject({comment: comment === '通过'?'驳回':comment, businessId: id, procInstId: procInstId, taskId: taskId}).then(({message}) => {
                         this.$modal.msgSuccess(message);
                         this.loadingA = false;
                         this.openDataScope = false;

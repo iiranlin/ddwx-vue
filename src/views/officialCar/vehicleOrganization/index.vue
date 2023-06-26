@@ -336,6 +336,9 @@ export default {
             if(row.status === '1' && this.rank === '1' && !row.isDisabled){
                 return false;
             }
+            if(row.status === '5' && !row.isDisabled){
+                return false;
+            }
             return true;
         },
         //判断状态
