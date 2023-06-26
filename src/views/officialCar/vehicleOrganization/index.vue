@@ -483,7 +483,7 @@ export default {
             }
             let params = {
                 id:this.selectionData[0].id,
-                status:'0',
+                status:this.selectionData[0].status,
                 strengthCount:this.selectionData[0].strengthCount,
             }
             this.$modal.confirm("是否保存所选信息?").then(()=>{
@@ -505,6 +505,7 @@ export default {
                             item.isDisabled = true;
                         }
                     })
+                    this.$refs.elTable.clearSelection();
                 }).catch((err) => {
                     this.loading = false;
                 })

@@ -598,7 +598,7 @@ export default {
             }
             let params = {
                 id:this.selectionData[0].id,
-                status:'0',
+                status:this.selectionData[0].status,
                 outsource:this.selectionData[0].outsource,
                 ownPurchase:this.selectionData[0].ownPurchase,
                 ownSafeguard:this.selectionData[0].ownSafeguard,
@@ -626,6 +626,7 @@ export default {
                             item.isDisabled = true;
                         }
                     })
+                    this.$refs.elTable.clearSelection();
                 }).catch((err) => {
                     this.loading = false;
                 })
