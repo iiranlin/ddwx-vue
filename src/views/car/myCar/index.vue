@@ -155,7 +155,6 @@ export default {
       console.log(row)
       console.log(url)
       if(Object.keys(row).length == 0){
-         console.log('1111')
         for (const item of this.selectionData) {
           if(url == 'confirmVehicleRequest'){
             if(item.status != 10){
@@ -170,7 +169,6 @@ export default {
           }
         }
       }else{
-        console.log('222')
         if(url == 'confirmVehicleRequest'){
           if(row.status != 10){
             this.$modal.msgWarning('该状态不能确认');

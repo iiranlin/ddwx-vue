@@ -634,6 +634,10 @@ export default {
         },
         //提交
         handleSubmit(){
+            if(!this.selectionData[0].accountUnitId){
+                this.$modal.msgWarning("全所汇总数据无法提交，请重新选择!")
+                return;
+            }
             if(!this.selectionData[0].ownPurchase){
                 this.$modal.msgWarning("请输入自有车辆购置费用!")
                 return;

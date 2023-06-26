@@ -3,6 +3,7 @@ import Vue from 'vue'
 import Cookies from 'js-cookie'
 
 import Element from 'element-ui'
+import '@/assets/icons/iconfont.js' //iconfont js
 import './assets/styles/element-variables.scss'
 import "./assets/theme/index.css"
 import '@/assets/styles/index.scss' // global css
@@ -37,6 +38,8 @@ import DictTag from '@/components/DictTag'
 import VueMeta from 'vue-meta'
 // 字典数据组件
 import DictData from '@/components/DictData'
+// iconfont图标组件
+import IconSvg from '@/components/iconComponent'
 import lottie from 'vue-lottie'
 
 // 通用列表组件
@@ -65,6 +68,7 @@ Vue.component('Editor', Editor)
 Vue.component('FileUpload', FileUpload)
 Vue.component('ImageUpload', ImageUpload)
 Vue.component('ImagePreview', ImagePreview)
+Vue.component('IconSvg', IconSvg)
 Vue.component('lottie', lottie);
 
 
