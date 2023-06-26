@@ -493,12 +493,29 @@ export default {
                     this.$modal.msgWarning("非待填报数据无法下发，请重新选择!")
                     return;
                 }
+                if(!this.selectionData[i].outsource){
+                    this.$modal.msgWarning("业务外包费用为空无法下发，请重新选择!")
+                    return;
+                }
+                if(!this.selectionData[i].ownPurchase){
+                    this.$modal.msgWarning("自有车辆购置费用为空无法下发，请重新选择!")
+                    return;
+                }
+                if(!this.selectionData[i].ownSafeguard){
+                    this.$modal.msgWarning("自有车辆维护费用为空无法下发，请重新选择!")
+                    return;
+                }
+                if(!this.selectionData[i].rentSafeguard){
+                    this.$modal.msgWarning("租赁车辆维护费用为空无法下发，请重新选择!")
+                    return;
+                }
             }
             let params = [];
 
             this.selectionData.forEach((item) => {
                 let obj = {};
                 this.$set(obj, 'unitId', item.unitId);
+                this.$set(obj, 'id', item.id);
                 this.$set(obj, 'outsource', item.outsource);
                 this.$set(obj, 'ownPurchase', item.ownPurchase);
                 this.$set(obj, 'ownSafeguard', item.ownSafeguard);

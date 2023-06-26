@@ -429,12 +429,17 @@ export default {
                     this.$modal.msgWarning("非待填报数据无法下发，请重新选择!")
                     return;
                 }
+                if(!this.selectionData[i].strengthCount){
+                    this.$modal.msgWarning("车辆编制数为空无法下发，请重新选择!")
+                    return;
+                }
             }
             let params = [];
 
             this.selectionData.forEach((item) => {
                 let obj = {};
                 this.$set(obj, 'unitId', item.unitId);
+                this.$set(obj, 'id', item.id);
                 this.$set(obj, 'strengthCount', item.strengthCount);
                 params.push(obj);
             })
