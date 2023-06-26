@@ -71,14 +71,19 @@
           <el-button @click="openWorkflow = false">取 消</el-button>
         </div>
     </el-dialog>
+    <!--弹出框-->
+    <operate ref="operate" @operateSuccess="operateSuccess"></operate>
   </div>
 </template>
 
 <script>
 import { gcywVehicleRequestListVehiclePage, cancelVehicleRequest, confirmVehicleRequest } from "@/api/gcywVehicleRequest";
+import operate from "./components/operate"
 import indexMixin from "@/views/mixins";
 export default {
   name: "myCar",
+  components:{operate},
+
   mixins: [indexMixin],
   data() {
     return {
@@ -181,6 +186,8 @@ export default {
           }
         }
       }
+      // this.$refs.operate.init("create","");
+
       let ids = [];
       ids = id.map(item => {
         return {id: item};
