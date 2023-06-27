@@ -20,7 +20,7 @@ export default {
   computed: {
 
     iconName () {
-      return `#Icon-${this.iconClass}`
+      return `#icon-${this.iconClass}`
     }
   },
   created () {

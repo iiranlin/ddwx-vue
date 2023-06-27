@@ -186,24 +186,27 @@ export default {
           }
         }
       }
-      // this.$refs.operate.init("create","");
+      this.$refs.operate.init();
 
-      let ids = [];
-      ids = id.map(item => {
-        return {id: item};
-      });
-      if(url == 'cancelVehicleRequest'){
-        if(this.$refs.elForm) this.$refs.elForm.resetFields();
-        this.openWorkflow = true;
-        this.ids = ids;
-        return
-      }
-      this.$modal.confirm(title).then(() => {
-          return confirmVehicleRequest(ids);
-      }).then(({message}) => {
-        this.$modal.msgSuccess(message);
-        this.handleQuery();
-      }).catch(() => {});
+      // let ids = [];
+      // ids = id.map(item => {
+      //   return {id: item};
+      // });
+      // if(url == 'cancelVehicleRequest'){
+      //   if(this.$refs.elForm) this.$refs.elForm.resetFields();
+      //   this.openWorkflow = true;
+      //   this.ids = ids;
+      //   return
+      // }
+      // this.$modal.confirm(title).then(() => {
+      //     return confirmVehicleRequest(ids);
+      // }).then(({message}) => {
+      //   this.$modal.msgSuccess(message);
+      //   this.handleQuery();
+      // }).catch(() => {});
+    },
+    operateSuccess(){
+
     },
     cancelVehicleRequest () {
       this.$refs.elForm.validate(async (result) => {
