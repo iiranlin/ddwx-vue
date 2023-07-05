@@ -271,7 +271,8 @@ export default {
                 this.initSpanArr();
 
                 this.dataList.forEach((item) => {
-                    if(!!item.ownPurchase ||!!item.ownSafeguard ||!!item.rentSafeguard ||!!item.outsource){
+                    if(!!item.ownPurchase ||!!item.ownSafeguard ||!!item.rentSafeguard ||!!item.outsource
+                        || item.ownPurchase === 0 || item.ownSafeguard === 0 || item.rentSafeguard === 0 || item.outsource === 0){
                         this.$set(item, 'isDisabled', true)
                     }else{
                         this.$set(item, 'isDisabled', false)
@@ -305,7 +306,8 @@ export default {
                     this.spanArr.push(1)
                     position = 0
                 } else {
-                    if (this.dataList[index].unitName === this.dataList[index - 1].unitName) {
+                    if ((this.dataList[index].unitName + this.dataList[index].budgetTag) 
+                            === (this.dataList[index-1].unitName + this.dataList[index-1].budgetTag)) {
                         // 当条数据跟上一条数据名称相同，要合并
                         this.spanArr[position] += 1  // 首条相同名称行合并行数增加
                         this.spanArr.push(0) // 当前行消除
@@ -455,12 +457,8 @@ export default {
                     this.$modal.msgWarning("全所汇总数据无法删除，请重新选择!")
                     return;
                 }
-                if(this.selectionData[i].status === '4'){
-                    this.$modal.msgWarning("审核通过数据无法删除，请重新选择!")
-                    return;
-                }
-                if(this.selectionData[i].status === '6'){
-                    this.$modal.msgWarning("已失效数据无法删除，请重新选择!")
+                if(this.selectionData[i].status !== '0' && this.selectionData[i].status !== '5'){
+                    this.$modal.msgWarning("只能删除已填报或已驳回数据，请重新选择!")
                     return;
                 }
             }
@@ -513,6 +511,22 @@ export default {
                     return;
                 }
             }
+            if(!this.checkSend('ownPurchase')){
+                this.$modal.msgWarning("全所汇总自有车辆购置费用不能小于已填报的列账单位自有车辆购置费用之和，请重新填写!")
+                return;
+            }
+            if(!this.checkSend('ownSafeguard')){
+                this.$modal.msgWarning("全所汇总自有车辆维护费用不能小于已填报的列账单位自有车辆维护费用之和，请重新填写!")
+                return;
+            }
+            if(!this.checkSend('rentSafeguard')){
+                this.$modal.msgWarning("全所汇总租赁车辆维护费用不能小于已填报的列账单位租赁车辆维护费用之和，请重新填写!")
+                return;
+            }
+            if(!this.checkSend('outsource')){
+                this.$modal.msgWarning("全所汇总业务外包费用不能小于已填报的列账单位业务外包费用费用之和，请重新填写!")
+                return;
+            }
             let params = [];
 
             this.selectionData.forEach((item) => {
@@ -539,29 +553,33 @@ export default {
         },
         //保存
         handleSave(){
-            if(!this.selectionData[0].ownPurchase){
+            if(!this.selectionData[0].ownPurchase && this.selectionData[0].ownPurchase !== 0){
                 this.$modal.msgWarning("请输入自有车辆购置费用!")
                 return;
             }
-            if(!this.selectionData[0].ownSafeguard){
+            if(!this.selectionData[0].ownSafeguard && this.selectionData[0].ownSafeguard !== 0){
                 this.$modal.msgWarning("请输入自有车辆维护费用!")
                 return;
             }
-            if(!this.selectionData[0].rentSafeguard){
+            if(!this.selectionData[0].rentSafeguard && this.selectionData[0].rentSafeguard !== 0){
                 this.$modal.msgWarning("请输入租赁车辆维护费用!")
                 return;
             }
-            if(!this.selectionData[0].outsource){
+            if(!this.selectionData[0].outsource && this.selectionData[0].outsource !== 0){
                 this.$modal.msgWarning("请输入业务外包费用!")
                 return;
             }
-            if(this.rank === '0' && this.selectionData[0].status !== '0'){
-                this.$modal.msgWarning("当前条目无法保存，请重新选择!")
-                return;
+            if(this.rank === '0'){
+                if(this.selectionData[0].status !== '0' && this.selectionData[0].status !== '5'){
+                    this.$modal.msgWarning("当前条目无法保存，请重新选择!")
+                    return;
+                }
             }
-            if(this.rank === '1' && this.selectionData[0].status !== '1'){
-                this.$modal.msgWarning("当前条目无法保存，请重新选择!")
-                return;
+            if(this.rank === '1'){
+                if(this.selectionData[0].status !== '1' && this.selectionData[0].status !== '5'){
+                    this.$modal.msgWarning("当前条目无法保存，请重新选择!")
+                    return;
+                }
             }
             if(this.selectionData[0].isDisabled){
                 this.$modal.msgWarning("已保存数据无法重复保存，请重新选择!")
@@ -641,29 +659,33 @@ export default {
                 this.$modal.msgWarning("全所汇总数据无法提交，请重新选择!")
                 return;
             }
-            if(!this.selectionData[0].ownPurchase){
+            if(!this.selectionData[0].ownPurchase && this.selectionData[0].ownPurchase !== 0){
                 this.$modal.msgWarning("请输入自有车辆购置费用!")
                 return;
             }
-            if(!this.selectionData[0].ownSafeguard){
+            if(!this.selectionData[0].ownSafeguard && this.selectionData[0].ownSafeguard !== 0){
                 this.$modal.msgWarning("请输入自有车辆维护费用!")
                 return;
             }
-            if(!this.selectionData[0].rentSafeguard){
+            if(!this.selectionData[0].rentSafeguard && this.selectionData[0].rentSafeguard !== 0){
                 this.$modal.msgWarning("请输入租赁车辆维护费用!")
                 return;
             }
-            if(!this.selectionData[0].outsource){
+            if(!this.selectionData[0].outsource && this.selectionData[0].outsource !== 0){
                 this.$modal.msgWarning("请输入业务外包费用!")
                 return;
             }
-            if(this.rank === '0' && this.selectionData[0].status !== '0'){
-                this.$modal.msgWarning("当前条目无法提交，请重新选择!")
-                return;
+            if(this.rank === '0'){
+                if(this.selectionData[0].status !== '0' && this.selectionData[0].status !== '5'){
+                    this.$modal.msgWarning("当前条目无法提交，请重新选择!")
+                    return;
+                }
             }
-            if(this.rank === '1' && this.selectionData[0].status !== '1'){
-                this.$modal.msgWarning("当前条目无法提交，请重新选择!")
-                return;
+            if(this.rank === '1'){
+                if(this.selectionData[0].status !== '1' && this.selectionData[0].status !== '5'){
+                    this.$modal.msgWarning("当前条目无法提交，请重新选择!")
+                    return;
+                }
             }
             if(!this.checkSaveAndCommit('ownPurchase')){
                 this.$modal.msgWarning("列账单位的自有车辆购置费用之和不能大于全所汇总的自有车辆购置费用，请重新填写!")
@@ -720,6 +742,30 @@ export default {
                 
             })
         },
+        //校验下发逻辑
+        checkSend(key){
+            for (let i = 0; i < this.selectionData.length; i++) {
+                let obj = this.selectionData[i];
+
+                //获取当前所属单位的所有原始数据
+                let originalArr = this.originalDataList.filter((item) => {
+                    return item.unitId === obj.unitId && item.budgetTag === obj.budgetTag;
+                })
+                //判断全所汇总数据是否大于已填报的列账单位数据之和
+                let sum = 0;
+
+                originalArr.forEach((item) => {
+                    if(!!item.accountUnitId){
+                        sum = Number(item[key]) + sum;
+                    }
+                })
+                //判断总和是否超过全所汇总数
+                if(Number(obj[key]) < Number(sum)){
+                    return false;
+                }
+            }
+            return true;
+        },
         //校验列账单位
         checkSaveAndCommit(key){
             let obj = this.selectionData[0];
@@ -734,7 +780,7 @@ export default {
                 let temp = originalArr.find((item) => {
                     return !item.accountUnitId
                 })
-                if(!!temp[key]){
+                if(!!temp[key] || temp[key] === 0){
                     let sum = 0;
 
                     originalArr.forEach((item) => {
@@ -774,14 +820,14 @@ export default {
             //判断当前未填写条目数量
             let num = 0;
             originalArr.forEach((item) => {
-                if(!item[key]){
+                if(!item[key] && item[key]!== 0){
                     num = num +1;
                 }
             })
             if(num === 1){
                 //判断未填写条目是否是当前保存或提交数据
                 let temp = originalArr.find((item) => {
-                    return !item[key];
+                    return !item[key] && item[key] !==0;
                 })
                 if(temp.id === obj.id){
                     //判断当前保存的是否是全所汇总数据

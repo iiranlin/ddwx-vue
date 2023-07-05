@@ -22,7 +22,7 @@
                     <span>编制年度：</span>
                     <div class="right-container">
                         <el-form-item prop="strengthTag">
-                            <el-input placeholder="请输入编制年度" v-model="form.strengthTag" size="small"></el-input>
+                            <el-input placeholder="请输入编制年度" v-model="form.strengthTag" size="small" maxlength="20"></el-input>
                         </el-form-item>
                         <el-button class="button-create" type="primary" @click="handleCreate()">确定</el-button>
                         <el-button class="button-cancel" @click="handleCancel">取消</el-button>

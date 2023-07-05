@@ -83,6 +83,15 @@ export function saveOrderDispatch(data) {
   })
 }
 
+//调度工作台-用车单 时间地点重合 校验接口 
+export function gcywVehicleRequestCheckRequestInfo(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywVehicleRequest/checkRequestInfo`,
+    method: 'get',
+    params
+  })
+}
+
 //改派
 export function reassignment(data) {
   return request({

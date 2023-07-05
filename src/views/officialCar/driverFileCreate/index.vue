@@ -112,6 +112,28 @@
                 <el-input type="textarea" :rows="3" maxlength="200" v-model="form.remark" size="mini"></el-input>
               </el-form-item>
             </el-col>
+            <el-col :span="14">
+              <el-form-item label="司机图像：" prop="driverPic">
+                <el-upload
+                  v-model="form.driverPic"
+                  class="avatar-uploader"
+                  accept=".jpg,.png"
+                  :action="uploadFileUrl"
+                  :headers="headers"
+                  :data="uploadData[2]"
+                  :show-file-list="false"
+                  :on-success="handleAvatarSuccess"
+                  :on-error="handleUploadError"
+                  :before-upload="beforeAvatarUpload"
+                >
+                  <img v-if="form.driverPicPath" :src="form.driverPicPath" class="avatar">
+                  <i v-else class="el-icon-plus avatar-uploader-icon">
+                    <span style="font-size:12px;display:block;height:30px;line-height:30px;">上传照片</span>
+                  </i>
+                </el-upload>
+                <span style="font-size:10px;color:#8c939d;">支持.jpg .png格式</span>
+              </el-form-item>
+            </el-col>
           </el-col>
         </el-row>
         <!--驾照信息-->
@@ -217,7 +239,7 @@
                     :on-error="handleUploadError"
                     :before-upload="beforeAvatarUpload"
                   >
-                    <img v-if="form.licenseFirstImg" :src="form.licenseFirstImg" class="avatar">
+                    <img v-if="form.licenseFirstImgPath" :src="form.licenseFirstImgPath" class="avatar">
                     <i v-else class="el-icon-plus avatar-uploader-icon">
                       <span style="font-size:12px;display:block;height:30px;line-height:30px;">上传主页照片</span>
                     </i>
@@ -236,7 +258,7 @@
                     :on-success="handleAvatarSuccess"
                     :before-upload="beforeAvatarUpload"
                   >
-                    <img v-if="form.licenseSecondImg" :src="form.licenseSecondImg" class="avatar">
+                    <img v-if="form.licenseSecondImgPath" :src="form.licenseSecondImgPath" class="avatar">
                     <i v-else class="el-icon-plus avatar-uploader-icon">
                       <span style="font-size:12px;display:block;height:30px;line-height:30px;">上传副页照片</span>
                     </i>
@@ -367,7 +389,7 @@ export default {
       },
       //图片上传参数
       uploadData: [
-        { type: '1' }, { type: '2' }
+        { type: '1' }, { type: '2' }, { type: '7' }
       ],
       //健康状态数据
       healthStateOptions: [],
@@ -389,6 +411,8 @@ export default {
         emergencyContact: '',    //紧急联系人
         emergencyPhone: '',  //紧急联系电话
         remark: '',      //备注
+        driverPic:'',   //司机图像上传参数
+        driverPicPath:'',
         license: '',     //驾照编号
         licenseType: '',    //驾照类型
         endDate: '',     //到期日期
@@ -397,8 +421,10 @@ export default {
         internshipEndDate: '',   //实习到期日期
         fileNo: '',      //档案编号
         issuingUnit: '',  //发证单位
-        licenseFirstImg: '',     //驾照主页照片
-        licenseSecondImg: '',     //驾照副页照片
+        licenseFirstImg: '',     //驾照主页照片上传参数
+        licenseFirstImgPath:'',
+        licenseSecondImg: '',     //驾照副页照片上传参数
+        licenseSecondImgPath:'',
         healthyStatus: '',   //健康状态 1-健康 2-生病中
         healthyCodeStatus: '',   //健康码状态 1-绿码 2-弹窗 3-黄码 4-红码
         vaccinesStatus: '',      //疫苗接种情况 0-未接种 1-接种中 2-已接种 3-已加强
@@ -420,6 +446,9 @@ export default {
         // license: [
         //   { required: true, message: '驾照编号不能为空', trigger: 'blur' }
         // ],
+        driverPic: [
+          { required: true, message: '司机图像不能为空', trigger: 'change' }
+        ],
         licenseType: [
           { required: true, message: '驾照类型不能为空', trigger: ['blur', 'change'] }
         ],
@@ -614,9 +643,14 @@ export default {
       let { data } = res
       this.$modal.msgSuccess('上传成功')
       if (data.type === '1') {
-        this.form.licenseFirstImg = data.url
+        this.form.licenseFirstImg = data.fileName;
+        this.form.licenseFirstImgPath = data.url;
       } else if (data.type === '2') {
-        this.form.licenseSecondImg = data.url
+        this.form.licenseSecondImg = data.fileName;
+        this.form.licenseSecondImgPath = data.url;
+      } else if (data.type === '7') {
+        this.form.driverPic = data.fileName;
+        this.form.driverPicPath = data.url;
       }
     },
     //上传图片失败

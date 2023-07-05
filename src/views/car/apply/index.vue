@@ -279,7 +279,7 @@ export default {
         this.formData = {
           reasonCode: row.reasonCode,
           demandCode: row.demandCode,
-          longDistanceTag: row.longDistanceTag,
+          longDistanceTag: row.longDistanceTag+'',
           usagePersons: row.usagePersons,
           userName: row.userName,
           phone: row.phone,

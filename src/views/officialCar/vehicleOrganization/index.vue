@@ -221,12 +221,13 @@ export default {
                 this.loading = false;
 
                 this.dataList.forEach((item) => {
-                    if(!!item.strengthCount){
+                    if(!!item.strengthCount || item.strengthCount === 0){
                         this.$set(item, 'isDisabled', true)
                     }else{
                         this.$set(item, 'isDisabled', false)
                     }
                 })
+                console.log(this.dataList)
                 this.initSpanArr();
 
                 this.realCount = data.realCount === null? 0:data.realCount;
@@ -268,7 +269,8 @@ export default {
                     this.spanArr.push(1)
                     position = 0
                 } else {
-                    if (this.dataList[index].unitName === this.dataList[index - 1].unitName) {
+                    if ((this.dataList[index].unitName + this.dataList[index].strengthTag) 
+                            === (this.dataList[index-1].unitName + this.dataList[index-1].strengthTag)) {
                         // 当条数据跟上一条数据名称相同，要合并
                         this.spanArr[position] += 1  // 首条相同名称行合并行数增加
                         this.spanArr.push(0) // 当前行消除
@@ -391,12 +393,8 @@ export default {
                     this.$modal.msgWarning("全所汇总数据无法删除，请重新选择!")
                     return;
                 }
-                if(this.selectionData[i].status === '4'){
-                    this.$modal.msgWarning("审核通过数据无法删除，请重新选择!")
-                    return;
-                }
-                if(this.selectionData[i].status === '6'){
-                    this.$modal.msgWarning("已失效数据无法删除，请重新选择!")
+                if(this.selectionData[i].status !== '0' && this.selectionData[i].status !== '5'){
+                    this.$modal.msgWarning("只能删除已填报或已驳回数据，请重新选择!")
                     return;
                 }
             }
@@ -437,6 +435,10 @@ export default {
                     return;
                 }
             }
+            if(!this.checkSend()){
+                this.$modal.msgWarning("全所汇总车辆编制数不能小于已填报的列账单位车辆编制数之和，请重新填写!")
+                return;
+            }
             let params = [];
 
             this.selectionData.forEach((item) => {
@@ -460,17 +462,21 @@ export default {
         },
         //保存
         handleSave(){
-            if(!this.selectionData[0].strengthCount){
+            if(!this.selectionData[0].strengthCount && this.selectionData[0].strengthCount !== 0){
                 this.$modal.msgWarning("请输入编制车辆数!")
                 return;
             }
-            if(this.rank === '0' && this.selectionData[0].status !== '0'){
-                this.$modal.msgWarning("当前条目无法保存，请重新选择!")
-                return;
+            if(this.rank === '0'){
+                if(this.selectionData[0].status !== '0' && this.selectionData[0].status !== '5'){
+                    this.$modal.msgWarning("当前条目无法保存，请重新选择!")
+                    return;
+                }
             }
-            if(this.rank === '1' && this.selectionData[0].status !== '1'){
-                this.$modal.msgWarning("当前条目无法保存，请重新选择!")
-                return;
+            if(this.rank === '1'){
+                if(this.selectionData[0].status !== '1' && this.selectionData[0].status !== '5'){
+                    this.$modal.msgWarning("当前条目无法保存，请重新选择!")
+                    return;
+                }
             }
             if(this.selectionData[0].isDisabled){
                 this.$modal.msgWarning("已保存数据无法重复保存，请重新选择!")
@@ -520,17 +526,21 @@ export default {
                 this.$modal.msgWarning("全所汇总数据无法提交，请重新选择!")
                 return;
             }
-            if(!this.selectionData[0].strengthCount){
+            if(!this.selectionData[0].strengthCount && this.selectionData[0].strengthCount !== 0){
                 this.$modal.msgWarning("请输入编制车辆数!")
                 return;
             }
-            if(this.rank === '0' && this.selectionData[0].status !== '0'){
-                this.$modal.msgWarning("当前条目无法提交，请重新选择!")
-                return;
+            if(this.rank === '0'){
+                if(this.selectionData[0].status !== '0' && this.selectionData[0].status !== '5'){
+                    this.$modal.msgWarning("当前条目无法提交，请重新选择!")
+                    return;
+                }
             }
-            if(this.rank === '1' && this.selectionData[0].status !== '1'){
-                this.$modal.msgWarning("当前条目无法提交，请重新选择!")
-                return;
+            if(this.rank === '1'){
+                if(this.selectionData[0].status !== '1' && this.selectionData[0].status !== '5'){
+                    this.$modal.msgWarning("当前条目无法提交，请重新选择!")
+                    return;
+                }
             }
             if(!this.checkSaveAndCommit()){
                 this.$modal.msgWarning("列账单位的编制车辆数之和不能大于全所汇总的编制车辆数，请重新填写!")
@@ -563,13 +573,37 @@ export default {
                 
             })
         },
+        //校验下发逻辑
+        checkSend(){
+            for (let i = 0; i < this.selectionData.length; i++) {
+                let obj = this.selectionData[i];
+
+                //获取当前所属单位的所有原始数据
+                let originalArr = this.originalDataList.filter((item) => {
+                    return item.unitId === obj.unitId && item.strengthTag === obj.strengthTag;
+                })
+                //判断全所汇总数据是否大于已填报的列账单位编制车辆数据之和
+                let sumStrengthCount = 0;
+
+                originalArr.forEach((item) => {
+                    if(!!item.accountUnitId){
+                        sumStrengthCount = Number(item.strengthCount) + sumStrengthCount;
+                    }
+                })
+                //判断编制车辆总和是否超过全所汇总数
+                if(Number(obj.strengthCount) < Number(sumStrengthCount)){
+                    return false;
+                }
+            }
+            return true;
+        },
         //校验编制车辆数
         checkSaveAndCommit(){
             let obj = this.selectionData[0];
 
             //获取当前所属单位的所有原始数据
             let originalArr = this.originalDataList.filter((item) => {
-                return item.unitId === obj.unitId && item.budgetTag === obj.budgetTag;
+                return item.unitId === obj.unitId && item.strengthTag === obj.strengthTag;
             })
             //判断当前保存的是否是全所汇总数据
             if(!!obj.accountUnitId){
@@ -577,7 +611,7 @@ export default {
                 let temp = originalArr.find((item) => {
                     return !item.accountUnitId
                 })
-                if(!!temp.strengthCount){
+                if(!!temp.strengthCount || temp.strengthCount === 0){
                     let sumStrengthCount = 0;
 
                     originalArr.forEach((item) => {
@@ -612,19 +646,19 @@ export default {
 
             //获取当前所属单位的所有原始数据
             let originalArr = this.originalDataList.filter((item) => {
-                return item.unitId === obj.unitId && item.budgetTag === obj.budgetTag;
+                return item.unitId === obj.unitId && item.strengthTag === obj.strengthTag;
             })
             //判断当前未填写条目数量
             let num = 0;
             originalArr.forEach((item) => {
-                if(!item.strengthCount){
+                if(!item.strengthCount && item.strengthCount !== 0){
                     num = num +1;
                 }
             })
             if(num === 1){
                 //判断未填写条目是否是当前保存或提交数据
                 let temp = originalArr.find((item) => {
-                    return !item.strengthCount
+                    return !item.strengthCount && item.strengthCount !==0;
                 })
                 if(temp.id === obj.id){
                     //判断当前保存的是否是全所汇总数据

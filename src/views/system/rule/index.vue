@@ -156,7 +156,7 @@ export default {
   components: { Treeselect },
   mixins: [indexMixin],
   name: "Rule",
-  dicts: ["status"],
+  // dicts: ["status"],
   data() {
     return {
       property:{},

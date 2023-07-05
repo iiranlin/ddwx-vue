@@ -44,7 +44,8 @@
                     @handleSelectionChange="handleSelectionChange"
                     @handleButton="handleButton"
                     @selectChange="selectChange"
-                    @emitAblFilter="emitAblFilter">
+                    @emitAblFilter="emitAblFilter"
+                    @clickLink="clickLink">
                 </table-index>
                 <!--分页器-->
                 <pagination
@@ -184,6 +185,15 @@ export default {
         handleQuery(row = {}){
             this.formData = Object.assign({}, this.formData,row);
             this.getList();
+        },
+        //跳转详情
+        clickLink (row, fieldCode, linkText) {
+            this.$router.push({
+                name: 'driverFileDetail',
+                params: {
+                    id:row.id
+                },
+            })
         },
         tableRowClassName({row,rowIndex}){
             row.index = rowIndex + 1;

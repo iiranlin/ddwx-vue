@@ -8,12 +8,12 @@
         <el-row :gutter="20">
             <el-form :model="form" ref="elform" label-width="120px">
                 <!--单位信息-->
-                <el-row :gutter="20">
+                <el-row :gutter="20" v-if="source!=='driverWorkBench'">
                     <el-col style="margin: 15px 10px">
                         <i class="el-icon-caret-right title-icon"></i><span>单位信息</span>
                     </el-col>
                 </el-row>
-                <el-row >
+                <el-row v-if="source!=='driverWorkBench'">
                     <el-col :span="24" :xs="24"  style="width:90%;">
                         <el-col :span="8">
                             <el-form-item label="用车单位："><span>{{vehicleData.unitName}}</span></el-form-item>
@@ -71,6 +71,9 @@
                             <el-col :span="8">
                                 <el-form-item label="预计时长："><span>{{vehicleData.timeLength}}</span></el-form-item>
                             </el-col>
+                            <el-col :span="8">
+                                <el-form-item label="期望车型："><span>{{hopeBrandInfo}}</span></el-form-item>
+                            </el-col>
                         </el-row>
                         <el-row :gutter="20">    
                             <el-col :span="24">
@@ -80,11 +83,6 @@
                         <el-row :gutter="20">    
                             <el-col :span="24">
                                 <el-form-item label="前往地点："><span>{{vehicleData.toAddr}}</span></el-form-item>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="20">    
-                            <el-col :span="24">
-                                <el-form-item label="期望车型："><span>{{hopeBrandInfo}}</span></el-form-item>
                             </el-col>
                         </el-row>
                         <el-row :gutter="20">    
@@ -104,7 +102,8 @@
                     <el-col :span="24" :xs="24"  style="width:90%;"> 
                         <el-row :gutter="20">    
                             <el-col :span="8">
-                                <el-form-item label="指派司机："><span>{{item.driver}}</span></el-form-item>
+                                <el-form-item v-if="source!=='myCar'" label="指派司机："><span>{{item.driver}}</span></el-form-item>
+                                <el-form-item v-else label="指派司机："><span>{{item.driver.substr(0,1)}}师傅</span></el-form-item>
                             </el-col>
                             <el-col :span="8">
                                 <el-form-item label="指派车辆：">
@@ -130,7 +129,50 @@
                         <el-row :gutter="20">    
                             <el-col :span="8">
                                 <el-form-item label="保养里程："><span>{{item.maintainMiles}}</span></el-form-item>
+                            </el-col>  
+                            <el-col :span="16">
+                                <el-form-item label="评价内容："><span>{{item.evaluateContent || '未填写'}}</span></el-form-item>
                             </el-col>       
+                        </el-row>
+                        <el-row>
+                            <el-form-item label="评分：">
+                                <el-rate
+                                    v-model="item.evaluateLevel"
+                                    disabled
+                                    show-text
+                                    :texts="texts">
+                                </el-rate>
+                            </el-form-item>
+                        </el-row>
+                        <el-row>
+                            <el-form-item label="驾驶水平：">
+                                <el-rate
+                                    v-model="item.evaluateDriver"
+                                    disabled
+                                    show-text
+                                    :texts="texts">
+                                </el-rate>
+                            </el-form-item>
+                        </el-row>
+                        <el-row>
+                            <el-form-item label="服务态度：">
+                                <el-rate
+                                    v-model="item.evaluateService"
+                                    disabled
+                                    show-text
+                                    :texts="texts">
+                                </el-rate>
+                            </el-form-item>
+                        </el-row>
+                        <el-row>
+                            <el-form-item label="车内环境：">
+                                <el-rate
+                                    v-model="item.evaluateIncar"
+                                    disabled
+                                    show-text
+                                    :texts="texts">
+                                </el-rate>
+                            </el-form-item>
                         </el-row>
                     </el-col>
                     <el-col :span="24">
@@ -138,7 +180,7 @@
                     </el-col>
                 </el-row>
                 <!--操作日志-->
-                <el-row :gutter="20">
+                <el-row :gutter="20" v-if="source!=='driverWorkBench'">
                     <el-col style="margin: 15px 10px">
                         <i class="el-icon-caret-right title-icon"></i><span>操作信息</span>
                     </el-col>
@@ -165,12 +207,22 @@ import {logisticsGetDrivingRecord} from '@/api/driver'
 import {getListByParentId} from "@/api/system/dict"
 export default {
     name: "carDetail",
+
+    beforeRouteEnter (to, from, next) {
+        next((vm) => {
+            vm.source = from.name;
+            console.log(vm.source)
+        });
+    },
+
     data() {
         return {
             //loading框
             loading:false,
             //id
             id:"",
+            userName1:'',
+            userName2:'',
             //表单数据
             form:{},
             //操作日志数据
@@ -179,6 +231,10 @@ export default {
             vehicleData:{},
             //期望车型数据
             hopeBrandInfo:"",
+             //评价标准
+            texts:['非常不满意','不满意','一般','比较满意','非常满意'],
+            //页面来源
+            source:'',
         };
     },
     computed: {
@@ -191,6 +247,8 @@ export default {
     },
     activated() {
         let id = this.$route.query.id;
+        this.userName1 = this.$route.query.handleUserName;
+        this.userName2 = this.$route.query.userName;
 
         if(this.id !== id){
             this.id = id;
@@ -202,13 +260,29 @@ export default {
         //获取用车单信息
         async getDispatchInfo(){
                 this.loading = true;
-                await gcywVehicleRequestDispatchList(Object.assign({}, {id:this.id})).then(({data}) => {
+
+                let params = {
+                    id:this.id,
+                    userName1:this.userName1,
+                    userName2:this.userName2,
+                }
+                await gcywVehicleRequestDispatchList(params).then(({data}) => {
                     this.vehicleData = data.list[0] || {};
                     this.loading = false;
                     this.getHopeBrandInfo();
+                    this.initEvaluateInfo();
                 }).catch((err) => {
                     this.loading = false;
                 })
+        },
+        //处理评价数据
+        initEvaluateInfo(){
+            this.vehicleData.reqAssignments.forEach((item) => {
+                item.evaluateLevel = Number(item.evaluateLevel);
+                item.evaluateDriver = Number(item.evaluateDriver);
+                item.evaluateService = Number(item.evaluateService);
+                item.evaluateIncar = Number(item.evaluateIncar);
+            })
         },
         //获取操作日志信息
         async getLogList(query){
@@ -300,5 +374,13 @@ export default {
 .custom-link {
     color: rgb(64, 158, 255);
     text-decoration: underline;
+}
+.svg-icon-font {
+    font-size: 20px;
+    color: orange;
+    margin-right: 10px;
+}
+::v-deep.el-rate {
+    margin-top: 8px;
 }
 </style>

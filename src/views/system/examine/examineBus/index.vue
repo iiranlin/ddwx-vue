@@ -57,7 +57,7 @@ import operate from "./components/operate";
 import workflow from "./components/workflow";
 import indexMixin from "@/views/mixins";
 export default {
-  name: "examineCar",
+  name: "examineBus",
   mixins: [indexMixin],
   components: { operate, workflow },
   data() {

@@ -78,6 +78,7 @@
 
 <script>
 import { gcywVehicleRequestListVehiclePage, cancelVehicleRequest, confirmVehicleRequest } from "@/api/gcywVehicleRequest";
+import {gcywVehicleRequestDispatchList} from "@/api/car"
 import operate from "./components/operate"
 import indexMixin from "@/views/mixins";
 export default {
@@ -154,11 +155,11 @@ export default {
         this.vehicleRequest(id, row, 'cancelVehicleRequest', '是否取消？');
       }else if(buttonCode === 'confirm'){
         this.vehicleRequest(id, row, 'confirmVehicleRequest', '是否确认？');
+      }else if(buttonCode === 'evaluate'){
+        this.handleEvaluate();
       }
     },
     vehicleRequest (id, row, url, title) {
-      console.log(row)
-      console.log(url)
       if(Object.keys(row).length == 0){
         for (const item of this.selectionData) {
           if(url == 'confirmVehicleRequest'){
@@ -186,27 +187,25 @@ export default {
           }
         }
       }
-      this.$refs.operate.init();
-
-      // let ids = [];
-      // ids = id.map(item => {
-      //   return {id: item};
-      // });
-      // if(url == 'cancelVehicleRequest'){
-      //   if(this.$refs.elForm) this.$refs.elForm.resetFields();
-      //   this.openWorkflow = true;
-      //   this.ids = ids;
-      //   return
-      // }
-      // this.$modal.confirm(title).then(() => {
-      //     return confirmVehicleRequest(ids);
-      // }).then(({message}) => {
-      //   this.$modal.msgSuccess(message);
-      //   this.handleQuery();
-      // }).catch(() => {});
+      let ids = [];
+      ids = id.map(item => {
+        return {id: item};
+      });
+      if(url == 'cancelVehicleRequest'){
+        if(this.$refs.elForm) this.$refs.elForm.resetFields();
+        this.openWorkflow = true;
+        this.ids = ids;
+        return
+      }
+      this.$modal.confirm(title).then(() => {
+          return confirmVehicleRequest(ids);
+      }).then(({message}) => {
+        this.$modal.msgSuccess(message);
+        this.handleQuery();
+      }).catch(() => {});
     },
     operateSuccess(){
-
+      this.getList();
     },
     cancelVehicleRequest () {
       this.$refs.elForm.validate(async (result) => {
@@ -225,6 +224,32 @@ export default {
           })
         }
       })
+    },
+    handleEvaluate(){
+      if(this.selectionData[0].status !== 10 && this.selectionData[0].status !== 11){
+        this.$modal.msgWarning('该状态不能进行评价');
+        return;
+      }
+      this.loading = true;
+
+      gcywVehicleRequestDispatchList({id:this.selectionData[0].id}).then(({data}) => {
+          this.loading = false;
+
+          let carInfo = data.list[0].reqAssignments;
+          this.checkEvaluate(carInfo)
+      }).catch((err) => {
+          this.loading = false;
+      })
+    },
+    checkEvaluate(carInfo){
+      let waitArr = carInfo.filter((item) => {
+        return !item.evaluateLevel;
+      })
+      if(waitArr.length === 0){
+        this.$modal.msgWarning('此订单已完成评价，无法再次进行评价!')
+      }else{
+        this.$refs.operate.init(waitArr);
+      }
     },
     handleCheckAllChange(columns) {
       this.$refs.tableIndex.init(columns);

@@ -39,11 +39,12 @@
                                 clearable
                                 filterable
                                 value-key="driverCode"
-                            >
+                                ref="template"
+                                @visible-change="(v) => visibleChange(v, 'template',index)">
                                 <el-option v-for="item in driverList" 
-                                :key="item.driverCode" 
-                                :label="item.driver" 
-                                :value="item">
+                                    :key="item.driverCode" 
+                                    :label="item.driver" 
+                                    :value="item">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -106,6 +107,7 @@ export default {
             }
         }
         return {
+            originDriverList :[],
             driverList: [],
             vehicleList: [],
             formData: {
@@ -140,7 +142,7 @@ export default {
                 this.$modal.msgWarning('至少有一条数据！');
             }
         },
-        getRGAvailableDriver (unitCode, usageDate,vinNumber) {
+        getRGAvailableDriver (unitCode, usageDate,vinNumber,index) {
             let obj = {
                 classDateEnd: usageDate,
                 classDateStart: usageDate,
@@ -150,13 +152,25 @@ export default {
                 vinNumber:vinNumber,
             }
             getRGAvailableDriver(obj).then(({data}) => {
-                this.driverList = data
+                this.originDriverList = data;
+
+                //隐藏数据
+                this.driverList = this.originDriverList.filter((item) => {
+                    return item.type === '1';
+                })
+                if(this.driverList.length === 0){
+                    this.driverList = this.originDriverList;
+                }
+                this.formData.list[index].driver = this.driverList[0];
             })
         },
         vehicleInfoGetAvailableCar (unitCode, deptId) {
+            let cityId = this.row.fromAreaId.split(',');
             let obj = {
                 unitCode: unitCode,
                 deptId: deptId,
+                cityId: cityId[1],
+                date: this.row.usageDate
             }
             vehicleInfoGetAvailableCar(obj).then(({data}) => {
                 this.vehicleList = data
@@ -185,9 +199,29 @@ export default {
 
             let vinNumber = this.formData.list[index].car.vinNumber;
             if(!!vinNumber){
-                this.getRGAvailableDriver(this.row.unitCode, this.row.usageDate,vinNumber);
+                this.getRGAvailableDriver(this.row.unitCode, this.row.usageDate,vinNumber,index);
+            } 
+        },
+        visibleChange(visible, refName,index) {
+            if (visible) {
+                const ref = this.$refs[refName];
+                let popper = ref[index].$refs.popper;
+                if (popper.$el) popper = popper.$el;
+                if (!Array.from(popper.children).some(v => v.className === 'el-template-more')){
+                    const el = document.createElement("div");
+                    el.className = "el-template-more";
+                    el.style ="line-height:50px;padding:0; color:#ffffff;";
+                    el.innerHTML =`<span id='more' style="color:#409EFF;font-size:14px;font-weight:600;float:right;margin-right:20px;cursor:pointer;">更多司机</span>`;
+                    popper.appendChild(el);
+                    let element = el.firstChild;
+                    element.onclick = () => {
+                        this.handleMoreClick();
+                    };
+                }
             }
-           
+        },
+        handleMoreClick(){
+            this.driverList = this.originDriverList;
         },
     }
 };

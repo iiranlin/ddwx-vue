@@ -253,10 +253,10 @@ export default {
     },
     // 链接跳转
     clickLink(row, fieldCode, linkText) {
-      console.log(row)
-      console.log(fieldCode)
-      console.log(linkText)
-      console.log(this.property)
+      // console.log(row)
+      // console.log(fieldCode)
+      // console.log(linkText)
+      // console.log(this.property)
 
       let name = linkText.substring(linkText.indexOf('/') + 1)
       let obj = this.property.fields.find((item) => {
@@ -360,9 +360,13 @@ export default {
       } else if (fieldCode === 'other') {
         params = {
           unitCode: row.unitCode,
+          vehiclePropertiesList:[],
           enableTag:'Y',
           otherType:obj.fieldName,
         }
+      }
+      if(!!this.formData.vehicleProperties){
+        this.$set(params, 'vehiclePropertiesList', [this.formData.vehicleProperties]);
       }
       this.$router.push({
         name: name,

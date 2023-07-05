@@ -13,7 +13,7 @@ export function getAvailableDriver(params) {
 //人工派车-获取司机
 export function getRGAvailableDriver(params) {
   return request({
-    url: `${VUE_APP_BASE_prefix}/gcjcDriverClass/getRGAvailableDriver`,
+    url: `${VUE_APP_BASE_prefix}/gcjcDriverClass/getAvailableDriver`,
     method: 'get',
     params
   })

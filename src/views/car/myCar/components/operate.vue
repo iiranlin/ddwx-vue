@@ -1,52 +1,72 @@
 <template>
-   <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="openDataScope" width="600px" append-to-body center @close="handleDialogClose()">
-       <el-form :model="form" :rules="rules" ref="elform" label-width="100px" v-loading="loading">
-           <el-row :span="24" :gutter="20">
-               <el-col :span="24" >
+    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="openDataScope" width="500px" append-to-body center @close="handleDialogClose()">
+        <el-form :model="form" ref="elform" label-width="100px" v-loading="loading">
+            <el-checkbox-group v-model="checkList">
+                <el-checkbox v-for="(item,index) in waitArr" :key="index" :label="item.id">
+                    <span>车辆：{{item.carNumber}}{{item.carBrand}}{{item.carSeries}}</span>
+                    <span>司机：{{item.driver}}</span>
+                </el-checkbox>
+            </el-checkbox-group>
+            <el-row :span="24" :gutter="20">
+                <el-col :span="24" >
                     <div>
-                        <ul class="ul-face">
-                            <li class="li-face">
-                                <icon-svg icon-class="verybumanyi" />
-                                <span>非常不满意</span>  
+                        <ul class="ul-evaluate">
+                            <li class="li-evaluate">
+                                <span>评分</span>
+                                <el-rate
+                                    size="small"
+                                    v-model="form.evaluateLevel"
+                                    show-text
+                                    :texts="texts">
+                                </el-rate>
                             </li>
-                            <li class="li-face">
-                                <icon-svg icon-class="bumanyi" />
-                                <span>不满意</span>
+                            <li class="li-evaluate">
+                                <span>驾驶水平</span>
+                                <el-rate
+                                    v-model="form.evaluateDriver"
+                                    show-text
+                                    :texts="texts">
+                                </el-rate>
                             </li>
-                            <li class="li-face">
-                                <icon-svg icon-class="yiban" />
-                                <span>一般</span>
+                            <li class="li-evaluate">
+                                <span>服务态度</span>
+                                <el-rate
+                                    v-model="form.evaluateService"
+                                    show-text
+                                    :texts="texts">
+                                </el-rate>
                             </li>
-                            <li class="li-face">
-                                <icon-svg icon-class="manyi" />
-                                <span>比较满意</span>
-                            </li>
-                            <li class="li-face">
-                                <icon-svg icon-class="verymanyi" />
-                                <span>非常满意</span>
+                            <li class="li-evaluate">
+                                <span>车内环境</span>
+                                <el-rate
+                                    v-model="form.evaluateIncar"
+                                    show-text
+                                    :texts="texts">
+                                </el-rate>
                             </li>
                         </ul>
                     </div>
-               </el-col>
-               <el-col :span="24">
-                    <el-form-item label="评价内容：">
-                        <el-input v-model="form.remark" 
-                            type="textarea" 
-                            :rows="4" 
-                            size="small" 
-                            maxlength="200"/>
-                    </el-form-item>
-               </el-col>
-           </el-row>
-       </el-form>
-       <div slot="footer" class="dialog-footer">
-           <el-button type="primary" @click="handleConfirm()">确定</el-button>
-           <el-button @click="handleCancel()">取消</el-button>
-       </div>
-   </el-dialog>
+                </el-col>
+                <el-col :span="24">
+                        <el-form-item label="评价内容：">
+                            <el-input v-model="form.evaluateContent" 
+                                type="textarea" 
+                                :rows="4" 
+                                size="small" 
+                                maxlength="200"/>
+                        </el-form-item>
+                </el-col>
+            </el-row>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="handleConfirm()">确定</el-button>
+            <el-button @click="handleCancel()">取消</el-button>
+        </div>
+    </el-dialog>
 </template>
 <script>
-import {gcjcClassCreate,gcjcClassDetail,gcjcClassModify} from "@/api/driver"
+import { gcywRequestEvaluateSave} from "@/api/car"
+
 export default {
     data() {
         return {
@@ -58,14 +78,18 @@ export default {
             openDataScope:false,
             //表单数据
             form:{
-                remark:""
+                 evaluateLevel:0,      //所选评价
+                 evaluateDriver:0,      //司机平分
+                 evaluateService:0,   //服务平分
+                 evaluateIncar:0,       //车内平分
+                 evaluateContent:'',    //评价内容
             },
-            //表单校验
-            rules:{
-                remark:[
-                    {required:true,message:"班次名称不能为空",trigger:"blur"}
-                ],
-            }
+            //车辆信息
+            waitArr:[],
+            //所选车辆
+            checkList:[],
+            //评价标准
+            texts:['非常不满意','不满意','一般','比较满意','非常满意'],
         }
     },
     created(){
@@ -73,28 +97,60 @@ export default {
     },
     methods:{
         //初始化
-        init(){
+        init(waitArr){
             this.openDataScope = true;
+            this.waitArr = waitArr;
+            this.waitArr.forEach((item) => {
+                this.checkList.push(item.id);
+            })
             this.$nextTick(() => {
-                this.title = "用车确认"
+                this.title = "用车评价"
             })
         },
-      
         //确认
         handleConfirm(){
-           this.$refs.elform.validate(async (valid) => {
-               if (valid) {
-                //    this.loading = true;
-                //    await gcjcClassCreate(Object.assign({}, this.form)).then(({message}) => {
-                //        this.loading = false;
-                //        this.$modal.msgSuccess(message);
-                //        this.openDataScope = false;
-                //        this.$emit('operateSuccess')
-                //    }).catch((err) => {
-                //        this.loading = false;
-                //    })
-               }
-           })
+            if(this.checkList.length === 0){
+                this.$modal.msgWarning('请至少选择一个车辆信息进行评价!');
+                return
+            }
+            if(!this.form.evaluateLevel){
+                this.$modal.msgWarning('请选择评分满意度!');
+                return
+            }
+            if(!this.form.evaluateDriver){
+                this.$modal.msgWarning('请选择驾驶水平评价满意度!');
+                return
+            }
+            if(!this.form.evaluateService){
+                this.$modal.msgWarning('请选择服务态度评价满意度!');
+                return
+            }
+            if(!this.form.evaluateIncar){
+                this.$modal.msgWarning('请选择车内环境评价满意度!');
+                return
+            }
+            let evaluateArr = [];
+
+            this.checkList.forEach((item) => {
+                let obj = {};
+                this.$set(obj, 'reqassId', item);
+                this.$set(obj, 'evaluateLevel', this.form.evaluateLevel);
+                this.$set(obj, 'evaluateDriver', this.form.evaluateDriver);
+                this.$set(obj, 'evaluateService', this.form.evaluateService);
+                this.$set(obj, 'evaluateIncar', this.form.evaluateIncar);
+                this.$set(obj, 'evaluateContent', this.form.evaluateContent);
+                evaluateArr.push(obj)
+            })
+            this.loading = true;
+
+            gcywRequestEvaluateSave(evaluateArr).then(({message}) => {
+                this.loading = false;
+                this.$modal.msgSuccess(message);
+                this.openDataScope = false;
+                this.$emit('operateSuccess')
+            }).catch((err) => {
+                this.loading = false;
+            })
         },
         //取消
         handleCancel(){
@@ -102,32 +158,55 @@ export default {
         },
         //关闭dialog回调
         handleDialogClose(){
-
+            this.waitArr = [];
+            this.checkList = [];
+            this.form.evaluateLevel = 0;
+            this.form.evaluateDriver = 0;
+            this.form.evaluateService = 0;
+            this.form.evaluateIncar = 0;
+            this.form.evaluateContent = '';
         }
     }
 }
 </script>
 <style lang="scss" scoped>
-.ul-face {
+.el-checkbox {
+    display: block;
+    margin: 0 20px 10px 20px;
+
+    span {
+        font-weight: 600;
+
+        &:nth-child(2){
+            margin-left: 30px;
+        }
+    }
+}
+.ul-evaluate {
     width: 100%;
     margin-bottom: 40px;
-    padding: 0px 10px;
+    padding: 0px 10px 0px 18px;
     list-style: none;
-    display: flex;
-    justify-content: space-between;
 
-    .li-face {
-        text-align: center;
-        flex: 1;
+    .li-evaluate {
         display: flex;
-        flex-direction: column;
+        height: 50px;
 
-        .svg-icon-font {
-            margin: 0 auto;
-            font-size: 40px;
-        }
         span {
-            margin-top: 5px;
+            width: 80px;
+            font-weight: 700;
+            font-size: 15px;
+            line-height: 35px;
+        }
+        ::v-deep.el-rate__icon {
+            font-size: 35px;
+        }
+        ::v-deep.el-rate__text {
+            font-size: 15px;
+            margin-left: 10px;
+        }
+        ::v-deep.el-rate__item {
+            margin-left: 10px;
         }
     }
 }

@@ -205,7 +205,15 @@ export default {
     },
     //页面链接点击
     clickLink(row, fieldCode, linkText) {
-       this.$router.push({ name: 'carDetail', query: { id: row.id } })
+
+       this.$router.push({
+         name: 'carDetail',
+         query: {
+           id: row.id,
+           handleUserName:row.handleUserName,
+           userName:row.userName,
+         },
+       })
     },
     //顶部列字段展示
     handleCheckAllChange(columns) {

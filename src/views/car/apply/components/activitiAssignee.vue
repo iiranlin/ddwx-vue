@@ -100,8 +100,11 @@ export default {
         },
         visibleChange(visible, refName) {
             if (visible) {
+                console.log(refName)
                 const ref = this.$refs[refName];
+                console.log(ref)
                 let popper = ref.$refs.popper;
+                console.log(popper)
                 if (popper.$el) popper = popper.$el;
                 if (!Array.from(popper.children).some(v => v.className === 'el-template-more')){
                     const el = document.createElement("div");

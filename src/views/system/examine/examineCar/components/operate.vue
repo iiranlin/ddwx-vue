@@ -8,6 +8,7 @@
                 type="textarea"
                 :rows="2"
                 placeholder="请输入内容"
+                maxlength="40"
                 v-model="form.comment">
               </el-input>
             </el-form-item>

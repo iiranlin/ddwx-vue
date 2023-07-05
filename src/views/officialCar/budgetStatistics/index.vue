@@ -34,13 +34,20 @@
                     <template slot="customItem">
                         <el-form-item label="统计年度">
                             <el-date-picker
-                                style="width:240px"
+                                style="width:160px"
                                 value-format="yyyy"
-                                v-model="formData.dateRange"
-                                type="monthrange"
-                                placeholder="请选择统计年度"
-                                size="small"
-                                @change="handleDateChange"/>
+                                v-model="formData.syear"
+                                type="year"
+                                placeholder="请选择开始年度"
+                                size="small"/>
+                                -
+                            <el-date-picker
+                                style="width:160px"
+                                value-format="yyyy"
+                                v-model="formData.eyear"
+                                type="year"
+                                placeholder="请选择结束年度"
+                                size="small"/>
                         </el-form-item>
                     </template>
                 </form-data>
@@ -162,9 +169,8 @@ export default {
             property: {},
             //查询参数
             formData: {
-                dateRange:[],
-                syear: null,
-                eyear:null,
+                syear: '',
+                eyear:'',
             },
             //是否显示序号
             numberShow: false,
@@ -206,7 +212,7 @@ export default {
             let currentYear = new Date().getFullYear();
 
             if(this.formData.eyear > currentYear || this.formData.syear < currentYear -2){
-                this.$modal.msgWarning('只能查询近3年的数据，请重新选择');
+                this.$modal.msgWarning('只能查询近3年的数据，请重新选择!');
                 return;
             }
             this.loading = true
@@ -365,11 +371,6 @@ export default {
             this.multiple = !selection.length;
             this.selectionData = selection;
         },
-        //统计年度切换
-        handleDateChange(){
-            this.formData.syear = this.formData.dateRange[0];
-            this.formData.eyear = this.formData.dateRange[1];
-        },
         //导出
         handleExport(){
             if(!this.formData.syear && !this.formData.eyear){
@@ -388,7 +389,6 @@ export default {
         },
         //清空状态数据
         handleResetDept() {
-            this.formData.dateRange = [];
             this.formData.syear = null;
             this.formData.eyear = null;
             this.binfosArr = [];

@@ -41,7 +41,8 @@
                                 filterable
                                 value-key="driverCode"
                                 :disabled="item.id?true : false"
-                            >
+                                ref="template"
+                                @visible-change="(v) => visibleChange(v, 'template',index)">
                                 <el-option v-for="item in driverList" 
                                 :key="item.driverCode" 
                                 :label="item.driver" 
@@ -89,9 +90,9 @@
 </template>
 
 <script>
-import { getAvailableDriver } from "@/api/gcjcDriverClass";
+import { getRGAvailableDriver } from "@/api/gcjcDriverClass";
 import { vehicleInfoGetAvailableCar, vehicleInfoIsRestriction } from "@/api/vehicleInfo";
-import { saveOrderDispatch, reassignment } from "@/api/gcywVehicleRequest";
+import { saveOrderDispatch, reassignment,gcywVehicleRequestCheckRequestInfo } from "@/api/gcywVehicleRequest";
 export default {
     data() {
         var checkfromDriver = (rule, value, callback) => {
@@ -110,6 +111,7 @@ export default {
         }
         return {
             driverList: [],
+            originDriverList:[],
             vehicleList: [],
             formData: {
                 list: [],
@@ -178,7 +180,7 @@ export default {
                 this.formData.list.splice(index, 1);
             }
         },
-        getAvailableDriver (unitCode, usageDate,vinNumber) {
+        getRGAvailableDriver (unitCode, usageDate,vinNumber,index) {
             let obj = {
                 classDateEnd: usageDate,
                 classDateStart: usageDate,
@@ -187,16 +189,28 @@ export default {
                 unitCode: unitCode,
                 vinNumber:vinNumber,
             }
-            getAvailableDriver(obj).then(({data}) => {
-                this.driverList = data
+            getRGAvailableDriver(obj).then(({data}) => {
+                this.originDriverList = data;
+
+                //隐藏数据
+                this.driverList = this.originDriverList.filter((item) => {
+                    return item.type === '1';
+                })
+                if(this.driverList.length === 0){
+                    this.driverList = this.originDriverList;
+                }
+                this.formData.list[index].driver = this.driverList[0];
                 this.num = ++this.num;
             })
         },
         vehicleInfoGetAvailableCar ({unitCode, deptId, reassignUnitCode}) {
+            let cityId = this.row.fromAreaId.split(',');
             let obj = {
                 unitCode: unitCode,
                 deptId: deptId,
-                tunUnitCode: reassignUnitCode || ''
+                tunUnitCode: reassignUnitCode || '',
+                cityId: cityId[1],
+                date: this.row.usageDate
             }
             vehicleInfoGetAvailableCar(obj, reassignUnitCode).then(({data}) => {
                 this.vehicleList = data
@@ -226,93 +240,136 @@ export default {
 
             let vinNumber = this.formData.list[index].car.vinNumber;
             if(!!vinNumber){
-                this.getAvailableDriver(this.row.reassignUnitCode || this.row.assignUnitCode || this.row.deptId, this.row.usageDate,vinNumber);
+                this.getRGAvailableDriver(this.row.reassignUnitCode || this.row.assignUnitCode || this.row.deptId, this.row.usageDate,vinNumber,index);
             }
         },
         addRequest () {
             this.$refs.elForm.validate( (valid) => {
                 if (valid) {
-                    let formList = this.formData.list, num = 0;
-                    let obj = {
-                        status: this.row.status,
-                        id: this.row.id,
-                        phone: this.row.phone,
-                        createType: this.row.createType,
-                        usageDate: this.row.usageDate,
-                        usageTime: this.row.usageTime,
-                        handleUserId: this.row.handleUserId,
-                        handleUserName: this.row.handleUserName,
-                        handleUnit: this.row.handleUnit,
-                        handleUnitCode: this.row.handleUnitCode,
-                        fromAddr: this.row.fromAddr,
-                        toAddr: this.row.toAddr,
-                        reqAssignments: []
+                    let params = {
+                        fromAddr:this.row.fromAddr,
+                        toAddr:this.row.toAddr,
+                        usageDate:this.row.usageDate,
+                        usageTime:this.row.usageTime,
+                        id:this.row.id,
                     }
-                    for(let i = 0;i<formList.length;i++){
-                        if(formList[i].restatus != 1){
-                            ++num
+                    gcywVehicleRequestCheckRequestInfo(params).then(({message}) => {
+                        if(message.includes('建议合理派车')){
+                            this.$modal.confirm(message+'是否继续派车？').then(() => {
+                                this.requestDispatch();
+                            }).catch(() => {
+                
+                            });
+                        }else{
+                            this.requestDispatch();
                         }
-                    }
-                    if(formList.length <= 0 || num <= 0){
-                        this.$modal.msgWarning('至少有一条数据！');
-                        return
-                    }
-                    //检查是否有重复司机
-                    for (let i = 0; i < formList.length; i++) {
-                        if(formList[i].restatus!='1'){
-                            let driverCode = formList[i].driver.driverCode;
-
-                            for (let j = i+1; j < formList.length; j++) {
-                                if(formList[j].restatus!='1'){
-                                    if(driverCode===formList[j].driver.driverCode){
-                                        this.$modal.msgWarning('指派司机不能重复，请重新选择!');
-                                    return
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    //检查是否有重复车辆
-                    for (let i = 0; i < formList.length; i++) {
-                        if(formList[i].restatus!='1'){
-                            let carNumber = formList[i].car.carNumber;
-
-                            for (let j = i+1; j < formList.length; j++) {
-                                if(formList[j].restatus!='1'){
-                                    if(carNumber===formList[j].car.carNumber){
-                                        this.$modal.msgWarning('指派车辆不能重复，请重新选择!');
-                                        return
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    formList.forEach( (item) => {
-                      obj.reqAssignments.push({
-                        id: item.id || null,
-                        restatus: item.restatus || null,
-                        driver: item.driver.realName,
-                        driverId: item.driver.driverCode,
-                        driverPhone: item.driver.phone,
-                        beginMiles: item.car.startMiles,
-                        carNumber: item.car.carNumber,
-                        conditionDesc: item.car.conditionDesc,
-                        vinNumber: item.car.vinNumber,
-                      })
-                    })
-                    if(this.buttonCode == 'sendVehicle'){
-                        saveOrderDispatch(obj).then( ({message}) => {
-                            this.$modal.msgSuccess(message);
-                            this.$router.push({name:'workspace'});
-                        })
-                    }else{
-                        reassignment(obj).then( ({message}) => {
-                            this.$modal.msgSuccess(message);
-                            this.$router.push({name:'workspace'});
-                        })
-                    }
+                    }).catch((err) => {
+                        this.requestDispatch();
+                    })    
                 }
             })
+        },
+        requestDispatch(){
+            let formList = this.formData.list, num = 0;
+            let obj = {
+                status: this.row.status,
+                id: this.row.id,
+                phone: this.row.phone,
+                createType: this.row.createType,
+                usageDate: this.row.usageDate,
+                usageTime: this.row.usageTime,
+                handleUserId: this.row.handleUserId,
+                handleUserName: this.row.handleUserName,
+                handleUnit: this.row.handleUnit,
+                handleUnitCode: this.row.handleUnitCode,
+                fromAddr: this.row.fromAddr,
+                toAddr: this.row.toAddr,
+                reqAssignments: []
+            }
+            for(let i = 0;i<formList.length;i++){
+                if(formList[i].restatus != 1){
+                    ++num
+                }
+            }
+            if(formList.length <= 0 || num <= 0){
+                this.$modal.msgWarning('至少有一条数据！');
+                return
+            }
+            //检查是否有重复司机
+            for (let i = 0; i < formList.length; i++) {
+                if(formList[i].restatus!='1'){
+                    let driverCode = formList[i].driver.driverCode;
+
+                    for (let j = i+1; j < formList.length; j++) {
+                        if(formList[j].restatus!='1'){
+                            if(driverCode===formList[j].driver.driverCode){
+                                this.$modal.msgWarning('指派司机不能重复，请重新选择!');
+                            return
+                            }
+                        }
+                    }
+                }
+            }
+            //检查是否有重复车辆
+            for (let i = 0; i < formList.length; i++) {
+                if(formList[i].restatus!='1'){
+                    let carNumber = formList[i].car.carNumber;
+
+                    for (let j = i+1; j < formList.length; j++) {
+                        if(formList[j].restatus!='1'){
+                            if(carNumber===formList[j].car.carNumber){
+                                this.$modal.msgWarning('指派车辆不能重复，请重新选择!');
+                                return
+                            }
+                        }
+                    }
+                }
+            }
+            formList.forEach( (item) => {
+                obj.reqAssignments.push({
+                id: item.id || null,
+                restatus: item.restatus || null,
+                driver: item.driver.realName,
+                driverId: item.driver.driverCode,
+                driverPhone: item.driver.phone,
+                beginMiles: item.car.startMiles,
+                carNumber: item.car.carNumber,
+                conditionDesc: item.car.conditionDesc,
+                vinNumber: item.car.vinNumber,
+                })
+            })
+            if(this.buttonCode == 'sendVehicle'){
+                saveOrderDispatch(obj).then( ({message}) => {
+                    this.$modal.msgSuccess(message);
+                    this.$router.push({name:'workspace'});
+                })
+            }else{
+                reassignment(obj).then( ({message}) => {
+                    this.$modal.msgSuccess(message);
+                    this.$router.push({name:'workspace'});
+                })
+            }
+        },
+        visibleChange(visible, refName,index) {
+            if (visible) {
+                const ref = this.$refs[refName];
+                let popper = ref[index].$refs.popper;
+                if (popper.$el) popper = popper.$el;
+                if (!Array.from(popper.children).some(v => v.className === 'el-template-more')){
+                    const el = document.createElement("div");
+                    el.className = "el-template-more";
+                    el.style ="line-height:50px;padding:0; color:#ffffff;";
+                    el.innerHTML =`<span id='more' style="color:#409EFF;font-size:14px;font-weight:600;float:right;margin-right:20px;cursor:pointer;">更多司机</span>`;
+                    popper.appendChild(el);
+                    let element = el.firstChild;
+                    element.onclick = () => {
+                        this.handleMoreClick();
+                    };
+                }
+            }
+        },
+        handleMoreClick(){
+            this.driverList = this.originDriverList;
         },
     }
 };
