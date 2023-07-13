@@ -6,7 +6,7 @@
                     <el-col>
                         <div>
                             <span class="title-right">车辆</span>
-                            <el-button class="delete-color" type="text" @click="deleteCar(index)">
+                            <el-button class="delete-color" type="text" @click="deleteCar(index)" v-if="item.status !=4 && item.status !=5">
                                 <i class="el-icon-delete" />删除
                             </el-button>
                         </div>
@@ -127,6 +127,7 @@ export default {
             row: null,
             num: 0,
             buttonCode: '',
+            moreStaus:true,
         }
     },
     watch: {
@@ -163,15 +164,20 @@ export default {
             let buttonCode = this.$route.query.buttonCode;
             this.row = row;
             this.buttonCode = buttonCode;
-            if(this.buttonCode == 'sendVehicle'){
-                this.addCarButton();
-            }
+            
             this.vehicleInfoGetAvailableCar(row);
         }
     },
     methods: {
         addCarButton () {
             this.formData.list.push({driver: {}, car: {},carName: ''});
+
+            console.log('1111111')
+            console.log(this.formData.list)
+
+            this.formData.list[this.formData.list.length-1].car = this.vehicleList[0];
+            this.formData.list[this.formData.list.length-1].carNumber = this.vehicleList[0].carNumber;
+            this.carNumberChange(this.formData.list.length-1);
         },
         deleteCar(index) {
             if(this.formData.list[index].id){
@@ -198,6 +204,9 @@ export default {
                 })
                 if(this.driverList.length === 0){
                     this.driverList = this.originDriverList;
+                    this.moreStaus = false;
+                }else {
+                    this.moreStaus = true;
                 }
                 this.formData.list[index].driver = this.driverList[0];
                 this.num = ++this.num;
@@ -215,6 +224,10 @@ export default {
             vehicleInfoGetAvailableCar(obj, reassignUnitCode).then(({data}) => {
                 this.vehicleList = data
                 this.num = ++this.num;
+
+                if(this.$route.query.buttonCode == 'sendVehicle' && this.formData.list.length ===  0){
+                    this.addCarButton();
+                }
             })
         },
         vehicleInfoIsRestriction (carNumber, index) {
@@ -355,16 +368,25 @@ export default {
                 const ref = this.$refs[refName];
                 let popper = ref[index].$refs.popper;
                 if (popper.$el) popper = popper.$el;
-                if (!Array.from(popper.children).some(v => v.className === 'el-template-more')){
-                    const el = document.createElement("div");
-                    el.className = "el-template-more";
-                    el.style ="line-height:50px;padding:0; color:#ffffff;";
-                    el.innerHTML =`<span id='more' style="color:#409EFF;font-size:14px;font-weight:600;float:right;margin-right:20px;cursor:pointer;">更多司机</span>`;
-                    popper.appendChild(el);
-                    let element = el.firstChild;
-                    element.onclick = () => {
-                        this.handleMoreClick();
-                    };
+
+                //判断当前是否要显示更多
+                if(this.moreStaus){
+                    if (!Array.from(popper.children).some(v => v.className === 'el-template-more')){
+                        const el = document.createElement("div");
+                        el.className = "el-template-more";
+                        el.style ="line-height:50px;padding:0; color:#ffffff;";
+                        el.innerHTML =`<span id='more' style="color:#409EFF;font-size:14px;font-weight:600;float:right;margin-right:20px;cursor:pointer;">更多司机</span>`;
+                        popper.appendChild(el);
+                        let element = el.firstChild;
+                        element.onclick = () => {
+                            this.handleMoreClick();
+                        };
+                    }
+                }else{
+                    if (Array.from(popper.children).some(v => v.className === 'el-template-more')){
+                        let element = document.getElementsByClassName('el-template-more')[0];
+                        popper.removeChild(element)
+                    }
                 }
             }
         },

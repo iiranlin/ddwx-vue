@@ -393,6 +393,7 @@ export default {
         handleQuery(row = {}){
             this.formData = Object.assign({}, this.formData,row);
             this.getList();
+            this.getAnalysis();
         },
         tableRowClassName({row,rowIndex}){
             row.index = rowIndex + 1;

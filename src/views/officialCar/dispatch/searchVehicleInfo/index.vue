@@ -64,6 +64,7 @@
                     :loading="loading"
                     :tableData="dataList"
                     :property="property"
+                    :selectShow="false"
                     @clickLink="clickLink"
                     :numberShow="numberShow"
                     @handleSelectionChange="handleSelectionChange"

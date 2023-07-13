@@ -123,6 +123,7 @@ export default {
             },
             buttonCode: '',
             row: null,
+            moreStaus:true,
         }
     },
     created() {
@@ -134,6 +135,10 @@ export default {
         },
         addCarButton () {
             this.formData.list.push({driver: {}, car: {},carName: ''});
+
+            this.formData.list[this.formData.list.length-1].car = this.vehicleList[0];
+            this.formData.list[this.formData.list.length-1].carNumber = this.vehicleList[0].carNumber;
+            this.carNumberChange(this.formData.list.length-1);
         },
         deleteCar(index) {
             if(this.formData.list.length > 1){
@@ -160,6 +165,9 @@ export default {
                 })
                 if(this.driverList.length === 0){
                     this.driverList = this.originDriverList;
+                    this.moreStaus = false;
+                }else {
+                    this.moreStaus = true;
                 }
                 this.formData.list[index].driver = this.driverList[0];
             })
@@ -173,7 +181,7 @@ export default {
                 date: this.row.usageDate
             }
             vehicleInfoGetAvailableCar(obj).then(({data}) => {
-                this.vehicleList = data
+                this.vehicleList = data;
             })
         },
         vehicleInfoIsRestriction (carNumber, index) {
@@ -207,16 +215,25 @@ export default {
                 const ref = this.$refs[refName];
                 let popper = ref[index].$refs.popper;
                 if (popper.$el) popper = popper.$el;
-                if (!Array.from(popper.children).some(v => v.className === 'el-template-more')){
-                    const el = document.createElement("div");
-                    el.className = "el-template-more";
-                    el.style ="line-height:50px;padding:0; color:#ffffff;";
-                    el.innerHTML =`<span id='more' style="color:#409EFF;font-size:14px;font-weight:600;float:right;margin-right:20px;cursor:pointer;">更多司机</span>`;
-                    popper.appendChild(el);
-                    let element = el.firstChild;
-                    element.onclick = () => {
-                        this.handleMoreClick();
-                    };
+
+                //判断当前是否要显示更多
+                if(this.moreStaus){
+                    if (!Array.from(popper.children).some(v => v.className === 'el-template-more')){
+                        const el = document.createElement("div");
+                        el.className = "el-template-more";
+                        el.style ="line-height:50px;padding:0; color:#ffffff;";
+                        el.innerHTML =`<span id='more' style="color:#409EFF;font-size:14px;font-weight:600;float:right;margin-right:20px;cursor:pointer;">更多司机</span>`;
+                        popper.appendChild(el);
+                        let element = el.firstChild;
+                        element.onclick = () => {
+                            this.handleMoreClick();
+                        };
+                    }
+                }else{
+                    if (Array.from(popper.children).some(v => v.className === 'el-template-more')){
+                        let element = document.getElementsByClassName('el-template-more')[0];
+                        popper.removeChild(element)
+                    }
                 }
             }
         },

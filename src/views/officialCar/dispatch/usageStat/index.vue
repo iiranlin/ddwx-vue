@@ -64,6 +64,7 @@
           :numberShow="numberShow"
           :showSummary="true"
           :getSummaries="getSummaries"
+          :selectShow="false"
           @clickLink="clickLink"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
@@ -138,31 +139,39 @@ export default {
     }
   },
   created() {
+    this.formData.statMonth = this.getStartMonth();
+    this.formData.endMonth = this.getEndMonth();
+    this.monthRange.push(this.formData.statMonth)
+    this.monthRange.push(this.formData.endMonth)
+
     this.menuProperty()
     this.getList()
   },
   activated() {
   },
-  computed: {
-    // 只能查询上个月份之前的
-    lastMonth() {
-      let date = new Date()
-      let year = date.getFullYear()
-      let month = date.getMonth()
-
-      if(month === 0){
-        year -= 1
-        month = 12
-      }
-      if (month < 9) {
-        month = '0' + month
-      } 
-      return year + '-' + month
-    }
-  },
   methods: {
     numberChange(val) {
       this.numberShow = val
+    },
+    //获取默认统计月份开始时间
+    getStartMonth(){
+        let year = new Date().getFullYear()-1;
+        let month = new Date().getMonth();
+
+        if(month < 10){
+          month = '0' + month;
+        }
+        return year + '-' + month;
+    },
+    //获取默认统计月份结束时间
+    getEndMonth(){
+        let year = new Date().getFullYear();
+        let month = new Date().getMonth();
+
+        if(month < 10){
+          month = '0' + month;
+        }
+        return year + '-' + month;
     },
     /**搜索框起始日期限制*/
     datePickerHandler() {
@@ -198,9 +207,6 @@ export default {
         if(this.monthRange.length!==0){
           this.formData.statMonth = this.monthRange[0];
           this.formData.endMonth = this.monthRange[1];
-        }else{
-          this.formData.statMonth = this.lastMonth
-          this.formData.endMonth = this.lastMonth
         }
         getUsageByPage(Object.assign({}, this.listQuery, this.formData)).then(({ data }) => {
           this.dataList = data.page.list
@@ -297,7 +303,7 @@ export default {
     getSummaries(param){
         const { columns, data } = param;
         const sums = [];
-        let targetColumenIndex = this.numberShow ? 2:1;
+        let targetColumenIndex = this.numberShow ? 1:0;
 
         columns.forEach((column, index) => {
             if (index === targetColumenIndex) {

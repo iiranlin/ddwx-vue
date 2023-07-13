@@ -64,7 +64,7 @@
                     <el-table ref="eltable" max-height="300px" :data="form.items" stripe border>
                         <el-table-column label="险种" align="center">
                             <template slot-scope="scope">
-                                <span>{{form.items[scope.$index].insrType | checkType(insuranceTypeOptions)}}</span>
+                                <span>{{checkType(form.items[scope.$index].insrType)}}</span>
                             </template>
                         </el-table-column>
                         <el-table-column label="保费" align="center" prop="insrFee"></el-table-column>
@@ -116,14 +116,6 @@ export default {
             return this.$store.state.tagsView.visitedViews
         },
     },
-    filters: {
-        checkType(value,insuranceTypeOptions) {
-            let obj = insuranceTypeOptions.find((item) => {
-                return item.code = value;
-            })
-            return obj.name;
-        }
-    },
     activated(){
         let id = this.$route.query.id;
 
@@ -172,6 +164,13 @@ export default {
             }).catch((err) => {
                 this.loading = false;
             })
+        },
+        //判断险种
+        checkType(insrType){
+            let obj = this.insuranceTypeOptions.find((item) => {
+                return item.code === insrType
+            })
+            return !!obj?obj.name:''
         },
         //返回按钮
         handleBack(){

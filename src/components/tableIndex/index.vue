@@ -12,6 +12,7 @@
     :row-key="id"
     :show-summary='showSummary'
     :summary-method="getSummaries"
+    @row-click="handleRowClick"
     @selection-change="handleSelectionChange"
     @sort-change="sortableColumnChange"
   >
@@ -421,7 +422,11 @@ export default {
     },
     changeSwitch(row) {
       this.$emit('changeSwitch', row)
-    }
+    },
+    //行点击
+    handleRowClick(row, column, event){
+      this.$refs.elTable.toggleRowSelection(row);
+    },
   },
   beforeUpdate() {
     this.$nextTick(() => {

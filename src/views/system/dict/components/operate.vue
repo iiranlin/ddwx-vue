@@ -12,15 +12,17 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="字典编号:" prop="code">
-              <el-input v-model="form.code" placeholder="请输入部门编号" />
+              <el-input v-model="form.code" placeholder="请输入字典编号" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="字典名称:" prop="name">
-              <el-input v-model="form.name" placeholder="请输入部门名称" />
+              <el-input v-model="form.name" placeholder="请输入字典名称" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+        </el-row>
+        <el-row>
+           <el-col :span="12">
             <el-form-item label="排序:" prop="seq">
               <el-input-number v-model="form.seq" controls-position="right" :min="1" :max="99"></el-input-number>
             </el-form-item>

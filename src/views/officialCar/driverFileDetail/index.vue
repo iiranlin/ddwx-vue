@@ -71,7 +71,7 @@
                 </el-form-item>
             </el-col>
             <el-col :span="8">
-                <el-form-item label="司机图像：">
+                <el-form-item label="司机头像：">
                     <img :src="form.driverPicPath" class="avatar">
                 </el-form-item>
             </el-col>
@@ -187,7 +187,7 @@ export default {
             emergencyContact:"",    //紧急联系人
             emergencyPhone:"",  //紧急联系电话
             remark:"",      //备注
-            driverPic:'',   //司机图像上传参数
+            driverPic:'',   //司机头像上传参数
             driverPicPath:'',
             license:"",     //驾照编号
             licenseType:"",    //驾照类型

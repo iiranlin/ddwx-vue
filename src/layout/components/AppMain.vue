@@ -39,12 +39,24 @@ export default {
 .hasTagsView {
   .app-main {
     /* 84 = navbar + tags-view = 50 + 34 */
-    height: calc(100vh - 84px);
+    height: calc(100vh - 101px);
   }
 
   .fixed-header+.app-main {
     padding-top: 84px;
   }
+}
+@media (min-width: 1366px) {
+  .hasTagsView {
+    .app-main {
+      /* 84 = navbar + tags-view = 50 + 34 */
+      height: calc(100vh - 84px);
+  }
+
+  .fixed-header+.app-main {
+      padding-top: 84px;
+  }
+}
 }
 </style>
 

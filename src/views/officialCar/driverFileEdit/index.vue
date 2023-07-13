@@ -103,7 +103,7 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="14">
-                    <el-form-item label="司机图像：" prop="driverPic">
+                    <el-form-item label="司机头像：" prop="driverPic">
                         <el-upload
                         v-model="form.driverPic"
                         class="avatar-uploader"
@@ -376,7 +376,7 @@ export default {
             emergencyContact:"",    //紧急联系人
             emergencyPhone:"",  //紧急联系电话
             remark:"",      //备注
-            driverPic:'',   //司机图像上传参数
+            driverPic:'',   //司机头像上传参数
             driverPicPath:'',
             license:"",     //驾照编号
             licenseType:"",    //驾照类型
@@ -409,7 +409,7 @@ export default {
                 {required:true,message:"司机类型不能为空",trigger:['blur','change']}
             ],
             driverPic: [
-                { required: true, message: '司机图像不能为空', trigger: 'change' }
+                { required: true, message: '司机头像不能为空', trigger: 'change' }
             ],
             license:[
                 {required:true,message:"驾照编号不能为空",trigger:"blur"}

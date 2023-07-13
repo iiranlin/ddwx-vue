@@ -130,7 +130,7 @@
                 :key="item.carId"
                 :label="item.carNumber"
                 :value="item.carNumber"
-              >
+                @click.native="handleCarNumberChange(item)">
               </el-option>
             </el-select>
           </el-form-item>
@@ -238,6 +238,8 @@ export default {
         cardNumber: '',
         // 是否有效
         enabled: 'Y',
+        //发动机号
+        vinNumber:'',
       },
       //单位数据
       unitData: [],
@@ -473,6 +475,10 @@ export default {
       } finally {
         // loading.close();
       }
+    },
+    //所属车辆变更
+    handleCarNumberChange(item){
+      this.form.vinNumber = item.vinNumber;
     },
   },
 }

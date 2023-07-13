@@ -75,8 +75,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="联系电话:" prop="phone">
-                <el-input v-model="formData.phone" @input="numberInput($event,'phone')" maxlength="20" placeholder="请输入联系电话" />
+              <el-form-item label="手机号码:" prop="phone">
+                <el-input v-model="formData.phone" @input="numberInput($event,'phone')" maxlength="20" placeholder="请输入手机号码" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -188,7 +188,17 @@ export default {
         return callback(new Error('请选择前往地点'));
       }
     }
+    var checkPhone = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('请填写手机号码'));
+      }
+      if(!this.pattern.test(value)){
+          return callback(new Error('手机号码格式有误,请输入正确的手机号码!'));
+      }
+      return callback()
+    };
     return {
+      pattern: /^1[3456789]\d{9}$/,
       loading: false,
       limitInput: limitInput,
       numberInput: numberInput,
@@ -235,7 +245,7 @@ export default {
             {required:true,message:"请输入乘车人",trigger:"blur"}
         ],
         phone:[
-            {required:true,message:"请输入联系电话",trigger:"blur"}
+            {validator: checkPhone,trigger:"blur"}
         ],
         usageDate:[
             {required:true,message:"请选择用车日期",trigger:"blur"}

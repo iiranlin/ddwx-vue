@@ -207,7 +207,7 @@ export default {
             this.$set(obj, 'maintainType', item.maintainType);
             this.$set(obj, 'maintainDate', item.maintainDate);
             this.$set(obj, 'maintainMiles', item.maintainMiles);
-            this.$set(obj, 'nextMaintainMiles', item.nextMaintainMiles);
+            this.$set(obj, 'nextMaintainDate', item.nextMaintainDate);
             this.$set(obj, 'nextMaintainMiles', item.nextMaintainMiles);
             this.$set(obj, 'carNumber', item.carNumber);
             paramsArr.push(obj)

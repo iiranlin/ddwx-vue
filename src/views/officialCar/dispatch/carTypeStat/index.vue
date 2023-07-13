@@ -59,6 +59,7 @@
           :numberShow="numberShow"
           :showSummary='true'
           :getSummaries="getSummaries"
+          :selectShow="false"
           @clickLink="clickLink"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
@@ -226,7 +227,7 @@ export default {
     getSummaries(param){
         const { columns, data } = param;
         const sums = [];
-        let targetColumenIndex = this.numberShow ? 2:1;
+        let targetColumenIndex = this.numberShow ? 1:0;
 
         columns.forEach((column, index) => {
             if (index === targetColumenIndex) {

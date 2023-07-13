@@ -191,14 +191,14 @@
         >
           <el-form-item
             label="数量"
-            prop="oilVolume"
+            prop="oilNum"
             :rules="[{ required: true, message: '数量不能为空', trigger: 'blur' },validateNumber8I2F]"
           >
             <el-input
-              v-model="form.oilVolume"
+              v-model="form.oilNum"
               placeholder="请输入数量"
               size="small"
-              @change="inputNumberChange(form.oilVolume, 'oilVolume')"
+              @change="inputNumberChange(form.oilNum, 'oilNum')"
               @blur="handleCalculatePrice()"
             ></el-input>
           </el-form-item>
@@ -318,7 +318,7 @@ export default {
         // 记账时间
         bookTime: '',
         // 数量
-        oilVolume: '',
+        oilNum: '',
         // 单价
         oilPrice: '',
         // 摘要
@@ -357,7 +357,7 @@ export default {
           { required: true, message: '记账时间不能为空', trigger: 'change' }
         ],
         // // 数量
-        // oilVolume: [
+        // oilNum: [
         //   { required: true, message: '数量不能为空', trigger: 'blur' }
         // ],
         // // 单价
@@ -543,10 +543,10 @@ export default {
       if(!this.form.transFee){
         return;
       }
-      if(!this.form.oilVolume){
+      if(!this.form.oilNum){
         return;
       }
-      this.form.oilPrice = parseFloat((Number(this.form.transFee)/Number(this.form.oilVolume))).toFixed(2);
+      this.form.oilPrice = parseFloat((Number(this.form.transFee)/Number(this.form.oilNum))).toFixed(2);
     }
   }
 }
