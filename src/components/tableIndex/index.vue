@@ -76,7 +76,7 @@
             >
             </el-switch>
           </span>
-          <span v-else-if="propertyFieldsArr[index].fieldType === 'dict'">
+          <span v-else-if="propertyFieldsArr[index].fieldType === 'dict'" :class="[propertyFieldsArr[index].fieldCode === 'guarantee'?'highlight-red':'']">
             {{
               scope.row[propertyFieldsArr[index].fieldCode]
                 | fieldFormat(propertyFieldsArr[index].fieldFormatArr)
@@ -427,6 +427,10 @@ export default {
     handleRowClick(row, column, event){
       this.$refs.elTable.toggleRowSelection(row);
     },
+    check(value1,value2){
+      console.log(value1)
+      console.log(value2)
+    }
   },
   beforeUpdate() {
     this.$nextTick(() => {
@@ -441,4 +445,8 @@ export default {
 .el-tooltip__popper {
   max-width: 50%;
 }
+.highlight-red {
+  color: #ed4646;
+}
+
 </style>
