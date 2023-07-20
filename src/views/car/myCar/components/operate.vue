@@ -4,7 +4,7 @@
             <el-checkbox-group v-model="checkList">
                 <el-checkbox v-for="(item,index) in waitArr" :key="index" :label="item.id">
                     <span>车辆：{{item.carNumber}}{{item.carBrand}}{{item.carSeries}}</span>
-                    <span>司机：{{item.driver}}</span>
+                    <span>司机：{{item.driver.substr(0,1)}}师傅</span>
                 </el-checkbox>
             </el-checkbox-group>
             <el-row :span="24" :gutter="20">
@@ -78,10 +78,10 @@ export default {
             openDataScope:false,
             //表单数据
             form:{
-                 evaluateLevel:0,      //所选评价
-                 evaluateDriver:0,      //司机平分
-                 evaluateService:0,   //服务平分
-                 evaluateIncar:0,       //车内平分
+                 evaluateLevel:4,      //所选评价
+                 evaluateDriver:4,      //司机平分
+                 evaluateService:4,   //服务平分
+                 evaluateIncar:4,       //车内平分
                  evaluateContent:'',    //评价内容
             },
             //车辆信息
@@ -160,10 +160,10 @@ export default {
         handleDialogClose(){
             this.waitArr = [];
             this.checkList = [];
-            this.form.evaluateLevel = 0;
-            this.form.evaluateDriver = 0;
-            this.form.evaluateService = 0;
-            this.form.evaluateIncar = 0;
+            this.form.evaluateLevel = 4;
+            this.form.evaluateDriver = 4;
+            this.form.evaluateService = 4;
+            this.form.evaluateIncar = 4;
             this.form.evaluateContent = '';
         }
     }
