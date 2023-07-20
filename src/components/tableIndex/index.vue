@@ -427,6 +427,10 @@ export default {
     handleRowClick(row, column, event){
       this.$refs.elTable.toggleRowSelection(row);
     },
+    check(value1,value2){
+      console.log(value1)
+      console.log(value2)
+    }
   },
   beforeUpdate() {
     this.$nextTick(() => {
