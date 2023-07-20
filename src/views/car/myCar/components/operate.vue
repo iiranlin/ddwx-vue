@@ -4,7 +4,7 @@
             <el-checkbox-group v-model="checkList">
                 <el-checkbox v-for="(item,index) in waitArr" :key="index" :label="item.id">
                     <span>车辆：{{item.carNumber}}{{item.carBrand}}{{item.carSeries}}</span>
-                    <span>司机：{{item.driver}}</span>
+                    <span>司机：{{item.driver.substr(0,1)}}师傅</span>
                 </el-checkbox>
             </el-checkbox-group>
             <el-row :span="24" :gutter="20">
