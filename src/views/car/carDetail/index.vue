@@ -74,6 +74,9 @@
                             <el-col :span="8">
                                 <el-form-item label="期望车型："><span>{{hopeBrandInfo}}</span></el-form-item>
                             </el-col>
+                            <el-col :span="8">
+                                <el-form-item label="优先保障："><span>{{checkGuarantee()}}</span></el-form-item>
+                            </el-col>
                         </el-row>
                         <el-row :gutter="20">    
                             <el-col :span="24">
@@ -229,6 +232,8 @@ export default {
             logData:[],
             //用车单数据
             vehicleData:{},
+             //优先保障数据
+            guaranteeOptions:[],
             //期望车型数据
             hopeBrandInfo:"",
              //评价标准
@@ -255,6 +260,7 @@ export default {
             this.getDispatchInfo();
             this.getLogList();
         }
+        this.getGuarantee();
     },
     methods: {
         //获取用车单信息
@@ -274,6 +280,17 @@ export default {
                 }).catch((err) => {
                     this.loading = false;
                 })
+        },
+        //获取优先保障
+        getGuarantee(){
+            this.loading = true;
+            
+            getListByParentId("1679651627836055552").then(({data}) => {
+                this.loading = false;
+                this.guaranteeOptions = data;
+            }).catch((err) => {
+                this.loading = false;
+            })
         },
         //处理评价数据
         initEvaluateInfo(){
@@ -296,17 +313,17 @@ export default {
         },
         //获取期望车型字典
         async getHopeBrandInfo(){
-                this.loading = true;
-                await getListByParentId("101801").then(({data}) => {
-                    this.loading = false;
-                    data.forEach((item) => {
-                        if(item.code===this.vehicleData.hopeBrand){
-                            this.hopeBrandInfo = item.name;
-                        }
-                    })
-                }).catch((err) => {
-                    this.loading = false;
+            this.loading = true;
+            await getListByParentId("101801").then(({data}) => {
+                this.loading = false;
+                data.forEach((item) => {
+                    if(item.code===this.vehicleData.hopeBrand){
+                        this.hopeBrandInfo = item.name;
+                    }
                 })
+            }).catch((err) => {
+                this.loading = false;
+            })
         },
         //车牌号点击跳转北斗设备
         handleCarNumberClick(item){
@@ -345,6 +362,13 @@ export default {
         //返回按钮
         handleBack(){
             this.closeCurrentPage();
+        },
+        //判断优先保障
+        checkGuarantee(){
+            let obj = this.guaranteeOptions.find((item) => {
+                return item.code === this.vehicleData.guarantee;
+            })
+            return !!obj?obj.name:'';
         },
         //关闭当前页面
         closeCurrentPage() {

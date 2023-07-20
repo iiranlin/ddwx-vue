@@ -3,6 +3,22 @@
       <el-form ref="elForm" :model="form" :rules="rules" label-width="85px">
         <el-row>
           <el-col :span="24">
+              <el-form-item label="优先保障:">
+                <el-select
+                  v-model="form.guarantee"
+                  placeholder="请选优先保障类型"
+                  filterable
+                  style="width:100%"
+                >
+                  <el-option v-for="item in guaranteeOptions" 
+                    :key="item.code" 
+                    :label="item.name" 
+                    :value="item.code">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+          </el-col>
+          <el-col :span="24">
             <el-form-item label="审批意见:" prop="comment">
               <el-input
                 type="textarea"
@@ -26,6 +42,7 @@
 <script>
 import { activitiReject } from '@/api/gcywVehicleRequest'
 import activitiAssignee from "./activitiAssignee";
+import { getListByParentId } from "@/api/system/dict";
 export default {
   components: { activitiAssignee },
   props: {
@@ -41,7 +58,8 @@ export default {
       title: '审批',
       openDataScope: false,
       form: {
-        comment: '通过'
+        comment: '通过',
+        guarantee:'',
       },
       // 表单校验
       rules: {
@@ -50,15 +68,25 @@ export default {
         ],
       },
       row: null,
+      guaranteeOptions:[],
     }
   },
   created() {
+      this.getGuaranteeOptions();
   },
   methods: {
+    getGuaranteeOptions(){
+      getListByParentId('1679651627836055552').then(({data}) => {
+        this.guaranteeOptions = data;
+      }).catch((err) => {
+        
+      })
+    },
     init (row) {
       this.row = row;
       this.openDataScope = true;
       if(this.$refs.elForm) this.$refs.elForm.resetFields();
+      this.form.guarantee = row.guarantee;
     },
     operateAdopt () {
       this.$refs.elForm.validate(async (valid) => {
@@ -73,7 +101,8 @@ export default {
           let { id, procInstId, taskId } = this.row;
           let { comment } = this.form;
           this.loadingA = true;
-          activitiReject({comment: comment, businessId: id, procInstId: procInstId, taskId: taskId}).then(({message}) => {
+
+          activitiReject({comment: comment, businessId: id, procInstId: procInstId, taskId: taskId,guarantee:this.form.guarantee}).then(({message}) => {
             this.$modal.msgSuccess(message);
             this.loadingA = false;
             this.openDataScope = false;

@@ -7,6 +7,7 @@ import md5 from "js-md5";
 const user = {
     state: {
         token: getToken(),
+        id:'',
         name: '',
         realName: '',
         unitName:"",
@@ -17,12 +18,16 @@ const user = {
         avatar: '',
         roles: false,
         rank:'',
+        userCode:'',
         permissions: []
     },
 
     mutations: {
         SET_TOKEN: (state, token) => {
             state.token = token
+        },
+        SET_ID: (state, id) => {
+            state.id = id
         },
         SET_NAME: (state, name) => {
             state.name = name
@@ -53,6 +58,9 @@ const user = {
         },
         SET_RANK: (state, rank) => {
             state.rank = rank
+        },
+        SET_USER_CODE: (state, userCode) => {
+            state.userCode = userCode
         },
         SET_PERMISSIONS: (state, permissions) => {
             state.permissions = permissions
@@ -102,6 +110,7 @@ const user = {
                             // } else {
                             //   commit('SET_ROLES', ['ROLE_DEFAULT'])
                             // }
+                        commit('SET_ID', user.id)
                         commit('SET_NAME', user.username)
                         commit('SET_UNIT_NAME',user.unitName)
                         commit('SET_UNIT_CODE',user.unitCode)
@@ -110,6 +119,7 @@ const user = {
                         commit('SET_DEPT_CODE',user.deptCode)
                         commit('SET_REAL_NAME', user.realName)
                         commit('SET_RANK', user.rank)
+                        commit('SET_USER_CODE', user.userCode)
                         
                         setCookie("unitCode", user.unitCode);
                         setCookie("phone", user.phone || '');

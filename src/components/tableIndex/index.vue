@@ -76,7 +76,7 @@
             >
             </el-switch>
           </span>
-          <span v-else-if="propertyFieldsArr[index].fieldType === 'dict'">
+          <span v-else-if="propertyFieldsArr[index].fieldType === 'dict'" :class="[propertyFieldsArr[index].fieldCode === 'guarantee'?'highlight-red':'']">
             {{
               scope.row[propertyFieldsArr[index].fieldCode]
                 | fieldFormat(propertyFieldsArr[index].fieldFormatArr)
@@ -440,5 +440,8 @@ export default {
 <style lang="scss">
 .el-tooltip__popper {
   max-width: 50%;
+}
+.highlight-red {
+  color: #ed4646;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
     <el-calendar v-model="calendarVal" :range="[assignTimey, assignTimer]" class="box-calendar" center>
         <div slot="dateCell" slot-scope="{data}" @click="calendarClick(data)">
-            <div v-for="item in dateList" :key="item.assignTime" >
+            <div v-for="item in dateList" :key="item.assignTime" @click="handleItemClcik(item)">
                 <template v-if="item.assignTime.indexOf(data.day) != -1">
                     <div :class="[usageDate == data.day ? 'container-date-default' : 'container-date-normal']"> 
                         <p class="date_default">
@@ -43,13 +43,17 @@ export default {
     data() {
         return {
             calendarVal: null,
+            available:0,
         }
     },
     created() {
     },
     methods: {
+        handleItemClcik(item){
+            this.available = item.tasscount - item.nasscount - item.sasscount;
+        },
         calendarClick (val) {
-            this.$emit('calendarClick', val.day)
+            this.$emit('calendarClick', val.day,this.available)
         },
     }
 };

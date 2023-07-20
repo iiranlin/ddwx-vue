@@ -138,6 +138,23 @@
                   </el-select>
                 </el-form-item>
               </el-col>
+              <el-col :span="8">
+                <el-form-item label="优先保障:" prop="guarantee">
+                    <el-select
+                      v-model="formData.guarantee"
+                      placeholder="请选择优先保障类型"
+                      clearable
+                      filterable
+                      disabled
+                    >
+                      <el-option v-for="item in dictionariesObj['1679651627836055552']" 
+                        :key="item.code" 
+                        :label="item.name" 
+                        :value="item.code">
+                      </el-option>
+                    </el-select>
+                </el-form-item>
+              </el-col>
             </el-row>
             <el-row :gutter="24">
               <el-col :span="24">
@@ -187,8 +204,8 @@ export default {
       assignTimey: '2022-05-23',
       assignTimer: '2022-05-29',
       activeNames: ['1', '2', '3'],
-      dictionariesCode: [1016, 10018, 101801],
-      dictionariesObj: {'1016': [], '10018': [], '101801': []},
+      dictionariesCode: [1016, 10018, 101801,'1679651627836055552'],
+      dictionariesObj: {'1016': [], '10018': [], '101801': [],'1679651627836055552':[]},
       addCarInfoList: [],
       formData: {
         id: '',
@@ -242,6 +259,7 @@ export default {
           hopeBrand: row.hopeBrand,
           remark: row.remark,
           source: 1,
+          guarantee:row.guarantee,
         }
         this.$refs.formAddress1.init(row.fromAddr);
         this.$refs.formAddress2.init(row.toAddr);
@@ -310,7 +328,7 @@ export default {
     },
     addCarButton () {
       this.$refs.formInformation.addCarButton();
-    }
+    },
   },
 };
 </script>

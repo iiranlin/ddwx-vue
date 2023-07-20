@@ -55,6 +55,7 @@ export default {
             },
             selectChangeData: {},
             comment: '',
+            guarantee:'',
 
             rules: {
                 id: [
@@ -69,6 +70,7 @@ export default {
             this.ids = ids || [];
             if(form){
                 this.comment = form.comment;
+                this.guarantee = form.guarantee;
             }
             this.activitiAssigneeList();
         },
@@ -117,7 +119,8 @@ export default {
         activitiComplete () {
             let { id, procInstId, taskId } = this.row;
             let comment = this.comment;
-            activitiComplete({comment: comment, businessId: id, procInstId: procInstId, taskId: taskId, candidateUser: this.form.id}).then(({message}) => {
+
+            activitiComplete({comment: comment, businessId: id, procInstId: procInstId, taskId: taskId, candidateUser: this.form.id,guarantee:this.guarantee}).then(({message}) => {
                 this.$modal.msgSuccess(message);
                 this.openWorkflow = false;
                 this.loading = false;

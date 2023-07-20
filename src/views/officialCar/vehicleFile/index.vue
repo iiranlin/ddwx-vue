@@ -204,6 +204,13 @@ export default {
         this.$refs.export.init()
       }else if(buttonCode==='binding'){
         this.$refs.binding.init(this.selectionData[0].usageUnitCode,this.selectionData[0].vinNumber);
+      }else if(buttonCode==='resume'){
+        this.$router.push({
+          name: 'carResume',
+          params:{
+            carInfo:JSON.stringify(this.selectionData[0]),
+          }
+        })
       }
     },
     // 导出文件

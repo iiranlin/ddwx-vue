@@ -66,12 +66,14 @@
           <el-row>
             <el-col :span="8">
               <el-form-item label="乘坐人数:" prop="usagePersons">
-                <el-input v-model="formData.usagePersons" @input="numberInput($event,'usagePersons')" maxlength="3" placeholder="请输入乘坐人数" />
+                <el-input v-model="formData.usagePersons" @input="numberInput($event,'usagePersons')" maxlength="3" placeholder="请输入乘坐人数"/>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="乘车人:" prop="userName">
-                <el-input v-model="formData.userName" maxlength="20" placeholder="请输入乘车人" />
+                <el-input v-model="formData.userName" maxlength="20" placeholder="请输入乘车人" readonly>
+                   <i slot="suffix" class="el-input__icon el-icon-user-solid" @click="handleUserNameClick()"></i>
+                </el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -139,6 +141,21 @@
                 </el-select>
               </el-form-item>
             </el-col>
+            <el-col :span="8">
+              <el-form-item label="优先保障:">
+                <el-select
+                  v-model="formData.guarantee"
+                  placeholder="请选优先保障类型"
+                  filterable
+                >
+                  <el-option v-for="item in dictionariesObj['1679651627836055552']" 
+                    :key="item.code" 
+                    :label="item.name" 
+                    :value="item.code">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
           </el-row>
           <el-row>
             <el-col :span="24">
@@ -155,6 +172,7 @@
       <el-button @click="closePush">关 闭</el-button>
     </div>
     <activiti-assignee ref="activitiAssignee" @carSuccess="carSuccess"></activiti-assignee>
+    <select-user ref="selectUser" @selectUserSuccess='selectUserSuccess'></select-user>
   </div>
 </template>
 
@@ -169,10 +187,11 @@ import getDict from "@/views/mixins/getDict";
 import { limitInput, numberInput } from '@/utils/index';
 import { getCookie } from '@/utils/auth';
 import { mapGetters } from 'vuex';
+import selectUser from './components/selectUser.vue';
 export default {
   name: "apply",
   mixins: [getDict],
-  components: { formAddress, formCalendar, activitiAssignee },
+  components: { formAddress, formCalendar, activitiAssignee,selectUser },
   data() {
     var checkfromAddr = (rule, value, callback) => {
       if(value.indexOf('null') == -1 && value){
@@ -206,14 +225,16 @@ export default {
       assignTimey: '2022-05-23',
       assignTimer: '2022-05-29',
       activeNames: ['1', '2'],
-      dictionariesCode: [1016, 10018, 101801],
-      dictionariesObj: {'1016': [], '10018': [], '101801': []},
+      dictionariesCode: [1016, 10018, 101801,'1679651627836055552'],
+      dictionariesObj: {'1016': [], '10018': [], '101801': [],'1679651627836055552':[]},
+      available:0,
       formData: {
         reasonCode: '1',
         demandCode: '1001803',
         longDistanceTag: '0',
-        usagePersons: '1',
+        usagePersons: '',
         userName: '',
+        userId:'',
         phone: getCookie('phone') || '',
         usageDate: this.parseTime(new Date().getTime(),'{y}-{m}-{d}'),
         usageTime: '',
@@ -226,8 +247,10 @@ export default {
         remark: '',
         source: 1,
         procDefId: '',
-        assignee: ''
+        assignee: '',
+        guarantee:'0',
       },
+      defaultCheckedUser:[],
       rules: {
         reasonCode:[
             {required:true,message:"请选择用车事由",trigger:"change"}
@@ -271,6 +294,8 @@ export default {
   computed: {
     ...mapGetters([
       'realName',
+      'deptId',
+      'id',
     ]),
     theme() {
       return this.$store.state.settings.theme;
@@ -278,6 +303,7 @@ export default {
   },  
   created() {
     this.initUsageTime();
+    this.initDefaultUserName();
     this.vehicleInfoGetAssignCount();
     for(const item of this.dictionariesCode){
       this.getOperateDict(item);
@@ -349,6 +375,16 @@ export default {
         // }
         // return ''
     },
+    //初始化默认用车人
+    initDefaultUserName(){
+        let obj = {
+          id:this.id,
+          realName:this.realName,
+          deptId:this.deptId,
+        }
+        this.defaultCheckedUser.push(obj);
+        this.formData.usagePersons = this.defaultCheckedUser.length;
+    },
     weekCheckingIn(assignTime, type){
       this.weekChecking_inloading = true
       var now = new Date(assignTime);
@@ -383,10 +419,17 @@ export default {
         this.dateList = data.slice(0, data.length - time_num);
         this.assignTimey = this.weekCheckingIn(this.dateList[0].assignTime, '周一');
         this.assignTimer = this.weekCheckingIn(this.dateList[this.dateList.length - 1].assignTime, '周日');
+
+        //初始化可用车辆
+        let obj = this.dateList.find((item) => {
+          return item.assignTime === this.formData.usageDate;
+        })
+        this.available = obj.tasscount - obj.nasscount - obj.sasscount;
       })
     },
-    calendarClick (val) {
+    calendarClick (val,available) {
       this.formData.usageDate = val;
+      this.available = available;
     },
     addressSuccessOut (row) {
       let {id, name} = row;
@@ -428,7 +471,11 @@ export default {
         }
       });
       addVehicleRequest(obj).then( ({message}) => {
-        this.$modal.msgSuccess('操作成功');
+        if(this.available === 0){
+          this.$modal.msgWarning('抱歉，所选时间暂无可用车辆，请耐心等待，我们会尽快为您安排车辆，感谢您的理解与支持！')
+        }else{
+          this.$modal.msgSuccess('操作成功');
+        }
         this.$router.push({name:'myCar'});
       })
     },
@@ -444,6 +491,29 @@ export default {
       this.$tab.closePage(this.$route).then(({ visitedViews }) => {
         this.toLastView(visitedViews, this.$route);
       })
+    },
+    //乘车人点击
+    handleUserNameClick(){
+      this.$refs.selectUser.init(this.defaultCheckedUser);
+    },
+    //选择乘车人回调
+    selectUserSuccess(defaultChecked){
+      this.defaultCheckedUser = defaultChecked;
+
+      let tempUserName = '';
+      let tempUserId = '';
+      this.defaultCheckedUser.forEach((item,index) => {
+        if(index === this.defaultCheckedUser.length-1){
+          tempUserName = tempUserName + item.realName;
+          tempUserId = tempUserId + item.id;
+        }else{
+          tempUserName = tempUserName + item.realName + ',';
+          tempUserId = tempUserId + item.id + ',';
+        }
+      })
+      this.formData.userName = tempUserName;
+      this.formData.userId = tempUserId;
+      this.formData.usagePersons = this.defaultCheckedUser.length;
     }
   },
 };
@@ -507,6 +577,13 @@ export default {
           margin: 0px;
           text-align: center;
         }
+      }
+    }
+    .el-input__icon {
+      color:#409EFF;
+      
+      &:hover {
+        cursor: pointer;
       }
     }
   }
