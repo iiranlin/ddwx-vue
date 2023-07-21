@@ -76,7 +76,8 @@
             >
             </el-switch>
           </span>
-          <span v-else-if="propertyFieldsArr[index].fieldType === 'dict'" :class="[propertyFieldsArr[index].fieldCode === 'guarantee'?'highlight-red':'']">
+          <span v-else-if="propertyFieldsArr[index].fieldType === 'dict'" 
+          :class="[propertyFieldsArr[index].fieldCode === 'guarantee' && scope.row[propertyFieldsArr[index].fieldCode] !=='0'?'highlight-red':'']">
             {{
               scope.row[propertyFieldsArr[index].fieldCode]
                 | fieldFormat(propertyFieldsArr[index].fieldFormatArr)

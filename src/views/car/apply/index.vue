@@ -330,7 +330,8 @@ export default {
           remark: row.remark,
           source: 1,
           procDefId: '',
-          assignee: ''
+          assignee: '',
+          guarantee:row.guarantee,
         }
         this.initUsageTime();
         this.$refs.formAddress1.init(row.fromAddr);
