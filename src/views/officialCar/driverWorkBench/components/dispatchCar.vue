@@ -153,7 +153,7 @@ export default {
         handleAvatarSuccess(res, file){
             let { data } = res;
             this.$modal.msgSuccess("上传成功");
-            this.form.imageUrl = data.url;
+            this.form.imageUrl = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+data.fileName;
             this.form.images[0] = data;
         },
         //上传图片失败

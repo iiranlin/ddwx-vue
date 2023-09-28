@@ -16,7 +16,7 @@
         muted
       ></video>
     </div>
-    <div style="position:absolute;top:30px;color:red;z-index: 10;right: 110px;font-weight: bold;font-size: 24px;">本系统为测试系统，均为测试数据</div>
+    <!-- <div style="position:absolute;top:30px;color:red;z-index: 10;right: 110px;font-weight: bold;font-size: 24px;">本系统为测试系统，均为测试数据</div> -->
     <div class="login-right-box">
       <div class="login-right-box-title">
         <img src="../assets/logo/StationLogo.svg" alt="" class="logo">
@@ -171,12 +171,12 @@ import { getVerificationCode, getList } from '@/api/login'
 import { generateUUID } from '@/utils'
 import UpdatePassword from '@/components/UpdatePassword'
 
-animationData.assets.forEach((item) => {
-  item.u = ''
-  if (item.w && item.h) {
-    item.p = require(`@/assets/lottie/images/${item.p}`)
-  }
-})
+// animationData.assets.forEach((item) => {
+//   item.u = ''
+//   if (item.w && item.h) {
+//     item.p = require(`@/assets/lottie/images/${item.p}`)
+//   }
+// })
 export default {
   name: 'Login',
   components: {
@@ -228,11 +228,11 @@ export default {
       },
       immediate: true
     },
-    'loginForm.username': {
-      handler: function(newUsername) {
-        this.loginForm.username = newUsername.toLocaleUpperCase()
-      }
-    }
+    // 'loginForm.username': {
+    //   handler: function(newUsername) {
+    //     this.loginForm.username = newUsername.toLocaleUpperCase()
+    //   }
+    // }
   },
   created() {
     this.testTitle = process.env.VUE_APP_TITLE

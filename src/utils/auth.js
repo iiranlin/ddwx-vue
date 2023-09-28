@@ -40,7 +40,6 @@ export function removeCookie(name) {
 	return Cookies.remove(name)
 }
 
-
 export const uploadHaders = () => {
 	return {
 		'Authorization': getToken()

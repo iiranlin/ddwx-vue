@@ -116,7 +116,7 @@
                         :on-error="handleUploadError"
                         :before-upload="beforeAvatarUpload"
                         >
-                        <img v-if="form.driverPicPath" :src="form.driverPicPath" class="avatar">
+                        <img v-if="!!form.driverPicPath" :src="form.driverPicPath" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon">
                             <span style="font-size:12px;display:block;height:30px;line-height:30px;">上传照片</span>
                         </i>
@@ -219,7 +219,7 @@
                                 :on-success="handleAvatarSuccess"
                                 :on-error="handleUploadError"
                                 :before-upload="beforeAvatarUpload">
-                                <img v-if="form.licenseFirstImgPath" :src="form.licenseFirstImgPath" class="avatar">
+                                <img v-if="!!form.licenseFirstImgPath" :src="form.licenseFirstImgPath" class="avatar">
                                 <i v-else class="el-icon-plus avatar-uploader-icon">
                                     <span style="font-size:12px;display:block;height:30px;line-height:30px;">上传主页照片</span>
                                 </i>
@@ -237,7 +237,7 @@
                                 :show-file-list="false"
                                 :on-success="handleAvatarSuccess"
                                 :before-upload="beforeAvatarUpload">
-                                <img v-if="form.licenseSecondImgPath" :src="form.licenseSecondImgPath" class="avatar">
+                                <img v-if="!!form.licenseSecondImgPath" :src="form.licenseSecondImgPath" class="avatar">
                                 <i v-else class="el-icon-plus avatar-uploader-icon">
                                      <span style="font-size:12px;display:block;height:30px;line-height:30px;">上传副页照片</span>
                                 </i>
@@ -469,9 +469,16 @@ export default {
             data.firstDate = this.parseTime(data.firstDate,"{y}-{m}-{d}");
             data.internshipEndDate = this.parseTime(data.internshipEndDate,"{y}-{m}-{d}");
             data.lastNucleinDate = this.parseTime(data.lastNucleinDate,"{y}-{m}-{d}");
-            data.driverPicPath = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+data.driverPic;
-            data.licenseFirstImgPath = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+data.licenseFirstImg;
-            data.licenseSecondImgPath = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+data.licenseSecondImg;
+            
+            if(!!data.driverPic){
+                data.driverPicPath = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+data.driverPic;
+            }
+            if(!!data.licenseFirstImg){
+                data.licenseFirstImgPath = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+data.licenseFirstImg;
+            }
+            if(!!data.licenseSecondImg){
+                data.licenseSecondImgPath = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+data.licenseSecondImg;
+            }
             this.licenseTypeSelection = data.licenseType.split(',')
             this.internshipChecked = data.internshipTag === "1"?true:false;
             this.form = data;
@@ -605,13 +612,13 @@ export default {
         this.$modal.msgSuccess('上传成功')
         if (data.type === '1') {
             this.form.licenseFirstImg = data.fileName;
-            this.form.licenseFirstImgPath = data.url;
+            this.form.licenseFirstImgPath = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+data.fileName;
         } else if (data.type === '2') {
             this.form.licenseSecondImg = data.fileName;
-            this.form.licenseSecondImgPath = data.url;
+            this.form.licenseSecondImgPath = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+data.fileName;
         } else if (data.type === '7') {
             this.form.driverPic = data.fileName;
-            this.form.driverPicPath = data.url;
+            this.form.driverPicPath = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+data.fileName;
         }
     },
     //上传图片失败

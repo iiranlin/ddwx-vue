@@ -644,13 +644,13 @@ export default {
       this.$modal.msgSuccess('上传成功')
       if (data.type === '1') {
         this.form.licenseFirstImg = data.fileName;
-        this.form.licenseFirstImgPath = data.url;
+        this.form.licenseFirstImgPath = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+data.fileName;
       } else if (data.type === '2') {
         this.form.licenseSecondImg = data.fileName;
-        this.form.licenseSecondImgPath = data.url;
+        this.form.licenseSecondImgPath = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+data.fileName;
       } else if (data.type === '7') {
         this.form.driverPic = data.fileName;
-        this.form.driverPicPath = data.url;
+        this.form.driverPicPath = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+data.fileName;
       }
     },
     //上传图片失败

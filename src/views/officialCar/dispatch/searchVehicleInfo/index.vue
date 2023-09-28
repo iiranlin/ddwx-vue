@@ -32,28 +32,14 @@
                     @handleQuery="handleQuery"
                     @handleResetDept="handleResetDept"
                     style="margin-top:-12px;margin-bottom:6px">
-                     <template slot="customItemStar">
-                        <el-form-item label="用车单位" prop="value">
-                        <el-select v-model="formData.unitCode" placeholder="请选择用车单位" clearable style="width:240px" size="small">
-                            <el-option v-for="item in unitOptions"
-                                :key="item.value"
-                                :label="item.unitName"
-                                :value="item.unitCode"
-                                @click.native="handleUnitChange(item.unitCode)">
-                            </el-option>
-                        </el-select>
-                        </el-form-item>
-                    </template>
                     <template slot="customItemStar">
-                      <el-form-item label="用车部门" prop="value">
-                        <el-select v-model="formData.deptId" placeholder="请选择用车部门" clearable style="width:240px" size="small">
-                            <el-option v-for="item in deptOptions"
-                                :key="item.value"
-                                :label="item.deptName"
-                                :value="item.id">
-                            </el-option>
-                        </el-select>
-                      </el-form-item>
+                        <el-form-item label="使用部门" prop="value">
+                            <select-tree 
+                                style="width:240px"
+                                :value="formData.deptId"
+                                :options="deptOptions"
+                                @getValue="deptIdChange($event)"/>
+                            </el-form-item>
                     </template>
                 </form-data>
                 <!--表格数据-->
@@ -93,13 +79,15 @@ import tableIndex from "@/components/tableIndex"
 import {gcywVehicleRequestDispatchListInfo,gcywVehicleRequestExportRequestInfo} from "@/api/car"
 import {getAllAvailableDept} from "@/api/dept"
 import { getDisAvailableUnit } from '@/api/system/unit'
+import { deptTree } from "@/api/system/dept";
+import selectTree from "@/components/selectTree";
 import indexMixin from "@/views/mixins"
 import exportDialog from '@/components/ExportDialog'
 import { axiosDownloadExcel } from '@/api/download'
 
 export default {
     name:"searchVehicleInfo",
-    components:{buttonTop,formData,tableIndex,exportDialog},
+    components:{buttonTop,formData,tableIndex,exportDialog,selectTree},
     mixins: [indexMixin],
 
     data() {
@@ -137,21 +125,21 @@ export default {
     created(){
         Object.assign(this.$data, this.$options.data());
         this.menuProperty();
-        this.getUnitOptions();
+        this.getDeptOptions();
         this.getList();
     },
     methods:{
         numberChange(val) {
             this.numberShow = val
         },
-        //获取用车单位信息
-        async getUnitOptions() {
-            this.loading = true
-            await getDisAvailableUnit().then(({ data }) => {
-                this.loading = false
-                this.unitOptions = data;
+        //查询部门数据
+        getDeptOptions(){
+            this.loading = true;
+            deptTree({unitCode: "cr"}).then( ({ data }) => {
+                this.loading = false;
+                this.deptOptions = data;
             }).catch((err) => {
-                this.loading = false
+                this.loading = false;
             })
         },
         //获取菜单数据
@@ -214,26 +202,14 @@ export default {
             this.multiple = multiple;
             this.selectionData = selection;
         },
-        //用车单位选择回调
-        handleUnitChange(unitCode){
-            this.handleQueryDept(unitCode)
-        },
-        //查询部门数据
-        handleQueryDept(unitCode){
-            this.formData.deptId ="";
-            this.loading = true;
-            getAllAvailableDept({unitCode:unitCode}).then(({data}) => {
-                this.loading = false;
-                this.deptOptions = data;
-            }).catch((err) => {
-                this.loading = false;
-            })
+        //用车部门选择回调
+        deptIdChange (val) {
+            this.formData.deptId = val;
         },
         //清空部门数据
         handleResetDept(){
             this.formData.deptId = "";
             this.formData.unitCode = "";
-            this.deptOptions = [];
         },
         //跳转详情
         clickLink(row, fieldCode, linkText){

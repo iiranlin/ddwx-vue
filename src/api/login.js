@@ -72,3 +72,11 @@ export function loginByTicket(snapTicket) {
     method: 'get',
   })
 }
+
+export function loginByAmlbcookie(params) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/auth/authgt`,
+    method: 'get',
+    params
+  })
+}

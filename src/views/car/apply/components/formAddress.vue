@@ -187,6 +187,7 @@ export default {
       })
     },
     gcjcCommonAddressListAll () {
+
       const rule = new Promise( (resolve, reject) => {
         gcjcCommonAddressListAll({addressType: this.name == '出发地'? 1 : 2}).then( ({data}) => {
           this.gcjcCommonAddressList = data;

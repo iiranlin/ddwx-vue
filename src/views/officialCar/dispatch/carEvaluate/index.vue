@@ -382,7 +382,9 @@ export default {
         },
         //清空搜索数据
         handleResetDept(){
-            this.formData.usageUnitCode = "";
+            this.formData.createDateBegin = '';
+            this.formData.createDateEnd = '';
+            this.dateRange = [];
         },
         // 导出文件
         exportFile(pageInfo) {

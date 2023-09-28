@@ -1,207 +1,163 @@
 <template >
     <div class="app-container">
-        <el-row :gutter="20">
-            <el-col :span="1.5">
-                <el-button type="primary" size="mini" @click="handleBack()">返回</el-button>
-            </el-col>
-        </el-row>
-        <el-row :gutter="20">
-            <el-form :model="form" ref="elform" label-width="120px">
-                <!--单位信息-->
-                <el-row :gutter="20" v-if="source!=='driverWorkBench'">
-                    <el-col style="margin: 15px 10px">
-                        <i class="el-icon-caret-right title-icon"></i><span>单位信息</span>
-                    </el-col>
-                </el-row>
-                <el-row v-if="source!=='driverWorkBench'">
-                    <el-col :span="24" :xs="24"  style="width:90%;">
-                        <el-col :span="8">
-                            <el-form-item label="用车单位："><span>{{vehicleData.unitName}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="用车部门："><span>{{vehicleData.deptName}}</span></el-form-item>
-                        </el-col>
-                    </el-col>
-                </el-row>
-                <!--用车信息-->
-                <el-row :gutter="20">
-                    <el-col style="margin: 15px 10px">
-                        <i class="el-icon-caret-right title-icon"></i><span>用车信息</span>
-                    </el-col>
-                </el-row>
-                <el-row>
-                    <el-col :span="24" :xs="24"  style="width:90%;">
-                        <el-row :gutter="20">    
-                            <el-col :span="8">
-                                <el-form-item label="用车事由："><span>{{vehicleData.reason}}</span></el-form-item>
-                            </el-col>
-                            <el-col :span="8">
-                                <el-form-item label="用车需求："><span>{{vehicleData.demand}}</span></el-form-item>
-                            </el-col>
-                            <el-col :span="8">
-                                <el-form-item label="是否长途：">
-                                    <span v-if="vehicleData.longDistanceTag===1">是</span>
-                                    <span v-if="vehicleData.longDistanceTag===0">否</span>
-                                </el-form-item>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="20">     
-                            <el-col :span="8">
-                                <el-form-item label="申请人："><span>{{vehicleData.handleUserName}}</span></el-form-item>
-                            </el-col>
-                            <el-col :span="8">
-                                <el-form-item label="乘坐人数："><span>{{vehicleData.usagePersons}}</span></el-form-item>
-                            </el-col>
-                            <el-col :span="8">
-                                <el-form-item label="乘坐人："><span>{{vehicleData.userName}}</span></el-form-item>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="20">    
-                            <el-col :span="8">
-                                <el-form-item label="联系电话："><span>{{vehicleData.phone}}</span></el-form-item>
-                            </el-col>
-                            <el-col :span="8">
-                                <el-form-item label="用车日期："><span>{{vehicleData.usageDate}}</span></el-form-item>
-                            </el-col>
-                            <el-col :span="8">
-                                <el-form-item label="出发时间："><span>{{vehicleData.usageTime}}</span></el-form-item>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="20">
-                            <el-col :span="8">
-                                <el-form-item label="预计时长："><span>{{vehicleData.timeLength}}</span></el-form-item>
-                            </el-col>
-                            <el-col :span="8">
-                                <el-form-item label="期望车型："><span>{{hopeBrandInfo}}</span></el-form-item>
-                            </el-col>
-                            <el-col :span="8">
-                                <el-form-item label="优先保障："><span>{{checkGuarantee()}}</span></el-form-item>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="20">    
-                            <el-col :span="24">
-                                <el-form-item label="出发地点："><span>{{vehicleData.fromAddr}}</span></el-form-item>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="20">    
-                            <el-col :span="24">
-                                <el-form-item label="前往地点："><span>{{vehicleData.toAddr}}</span></el-form-item>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="20">    
-                            <el-col :span="24">
-                                <el-form-item label="备注："><span>{{vehicleData.remark}}</span></el-form-item>
-                            </el-col>
-                        </el-row>
-                    </el-col>
-                </el-row>
-                <!--派车信息-->
-                <el-row :gutter="20" v-if="vehicleData.reqAssignments">
-                    <el-col style="margin: 15px 10px">
-                        <i class="el-icon-caret-right title-icon"></i><span>派车信息</span>
-                    </el-col>
-                </el-row>
-                <el-row v-for="item in vehicleData.reqAssignments" :key="item.id">
-                    <el-col :span="24" :xs="24"  style="width:90%;"> 
-                        <el-row :gutter="20">    
-                            <el-col :span="8">
-                                <el-form-item v-if="source!=='myCar'" label="指派司机："><span>{{item.driver}}</span></el-form-item>
-                                <el-form-item v-else label="指派司机："><span>{{item.driver.substr(0,1)}}师傅</span></el-form-item>
-                            </el-col>
-                            <el-col :span="8">
-                                <el-form-item label="指派车辆：">
-                                    <a href="#" v-if="item.status===5 || item.status===7" class="custom-link" @click="handleCarNumberClick(item)">{{item.carNumber}}</a>
-                                    <span v-else>{{item.carNumber}}</span>
-                                </el-form-item>
-                            </el-col>
-                            <el-col :span="8">
-                                <el-form-item label="出场里程："><span>{{item.beginMiles}}</span></el-form-item>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="20">    
-                            <el-col :span="8">
-                                <el-form-item label="还车里程："><span>{{item.endMiles}}</span></el-form-item>
-                            </el-col>
-                            <el-col :span="8">
-                                <el-form-item label="下次保养里程："><span>{{item.nextMaintainDate}}</span></el-form-item>
-                            </el-col>
-                            <el-col :span="8">
-                                <el-form-item label="保养时间："><span>{{parseTime(item.maintainDate)}}</span></el-form-item>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="20">    
-                            <el-col :span="8">
-                                <el-form-item label="保养里程："><span>{{item.maintainMiles}}</span></el-form-item>
-                            </el-col>  
-                            <el-col :span="16">
-                                <el-form-item label="评价内容："><span>{{item.evaluateContent || '未填写'}}</span></el-form-item>
-                            </el-col>       
-                        </el-row>
-                        <el-row>
-                            <el-form-item label="评分：">
-                                <el-rate
-                                    v-model="item.evaluateLevel"
-                                    disabled
-                                    show-text
-                                    :texts="texts">
-                                </el-rate>
-                            </el-form-item>
-                        </el-row>
-                        <el-row>
-                            <el-form-item label="驾驶水平：">
-                                <el-rate
-                                    v-model="item.evaluateDriver"
-                                    disabled
-                                    show-text
-                                    :texts="texts">
-                                </el-rate>
-                            </el-form-item>
-                        </el-row>
-                        <el-row>
-                            <el-form-item label="服务态度：">
-                                <el-rate
-                                    v-model="item.evaluateService"
-                                    disabled
-                                    show-text
-                                    :texts="texts">
-                                </el-rate>
-                            </el-form-item>
-                        </el-row>
-                        <el-row>
-                            <el-form-item label="车内环境：">
-                                <el-rate
-                                    v-model="item.evaluateIncar"
-                                    disabled
-                                    show-text
-                                    :texts="texts">
-                                </el-rate>
-                            </el-form-item>
-                        </el-row>
-                    </el-col>
-                    <el-col :span="24">
-                            <hr style="color: #dddddd ;border:1px dashed;width:90%;margin-left:40px;">
-                    </el-col>
-                </el-row>
-                <!--操作日志-->
-                <el-row :gutter="20" v-if="source!=='driverWorkBench'">
-                    <el-col style="margin: 15px 10px">
-                        <i class="el-icon-caret-right title-icon"></i><span>操作信息</span>
-                    </el-col>
-                    <!-- operationType -->
-                    <el-col :span="24" style="margin-bottom:40px;">
-                    <el-table ref="eltableSetting" max-height="300px" :data="logData" style="width:90%;margin-left:40px;" stripe border>
-                        <el-table-column label="操作时间" align="center" width="200px">
-                            <template slot-scope="scope">
-                                <span>{{parseTime(logData[scope.$index].createTime)}}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="操作人" prop="operator" align="center" width="200px"></el-table-column>
-                        <el-table-column label="描述" prop="sdesc" align="center"></el-table-column>
-                    </el-table>
-                </el-col>
-                </el-row>
-            </el-form>
-        </el-row> 
+        <!--用车信息-->
+        <div class="item-content-container">
+            <div class="title-container">
+                <img src="/static/icon_use_car.png"/>
+                <span>用车信息</span>
+            </div>
+            <div class="ul-parent">
+                <ul class="ul-container">
+                    <li class="li-item">
+                        <span>用车单位：</span>
+                        <span>{{vehicleData.unitName}}/{{vehicleData.deptName}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>用车事由：</span>
+                        <span>{{vehicleData.reason}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>用车需求：</span>
+                        <span>{{vehicleData.demand}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>是否长途：</span>
+                        <span>{{checkLongDistanceTag()}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>乘坐人数：</span>
+                        <span>{{vehicleData.usagePersons}}人</span>
+                    </li>
+                    <li class="li-item">
+                        <span>乘 车 人：</span>
+                        <span>{{vehicleData.userName}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>联系电话：</span>
+                        <span>{{vehicleData.phone}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>用车时间：</span>
+                        <span>{{parseTime(vehicleData.usageDate,'{m}-{d}')}} {{vehicleData.usageTime}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>预计时长：</span>
+                        <span>{{vehicleData.timeLength}}小时</span>
+                    </li>
+                    <li class="li-item">
+                        <span>期望车型：</span>
+                        <span>{{hopeBrandInfo}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>优先保障：</span>
+                        <span>{{checkGuarantee()}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>备注：</span>
+                        <span>{{vehicleData.remark || '未填写'}}</span>
+                    </li>
+                    <li class="li-item li-item-all">
+                        <span>用车行程：</span>
+                        <span>{{checkAddress()}}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!--派车信息-->
+        <div class="item-content-container" v-if="reqAssignments.length > 0">
+            <div class="title-container">
+                <img src="/static/icon_dispatch_car.png"/>
+                <span>派车信息</span>
+            </div>
+            <div :class="['ul-parent',reqAssignments.length > 1?'border-dashed':'']" v-for="item in reqAssignments" :key="item.id">
+                <ul class="ul-container border-bottom">
+                    <li class="li-item">
+                        <span>指派司机：</span>
+                        <span>{{checkDriver(item)}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>指派车辆：</span>
+                        <a href="#" v-if="item.status===5 || item.status===7" class="custom-link" @click="handleCarNumberClick(item)">{{item.carNumber}}</a>
+                        <span v-else>{{item.carNumber}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>出车里程：</span>
+                        <span>{{item.beginMiles}}公里</span>
+                    </li>
+                    <li class="li-item">
+                        <span>还车里程：</span>
+                        <span v-if="!!item.endMiles">{{item.endMiles}}公里</span>
+                        <span v-else>暂无数据</span>
+                    </li>
+                    <li class="li-item">
+                        <span>出车时间：</span>
+                        <span>{{parseTime(item.drivingTime,'{m}-{d} {h}:{i}') || '暂无数据'}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>还车时间：</span>
+                        <span>{{parseTime(item.overTime,'{m}-{d} {h}:{i}') || '暂无数据'}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>用户评价：</span>
+                        <span>{{item.evaluateContent || '未填写'}}</span>
+                    </li>
+                    <li class="li-item li-item-half">
+                        <span>总体评分：</span>
+                        <el-rate
+                            v-model="item.evaluateLevel"
+                            disabled
+                            show-text
+                            :texts="texts">
+                        </el-rate>
+                    </li>
+                    <li class="li-item li-item-half">
+                        <span>服务态度：</span>
+                        <el-rate
+                            v-model="item.evaluateService"
+                            disabled
+                            show-text
+                            :texts="texts">
+                        </el-rate>
+                    </li>
+                    <li class="li-item li-item-half">
+                        <span>驾驶水平：</span>
+                        <el-rate
+                            v-model="item.evaluateDriver"
+                            disabled
+                            show-text
+                            :texts="texts">
+                        </el-rate>
+                    </li>
+                    <li class="li-item li-item-half">
+                        <span>车内环境：</span>
+                        <el-rate
+                            v-model="item.evaluateIncar"
+                            disabled
+                            show-text
+                            :texts="texts">
+                        </el-rate>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!--操作日志-->
+        <div class="item-content-container" v-if="source!=='driverWorkBench'">
+            <div class="title-container">
+                <img src="/static/icon_log_car.png"/>
+                <span>操作日志</span>
+            </div>
+            <div class="table-container">
+                <el-table ref="eltableSetting" :data="logData" border>
+                    <el-table-column label="操作时间" align="center" width="200px">
+                        <template slot-scope="scope">
+                            <span>{{parseTime(logData[scope.$index].createTime)}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="操作人" prop="operator" align="center" width="200px"></el-table-column>
+                    <el-table-column label="描述" prop="sdesc" align="center"></el-table-column>
+                </el-table>
+            </div>
+        </div>
     </div>
 </template>
 <script>
@@ -214,7 +170,6 @@ export default {
     beforeRouteEnter (to, from, next) {
         next((vm) => {
             vm.source = from.name;
-            console.log(vm.source)
         });
     },
 
@@ -232,6 +187,8 @@ export default {
             logData:[],
             //用车单数据
             vehicleData:{},
+            //派车数据
+            reqAssignments:[],
              //优先保障数据
             guaranteeOptions:[],
             //期望车型数据
@@ -274,6 +231,7 @@ export default {
                 }
                 await gcywVehicleRequestDispatchList(params).then(({data}) => {
                     this.vehicleData = data.list[0] || {};
+                    this.reqAssignments = this.vehicleData.reqAssignments;
                     this.loading = false;
                     this.getHopeBrandInfo();
                     this.initEvaluateInfo();
@@ -368,7 +326,53 @@ export default {
             let obj = this.guaranteeOptions.find((item) => {
                 return item.code === this.vehicleData.guarantee;
             })
-            return !!obj?obj.name:'';
+            return !!obj?obj.name:'否';
+        },
+        //判断用车行程
+        checkAddress(){
+            let fromArr = '';
+            let toArr = ''
+
+            if(!this.vehicleData.fromAreaId || !this.vehicleData.toAreaIdd){
+                return;
+            }
+
+            let fromAreaIdArr = this.vehicleData.fromAreaId.split(',');
+            let toAreaIddArr = this.vehicleData.toAreaIdd.split(',');
+
+            if(fromAreaIdArr[1] === toAreaIddArr[1]){
+                fromArr = this.vehicleData.fromAddr.split('/')[1] + '/';
+
+                if(fromAreaIdArr[2] === toAreaIddArr[2]){
+                    fromArr = fromArr + this.vehicleData.fromAddr.split('/')[2];
+                    toArr = this.vehicleData.toAddr.split('/')[2].split(' ')[1];
+                }else{
+                    fromArr = fromArr + this.vehicleData.fromAddr.split('/')[2];
+                    toArr = this.vehicleData.toAddr.split('/')[2];
+                }
+            }else{
+                fromArr = this.vehicleData.fromAddr.split('/')[1] + '/' + this.vehicleData.fromAddr.split('/')[2];
+                toArr = this.vehicleData.toAddr.split('/')[1] + '/' + this.vehicleData.toAddr.split('/')[2];
+            }
+            return fromArr + " → " + toArr;
+        },
+        //判断是否长途
+        checkLongDistanceTag(){
+            if(this.vehicleData.longDistanceTag===1){
+                return '是';
+            }
+            return "否"
+        },
+        //判断指派司机
+        checkDriver(item){
+            if(this.source!=='myCar'){
+                return item.driver;
+            }
+            return item.driver.substr(0,1) + '师傅';
+        },
+        //行类名
+        rowClassName(){
+            return 'car-detail-row-class'
         },
         //关闭当前页面
         closeCurrentPage() {
@@ -383,28 +387,81 @@ export default {
     }
 };
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .app-container {
-    padding: 10px 15px;
-    overflow: auto;
+    box-sizing: border-box;
+    padding: 7px 9px;
+    background-color: #f1f3f8;
+    overflow-y: auto;
+
+    .item-content-container {
+        background-color: #ffffff;
+        border-radius: 5px;
+        margin-bottom: 7px;
+        padding-bottom: 18px;
+
+        .title-container {
+            width: 100%;
+            height: 41px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #f3f5f7;
+
+            img {
+                margin-left: 4px;
+                width: 23px;
+                height: 23x;
+            }
+            span {
+                font-size: 14px;
+                color: #1b1e22;
+            }
+        }
+        .ul-parent {
+            overflow: hidden;
+            padding: 7px 0px 0px 40px;
+        }
+        .ul-container {
+            padding: 0px;
+            margin: 0px;
+            list-style: none;
+        }
+        .li-item {
+            float: left;
+            min-height: 24px;
+            line-height: 24px;
+            min-width: 25%;
+            max-width: 25%;
+            font-size: 12px;
+            display: flex;
+            color: #000000;
+        } 
+        .li-item-all {
+            min-width: 100%;
+        }
+        .li-item-half {
+            min-width: 50%;
+        }
+        .table-container {
+            padding: 10px 10px 0px 10px;
+        }
+    }
 }
-.el-form-item_content .el-input-group {
-    vertical-align: middle;
-}
-.title-icon {
-    color: rgb(64, 158, 255);
-    margin-right: 5px;
+.border-dashed {
+    border-bottom: 1px dashed #f3f5f7;
 }
 .custom-link {
     color: rgb(64, 158, 255);
     text-decoration: underline;
 }
-.svg-icon-font {
-    font-size: 20px;
-    color: orange;
-    margin-right: 10px;
+::v-deep .el-rate {
+    margin-top: 2px;
 }
-::v-deep.el-rate {
-    margin-top: 8px;
+::v-deep .el-rate__text {
+    font-size: 12px;
+}
+::v-deep .el-table .cell {
+    font-size: 12px;
+    line-height: 16px;
 }
 </style>

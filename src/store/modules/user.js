@@ -1,4 +1,4 @@
-import { login, logout, info } from '@/api/login'
+import { login, logout, info,loginByAmlbcookie } from '@/api/login'
 import { authAuth } from '@/api/auth'
 
 import { getToken, setToken, removeToken, setCookie } from '@/utils/auth'
@@ -126,6 +126,19 @@ const user = {
                             // commit('SET_AVATAR', avatar)
                         resolve(res)
                     }
+                }).catch(error => {
+                    reject(error)
+                })
+            })
+        },
+
+        // 统一身份认证获取token
+        GetInfoByAmlbcookie({ commit, state },iPlanetDirectoryPro) {
+            return new Promise((resolve, reject) => {
+                loginByAmlbcookie({id_token:iPlanetDirectoryPro}).then(res => {
+                    setToken(res.data.token)
+                    commit('SET_TOKEN', res.data.token)
+                    resolve(res)
                 }).catch(error => {
                     reject(error)
                 })

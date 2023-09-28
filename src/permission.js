@@ -1,9 +1,9 @@
 import router from './router'
 import store from './store'
 import { Message } from 'element-ui'
-import NProgress from 'nprogress'
+import NProgress, { remove } from 'nprogress'
 import 'nprogress/nprogress.css'
-import { setToken,getToken,getIdToken } from '@/utils/auth'
+import { setToken,getToken,getIdToken,getCookie,removeCookie } from '@/utils/auth'
 import { loginByTicket } from '@/api/login'
 
 NProgress.configure({ showSpinner: false })
@@ -35,7 +35,25 @@ router.beforeEach(async(to, from, next) => {
       return;
     }
   }
+  
+  //统一身份认证登录逻辑
+  const iPlanetDirectoryPro = getCookie('iPlanetDirectoryPro');
 
+  if(!!iPlanetDirectoryPro){
+
+    const hasToken = getToken()
+
+    if(!hasToken){
+      await store.dispatch('GetInfoByAmlbcookie',iPlanetDirectoryPro).then((res) => {
+        next(to.path)
+        return;
+      }).catch((err) => {
+  
+      })
+    }
+  }
+
+  //正常登录逻辑
 	const hasToken = getToken()
   if (hasToken) {
     to.meta.title && store.dispatch('settings/setTitle', to.meta.title)

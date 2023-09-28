@@ -15,16 +15,21 @@
             width: 100%;
         }
         #marklayer_layer image:not(#carMarkerImage){
-            width: 36px !important;
-            height: 36px !important;
+            width: 40px !important;
+            height: 40px !important;
             transform: translate(-5px,-30px);
         }
-        image#carMarkerImage {
+        /* image#carMarkerImage {
             width: 32px;
             height: 64px;
-        }
+        } */
     </style>
     <script>
+        String.prototype.startsWith = String.prototype.startsWith || function (str) {
+            var reg = new RegExp("^."+str);
+            return  reg.test(this)
+        }
+
         var host="http://10.3.102.90";
         var itemName="/Portal"
         var map_wkid = "3857";
@@ -88,7 +93,7 @@
             logo: false,
             zoom: 10,
             minZoom: 3,
-            maxZoom:15,
+            maxZoom:17,
             sliderPosition: "bottom-right",
             sliderStyle: "small",
             extent: new ExtentObj({
@@ -150,19 +155,28 @@
 
         tokenUtil.getToken('mn9ieCApH8A08UR9V8shlYd9Dac3RRTGei+aLVCyaLVTVC51VUmcLrvgcBRARuCY',function(rep){
             if(!rep.token||!!rep.error){alert(rep.error);return;}
-            userKey = rep.token;
-            layerArr.map.basemaps.forEach(function (item,i) {
-                if(i>=0){
-                    $.each(item.layers, function(index, input){
-                        var layer = rMapUtil.createSingleLayer(input,rep.token);
-                        map.addLayer(layer, item.layers.length+i);
-                    });
-                }
-            })
+
+            setTimeout(function() {
+                layerArr.map.basemaps.forEach(function (item,i) {
+                    if(i>=0){
+                        $.each(item.layers, function(index, input){
+                            var layer = rMapUtil.createSingleLayer(input,rep.token);
+                            map.addLayer(layer, item.layers.length+i);
+                        });
+                    }
+                })
+                rmark = new RAddMarkObj();
+                map.addLayer(rmark);
+            }, 1000)
         });
 
-        rmark = new RAddMarkObj();
-        map.addLayer(rmark);
+        //视口监听事件
+         map.on("extent-change",function (event) {
+            setTimeout(function() {
+                setCarMarkerStyle();
+            }, 50)
+           
+        });
     }
 
     //创建坐标点的路线
@@ -212,7 +226,7 @@
             x: x,
             y: y,
             id: 'pointCarIcon',
-            img: "/static/carIcon.png",
+            img: "/static/car_black.png",
         });
     }
 
@@ -229,6 +243,7 @@
         map.graphics.clear();
 
         pointList=data;
+     
         initData();
     }
 
@@ -240,47 +255,43 @@
         rmark.clear();
         map.graphics.clear();
 
-        let lnglat = changePosXy(data.lng,data.lat);
+        var lnglat = changePosXy(data.lng,data.lat);
 
-        let x = lnglat[0];
-        let y = lnglat[1];
+        var x = lnglat[0];
+        var y = lnglat[1];
 
-        map.setZoom(map.getMaxZoom());
-
-        setTimeout(() => {
-            addCarMarker(x,y);
-            setCarMarkerStyle();
-        }, 1000)
+        addCarMarker(x,y);
+        setCarMarkerStyle();
     }
 
     function initData(data){
         //去除重复坐标
-        let arr = [];
+        var tempArr = [];
 
-        for (let i = 0; i < this.pointList.length; i++) {
+        for (var i = 0; i < pointList.length; i++) {
             if(i===0){
-                arr.push(this.pointList[i]);
+                tempArr.push(pointList[i]);
                 continue;
             }
-            let obj = arr.find((item) => {
-                return item.lat===this.pointList[i].lat && item.lng===this.pointList[i].lng;
+            var result = tempArr.some(function(item){
+                return item.lat===pointList[i].lat && item.lng===pointList[i].lng;
             })
-            if(!obj){
-                arr.push(this.pointList[i]);
+            if(!result){
+                tempArr.push(pointList[i]);
             }
         }
-        this.pointList = arr;
+        pointList = tempArr;
 
         //封装轨迹坐标
-        let pathArr = [];
-        for (let i = 0; i < pointList.length; i++) {
-            let path = [];
+        var pathArr = [];
+        for (var i = 0; i < pointList.length; i++) {
+            var tempPath = [];
 
-            let lnglat = changePosXy(pointList[i].lng,pointList[i].lat);
+            var lnglat = changePosXy(pointList[i].lng,pointList[i].lat);
 
-            path.push(Number(lnglat[0]));
-            path.push(Number(lnglat[1]));
-            pathArr.push(path);
+            tempPath.push(Number(lnglat[0]));
+            tempPath.push(Number(lnglat[1]));
+            pathArr.push(tempPath);
         }
         paths.push(pathArr);
 
@@ -293,45 +304,45 @@
     }
 
     function centerPointAndZoom(){
-        let centerMaxX=this.pointList[0].lng;
-        let centerMaxY=this.pointList[0].lat;
-        let centerMinX=this.pointList[0].lng;
-        let centerMinY=this.pointList[0].lat;
+        var centerMaxX = pointList[0].lng;
+        var centerMaxY = pointList[0].lat;
+        var centerMinX = pointList[0].lng;
+        var centerMinY = pointList[0].lat;
 
-        for (let i = 0; i < this.pointList.length; i++) {
-            if(Number(this.pointList[i].lng)>Number(centerMaxX)){
-                centerMaxX = this.pointList[i].lng;
+        for (var i = 0; i < pointList.length; i++) {
+            if(Number(pointList[i].lng)>Number(centerMaxX)){
+                centerMaxX = pointList[i].lng;
             }
-            if(Number(this.pointList[i].lat)>Number(centerMaxY)){
-                centerMaxY = this.pointList[i].lat;
+            if(Number(pointList[i].lat)>Number(centerMaxY)){
+                centerMaxY = pointList[i].lat;
             }
         }
-        for (let i = 0; i < this.pointList.length; i++) {
-            if(Number(this.pointList[i].lng)<Number(centerMinX)){
-                centerMinX = this.pointList[i].lng;
+        for (var j = 0; j < pointList.length; j++) {
+            if(Number(pointList[j].lng)<Number(centerMinX)){
+                centerMinX = pointList[j].lng;
             }
-            if(Number(this.pointList[i].lat)<Number(centerMinY)){
-                centerMinY = this.pointList[i].lat;
+            if(Number(pointList[j].lat)<Number(centerMinY)){
+                centerMinY = pointList[j].lat;
             }
         }
         
         //计算缩放比例-判断基准轴
-        let zoom1;
+        var zoom1;
         if((Number(centerMaxX)-Number(centerMinX))/(Number(centerMaxY)-Number(centerMinY))
             >(Number(map.extent.xmax)-Number(map.extent.xmin))/(Number(map.extent.ymax)-Number(map.extent.ymin))){
             zoom1 = (centerMaxX-centerMinX)/(map.extent.xmax-map.extent.xmin);
         }else{
             zoom1 = (centerMaxY-centerMinY)/(map.extent.ymax-map.extent.ymin);
         }
-        let zoom2 = Math.log2(zoom1)
-        let zoom3 = Math.floor(map.getZoom()-zoom2);
+        var zoom2 = Math.log2(zoom1)
+        var zoom3 = Math.floor(map.getZoom()-zoom2);
         map.setZoom(zoom3);
 
         //中心点位置
-        let centerX = (Number(centerMaxX)+Number(centerMinX))/2;
-        let centerY = (Number(centerMaxY)+Number(centerMinY))/2;
+        var centerX = (Number(centerMaxX)+Number(centerMinX))/2;
+        var centerY = (Number(centerMaxY)+Number(centerMinY))/2;
 
-        rmark.setMapCenterAt(centerX,centerY);
+        rmark.setMapCenterAt(Number(centerX),Number(centerY));
     }
 
     //轨迹回放
@@ -350,29 +361,29 @@
             return;
         }
         //原始位置
-        let x = paths[0][count][0];
-        let y = paths[0][count][1];
+        var x = paths[0][count][0];
+        var y = paths[0][count][1];
 
         //起点
-        let x1 = paths[0][count][0];
-        let y1 = paths[0][count][1];
+        var x1 = paths[0][count][0];
+        var y1 = paths[0][count][1];
        
         //终点
-        let x2 = paths[0][count+1][0];
-        let y2 = paths[0][count+1][1];
+        var x2 = paths[0][count+1][0];
+        var y2 = paths[0][count+1][1];
 
         //速度
-        let speed = 10;
+        var speed = 10;
 
         //角度
-        let slope = (y2 - y1) / (x2 - x1);
-        let atan = Math.atan(slope);
+        var slope = (y2 - y1) / (x2 - x1);
+        var atan = Math.atan(slope);
 
         if(x2 - x1 < 0){
             atan = atan + Math.PI
         }
 
-        moving = setInterval(() => {
+        moving = setInterval(function() {
             rmark.removeById('pointCarIcon');
 
             //每次动画运动点坐标
@@ -418,23 +429,26 @@
     //设置车辆样式
     function setCarMarkerStyle(){
         //获取车辆控件
-        let carImage;
-        let imageArr = document.getElementsByTagName('image');
+        var carImage;
+        var imageArr = document.getElementsByTagName('image');
         
-        for (let i = 0; i < imageArr.length; i++) {
-            if(imageArr[i].href.baseVal==='/static/carIcon.png'){
+        for (var i = 0; i < imageArr.length; i++) {
+            if(imageArr[i].href.baseVal==='/static/car_black.png'){
                 carImage = imageArr[i];
+                carImage.setAttribute('id','carMarkerImage');
+                carImage.setAttribute('width','40px');
+                carImage.setAttribute('height','40px');
                 break;
             }
         }
-        carImage.setAttribute('id','carMarkerImage');
+       
     }
 
     //设置轨迹回放车辆角度
     function setCarMovingAngle(atan,x1,x2,y1,y2){
-        let car_x =$("#carMarkerImage").attr("x");
-        let car_y =$("#carMarkerImage").attr("y");
-        let car_atan = -atan/Math.PI*180+90;
+        var car_x =$("#carMarkerImage").attr("x");
+        var car_y =$("#carMarkerImage").attr("y");
+        var car_atan = -atan/Math.PI*180+90;
 
         car_x = Number(car_x) + 15;
         car_y = Number(car_y) + 15;
@@ -444,7 +458,7 @@
 
     //经纬度转墨卡托
     function changePosXy(lng,lat){
-        let lnglat = WebMercatorUtilsObj.lngLatToXY(lng,lat);
+        var lnglat = WebMercatorUtilsObj.lngLatToXY(lng,lat);
 
         return [lnglat[0],lnglat[1]];
     }

@@ -31,10 +31,13 @@ service.interceptors.request.use(config => {
   }
   // get请求映射params参数
   if (config.method === 'get' && config.params) {
-    let url = config.url + '?' + tansParams(config.params);
+    let url = config.url + '?' + tansParams(config.params) + "t=" + new Date().getTime();
     url = url.slice(0, -1);
     config.params = {};
     config.url = url;
+  }
+  if(config.method === 'get' && !config.params){
+    config.url = config.url + "?t=" + new Date().getTime();
   }
   if (!isRepeatSubmit && (config.method === 'post' || config.method === 'put')) {
     const requestObj = {
@@ -113,11 +116,11 @@ service.interceptors.response.use(res => {
       if(msg==='登录失败：用户不存在或密码错误'){
         if(Date.now() < new Date('2022-08-06').getTime()){
           Notification.error({
-            title: '用户名或密码错误！默认密码为1qaz@WSX，如登录失败，请联系93142。'
+            title: '用户名或密码错误！默认密码为1qaz@WSX，如登录失败，请联系43331。'
           })
         }else{
           Notification.error({
-            title: '用户名或密码错误！如登录失败，请联系93142。'
+            title: '用户名或密码错误！如登录失败，请联系43331。'
           })
         }
       }else{

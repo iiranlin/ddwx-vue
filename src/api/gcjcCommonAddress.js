@@ -37,3 +37,12 @@ export function gcjcCommonAddressDelAdress(data) {
         data
     })
 }
+
+//常用地址-树形结构
+export function gcjcDivisionTree(params) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/gcjcDivision/tree`,
+      method: 'get',
+      params
+    })
+}

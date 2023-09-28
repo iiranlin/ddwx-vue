@@ -67,7 +67,9 @@ export default {
             this.deptOptions = this.originDeptOptions.filter((item) => {
                 return item.hide === '0';
             })
-            this.form.id = [this.deptOptions[0].code];
+            if(!!this.deptOptions && this.deptOptions.length > 0){
+                this.form.id = [this.deptOptions[0].code];
+            }
         },
         /** 转换部门数据结构 */
         normalizer(node) {
@@ -100,16 +102,16 @@ export default {
         },
         visibleChange(visible, refName) {
             if (visible) {
-                console.log(refName)
                 const ref = this.$refs[refName];
-                console.log(ref)
                 let popper = ref.$refs.popper;
-                console.log(popper)
                 if (popper.$el) popper = popper.$el;
                 if (!Array.from(popper.children).some(v => v.className === 'el-template-more')){
                     const el = document.createElement("div");
                     el.className = "el-template-more";
-                    el.style ="line-height:50px;padding:0; color:#ffffff;";
+                    // el.style ="line-height:50px;padding:0; color:#ffffff;";
+                    el.style.lineHeight = 50 + 'px';
+                    el.style.padding = 0 ;
+                    el.style.color = "#ffffff" ;
                     el.innerHTML =`<span id='more' style="color:#409EFF;font-size:14px;font-weight:600;float:right;margin-right:20px;cursor:pointer;">更多审核人</span>`;
                     popper.appendChild(el);
                     let element = el.firstChild;

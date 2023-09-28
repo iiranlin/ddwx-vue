@@ -164,11 +164,11 @@ export default {
     }
   },
   watch: {
-    'formData.username': {
-      handler: function(newUsername) {
-        this.formData.username = newUsername.toLocaleUpperCase()
-      }
-    }
+    // 'formData.username': {
+    //   handler: function(newUsername) {
+    //     this.formData.username = newUsername.toLocaleUpperCase()
+    //   }
+    // }
   },
   created() {
     this.deptTree()

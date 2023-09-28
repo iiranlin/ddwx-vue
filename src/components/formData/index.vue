@@ -157,14 +157,20 @@ export default {
     searchArr: {
       handler: function(val) {
         val.forEach((item) => {
+          if(!this.formData[item.fieldCode]){
+             this.$set(this.formData, item.fieldCode, '')
+          }
           if (item.fieldType === 'enum') {
             getAllAvailableUnit().then(({ data }) => {
               this.enumData = data
             })
           }
         })
+        this.$nextTick(() => {
+            $('input, textarea').placeholder();
+        })
       },
-      immediate: true
+      immediate: true,
     },
     formDta: {
       deep: true,
@@ -175,6 +181,9 @@ export default {
       },
       immediate: true
     }
+  },
+  created () {
+     
   },
   methods: {
     handleQuery() {
@@ -196,13 +205,12 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      //清空用车信息查询界面-用车部门信息
-      this.$emit('handleResetDept')
       // this.resetForm("queryForm");
       this.dateRange = {}
       for (let key in this.formData) {
-        this.formData[key] = null
+        this.formData[key] = ''
       }
+      this.$emit('handleResetDept')
       this.handleQuery()
     },
   }

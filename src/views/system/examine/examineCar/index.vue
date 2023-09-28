@@ -20,10 +20,11 @@
       ></right-toolbar>
     </el-row>
     <form-data
-      :formData="formData"
+      :formDta="formData"
       :showSearch="showSearch"
       :searchArr="property.search || []"
       @handleQuery="handleQuery"
+      @handleResetDept="handleResetDept"
     />
     <table-index
       ref="tableIndex"
@@ -86,6 +87,7 @@ export default {
       // 查询参数
       formData: {
         parentId: "",
+        status: "2",
       },
       total: 0
     };
@@ -133,6 +135,8 @@ export default {
         }else{
           this.$modal.msgWarning('该单据不能审批！');
         }
+      }else if(buttonCode === 'detail'){
+          this.$router.push({name:'carDetail',query: {id: row.id}});
       }
     },
     handleCheckAllChange(columns) {
@@ -179,7 +183,11 @@ export default {
     },
     clickLink (row, fieldCode, linkText) {
       this.$router.push({name:'carDetail',query: {id: row.id}});
-    }
+    },
+     //清空状态数据
+    handleResetDept() {
+        this.formData.status = '2';
+    },
   },
 };
 </script>

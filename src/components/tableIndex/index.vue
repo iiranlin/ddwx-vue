@@ -77,7 +77,8 @@
             </el-switch>
           </span>
           <span v-else-if="propertyFieldsArr[index].fieldType === 'dict'" 
-          :class="[propertyFieldsArr[index].fieldCode === 'guarantee' && scope.row[propertyFieldsArr[index].fieldCode] !=='0'?'highlight-red':'']">
+          :class="[propertyFieldsArr[index].fieldCode === 'guarantee' && scope.row[propertyFieldsArr[index].fieldCode] !=='0'?'highlight-red':'',
+                   menuName === 'workspace' && propertyFieldsArr[index].fieldCode === 'status' && scope.row[propertyFieldsArr[index].fieldCode] ===4 ?'highlight-red':'']">
             {{
               scope.row[propertyFieldsArr[index].fieldCode]
                 | fieldFormat(propertyFieldsArr[index].fieldFormatArr)

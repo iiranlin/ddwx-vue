@@ -72,7 +72,7 @@
             </el-col>
             <el-col :span="8">
                 <el-form-item label="司机头像：">
-                    <img :src="form.driverPicPath" class="avatar">
+                    <img :src="form.driverPicPath" class="avatar" v-if="!!form.driverPicPath">
                 </el-form-item>
             </el-col>
         </el-row>
@@ -132,8 +132,8 @@
             <el-col :span="16">
                 <el-form-item label="驾照图片："> 
                     <div style="display:flex;">
-                        <img :src="form.licenseFirstImgPath" class="avatar">
-                        <img :src="form.licenseSecondImgPath" class="avatar" style="margin-left:10px;">
+                        <img :src="form.licenseFirstImgPath" class="avatar" v-if="!!form.licenseFirstImgPath">
+                        <img :src="form.licenseSecondImgPath" class="avatar" style="margin-left:10px;" v-if="!!form.licenseSecondImgPath">
                     </div>
                 </el-form-item>
             </el-col>
@@ -212,6 +212,10 @@ export default {
   activated(){
     this.$refs.elform.resetFields();
     this.id = this.$route.params.id;
+
+    if('abc'.startsWith('cc')){
+
+    }
     
         if(!!this.id){
             this.handleFleetFocus();
@@ -227,9 +231,16 @@ export default {
             data.endDate = this.parseTime(data.endDate,"{y}-{m}-{d}");
             data.firstDate = this.parseTime(data.firstDate,"{y}-{m}-{d}");
             data.internshipEndDate = this.parseTime(data.internshipEndDate,"{y}-{m}-{d}");
-            data.driverPicPath = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+data.driverPic;
-            data.licenseFirstImgPath = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+data.licenseFirstImg;
-            data.licenseSecondImgPath = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+data.licenseSecondImg;
+
+            if(!!data.driverPic){
+                data.driverPicPath = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+data.driverPic;
+            }
+            if(!!data.licenseFirstImg){
+                data.licenseFirstImgPath = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+data.licenseFirstImg;
+            }
+            if(!!data.licenseSecondImg){
+                data.licenseSecondImgPath = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+data.licenseSecondImg;
+            }
             this.form = data;
         })
     },

@@ -107,7 +107,7 @@ export default {
     newButton (buttonCode) {
       this.$refs.tableIndex.newButton(buttonCode)
     },
-    handleButton(id, buttonCode, row) {
+    handleButton(id, buttonCode, row,selection) {
       if (buttonCode === 'update') {
         let rowObj = null;
         if(Object.keys(row).length == 0){
@@ -117,7 +117,7 @@ export default {
         }
         this.handleUpdate(rowObj)
       } else if (buttonCode === 'delete') {
-        this.handleDelete(id)
+        this.handleDelete(selection)
       } else if (buttonCode === 'create') {
         this.handleCreate()
       }
@@ -128,10 +128,10 @@ export default {
     handleUpdate(row) {
       this.$refs.operate.init("update", row);
     },
-    handleDelete(id) {
+    handleDelete(selection) {
       let ids = [];
-      id.forEach((item) => {
-        ids.push({id: item,deleteTag: 1})
+      selection.forEach((item) => {
+        ids.push({id: item.id,deleteTag: 1,userId:item.userId})
       })
       this.$modal.confirm("是否确认删除?").then(function () {
         return gcjcCommonAddressDelAdress(ids);

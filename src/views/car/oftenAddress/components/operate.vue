@@ -133,7 +133,8 @@ export default {
         areaId: '',
         defualtTag: '1', //默认：1
         address: '',
-        areaLongName: ''
+        areaLongName: '',
+        userId:'',
       },
       // 表单校验
       rules: {
@@ -183,6 +184,7 @@ export default {
               defualtTag: row.defualtTag,
               address: row.address,
               areaLongName: row.areaLongName,
+              userId:row.userId,
             };
             this.gcjcDivisionList(row.provinceId, 'city');
             this.gcjcDivisionList(row.cityId, 'area');

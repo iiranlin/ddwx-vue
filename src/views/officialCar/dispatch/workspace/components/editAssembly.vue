@@ -14,7 +14,8 @@
                         <el-option v-for="item in dictionariesObj['1016']" 
                             :key="item.code" 
                             :label="item.name" 
-                            :value="item.code">
+                            :value="item.code"
+                            @click.native="handleReasonChange(item)">
                         </el-option>
                         </el-select>
                     </el-form-item>
@@ -30,7 +31,8 @@
                         <el-option v-for="item in dictionariesObj['10018']"
                             :key="item.code" 
                             :label="item.name" 
-                            :value="item.code">
+                            :value="item.code"
+                             @click.native="handleDemandChange(item)">
                         </el-option>
                         </el-select>
                     </el-form-item>
@@ -80,6 +82,13 @@
                     </el-form-item>
                 </el-col>
             </el-row>
+            <el-row>
+                <el-col :span="24">
+                    <el-form-item :label="'备\u3000\u3000注：'">
+                        <el-input  v-model="formData.remark" type="textarea" style="width: 600px" maxlength="200" placeholder="请输入备注" />
+                    </el-form-item>
+                </el-col>
+            </el-row>
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button type="primary" @click="updateVeh" :loading="loading">确 定</el-button>
@@ -119,7 +128,9 @@ export default {
         dictionariesObj: {},
         formData: {
             reasonCode: '',
+            reason:'',
             demandCode: '',
+            demand:'',
             usagePersons: '',
             userName: '',
             phone: '',
@@ -212,6 +223,15 @@ export default {
             });
         }
       })
+    },
+    handleReasonChange(item){
+        this.formData.reasonCode = item.code;
+        this.formData.reason = item.name;
+    },
+    handleDemandChange(item){
+        console.log(item)
+        this.formData.demandCode = item.code;
+        this.formData.demand = item.name;
     }
   }
 };

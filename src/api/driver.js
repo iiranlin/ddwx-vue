@@ -580,3 +580,30 @@ export function gcywDrivingRecordUpdateReturnMiles(data) {
     data
   })
 }
+
+//获取车辆分布信息
+export function logisticsDistribution(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/logistics/distribution`,
+    method: 'get',
+    params
+  })
+}
+
+//获取车辆信息
+export function gcywVehicleReqAssignmentDrivingGetAllCardInfos(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywVehicleReqAssignment/driving/getAllCardInfos`,
+    method: 'get',
+    params
+  })
+}
+
+//经纬度转地址
+export function logisticsGeocode(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/logistics/geocode`,
+    method: 'get',
+    params
+  })
+}

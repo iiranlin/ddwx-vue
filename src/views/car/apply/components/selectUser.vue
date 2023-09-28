@@ -67,9 +67,13 @@ export default {
                 children: 'children',
                 label:function(data,node){
                     if(data.children.length === 0){
-                        return data.realName;
+                        if(!!data.userCode){
+                            return data.realName;
+                        }else{
+                            return data.deptName;
+                        }
                     }else{
-                         return data.deptName;
+                        return data.deptName;
                     }
                 },
             },
@@ -135,7 +139,7 @@ export default {
             this.defaultChecked = [];
 
             for (let i = 0; i < nodes.length; i++) {
-                if(nodes[i].children.length === 0){
+                if(nodes[i].children.length === 0 && !!nodes[i].userCode){
                     let obj = {
                         id:nodes[i].id,
                         deptId:nodes[i].deptId,

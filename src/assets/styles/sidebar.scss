@@ -44,7 +44,7 @@
     &.has-logo {
       .el-scrollbar {
         height: calc(100% - 80px);
-        overflow-y: scroll;
+        // overflow-y: scroll;
       }
       .el-scrollbar::-webkit-scrollbar {display: none;}
     }

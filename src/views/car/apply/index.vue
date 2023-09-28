@@ -69,20 +69,41 @@
                 <el-input v-model="formData.usagePersons" @input="numberInput($event,'usagePersons')" maxlength="3" placeholder="请输入乘坐人数"/>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+           <el-col :span="8">
               <el-form-item label="乘车人:" prop="userName">
-                <el-input v-model="formData.userName" maxlength="20" placeholder="请输入乘车人" readonly>
-                   <i slot="suffix" class="el-input__icon el-icon-user-solid" @click="handleUserNameClick()"></i>
-                </el-input>
+                    <el-autocomplete
+                      class="inline-input"
+                      v-model="inputUserName"
+                      :fetch-suggestions="querySearch"
+                      placeholder="请输入乘车人"
+                      style="width:95%"
+                      :maxlength="10"
+                      :trigger-on-focus="false"
+                      @select="handleSelect"
+                      @keyup.enter.native="handleEnterClick">
+                        <i slot="suffix" class="el-input__icon el-icon-user-solid" @click="handleUserNameClick()"></i>
+                    </el-autocomplete>
               </el-form-item>
-            </el-col>
+          </el-col>
+          <el-col :span="8">
+              <div class="tag-container">
+                  <el-tag
+                      v-for="tag in defaultCheckedUser"
+                      :key="tag.id"
+                      closable
+                      type="info"
+                      @close='handleTagClose(tag)'>
+                      {{tag.realName}}
+                  </el-tag>
+              </div>
+          </el-col>
+          </el-row>
+          <el-row>
             <el-col :span="8">
               <el-form-item label="手机号码:" prop="phone">
                 <el-input v-model="formData.phone" @input="numberInput($event,'phone')" maxlength="20" placeholder="请输入手机号码" />
               </el-form-item>
             </el-col>
-          </el-row>
-          <el-row>
             <el-col :span="8">
               <el-form-item label="用车日期:" prop="usageDate">
                 <el-input v-model="formData.usageDate" disabled maxlength="200" placeholder="请选择用车日期" />
@@ -94,7 +115,7 @@
                     v-model="formData.usageTime"
                     :picker-options="{
                         start: '00:00',
-                        step: '00:15',
+                        step: '00:05',
                         end: '24:00',
                         minTime:checkMinTime(),
                     }"
@@ -102,6 +123,22 @@
                 </el-time-select>
               </el-form-item>
             </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="24">
+              <el-form-item label="出发地点:" prop="fromAddr">
+                <form-address-cascader ref="formAddress1" :name="'出发地'" @addressSuccess="addressSuccessOut" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="24">
+              <el-form-item label="前往地点:" prop="toAddr">
+                <form-address-cascader ref="formAddress2" :name="'目的地'" @addressSuccess="addressSuccessTo" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
             <el-col :span="8">
               <el-form-item label="预计时长:" prop="timeLength">
                 <el-input v-model="formData.timeLength" @input="limitInput($event,'timeLength')" maxlength="5" placeholder="请输入预计时长">
@@ -109,22 +146,6 @@
                 </el-input>
               </el-form-item>
             </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
-              <el-form-item label="出发地点:" prop="fromAddr">
-                <form-address ref="formAddress1" :name="'出发地'" @addressSuccess="addressSuccessOut" />
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
-              <el-form-item label="前往地点:" prop="toAddr">
-                <form-address ref="formAddress2" :name="'目的地'" @addressSuccess="addressSuccessTo" />
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
             <el-col :span="8">
               <el-form-item label="期望车型:" prop="hopeBrand">
                 <el-select
@@ -181,6 +202,7 @@ import { vehicleInfoGetAssignCount } from "@/api/vehicleInfo";
 import { activitiAssigneeListByType } from "@/api/driver";
 import { addVehicleRequest } from "@/api/gcywVehicleRequest";
 import formAddress from "./components/formAddress";
+import formAddressCascader from "./components/formAddressCascader";
 import formCalendar from "./components/formCalendar";
 import activitiAssignee from "./components/activitiAssignee";
 import getDict from "@/views/mixins/getDict";
@@ -188,10 +210,12 @@ import { limitInput, numberInput } from '@/utils/index';
 import { getCookie } from '@/utils/auth';
 import { mapGetters } from 'vuex';
 import selectUser from './components/selectUser.vue';
+import FormAddressCascader from './components/formAddressCascader.vue';
+import { userListAllForDept } from '@/api/system/laborDict'
 export default {
   name: "apply",
   mixins: [getDict],
-  components: { formAddress, formCalendar, activitiAssignee,selectUser },
+  components: { formAddress, formCalendar, activitiAssignee,selectUser,formAddressCascader, FormAddressCascader },
   data() {
     var checkfromAddr = (rule, value, callback) => {
       if(value.indexOf('null') == -1 && value){
@@ -229,8 +253,8 @@ export default {
       dictionariesObj: {'1016': [], '10018': [], '101801': [],'1679651627836055552':[]},
       available:0,
       formData: {
-        reasonCode: '1',
-        demandCode: '1001803',
+        reasonCode: '4',
+        demandCode: '1001802',
         longDistanceTag: '0',
         usagePersons: '',
         userName: '',
@@ -251,6 +275,8 @@ export default {
         guarantee:'0',
       },
       defaultCheckedUser:[],
+      inputUserName:'',
+      unitOptions:[],
       rules: {
         reasonCode:[
             {required:true,message:"请选择用车事由",trigger:"change"}
@@ -304,6 +330,7 @@ export default {
   created() {
     this.initUsageTime();
     this.initDefaultUserName();
+    this.getUserListAllForDept();
     this.vehicleInfoGetAssignCount();
     for(const item of this.dictionariesCode){
       this.getOperateDict(item);
@@ -334,8 +361,8 @@ export default {
           guarantee:row.guarantee,
         }
         this.initUsageTime();
-        this.$refs.formAddress1.init(row.fromAddr);
-        this.$refs.formAddress2.init(row.toAddr);
+        this.$refs.formAddress1.init(row.fromAddr,row.fromAreaId);
+        this.$refs.formAddress2.init(row.toAddr,row.toAreaIdd);
       }
     })
   },
@@ -349,32 +376,37 @@ export default {
       let hh = new Date().getHours();
       let mf = new Date().getMinutes();
 
-      hh = hh +1;
+      let diff = mf % 5;
 
-      if(mf >= 0 && mf <= 15){
-          mf = '30';
-      }else if(mf > 15 && mf <= 30){
-          mf = '45';
-      }else if(mf > 30 && mf <= 45){
-          mf = '00';
-          hh = hh +1 ;
-      }else if(mf > 45){
-          mf = '15';
-          hh = hh +1 ;
+      if(diff !== 0 ){
+          diff = 5 - diff;
+      }
+
+      if(mf < 55){
+          mf = mf + diff + 5;
+      }else if(mf === 55){
+          mf = 0;
+          hh = hh +1;
+      }else{
+          mf = 5;
+          hh = hh +1;
       }
       if(hh < 10){
-          hh = '0'+hh;
+          hh = '0'+ hh;
       }
-      if(hh == 25){
+      if(mf < 10){
+          mf = '0'+ mf;
+      }
+      if(hh == 24){
           hh = '00'
       }
       this.formData.usageTime = hh +':'+ mf;
     },
     checkMinTime(){
-        // if(this.formData.usageDate === this.parseTime(new Date().getTime(),'{y}-{m}-{d}')){
-        //      return new Date().getHours()+':'+new Date().getMinutes();
-        // }
-        // return ''
+        if(this.formData.usageDate === this.parseTime(new Date().getTime(),'{y}-{m}-{d}')){
+             return new Date().getHours()+':'+new Date().getMinutes();
+        }
+        return ''
     },
     //初始化默认用车人
     initDefaultUserName(){
@@ -385,6 +417,18 @@ export default {
         }
         this.defaultCheckedUser.push(obj);
         this.formData.usagePersons = this.defaultCheckedUser.length;
+    },
+    //获取树形数据
+    async getUserListAllForDept(){
+        this.loading = true;
+
+        await userListAllForDept().then(({ data }) => {
+            this.unitOptions = data;
+            this.loading = false;
+          
+        }).catch((err) => {
+            this.loading = false;
+        })
     },
     weekCheckingIn(assignTime, type){
       this.weekChecking_inloading = true
@@ -493,6 +537,85 @@ export default {
         this.toLastView(visitedViews, this.$route);
       })
     },
+    //模糊搜索乘车人
+    querySearch(queryString, cb){
+        let resultOptions = [];
+        resultOptions = this.filterUser(queryString,this.unitOptions,resultOptions);
+
+        resultOptions.forEach((item) => {
+            this.$set(item, 'value', item.realName+" "+item.longName)
+        })
+        // 调用 callback 返回建议列表的数据
+        cb(resultOptions);
+    },
+    filterUser(queryString,data,resultOptions) {
+        data.forEach((item) => {
+            if(!!item.userCode && item.realName.includes(queryString)){
+                resultOptions.push(item);
+            }else{
+                this.filterUser(queryString,item.children,resultOptions)
+            }
+        })
+        return resultOptions;
+    },
+    //模糊搜索乘车人选中
+    handleSelect(item){
+        this.inputUserName = item.realName;
+
+        //判断是否重复
+        let result = this.defaultCheckedUser.some((defaultItem) => {
+            return item.id === defaultItem.id;
+        })
+        if(result){
+            this.$modal.msgWarning("乘车人已存在，请重新选择!")
+            return;
+        }
+        let obj = {
+            id:item.id,
+            deptId:item.deptId,
+            realName:item.realName,
+        }
+        this.defaultCheckedUser.push(obj);
+        this.selectUserSuccess(this.defaultCheckedUser);
+        this.inputUserName = '';
+    },
+    //模糊搜索回车点击
+    handleEnterClick(){
+        //判断是否重复
+        let result = this.defaultCheckedUser.some((item) => {
+            return !item.id && item.realName === this.inputUserName; 
+        })
+        if(result){
+            this.$modal.msgWarning("乘车人已存在，请重新选择!")
+            return;
+        }
+        let obj = {
+            id:'',
+            deptId:'',
+            realName:this.inputUserName,
+        }
+        this.defaultCheckedUser.push(obj);
+        this.selectUserSuccess(this.defaultCheckedUser);
+        this.inputUserName = '';
+    },
+    //删除tag
+    handleTagClose(tag){
+        if(this.defaultCheckedUser.length === 1){
+            this.$modal.msgWarning('至少选择一名乘车人!')
+            return;
+        }
+        if(!tag.id){
+            let index = this.defaultCheckedUser.findIndex((item) => {
+                return tag.realName === item.realName;
+            })
+            this.defaultCheckedUser.splice(index, 1);
+        }else{
+            let index = this.defaultCheckedUser.findIndex((item) => {
+                return tag.id === item.id;
+            })
+            this.defaultCheckedUser.splice(index, 1);
+        }
+    },
     //乘车人点击
     handleUserNameClick(){
       this.$refs.selectUser.init(this.defaultCheckedUser);
@@ -587,5 +710,15 @@ export default {
         cursor: pointer;
       }
     }
+     .tag-container {
+        .el-tag {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+    }
   }
+  ::v-deep .fold_label .el-form-item__label {
+    white-space: pre-line;
+    line-height: 20px;
+}
 </style>

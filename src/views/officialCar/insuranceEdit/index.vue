@@ -379,7 +379,7 @@ export default {
     handleAvatarSuccess(res, file) {
       let { data } = res
       this.$modal.msgSuccess('上传成功')
-      this.form.insrPath = data.url
+      this.form.insrPath = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+data.fileName;
     },
     //上传图片失败
     handleUploadError() {
@@ -413,6 +413,16 @@ export default {
             this.$modal.msgWarning('请填写保额信息!')
             return
           }
+        }
+        for (let i = 0; i < this.form.items.length; i++) {
+            let code = this.form.items[i].code;
+
+            for (let j = i+1; j < this.form.items.length; j++) {
+                if(code===this.form.items[j].code){
+                    this.$modal.msgWarning('险种类型不能重复，请重新选择!');
+                    return
+                }
+            }
         }
         if (result) {
           if (this.checkDate()) {

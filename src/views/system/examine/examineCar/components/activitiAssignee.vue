@@ -174,7 +174,10 @@ export default {
                 if (!Array.from(popper.children).some(v => v.className === 'el-template-more')){
                     const el = document.createElement("div");
                     el.className = "el-template-more";
-                    el.style ="line-height:50px;padding:0; color:#ffffff;";
+                    // el.style ="line-height:50px;padding:0; color:#ffffff;";
+                    el.style.lineHeight = 50 + 'px';   
+                    el.style.padding = 0 ;
+                    el.style.color = "#ffffff" ;
                     el.innerHTML =`<span id='more' style="color:#409EFF;font-size:14px;font-weight:600;float:right;margin-right:20px;cursor:pointer;">更多审核人</span>`;
                     popper.appendChild(el);
                     let element = el.firstChild;

@@ -1,7 +1,7 @@
 <template>
     <el-form ref="elForm" label-suffix=":" :model="formData" :rules="rules" label-width="112px">
         <div class="form-row" v-for="(item, index) in formData.list" :key="'id' + index">
-            <template v-if="item.status != 6 && item.restatus != 1">
+            <template v-if="item.status != 6 && item.restatus != 1 && !item.id">
                 <el-row :gutter="24">
                     <el-col>
                         <div>
@@ -164,16 +164,12 @@ export default {
             let buttonCode = this.$route.query.buttonCode;
             this.row = row;
             this.buttonCode = buttonCode;
-            
             this.vehicleInfoGetAvailableCar(row);
         }
     },
     methods: {
         addCarButton () {
             this.formData.list.push({driver: {}, car: {},carName: ''});
-
-            console.log('1111111')
-            console.log(this.formData.list)
 
             this.formData.list[this.formData.list.length-1].car = this.vehicleList[0];
             this.formData.list[this.formData.list.length-1].carNumber = this.vehicleList[0].carNumber;
@@ -284,6 +280,7 @@ export default {
         },
         requestDispatch(){
             let formList = this.formData.list, num = 0;
+
             let obj = {
                 status: this.row.status,
                 id: this.row.id,
@@ -310,14 +307,14 @@ export default {
             }
             //检查是否有重复司机
             for (let i = 0; i < formList.length; i++) {
-                if(formList[i].restatus!='1'){
+                if(!formList[i].id){
                     let driverCode = formList[i].driver.driverCode;
 
                     for (let j = i+1; j < formList.length; j++) {
-                        if(formList[j].restatus!='1'){
+                        if(!formList[j].id){
                             if(driverCode===formList[j].driver.driverCode){
                                 this.$modal.msgWarning('指派司机不能重复，请重新选择!');
-                            return
+                                 return
                             }
                         }
                     }
@@ -325,13 +322,29 @@ export default {
             }
             //检查是否有重复车辆
             for (let i = 0; i < formList.length; i++) {
-                if(formList[i].restatus!='1'){
+                if(!formList[i].id){
                     let carNumber = formList[i].car.carNumber;
 
                     for (let j = i+1; j < formList.length; j++) {
-                        if(formList[j].restatus!='1'){
+                        if(!formList[j].id){
                             if(carNumber===formList[j].car.carNumber){
                                 this.$modal.msgWarning('指派车辆不能重复，请重新选择!');
+                                return
+                            }
+                        }
+                    }
+                }
+            }
+            if(this.buttonCode !== 'sendVehicle'){
+                 //检查是否与改派前的车辆重复
+                for (let i = 0; i < formList.length; i++) {
+                    if(!formList[i].id){
+                        let carNumber = formList[i].car.carNumber;
+                        let driverCode = formList[i].driver.driverCode;
+
+                        for (let j = 0; j < this.row.reqAssignments.length; j++) {
+                            if(carNumber==this.row.reqAssignments[j].carNumber && driverCode==this.row.reqAssignments[j].driverId){
+                                this.$modal.msgWarning('派车信息重复，请重新选择!');
                                 return
                             }
                         }
@@ -357,6 +370,10 @@ export default {
                     this.$router.push({name:'workspace'});
                 })
             }else{
+                this.row.reqAssignments.forEach((item) => {
+                    item.restatus = "1";
+                    obj.reqAssignments.push(item);
+                })
                 reassignment(obj).then( ({message}) => {
                     this.$modal.msgSuccess(message);
                     this.$router.push({name:'workspace'});
@@ -374,7 +391,10 @@ export default {
                     if (!Array.from(popper.children).some(v => v.className === 'el-template-more')){
                         const el = document.createElement("div");
                         el.className = "el-template-more";
-                        el.style ="line-height:50px;padding:0; color:#ffffff;";
+                        // el.style ="line-height:50px;padding:0; color:#ffffff;";
+                        el.style.lineHeight = 50 + 'px';   
+                        el.style.padding = 0 ;
+                        el.style.color = "#ffffff" ;
                         el.innerHTML =`<span id='more' style="color:#409EFF;font-size:14px;font-weight:600;float:right;margin-right:20px;cursor:pointer;">更多司机</span>`;
                         popper.appendChild(el);
                         let element = el.firstChild;

@@ -6,7 +6,7 @@
     <breadcrumb id="breadcrumb-container" class="breadcrumb-container" v-if="!topNav && (sideTheme == 'theme-dark' || sideTheme == 'theme-dark-top')"/>
     <top-nav id="topmenu-container" class="topmenu-container" v-if="topNav && (sideTheme == 'theme-dark' || sideTheme == 'theme-dark-top')"/>
     <Sidebara class="topmenu-containera" v-if="sideTheme != 'theme-dark' && sideTheme != 'theme-dark-top'"/>
-    <div style="position:absolute;top:10px;color:red;z-index: 10;left: 50%;font-weight: bold;font-size: 22px;">本系统为测试系统，均为测试数据</div>
+    <!-- <div style="position:absolute;top:10px;color:red;z-index: 10;left: 50%;font-weight: bold;font-size: 22px;">本系统为测试系统，均为测试数据</div> -->
     <div class="right-menu">
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">

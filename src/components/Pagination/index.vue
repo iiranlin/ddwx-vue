@@ -1,6 +1,7 @@
 <template>
   <div :class="{'hidden':hidden}" class="pagination-container">
     <el-pagination
+      :small="isSamll"
       :background="background"
       :current-page.sync="currentPage"
       :page-size.sync="pageSize"
@@ -58,6 +59,10 @@ export default {
       default: true
     },
     hidden: {
+      type: Boolean,
+      default: false
+    },
+    isSamll: {
       type: Boolean,
       default: false
     }

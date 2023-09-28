@@ -28,29 +28,45 @@
       @handleQuery="handleQuery"
       @handleResetDept="handleResetDept">
       <template slot="customItemStar">
-        <el-form-item label="用车单位" prop="value">
-        <el-select v-model="formData.unitCode" placeholder="请选择用车单位" clearable style="width:240px" size="small">
-            <el-option v-for="item in unitOptions"
-                :key="item.value"
-                :label="item.unitName"
-                :value="item.unitCode"
-                @click.native="handleUnitChange(item.unitCode)">
-            </el-option>
-        </el-select>
+        <el-form-item label="使用部门" prop="value">
+           <select-tree 
+              style="width:240px"
+              :value="formData.deptId"
+              :options="deptOptions"
+              @getValue="deptIdChange($event)"/>
         </el-form-item>
-    </template>
-    <template slot="customItemStar">
-      <el-form-item label="使用部门" prop="value">
-        <el-select v-model="formData.deptId" placeholder="请选择使用部门" clearable style="width:240px" size="small">
-            <el-option v-for="item in deptOptions"
-                :key="item.value"
-                :label="item.deptName"
-                :value="item.id">
-            </el-option>
-        </el-select>
-      </el-form-item>
-    </template>
+      </template>
+      <template slot="customItem">
+        <el-form-item label="状态" prop="value">
+          <el-select v-model="formData.statusList" placeholder="请选择状态" clearable style="width:240px" size="small" multiple>
+              <el-option v-for="item in statusOptions"
+                  :key="item.value"
+                  :label="item.name"
+                  :value="item.code"
+                  @click.native="handleStatusClick(item)">
+              </el-option>
+          </el-select>
+        </el-form-item>
+      </template>
+      <template slot="customItem">
+        <el-form-item label="出发时间" prop="value">
+            <el-date-picker
+                v-model="dateRange"
+                size="small"
+                style="width: 240px"
+                value-format="yyyy-MM-dd"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                @change="handleDateChange"/>
+        </el-form-item>
+      </template>
     </form-data>
+    <div class="auto-refresh">
+        <el-checkbox v-model="autoChecked" @change='autoChange'>自动更新</el-checkbox>
+        <span>( 开启后每分钟更新一次数据 )</span>
+    </div>
     <table-index
       ref="tableIndex"
       :loading="loading"
@@ -58,6 +74,7 @@
       :numberShow="numberShow"
       :tableData="dataList"
       :property="property"
+      menuName='workspace'
       @handleSelectionChange="handleSelectionChange"
       @handleButton="handleButton"
       @selectChange="selectChange"
@@ -101,16 +118,19 @@
 
 <script>
 import { gcywVehicleRequestDispatchList, cancelVehicleRequest, updateRessUnit } from '@/api/gcywVehicleRequest'
-import indexMixin from '@/views/mixins'
 import operate from './components/operate'
 import editAssembly from './components/editAssembly'
+import indexMixin from '@/views/mixins'
 import { getDisAvailableUnit } from '@/api/system/unit'
 import { getAllAvailableDept } from "@/api/dept"
+import { deptTree } from "@/api/system/dept";
+import selectTree from "@/components/selectTree";
+import {getListByParentId} from "@/api/system/dict"
 
 export default {
   name: 'workspace',
   mixins: [indexMixin],
-  components: { operate, editAssembly },
+  components: { operate, editAssembly,selectTree},
   data() {
     return {
       // 遮罩层
@@ -128,21 +148,31 @@ export default {
       numberShow: false,
       // 表格数据
       dataList: [],
+      //日期范围
+      dateRange:[],
       //用车单位数据
       unitOptions:[],
       //使用部门数据
       deptOptions:[],
+      //状态数据
+      statusOptions:[],
       // 弹出层标题
       title: '',
       //列表显示字段
       property: {},
+      //是否开启自动更新
+      autoChecked:false,
+      //定时器
+      timer:null,
       selectionData: [],
       // 查询参数
       formData: {
         parentId: '',
         unitCode:'',
         deptId: '',
-        status:'4',
+        statusList:['4'],
+        usageDateStart: this.parseTime(new Date().getTime(),'{y}-{m}-{d}'),
+        usageDateEnd: this.parseTime(new Date().getTime(),'{y}-{m}-{d}'),
       },
       form: {
         closeReason: ''
@@ -154,38 +184,83 @@ export default {
       openWorkflow: false
     }
   },
+  beforeDestroy(){
+    clearInterval(this.timer);
+    this.timer = null;
+  },
   created() {
+    this.dateRange = [this.formData.usageDateStart,this.formData.usageDateEnd];
+
+    this.getStatusOptions();
+    this.getDeptOptions();
     this.menuProperty();
-    this.getUnitOptions();
     this.getList();
   },
   mounted() {
   },
   methods: {
-    //获取用车单位信息
-    async getUnitOptions() {
-        this.loading = true
-        await getDisAvailableUnit().then(({ data }) => {
-            this.loading = false
-            this.unitOptions = data;
-        }).catch((err) => {
-            this.loading = false
-        })
-    },
-    //用车单位选择回调
-    handleUnitChange(unitCode){
-        this.handleQueryDept(unitCode)
-    },
     //查询部门数据
-    handleQueryDept(unitCode){
-        this.formData.deptId = "";
+    getDeptOptions(){
         this.loading = true;
-        getAllAvailableDept({unitCode: unitCode}).then( ({ data }) => {
+        deptTree({unitCode: "cr"}).then( ({ data }) => {
             this.loading = false;
             this.deptOptions = data;
         }).catch((err) => {
             this.loading = false;
         })
+    },
+    deptIdChange (val) {
+        this.formData.deptId = val;
+    },
+    //获取状态信息
+    getStatusOptions(){
+        this.loading = true;
+        
+        getListByParentId("1522830760585670657").then(({data}) => {
+           this.statusOptions = data;
+           this.statusOptions.unshift({
+             name:'全部',
+             code:'',
+           })
+           this.loading = false;
+           
+        }).catch((err) => {
+            this.loading = false;
+        })
+    },
+    //状态选择回调
+    handleStatusClick(item){
+        if(item.code == ''){
+          this.formData.statusList = [''];
+        }else{
+          let index =  this.formData.statusList.findIndex((statusItem) => {
+            return !statusItem;
+          })
+          if(index !== -1){
+            this.formData.statusList.splice(index, 1)
+          }
+        }
+    },
+    //自动更新选择回调
+    autoChange(val){
+      if(val){
+          this.timer = setInterval(() => {
+            this.handleResetDept();
+            this.handleQuery();
+          }, 1000*60*1);
+      }else{
+        clearInterval(this.timer)
+      }
+    },
+    //出发时间回调
+    handleDateChange(){
+        if(this.dateRange && this.dateRange.length != 0){
+          this.formData.usageDateStart = this.dateRange[0];
+          this.formData.usageDateEnd = this.dateRange[1];
+        }else{
+          this.formData.usageDateStart = "";
+          this.formData.usageDateEnd = "";
+        }
     },
     menuProperty() {
       const id = this.$route.meta.id
@@ -352,6 +427,10 @@ export default {
     handleResetDept(){
         this.formData.unitCode = "";
         this.formData.deptId = "";
+        this.formData.statusList = ['4'];
+        this.formData.usageDateStart = this.parseTime(new Date().getTime(),'{y}-{m}-{d}');
+        this.formData.usageDateEnd =  this.parseTime(new Date().getTime(),'{y}-{m}-{d}');
+        this.dateRange = [this.formData.usageDateStart,this.formData.usageDateEnd];
     },
     clickReset() {
       this.menuProperty()
@@ -359,7 +438,23 @@ export default {
     },
     clickLink(row, fieldCode, linkText) {
       this.$router.push({ name: 'carDetail', query: { id: row.id } })
-    }
+    },
   }
 }
 </script>
+<style lang="scss" scoped>
+.auto-refresh {
+  height: 30px;
+  padding-left: 10px;
+
+  span {
+    margin-left: 5px;
+    font-size: 12px;
+  }
+
+  ::v-deep.el-checkbox__label {
+    font-size: 15px;
+    font-weight: 600;
+}
+}
+</style>

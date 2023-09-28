@@ -4,59 +4,6 @@
             :model="formData"
             :rules="rules">
             <el-collapse v-model="activeNames">
-                <el-collapse-item name="1">
-                    <template slot="title">
-                        <i :class="calcIconClass('1')" />
-                        <span class="title-right">单位信息</span>
-                    </template>
-                    <el-row :gutter="24">
-                        <el-col :xs="24" :sm="12" :md="8" :lg="8">
-                            <el-form-item label="用车单位" prop="unitCode">
-                                <el-select
-                                    ref="unitCodeRef"
-                                    v-model="formData.unitCode"
-                                    placeholder="请选择用车单位"
-                                    clearable
-                                    @change="unitCodeChange">
-                                    <el-option
-                                        v-for="item in unitData"
-                                        :key="item.value"
-                                        :label="item.unitName"
-                                        :value="item.unitCode">
-                                    </el-option>
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :xs="24" :sm="12" :md="8" :lg="8">
-                            <el-form-item label="用车部门" prop="deptId">
-                                <select-tree 
-                                    :value="formData.deptId"
-                                    :options="deptData"
-                                    @getValue="deptIdChange($event)"/>
-                                <!-- <treeselect v-model="formData.deptId"
-                                    :appendToBody="true"
-                                    z-index="9999"
-                                    :options="deptData"
-                                    :normalizer="normalizer"
-                                    @input="deptIdChange"
-                                    placeholder="选择上级部门" /> -->
-                                <!-- <el-select
-                                    ref="deptIdRef"
-                                    v-model="formData.deptId"
-                                    placeholder="请选择用车部门"
-                                    clearable
-                                    @change="deptIdChange">
-                                    <el-option
-                                        v-for="item in deptData"
-                                        :key="item.id"
-                                        :label="item.deptName"
-                                        :value="item.id">
-                                    </el-option>
-                                </el-select> -->
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
-                </el-collapse-item>
                 <el-collapse-item name="2">
                     <template slot="title">
                         <i :class="calcIconClass('2')" />
@@ -76,40 +23,65 @@
                         <i :class="calcIconClass('3')" />
                         <span class="title-right">用车信息</span>
                     </template>
-                    <el-row>
-                        <el-col :xs="24" :sm="12" :md="8" :lg="8">
-                            <el-form-item label="用车事由:" prop="reasonCode">
+                    <el-row :gutter="24">
+                        <el-col :span="8">
+                            <el-form-item label="用车单位:" prop="unitCode">
                                 <el-select
-                                v-model="formData.reasonCode"
-                                placeholder="请选择用车事由"
-                                clearable
-                                filterable
-                                >
-                                <el-option v-for="item in dictionariesObj['1016']" 
-                                    :key="item.code" 
-                                    :label="item.name" 
-                                    :value="item.code">
-                                </el-option>
+                                    ref="unitCodeRef"
+                                    v-model="formData.unitCode"
+                                    placeholder="请选择用车单位"
+                                    clearable
+                                    @change="unitCodeChange">
+                                    <el-option
+                                        v-for="item in unitData"
+                                        :key="item.value"
+                                        :label="item.unitName"
+                                        :value="item.unitCode">
+                                    </el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
-                        <el-col :xs="24" :sm="12" :md="8" :lg="8">
+                        <el-col :span="8">
+                            <el-form-item label="用车部门:" prop="deptId">
+                                <select-tree 
+                                    :value="formData.deptId"
+                                    :options="deptData"
+                                    @getValue="deptIdChange($event)"/>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="用车事由:" prop="reasonCode">
+                                <el-select
+                                    v-model="formData.reasonCode"
+                                    placeholder="请选择用车事由"
+                                    clearable
+                                    filterable>
+                                    <el-option v-for="item in dictionariesObj['1016']" 
+                                        :key="item.code" 
+                                        :label="item.name" 
+                                        :value="item.code">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="24">
+                        <el-col :span="8">
                             <el-form-item label="用车需求:" prop="demandCode">
                                 <el-select
-                                v-model="formData.demandCode"
-                                placeholder="请选择用车需求"
-                                clearable
-                                filterable
-                                >
-                                <el-option v-for="item in dictionariesObj['10018']"
-                                    :key="item.code" 
-                                    :label="item.name" 
-                                    :value="item.code">
-                                </el-option>
+                                    v-model="formData.demandCode"
+                                    placeholder="请选择用车需求"
+                                    clearable
+                                    filterable>
+                                    <el-option v-for="item in dictionariesObj['10018']"
+                                        :key="item.code" 
+                                        :label="item.name" 
+                                        :value="item.code">
+                                    </el-option>
                                 </el-select>
-                        </el-form-item>
+                            </el-form-item>
                         </el-col>
-                        <el-col :xs="24" :sm="12" :md="8" :lg="8">
+                        <el-col :span="8">
                             <el-form-item label="是否长途:" prop="longDistanceTag">
                                 <el-radio-group v-model="formData.longDistanceTag">
                                 <el-radio :label="'1'">是</el-radio>
@@ -117,37 +89,60 @@
                                 </el-radio-group>
                             </el-form-item>
                         </el-col>
-                    </el-row>
-                    <el-row>
-                        <el-col :xs="24" :sm="12" :md="8" :lg="8">
+                        <el-col :span="8">
                             <el-form-item label="乘坐人数:" prop="usagePersons">
-                                <el-input v-model="formData.usagePersons" @input="numberInput($event,'usagePersons')" maxlength="200" placeholder="请输入乘坐人数" />
-                            </el-form-item>
-                        </el-col>
-                        <el-col :xs="24" :sm="12" :md="8" :lg="8">
-                            <el-form-item label="乘车人:" prop="userName">
-                                <el-input v-model="formData.userName" maxlength="200" placeholder="请输入乘车人" />
-                            </el-form-item>
-                        </el-col>
-                        <el-col :xs="24" :sm="12" :md="8" :lg="8">
-                            <el-form-item label="联系电话:" prop="phone">
-                                <el-input v-model="formData.phone" @input="numberInput($event,'phone')" maxlength="200" placeholder="请输入联系电话" />
+                                <el-input v-model="formData.usagePersons" @input="numberInput($event,'usagePersons')" maxlength="200" placeholder="请输入乘坐人数"/>
                             </el-form-item>
                         </el-col>
                     </el-row>
-                    <el-row>
-                        <el-col :xs="24" :sm="12" :md="8" :lg="8">
-                            <el-form-item label="用车日期:" prop="usageDate">
-                                <el-input v-model="formData.usageDate" disabled maxlength="200" placeholder="请选择用车日期" />
+                    <el-row :gutter="24">
+                        <el-col :span="8">
+                            <el-form-item label="乘车人:" prop="userName">
+                                 <el-autocomplete
+                                    class="inline-input"
+                                    v-model="inputUserName"
+                                    :fetch-suggestions="querySearch"
+                                    placeholder="请输入乘车人"
+                                    style="width:95%"
+                                    :maxlength="10"
+                                    :trigger-on-focus="false"
+                                    @select="handleSelect"
+                                    @keyup.enter.native="handleEnterClick">
+                                      <i slot="suffix" class="el-input__icon el-icon-user-solid" @click="handleUserNameClick()"></i>
+                                 </el-autocomplete>
                             </el-form-item>
                         </el-col>
-                        <el-col :xs="24" :sm="12" :md="8" :lg="8">
+                        <el-col :span="8">
+                            <div class="tag-container">
+                                <el-tag
+                                    v-for="tag in defaultCheckedUser"
+                                    :key="tag.id"
+                                    closable
+                                    type="info"
+                                    @close='handleTagClose(tag)'>
+                                    {{tag.realName}}
+                                </el-tag>
+                            </div>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="联系电话:" prop="phone">
+                                <el-input v-model="formData.phone" @input="numberInput($event,'phone')" maxlength="200" placeholder="请输入联系电话"/>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="24">
+                        <el-col :span="8">
+                            <el-form-item label="用车日期:" prop="usageDate">
+                                <el-input v-model="formData.usageDate" disabled maxlength="200" placeholder="请选择用车日期"/>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
                             <el-form-item label="出发时间:" prop="usageTime">
                                 <el-time-select
                                     v-model="formData.usageTime"
                                     :picker-options="{
                                         start: '00:00',
-                                        step: '00:15',
+                                        step: '00:05',
                                         end: '24:00',
                                         minTime:checkMinTime(),
                                     }"
@@ -155,7 +150,7 @@
                                 </el-time-select>
                             </el-form-item>
                         </el-col>
-                        <el-col :xs="24" :sm="12" :md="8" :lg="8">
+                        <el-col :span="8">
                             <el-form-item label="预计时长:" prop="timeLength">
                                 <el-input v-model="formData.timeLength" @input="limitInput($event,'timeLength')" maxlength="10" placeholder="请输入预计时长">
                                     <span slot="append">小时</span>
@@ -166,14 +161,14 @@
                     <el-row :gutter="24">
                         <el-col :span="24">
                             <el-form-item label="出发地点:" prop="fromAddr">
-                                <form-address v-if="isRouterAlive" ref="formAddress1" :name="'出发地'" @addressSuccess="addressSuccessOut" />
+                                <form-address-cascader v-if="isRouterAlive" ref="formAddress1" :name="'出发地'" @addressSuccess="addressSuccessOut" />
                             </el-form-item>
                         </el-col>
                     </el-row>
                     <el-row :gutter="24">
                         <el-col :span="24">
                             <el-form-item label="前往地点:" prop="toAddr">
-                                <form-address v-if="isRouterAlive" ref="formAddress2" :name="'目的地'" @addressSuccess="addressSuccessTo" />
+                                <form-address-cascader v-if="isRouterAlive" ref="formAddress2" :name="'目的地'" @addressSuccess="addressSuccessTo" />
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -181,16 +176,15 @@
                         <el-col :span="8">
                             <el-form-item label="期望车型:" prop="hopeBrand">
                                 <el-select
-                                v-model="formData.hopeBrand"
-                                placeholder="请选择期望车型"
-                                clearable
-                                filterable
-                                >
-                                <el-option v-for="item in dictionariesObj['101801']" 
-                                    :key="item.code" 
-                                    :label="item.name" 
-                                    :value="item.code">
-                                </el-option>
+                                    v-model="formData.hopeBrand"
+                                    placeholder="请选择期望车型"
+                                    clearable
+                                    filterable>
+                                    <el-option v-for="item in dictionariesObj['101801']" 
+                                        :key="item.code" 
+                                        :label="item.name" 
+                                        :value="item.code">
+                                    </el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
@@ -221,6 +215,7 @@
         <div class="dialog-footer">
             <el-button type="primary" @click="addRequest">保 存</el-button>
         </div>
+        <select-user ref="selectUser" @selectUserSuccess='selectUserSuccess'></select-user>
     </div>
 </template>
 
@@ -230,6 +225,7 @@ import { getAllAvailableUnit } from "@/api/system/unit"
 import { deptTree } from "@/api/system/dept";
 import getDict from "@/views/mixins/getDict"
 import formAddress from "./components/formAddress";
+import formAddressCascader from "./components/formAddressCascader";
 import formCalendar from "./components/formCalendar";
 import formInformation from "./components/formInformation";
 import selectTree from "@/components/selectTree";
@@ -239,10 +235,12 @@ import { getCookie } from '@/utils/auth'
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import { mapGetters } from 'vuex';
+import selectUser from './components/selectUser.vue';
+import { userListAllForDept } from '@/api/system/laborDict'
 export default {
     name: "dispatchACar",
     mixins: [getDict],
-    components: { formAddress, formCalendar, formInformation, Treeselect, selectTree },
+    components: { formAddress, formCalendar, formInformation, Treeselect, selectTree,selectUser,formAddressCascader },
     data() {
         var checkfromAddr = (rule, value, callback) => {
             if(value.indexOf('null') == -1 && value){
@@ -274,11 +272,12 @@ export default {
             formData: {
                 unitCode: '',
                 deptId: undefined,
-                reasonCode: '1',
-                demandCode: '1001803',
+                reasonCode: '4',
+                demandCode: '1001802',
                 longDistanceTag: '0',
-                usagePersons: '1',
+                usagePersons: '',
                 userName: '',
+                userId:'',
                 phone: getCookie('phone') || '',
                 usageDate: this.parseTime(new Date().getTime(),'{y}-{m}-{d}'),
                 usageTime: '',
@@ -292,6 +291,9 @@ export default {
                 source: 1,
                 createType: '1'
             },
+            defaultCheckedUser:[],
+            inputUserName:'',
+            unitOptions:[],
             rules: {
                 unitCode: [
                     { required: true, message: "请选择用车单位", trigger: "change" }
@@ -345,6 +347,7 @@ export default {
             'unitCode',
             'deptName',
             'deptId',
+            'id',
         ]),
         theme() {
             return this.$store.state.settings.theme;
@@ -353,8 +356,11 @@ export default {
     created() {
         this.$nextTick( () => {
             this.formData.userName = this.realName;
+            this.formData.userId = this.id;
         })
         this.initUsageTime();
+        this.initDefaultUserName();
+        this.getUserListAllForDept();
         this.vehicleInfoGetAssignCount();
         for(const item of this.dictionariesCode){
             this.getOperateDict(item);
@@ -373,35 +379,62 @@ export default {
             let hh = new Date().getHours();
             let mf = new Date().getMinutes();
 
-            hh = hh +1;
+            let diff = mf % 5;
 
-            if(mf >= 0 && mf <= 15){
-                mf = '30';
-            }else if(mf > 15 && mf <= 30){
-                mf = '45';
-            }else if(mf > 30 && mf <= 45){
-                mf = '00';
-                hh = hh +1 ;
-            }else if(mf > 45){
-                mf = '15';
-                hh = hh +1 ;
+            if(diff !== 0 ){
+                diff = 5 - diff;
+            }
+
+            if(mf < 55){
+                mf = mf + diff + 5;
+            }else if(mf === 55){
+                mf = 0;
+                hh = hh +1;
+            }else{
+                mf = 5;
+                hh = hh +1;
             }
             if(hh < 10){
-                hh = '0'+hh;
+                hh = '0'+ hh;
             }
-            if(hh == 25){
+            if(mf < 10){
+                mf = '0'+ mf;
+            }
+            if(hh == 24){
                 hh = '00'
             }
             this.formData.usageTime = hh +':'+ mf;
         },
         checkMinTime(){
-            // if(this.formData.usageDate === this.parseTime(new Date().getTime(),'{y}-{m}-{d}')){
-            //     return new Date().getHours()+':'+new Date().getMinutes();
-            // }
-            // return ''
+            if(this.formData.usageDate === this.parseTime(new Date().getTime(),'{y}-{m}-{d}')){
+                return new Date().getHours()+':'+new Date().getMinutes();
+            }
+            return ''
+        },
+        //初始化默认用车人
+        initDefaultUserName(){
+            let obj = {
+                id:this.id,
+                realName:this.realName,
+                deptId:this.deptId,
+            }
+            this.defaultCheckedUser.push(obj);
+            this.formData.usagePersons = this.defaultCheckedUser.length;
         },
         calcIconClass(name) {
             return this.activeNames.includes(name) ? `el-icon-caret-bottom` : `el-icon-caret-right`;
+        },
+        //获取树形数据
+        async getUserListAllForDept(){
+            this.loading = true;
+
+            await userListAllForDept().then(({ data }) => {
+                this.unitOptions = data;
+                this.loading = false;
+              
+            }).catch((err) => {
+                this.loading = false;
+            })
         },
         weekCheckingIn(assignTime, type){
             this.weekChecking_inloading = true
@@ -627,6 +660,7 @@ export default {
                     })
                 })
                 this.loading = true;
+
                 saveOrderDispatch(obj).then( ({message}) => {
                     this.$modal.msgSuccess(message);
                     this.$refs.elForm.resetFields();
@@ -639,6 +673,108 @@ export default {
                 })
             })
         },
+        //模糊搜索乘车人
+        querySearch(queryString, cb){
+            let resultOptions = [];
+            resultOptions = this.filterUser(queryString,this.unitOptions,resultOptions);
+
+            resultOptions.forEach((item) => {
+                this.$set(item, 'value', item.realName+" "+item.longName)
+            })
+            // 调用 callback 返回建议列表的数据
+            cb(resultOptions);
+        },
+        filterUser(queryString,data,resultOptions) {
+           data.forEach((item) => {
+               if(!!item.userCode && item.realName.includes(queryString)){
+                   resultOptions.push(item);
+               }else{
+                   this.filterUser(queryString,item.children,resultOptions)
+               }
+           })
+           return resultOptions;
+        },
+        //模糊搜索乘车人选中
+        handleSelect(item){
+            this.inputUserName = item.realName;
+
+            //判断是否重复
+            let result = this.defaultCheckedUser.some((defaultItem) => {
+                return item.id === defaultItem.id;
+            })
+            if(result){
+                this.$modal.msgWarning("乘车人已存在，请重新选择!")
+                return;
+            }
+            let obj = {
+                id:item.id,
+                deptId:item.deptId,
+                realName:item.realName,
+            }
+            this.defaultCheckedUser.push(obj);
+            this.selectUserSuccess(this.defaultCheckedUser);
+            this.inputUserName = '';
+        },
+        //模糊搜索回车点击
+        handleEnterClick(){
+            //判断是否重复
+            let result = this.defaultCheckedUser.some((item) => {
+                return !item.id && item.realName === this.inputUserName; 
+            })
+            if(result){
+                this.$modal.msgWarning("乘车人已存在，请重新选择!")
+                return;
+            }
+            let obj = {
+                id:'',
+                deptId:'',
+                realName:this.inputUserName,
+            }
+            this.defaultCheckedUser.push(obj);
+            this.selectUserSuccess(this.defaultCheckedUser);
+            this.inputUserName = '';
+        },
+        //删除tag
+        handleTagClose(tag){
+            if(this.defaultCheckedUser.length === 1){
+                this.$modal.msgWarning('至少选择一名乘车人!')
+                return;
+            }
+            if(!tag.id){
+                let index = this.defaultCheckedUser.findIndex((item) => {
+                    return tag.realName === item.realName;
+                })
+                this.defaultCheckedUser.splice(index, 1);
+            }else{
+                let index = this.defaultCheckedUser.findIndex((item) => {
+                    return tag.id === item.id;
+                })
+                this.defaultCheckedUser.splice(index, 1);
+            }
+        },
+        //乘车人点击
+        handleUserNameClick(){
+            this.$refs.selectUser.init(this.defaultCheckedUser);
+        },
+        //选择乘车人回调
+        selectUserSuccess(defaultChecked){
+            this.defaultCheckedUser = defaultChecked;
+
+            let tempUserName = '';
+            let tempUserId = '';
+            this.defaultCheckedUser.forEach((item,index) => {
+                if(index === this.defaultCheckedUser.length-1){
+                    tempUserName = tempUserName + item.realName;
+                    tempUserId = tempUserId + item.id;
+                }else{
+                    tempUserName = tempUserName + item.realName + ',';
+                    tempUserId = tempUserId + item.id + ',';
+                }
+            })
+            this.formData.userName = tempUserName;
+            this.formData.userId = tempUserId;
+            this.formData.usagePersons = this.defaultCheckedUser.length;
+        }
     }
 
 };
@@ -708,5 +844,22 @@ export default {
             }
         }
     }
+    .el-input__icon {
+        color:#409EFF;
+        
+        &:hover {
+            cursor: pointer;
+        }
+    }
+    .tag-container {
+        .el-tag {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+    }
+}
+::v-deep .fold_label .el-form-item__label {
+    white-space: pre-line;
+    line-height: 20px;
 }
 </style>
