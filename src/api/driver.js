@@ -607,3 +607,100 @@ export function logisticsGeocode(params) {
     params
   })
 }
+
+//班组列表
+export function gcjcTeamsListPage(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcjcTeams/listPage`,
+    method: 'get',
+    params
+  })
+}
+
+//班组列表
+export function getTeamsList(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcjcTeams/list`,
+    method: 'get',
+    params
+  })
+}
+
+//班组-详情
+export function gcjcTeamsDetail(id) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcjcTeams/detail/${id}`,
+    method: 'get',
+  })
+}
+
+//班组-新增
+export function gcjcTeamsCreate(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcjcTeams/create`,
+    method: 'post',
+    data
+  })
+}
+
+//班组-修改
+export function gcjcTeamsModify(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcjcTeams/modify`,
+    method: 'post',
+    data
+  })
+}
+
+//班组-删除
+export function gcjcTeamsDeleteBatch(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcjcTeams/deleteBatch`,
+    method: 'post',
+    data
+  })
+}
+
+//班组-获取班组下已绑司机信息
+export function getDriverByTeamsId(id) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcjcTeams/getDriverByTeamsId/${id}`,
+    method: 'get',
+  })
+}
+
+//班组-绑定司机
+export function teamsBindDriver(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcjcTeams/teamsBindDriver`,
+    method: 'post',
+    data
+  })
+}
+
+//班组-解绑司机
+export function deleteTeamsDriver(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcjcTeams/deleteTeamsDriver`,
+    method: 'post',
+    data
+  })
+}
+
+// 排班类型
+export function getListByParentSchedulingType(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/dict/common/getListByParentCode/Scheduling_Type`,
+    method: 'get',
+    params
+  })
+}
+
+// 根据班次获取当天排班类型
+export function getSchedulingTypeByClass(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcjcDriverClass/getSchedulingTypeByClass`,
+    method: 'post',
+    data
+  })
+}
