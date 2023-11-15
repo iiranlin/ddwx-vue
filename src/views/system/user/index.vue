@@ -30,9 +30,11 @@
           <right-toolbar
             ref="rightToolbar"
             style="margin-top:4px; padding-right:20px"
+            :isRowDropShow="isRowDropShow"
             :showSearch.sync="showSearch"
             :columns="property.fields"
             @numberChange="numberChange"
+            @rowDropSortChange="rowDropSortChange"
             @queryTable="handleQuery"
             @handleCheckAllChange="handleCheckAllChange"
             @clickReset="clickReset"
@@ -55,10 +57,12 @@
           :showMoreButton="true"
           pageName="userPage"
           :numberShow="numberShow"
+          :isRowDrop="isRowDrop"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
           @selectChange="selectChange"
           @emitAblFilter="emitAblFilter"
+          @refreshTable="handleQuery"
         />
         <pagination
           v-show="listQuery.total>0"
@@ -88,6 +92,10 @@ export default {
   components: {roleDrawer, operate},
   data() {
     return {
+      // 表格行是否拖拽排序
+      isRowDropShow: true,
+      isRowDrop: false,
+      modelName: "user",
       // 遮罩层
       loading: false,
       // 选中数组
@@ -133,6 +141,10 @@ export default {
   methods: {
     numberChange(val) {
       this.numberShow = val
+    },
+    rowDropSortChange(val) {
+      this.isRowDrop = val;
+      this.$refs.tableIndex.rowDrop(val, this.modelName)
     },
     newButton(buttonCode) {
       if (buttonCode === "bindStoryhouse") {
@@ -277,10 +289,10 @@ export default {
           this.$modal.msgSuccess(message);
           this.getList();
         }).catch((err) => {
-          
-        }) 
+
+        })
       }).catch((err) => {
-        
+
       })
     }
     // handleStopGrant(ids){

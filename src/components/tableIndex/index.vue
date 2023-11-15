@@ -25,6 +25,13 @@
       fixed="left"
     />
     <el-table-column
+      width="50"
+      align="center"
+      v-if="isRowDrop"
+    >
+      <i class="el-icon-rank"></i>
+    </el-table-column>
+    <el-table-column
       type="index"
       width="50"
       align="center"
@@ -76,7 +83,7 @@
             >
             </el-switch>
           </span>
-          <span v-else-if="propertyFieldsArr[index].fieldType === 'dict'" 
+          <span v-else-if="propertyFieldsArr[index].fieldType === 'dict'"
           :class="[propertyFieldsArr[index].fieldCode === 'guarantee' && scope.row[propertyFieldsArr[index].fieldCode] !=='0'?'highlight-red':'',
                    menuName === 'workspace' && propertyFieldsArr[index].fieldCode === 'status' && scope.row[propertyFieldsArr[index].fieldCode] ===4 ?'highlight-red':'',
                    menuName === 'examineCar' && propertyFieldsArr[index].fieldCode === 'status' && scope.row[propertyFieldsArr[index].fieldCode] ===2 ?'highlight-red':'']">
@@ -145,9 +152,10 @@
 </template>
 
 <script>
-import SelectHeader from '@/components/SelectHeader'
-import Sortable from 'sortablejs'
-import indexMixin from '@/views/mixins'
+  import SelectHeader from '@/components/SelectHeader'
+  import Sortable from 'sortablejs'
+  import indexMixin from '@/views/mixins'
+  import {rowDropSort} from '@/api/dept'
 
 export default {
   name: 'tableIndex',
@@ -156,6 +164,11 @@ export default {
     id: {
       type: String,
       default: 'id'
+    },
+    // 是否开启行拖拽
+    isRowDrop: {
+      type: Boolean,
+      default: false
     },
     //加载
     loading: {
@@ -260,8 +273,6 @@ export default {
     })
   },
   mounted() {
-    // this.rowDrop();
-    // this.columnDrop();
   },
   methods: {
     init(data) {
@@ -291,15 +302,48 @@ export default {
       this.newButton(command, row)
     },
     //行拖拽
-    rowDrop() {
-      const tbody = document.querySelector('.el-table__body-wrapper tbody')
+    rowDrop(isRowDrop, modelName) {
       const _this = this
-      Sortable.create(tbody, {
-        onEnd({ newIndex, oldIndex }) {
-          const currRow = _this.tableData.splice(oldIndex, 1)[0]
-          _this.tableData.splice(newIndex, 0, currRow)
-        }
-      })
+      if (isRowDrop) {
+        const tbody = document.querySelector('.el-table__body-wrapper tbody')
+        _this.sortable = Sortable.create(tbody, {
+          onEnd({newIndex, oldIndex}) {
+            if (newIndex === oldIndex) {
+              return
+            }
+            const currRow = _this.tableData.splice(oldIndex, 1)[0]
+            _this.tableData.splice(newIndex, 0, currRow)
+            const parentIdArr = []
+            const seqArr = []
+            _this.tableData.forEach((item) => {
+              parentIdArr.push(item.parentId)
+            })
+            const params = []
+            _this.tableData.forEach((item) => {
+              if (!parentIdArr.includes(item.id)) {
+                seqArr.push(item.seq)
+                params.push({id: item.id, modelName: modelName})
+              }
+            })
+            seqArr.sort(function (a, b) {
+              return a - b
+            })
+            for (let i = 0; i < seqArr.length; i++) {
+              if (modelName === 'dept') {
+                params[i].seq = seqArr[i]
+              } else {
+                params[i].seq = i + 1
+              }
+            }
+            // 行拖拽排序
+            rowDropSort(params).then(()=>{
+              _this.$emit("refreshTable");
+            })
+          }
+        })
+      } else {
+        _this.sortable.destroy()
+      }
     },
     //列拖拽
     columnDrop() {
