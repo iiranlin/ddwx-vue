@@ -61,7 +61,6 @@
           @handleButton="handleButton"
           @selectChange="selectChange"
           @emitAblFilter="emitAblFilter"
-          @refreshTable="handleQuery"
         />
         <pagination
           v-show="total > 0"

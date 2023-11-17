@@ -58,11 +58,12 @@
           pageName="userPage"
           :numberShow="numberShow"
           :isRowDrop="isRowDrop"
+          :pageNum="listQuery.pageNum"
+          :pageSize="listQuery.pageSize"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
           @selectChange="selectChange"
           @emitAblFilter="emitAblFilter"
-          @refreshTable="handleQuery"
         />
         <pagination
           v-show="listQuery.total>0"
@@ -273,7 +274,7 @@ export default {
           return item.smsFlag==='1'
         })
         if(!!obj){
-          this.$modal.msgWarning("已选条目中存不收短信状态的条目，请重新选择!");
+          this.$modal.msgWarning("已选条目中存在不收短信状态的条目，请重新选择!");
           return
         }
       }
