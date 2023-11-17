@@ -1,309 +1,468 @@
 <template >
     <div class="app-container">
-        <el-row :gutter="20">
-            <el-col :span="1.5">
-                <el-button type="primary" size="mini" @click="handleBack()">返回</el-button>
-            </el-col>
-        </el-row>
-        <el-row :gutter="20">
-            <el-form :model="form" ref="elform" label-width="140px">
-                <!--单位信息-->
-                <el-row :gutter="20">
-                    <el-col style="margin: 15px 10px">
-                        <i class="el-icon-caret-right title-icon"></i><span>单位信息</span>
-                    </el-col>
-                </el-row>
-                <el-row >
-                    <el-col :span="24" :xs="24"  style="width:90%;">
-                        <el-col :span="8">
-                            <el-form-item label="产权单位："><span>{{form.unitName}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="使用单位："><span>{{form.usageUnitName}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="使用部门："><span>{{form.usageDeptName}}</span></el-form-item>
-                        </el-col>
-                    </el-col>
-                </el-row>
-                <!--车辆信息-->
-                <el-row :gutter="20">
-                    <el-col style="margin: 15px 10px">
-                        <i class="el-icon-caret-right title-icon"></i><span>车辆信息</span>
-                    </el-col>
-                </el-row>
-                <el-row>
-                    <el-col :span="24" :xs="24"  style="width:90%;">
-                        <el-col :span="8">
-                            <el-form-item label="车牌号："><span>{{form.carNumber}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="车架号："><span></span>{{form.vinNumber}}</el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="发动机号："><span>{{form.engineNumber}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="车辆品牌："><span>{{form.carBrand}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="车辆系列："><span>{{form.carSeries}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="车辆型号："><span>{{form.carModel}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="车辆类型Ⅰ："><span>{{form.carType}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="车辆类型Ⅱ："><span>{{form.carType2}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="能源类型："><span></span>{{form.powerType}}</el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="车身颜色："><span>{{form.color}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="初登日期："><span>{{parseTime(form.registerDate,"{y}-{m}-{d}")}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="排放标准："><span>{{form.emission}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="排量："><span>{{form.capacity}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="驱动方式：">
-                                <span v-if="form.vehicleProperties==='2'">两驱</span>
-                                <span v-if="form.vehicleProperties==='4'">四驱</span>
-                                <span v-if="form.vehicleProperties==='6'">六驱</span>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="工况油耗："><span>{{form.fuelConsumotion}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="初始里程："><span>{{form.initMiles}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="燃油标号："><span>{{form.fuelType}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="座位数："><span>{{form.maxMens}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="核准载重（吨）："><span>{{form.maxWeight}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="车辆来源：">
-                                <span v-if="form.vehicleProperties==='1'">自有车辆</span>
-                                <span v-if="form.vehicleProperties==='2'">长期租赁车辆</span>
-                                <span v-if="form.vehicleProperties==='3'">短期租赁车辆</span>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="车辆用途："><span>{{form.carUsing}}</span></el-form-item>
-                        </el-col>
-                    </el-col>
-                </el-row>
-                <!--财务信息-->
-                <el-row :gutter="20">
-                    <el-col style="margin: 15px 10px">
-                        <i class="el-icon-caret-right title-icon"></i><span>财务信息</span>
-                    </el-col>
-                </el-row>
-                <el-row >
-                    <el-col :span="24" :xs="24"  style="width:90%;">
-                        <el-col :span="8">
-                            <el-form-item label="固资编码："><span>{{form.assetsNumber}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="发票号码："><span>{{form.invoiceNumber}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="发票金额："><span>{{form.invoiceAmount}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="资金来源："><span>{{form.carMoneySource}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="购置依据："><span></span>{{form.purchaseBasis}}</el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="原始价值："><span>{{form.originalValue}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="不含税价："><span>{{form.price}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="增值税："><span>{{form.valueAddedTax}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="购置税："><span>{{form.purchaseTax}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="车船使用税："><span>{{form.usageTax}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="其他税："><span>{{form.otherTax}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="其他费用："><span>{{form.otherFee}}</span></el-form-item>
-                        </el-col>
-                    </el-col>
-                </el-row>
-                <!--状态信息-->
-                <el-row :gutter="20">
-                    <el-col style="margin: 15px 10px">
-                        <i class="el-icon-caret-right title-icon"></i><span>状态信息</span>
-                    </el-col>
-                </el-row>
-                <el-row >
-                    <el-col :span="24" :xs="24"  style="width:90%;">
-                        <el-col :span="8">
-                            <el-form-item label="车辆状态：">
-                                <span v-if="form.carStatus==='0'">专用车</span>
-                                <span v-if="form.carStatus==='1'">维修中</span>
-                                <span v-if="form.carStatus==='2'">保养中</span>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="审核状态：">
-                                <span v-if="form.status==='1'">待审核</span>
-                                <span v-if="form.status==='2'">审核中</span>
-                                <span v-if="form.status==='3'">已审核</span>
-                                <span v-if="form.status==='4'">已驳回</span>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="出车状态：">
-                                <span v-if="form.busyTag==='Y'">是</span>
-                                <span v-if="form.busyTag==='N'">否</span>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="有效状态：">
-                                <span v-if="form.enableTag==='Y'">有效</span>
-                                <span v-if="form.enableTag==='N'">无效</span>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="超标状态：">
-                                <span v-if="form.overStandardTag==='Y'">是</span>
-                                <span v-if="form.overStandardTag==='N'">否</span>
-                            </el-form-item>
-                        </el-col>
-                    </el-col>
-                </el-row>
-                <!--租赁信息-->
-                <el-row :gutter="20">
-                    <el-col style="margin: 15px 10px">
-                        <i class="el-icon-caret-right title-icon"></i><span>租赁信息</span>
-                    </el-col>
-                </el-row>
-                <el-row >
-                    <el-col :span="24" :xs="24"  style="width:90%;">
-                        <el-col :span="8">
-                            <el-form-item label="租赁公司："><span>{{form.rentUnit}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="合同号："><span>{{form.rentAgreement}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="合同期限："><span>{{form.rentBeginDate}}-{{form.rentEndDate}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="租金费用："><span>{{form.rentPrice}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="租金描述："><span>{{form.rentMoneyDesc}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="申请理由及用途："><span>{{form.rentApplydesc}}</span></el-form-item>
-                        </el-col>
-                    </el-col>
-                </el-row>
-                <!--其他信息-->
-                <el-row :gutter="20">
-                    <el-col style="margin: 15px 10px">
-                        <i class="el-icon-caret-right title-icon"></i><span>其他信息</span>
-                    </el-col>
-                </el-row>
-                <el-row >
-                    <el-col :span="24" :xs="24"  style="width:90%;">
-                        <el-col :span="8">
-                            <el-form-item label="保养日期："><span>{{parseTime(form.maintainDate,"{y}-{m}-{d}")}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="保养里程："><span>{{form.maintainMiles}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="下次保养日期："><span>{{parseTime(form.nextMaintainDate,"{y}-{m}-{d}")}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="下次保养里程："><span>{{form.nextMaintainMiles}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="出库公里数："><span>{{form.startMiles}}</span></el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="备注："><span>{{form.remark}}</span></el-form-item>
-                        </el-col>
-                    </el-col>
-                </el-row>
-            </el-form>
-        </el-row>
+        <!--车辆信息-->
+        <div class="item-content-container">
+            <div class="title-container">
+                <img src="/static/icon_use_car.png"/>
+                <span>车辆信息</span>
+            </div>
+            <div class="vehicle-container">
+                <div class="vehicle-img">
+                    <span>{{formData.carBrand}} - {{formData.carSeries}} {{formData.carModel}}</span>
+                    <img :src="checkCarImagePath(formData.carBrand, formData.carSeries)" alt=""/>
+                </div>
+                <ul class="vehicle-content">
+                    <li class="li-item">
+                        <span>车牌号：</span>
+                        <span>{{formData.carNumber}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>车架号：</span>
+                        <span>{{formData.vinNumber}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>发动机号：</span>
+                        <span>{{formData.engineNumber}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>车辆品牌：</span>
+                        <span>{{formData.carBrand}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>车辆系列：</span>
+                        <span>{{formData.carSeries}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>车辆型号：</span>
+                        <span>{{formData.carModel}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>车辆类型Ⅰ：</span>
+                        <span>{{formData.carType}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>车辆类型Ⅱ：</span>
+                        <span>{{formData.carType2}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>能源类型：</span>
+                        <span>{{formData.powerType}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>车身颜色：</span>
+                        <span>{{formData.color}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>初登日期：</span>
+                        <span>{{parseTime(formData.registerDate,"{y}-{m}-{d}")}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>排放标准：</span>
+                        <span>{{formData.emission}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>排量：</span>
+                        <span>{{formData.capacity}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>驱动方式：</span>
+                        <span>{{checkVehicleProperties(formData.vehicleProperties)}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>工况油耗：</span>
+                        <span>{{formData.fuelConsumotion}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>初始里程：</span>
+                        <span>{{formData.initMiles}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>燃油标号：</span>
+                        <span>{{formData.fuelType}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>座位数：</span>
+                        <span>{{formData.maxMens}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>核准载重（吨）：</span>
+                        <span>{{formData.maxWeight}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>车辆来源：</span>
+                        <span>{{checkSource(formData.vehicleProperties)}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>车辆用途：</span>
+                        <span>{{formData.carUsing}}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!--单位信息-->
+        <div class="item-content-container">
+            <div class="title-container">
+                <img src="/static/icon_detail_unit.png"/>
+                <span>单位信息</span>
+            </div>
+            <div class="ul-parent">
+                <ul class="ul-container">
+                    <li class="li-item">
+                        <span>产权单位：</span>
+                        <span>{{formData.unitName}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>使用单位：</span>
+                        <span>{{formData.usageUnitName}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>使用部门：</span>
+                        <span>{{formData.usageDeptName}}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!--财务信息-->
+        <div class="item-content-container">
+            <div class="title-container">
+                <img src="/static/icon_detail_finance.png"/>
+                <span>财务信息</span>
+            </div>
+            <div class="ul-parent">
+                <ul class="ul-container">
+                    <li class="li-item">
+                        <span>固资编码：</span>
+                        <span>{{formData.assetsNumber}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>发票号码：</span>
+                        <span>{{formData.invoiceNumber}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>发票金额：</span>
+                        <span>{{formData.invoiceAmount}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>资金来源：</span>
+                        <span>{{formData.carMoneySource}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>购置依据：</span>
+                        <span>{{formData.purchaseBasis}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>原始价值：</span>
+                        <span>{{formData.originalValue}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>不含税价：</span>
+                        <span>{{formData.price}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>增值税：</span>
+                        <span>{{formData.valueAddedTax}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>购置税：</span>
+                        <span>{{formData.purchaseTax}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>车船使用税：</span>
+                        <span>{{formData.usageTax}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>其他税：</span>
+                        <span>{{formData.otherTax}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>其他费用：</span>
+                        <span>{{formData.otherFee}}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!--状态信息-->
+        <div class="item-content-container">
+            <div class="title-container">
+                <img src="/static/icon_dispatch_car.png"/>
+                <span>状态信息</span>
+            </div>
+            <div class="ul-parent">
+                <ul class="ul-container">
+                    <li class="li-item">
+                        <span>车辆状态：</span>
+                        <span>{{checkCarStatus(formData.carStatus)}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>审核状态：</span>
+                        <span>{{checkStatus(formData.status)}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>出车状态：</span>
+                        <span>{{checkBusyTag(formData.busyTag)}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>有效状态：</span>
+                        <span>{{checkEnableTag(formData.enableTag)}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>超标状态：</span>
+                        <span>{{checkOverStandardTag(formData.overStandardTag)}}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!--租赁信息-->
+        <div class="item-content-container">
+            <div class="title-container">
+                <img src="/static/icon_log_car.png"/>
+                <span>租赁信息</span>
+            </div>
+            <div class="ul-parent">
+                <ul class="ul-container">
+                    <li class="li-item">
+                        <span>租赁公司：</span>
+                        <span>{{formData.rentUnit}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>合同号：</span>
+                        <span>{{formData.rentAgreement}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>合同期限：</span>
+                        <span>{{formData.rentBeginDate}}-{{formData.rentEndDate}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>租金费用：</span>
+                        <span>{{formData.rentPrice}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>租金描述：</span>
+                        <span>{{formData.rentMoneyDesc}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>申请理由及用途：</span>
+                        <span>{{formData.rentApplydesc}}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+         <!--其他信息-->
+        <div class="item-content-container">
+            <div class="title-container">
+                <img src="/static/icon_log_car.png"/>
+                <span>其他信息</span>
+            </div>
+            <div class="ul-parent">
+                <ul class="ul-container">
+                    <li class="li-item">
+                        <span>保养日期：</span>
+                        <span>{{parseTime(formData.maintainDate,"{y}-{m}-{d}")}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>保养里程：</span>
+                        <span>{{formData.maintainMiles}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>下次保养日期：</span>
+                        <span>{{parseTime(formData.nextMaintainDate,"{y}-{m}-{d}")}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>下次保养里程：</span>
+                        <span>{{formData.nextMaintainMiles}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>出库公里数：</span>
+                        <span>{{formData.startMiles}}</span>
+                    </li>
+                    <li class="li-item">
+                        <span>备注：</span>
+                        <span>{{formData.remark}}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 </template>
 <script>
+import checkCarImagePath from '@/utils/carPath'
+
 export default {
     name:"vehicleFileDetail",
     data () {
         return {
-            form:{}
-        }
-    },
-    computed: {
-        visitedViews() {
-            return this.$store.state.tagsView.visitedViews
+            formData:{},
+            //车辆图片
+            checkCarImagePath,
         }
     },
     activated() {
         let obj = JSON.parse(this.$route.query.row);
 
-        if(this.form.carId !== obj.carId){
-            this.form = Object.assign({}, obj);
+        if(this.formData.carId !== obj.carId){
+            this.formData = Object.assign({}, obj);
         }
     },
     methods: {
-        //返回按钮
-        handleBack(){
-            this.closeCurrentPage();
+        //判断驱动方式
+        checkVehicleProperties(vehicleProperties){
+            if(vehicleProperties === '2'){
+                return '两驱'
+            }else if(vehicleProperties === '4'){
+                return '四驱'
+            }else if(vehicleProperties === '6'){
+                return '六驱'
+            }
         },
-        //关闭当前页面
-        closeCurrentPage() {
-            this.visitedViews.forEach((item) => {
-                if (item.name === this.$route.name) {
-                    this.$tab.closePage(item).then(({ visitedViews }) => {
-                        this.$router.back();
-                    })
-                }
-            })
+        //判断车辆来源
+        checkSource(source){
+            if(source === '1'){
+                return '自有车辆'
+            }else if(source === '2'){
+                return '长期租赁车辆'
+            }else if(source === '3'){
+                return '短期租赁车辆'
+            }
         },
+        //判断状态信息
+        checkCarStatus(carStatus){
+            if(carStatus === '0'){
+                return '专用车'
+            }else if(carStatus === '1'){
+                return '维修中'
+            }else if(carStatus === '2'){
+                return '保养中'
+            }
+        },
+        //判断审核状态
+        checkStatus(status){
+            if(status === '1'){
+                return '待审核'
+            }else if(status === '2'){
+                return '审核中'
+            }else if(status === '3'){
+                return '已审核'
+            }else if(status === '4'){
+                return '已驳回'
+            }
+        },
+        //判断出车状态
+        checkBusyTag(busyTag){
+            if(busyTag === 'Y'){
+                return '是'
+            }else if(busyTag === 'N'){
+                return '否'
+            }
+        },
+        //判断有效状态
+        checkEnableTag(enableTag){
+            if(enableTag === 'Y'){
+                return '有效'
+            }else if(enableTag === 'N'){
+                return '无效'
+            }
+        },
+        //判断超标状态
+        checkOverStandardTag(overStandardTag){
+            if(overStandardTag === 'Y'){
+                return '是'
+            }else if(overStandardTag === 'N'){
+                return '否'
+            }
+        }
     },
 }
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .app-container {
-    padding: 10px 15px;
-    overflow: auto;
-}
-.el-form-item_content .el-input-group {
-    vertical-align: middle;
-}
-.title-icon {
-    color: rgb(64, 158, 255);
-    margin-right: 5px;
+    box-sizing: border-box;
+    padding: 7px 9px;
+    background-color: #f1f3f8;
+    overflow-y: auto;
+
+    .item-content-container {
+        background-color: #ffffff;
+        border-radius: 5px;
+        margin-bottom: 7px;
+        padding-bottom: 18px;
+       
+        .title-container {
+            width: 100%;
+            height: 41px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #f3f5f7;
+
+            img {
+                margin-left: 4px;
+                width: 23px;
+                height: 23x;
+            }
+            span {
+                font-size: 14px;
+                color: #1b1e22;
+            }
+        }
+
+        .vehicle-container {
+            display: flex;
+            padding: 10px 0px 0px 40px;
+
+            .vehicle-img {
+                width: 25%;
+                display: flex;
+                flex-direction: column;
+
+                span {
+                    display: inline-block;
+                    min-height: 30px;
+                    line-height: 30px;
+                    font-size: 16px;
+                    font-weight: 600;
+                }
+
+                img {
+                    width: 196px;
+                    height: 196px;
+                }
+            }
+            .vehicle-content {
+                padding-left: 0px;
+                padding-top: 25px;
+                width: 75%;
+
+                .li-item {
+                    float: left;
+                    min-height: 24px;
+                    line-height: 24px;
+                    min-width: 33%;
+                    max-width: 33%;
+                    font-size: 12px;
+                    display: flex;
+                    color: #000000;
+                } 
+            }
+        }
+
+        .ul-parent {
+            overflow: hidden;
+            padding: 7px 0px 0px 40px;
+        }
+        .ul-container {
+            padding: 0px;
+            margin: 0px;
+            list-style: none;
+        }
+        .li-item {
+            float: left;
+            min-height: 24px;
+            line-height: 24px;
+            min-width: 25%;
+            max-width: 25%;
+            font-size: 12px;
+            display: flex;
+            color: #000000;
+        } 
+    }
 }
 </style>

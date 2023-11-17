@@ -114,7 +114,10 @@ export default {
     }
   },
   mounted() {
-    this.menuProperty()
+    this.menuProperty();
+    if (this.$route.params) {
+      this.formData = this.$route.params;
+    }
     this.getList()
   },
   methods: {

@@ -119,6 +119,9 @@ export default {
         if (parseFloat(value) <= parseFloat(this.form.beginMiles)) {
           return callback(new Error('还车里程不能小于出车里程'))
         }
+        if (parseFloat(value) - parseFloat(this.form.beginMiles) > 500) {
+          return callback(new Error('还车里程不能超过出车里程+500km'))
+        }
         return callback()
       }
     }

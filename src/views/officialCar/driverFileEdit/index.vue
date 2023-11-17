@@ -249,7 +249,7 @@
             </el-col>
         </el-row>
         <!--健康信息-->
-        <el-row :gutter="20">
+        <!-- <el-row :gutter="20">
             <el-col style="margin: 15px 10px">
                 <i class="el-icon-caret-right title-icon"></i><span>健康信息</span>
             </el-col>
@@ -306,7 +306,7 @@
                    </el-form-item>
                 </el-col>
             </el-col>
-        </el-row>
+        </el-row> -->
       </el-form>
     </el-row>
   </div>
@@ -408,36 +408,36 @@ export default {
             driverType:[
                 {required:true,message:"司机类型不能为空",trigger:['blur','change']}
             ],
-            driverPic: [
-                { required: true, message: '司机头像不能为空', trigger: 'change' }
-            ],
-            license:[
-                {required:true,message:"驾照编号不能为空",trigger:"blur"}
-            ],
-            licenseType:[
-                {required:true,message:"驾照类型不能为空",trigger:['blur','change']}
-            ],
-            endDate:[
-                {required:true,message:"到期日期不能为空",trigger:"blur"}
-            ],
-            firstDate:[
-                {required:true,message:"首次领证日期不能为空",trigger:"blur"}
-            ],
-            fileNo:[
-                {required:true,message:"档案编号不能为空",trigger:"blur"}
-            ],
-            issuingUnit:[
-                {required:true,message:"发证单位不能为空",trigger:"blur"}
-            ],
-            licenseFirstImg:[
-                {required:true,message:"驾照主页照片不能为空",trigger:"change"}
-            ],
-            licenseSecondImg:[
-                {required:true,message:"驾照副页照片不能为空",trigger:"change"}
-            ],
-            vaccinesSttuss:[
-                {required:true,message:"疫苗接种情况不能为空",trigger:['blur','change']}
-            ]
+            // driverPic: [
+            //     { required: true, message: '司机头像不能为空', trigger: 'change' }
+            // ],
+            // license:[
+            //     {required:true,message:"驾照编号不能为空",trigger:"blur"}
+            // ],
+            // licenseType:[
+            //     {required:true,message:"驾照类型不能为空",trigger:['blur','change']}
+            // ],
+            // endDate:[
+            //     {required:true,message:"到期日期不能为空",trigger:"blur"}
+            // ],
+            // firstDate:[
+            //     {required:true,message:"首次领证日期不能为空",trigger:"blur"}
+            // ],
+            // fileNo:[
+            //     {required:true,message:"档案编号不能为空",trigger:"blur"}
+            // ],
+            // issuingUnit:[
+            //     {required:true,message:"发证单位不能为空",trigger:"blur"}
+            // ],
+            // licenseFirstImg:[
+            //     {required:true,message:"驾照主页照片不能为空",trigger:"change"}
+            // ],
+            // licenseSecondImg:[
+            //     {required:true,message:"驾照副页照片不能为空",trigger:"change"}
+            // ],
+            // vaccinesSttuss:[
+            //     {required:true,message:"疫苗接种情况不能为空",trigger:['blur','change']}
+            // ]
         }
     };
   },
@@ -479,7 +479,9 @@ export default {
             if(!!data.licenseSecondImg){
                 data.licenseSecondImgPath = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+data.licenseSecondImg;
             }
-            this.licenseTypeSelection = data.licenseType.split(',')
+            if(!!data.licenseType){
+                this.licenseTypeSelection = data.licenseType.split(',')
+            }
             this.internshipChecked = data.internshipTag === "1"?true:false;
             this.form = data;
         })

@@ -16,6 +16,7 @@ const getters = {
   deptCode: state => state.user.deptCode,
   rank: state => state.user.rank,
   userCode: state => state.user.userCode,
+  phone: state => state.user.phone,
   introduction: state => state.user.introduction,
   roles: state => state.user.roles,
   permissions: state => state.user.permissions,

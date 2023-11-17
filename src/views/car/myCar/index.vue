@@ -23,7 +23,7 @@
       ></right-toolbar>
     </el-row>
     <form-data
-      :formData="formData"
+      :formDta="formData"
       :showSearch="showSearch"
       :searchArr="property.search || []"
       @handleQuery="handleQuery"
@@ -111,6 +111,7 @@ export default {
       // 查询参数
       formData: {
         parentId: "",
+        reqNo:"Rcr202306070001",
       },
       form: {
         closeReason: ''
@@ -124,9 +125,14 @@ export default {
   },
   created() {
     this.menuProperty();
+    if (this.$route.params) {
+      this.formData = this.$route.params
+    }
     this.getList();
   },
-  mounted() {},
+  mounted() {
+  
+  },
   methods: {
     menuProperty() {
       const id = this.$route.meta.id;

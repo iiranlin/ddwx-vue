@@ -14,14 +14,17 @@
             </div>
             <div>
                 <el-tag
-                  v-for="(tag,index) in tags"
-                  :key="tag.name"
+                  v-for="(tag,index) in defaultMenuOptions"
+                  :key="tag.id"
                   closable
                   effect="dark"
                   @click='handleTagClick(tag,index)'
                   @close='handleTagClose(tag,index)'>
-                  {{tag.name}}
+                  {{tag.menuName}}
                 </el-tag>
+            </div>
+            <div class="title-empty" v-if="defaultMenuOptions.length === 0">
+                <span>暂无数据</span>
             </div>
         </div>
         <!--待办事项/系统帮助-->
@@ -70,15 +73,15 @@
                     <ul>
                         <li v-for="(item,index) in documentOpitons" :key="index">
                             <span>{{item.docName}}</span>
-                            <a href="#" @click="handleDownloadClick(item)">下载</a>
                             <a href="#" @click="handlePreviewClick(item)">预览</a>
+                            <a href="#" @click="handleDownloadClick(item)">下载</a>
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
         <!--用车统计-->
-        <div class="item-content-container echartsItem">
+        <div class="item-content-container echartsItem" v-if="showRequest">
             <div class="title-container">
                 <img src="/static/icon_index_wait.png"/>
                 <span>我的用车统计</span>
@@ -101,14 +104,15 @@
                     <el-option v-for="(item,index) in dateOptions"
                         :key="index"
                         :label="item.value"
-                        :value="item.code">
+                        :value="item.code"
+                        @click.native="handleVehicleDateChange(item)">
                     </el-option>
                 </el-select>
             </div>
             <div id="vehicleChart" class="echartsItem-line"></div>
         </div>
         <!--审核统计-->
-        <div class="item-content-container echartsItem">
+        <div class="item-content-container echartsItem" v-if="showActiviti">
             <div class="title-container">
                 <img src="/static/icon_index_wait.png"/>
                 <span>我的审核统计</span>
@@ -131,14 +135,15 @@
                     <el-option v-for="(item,index) in dateOptions"
                         :key="index"
                         :label="item.value"
-                        :value="item.code">
+                        :value="item.code"
+                        @click.native="handleActivitiDateChange(item)">
                     </el-option>
                 </el-select>
             </div>
             <div id="activitiChart" class="echartsItem-line"></div>
         </div>
         <!--调度统计-->
-        <div class="item-content-container echartsItem">
+        <div class="item-content-container echartsItem" v-if="showDispatch">
             <div class="title-container">
                 <img src="/static/icon_index_wait.png"/>
                 <span>我的调度统计</span>
@@ -161,14 +166,15 @@
                     <el-option v-for="(item,index) in dateOptions"
                         :key="index"
                         :label="item.value"
-                        :value="item.code">
+                        :value="item.code"
+                        @click.native="handleDispatchDateChange(item)">
                     </el-option>
                 </el-select>
             </div>
             <div id="dispatchChart" class="echartsItem-line"></div>
         </div>
         <!--出车统计-->
-        <div class="item-content-container echartsItem">
+        <div class="item-content-container echartsItem" v-if="showDriver">
             <div class="title-container">
                 <img src="/static/icon_index_wait.png"/>
                 <span>我的出车统计</span>
@@ -187,37 +193,43 @@
                     <el-option v-for="(item,index) in dateOptions"
                         :key="index"
                         :label="item.value"
-                        :value="item.code">
+                        :value="item.code"
+                        @click.native="handleDriverDateChange(item)">
                     </el-option>
                 </el-select>
             </div>
             <div id="driverChart" class="echartsItem-line"></div>
         </div>
         <!--mp4-->
-         <!-- <video-preview ref="videoPreview"></video-preview> -->
+         <video-preview ref="videoPreview"></video-preview>
+         <!--常用菜单-->
+        <common-menu ref="commonMenu" @commonMenuSuccess='commonMenuSuccess'></common-menu>
     </div>
 </template>
 <script>
 import animationData from '@/assets/lottie/suvRunning.json'
-import {gcywVehicleRequestPendding,documentList,gcywVehicleRequestHomeInfo} from '@/api/home.js'
+import {gcywVehicleRequestPendding,
+documentList,
+gcywVehicleRequestHomeInfo,
+usemenuList,
+usemenuDelete} from '@/api/home.js'
 import { axiosDownloadExcel } from '@/api/download'
-// import videoPreview from './components/videoPreview'
+import videoPreview from './components/videoPreview'
+import commonMenu from './components/commonMenu.vue';
 import echarts from "echarts";
+import dayjs from 'dayjs'
+let quarterOfYear = require('dayjs/plugin/quarterOfYear')//day.js季度插件
+dayjs.extend(quarterOfYear)
 
 export default {
     name: "Index",
-    // components: { videoPreview },
+    components: { videoPreview,commonMenu },
 
   
     data() {
         return {
-            tags: [
-                { name: '标签一', type: '' },
-                { name: '标签二', type: 'success' },
-                { name: '标签三', type: 'info' },
-                { name: '标签四', type: 'warning' },
-                { name: '标签五', type: 'danger' }
-            ],
+            //常用菜单数据
+            defaultMenuOptions: [],
             listQuery: {
                 pageNum: 1,
                 pageSize: 10,
@@ -240,6 +252,10 @@ export default {
             startMonth:'',
             //结束年月
             endMonth:'',
+            showRequest:true,
+            showActiviti:true,
+            showDispatch:true,
+            showDriver:true,
 
             //起止时间数据
             dateOptions:[
@@ -279,12 +295,13 @@ export default {
             }
         })
 
-        this.startMonth = new Date().getFullYear() + "-01";
-        this.endMonth = this.parseTime(new Date().getTime(),'{y}-{m}');
+        this.startMonth = dayjs().startOf('year').format('YYYY-MM');
+        this.endMonth = dayjs().endOf('year').format('YYYY-MM');
 
         this.getGcywVehicleRequestPendding();
+        this.getMenuInfo();
         this.getDocumentList();
-        this.getChartInfo();
+        this.getChartInfo('');
     },
     methods: {
         //获取待办事项
@@ -295,6 +312,36 @@ export default {
                 this.loading = false;
                 this.waitOptions = data.list;
                 this.total = data.total;
+            }).catch((err) => {
+                this.loading = false;
+            })
+        },
+        //获取常用菜单
+        getMenuInfo(){
+            this.loading = true;
+            
+            usemenuList().then(({data}) => {
+                this.loading = false;
+                this.defaultMenuOptions = data;
+            }).catch((err) => {
+                this.loading = false;
+            })
+        },
+        //删除常用菜单
+        removeMenuInfo(item){
+            this.loading = true;
+
+            let paramsArr = [];
+
+            let obj = {
+                id:item.id,
+            }
+            paramsArr.push(obj);
+
+            usemenuDelete(paramsArr).then(({message}) => {
+                this.loading = false;
+                this.$modal.msgSuccess(message);
+                this.getMenuInfo();
             }).catch((err) => {
                 this.loading = false;
             })
@@ -311,27 +358,59 @@ export default {
             })
         },
         //获取图标数据
-        getChartInfo(){
+        getChartInfo(homeType){
             this.loading = true;
 
             let params = {
                 startMonth: this.startMonth,
                 endMonth: this.endMonth,
+                homeType:homeType,
             }
             
             gcywVehicleRequestHomeInfo(params).then(({data}) => {
                 this.loading = false;
                 
-                this.initRequestOptions(data.request);
-                this.initActivitiOptions(data.activiti);
-                this.initDispatchOptions(data.dispatch);
-                this.initDriverOptions(data.driver);
+                if(!data.request){
+                    this.showRequest = false;
+                }else{
+                    this.showRequest = true;
+                    this.$nextTick(() => {
+                        this.initRequestOptions(data.request);
+                    })
+                }
+                if(!data.activiti){
+                    this.showActiviti = false;
+                }else{
+                    this.showActiviti = true;
+                    this.$nextTick(() => {
+                        this.initActivitiOptions(data.activiti);
+                    })
+                }
+                if(!data.dispatch){
+                    this.showDispatch = false;
+                }else{
+                    this.showDispatch = true;
+                    this.$nextTick(() => {
+                        this.initDispatchOptions(data.dispatch);
+                    })
+                }
+                if(!data.driver){
+                    this.showDriver = false;
+                }else{
+                    this.showDriver = true;
+                    this.$nextTick(() => {
+                        this.initDriverOptions(data.driver);
+                    })
+                }
             }).catch((err) => {
                 this.loading = false;
             })
         },
         //初始化用车统计图表
         initRequestOptions(dataList){
+            if(!dataList){
+                return
+            }
             //X轴坐标值
             let lineItemListX = [];
 
@@ -422,6 +501,9 @@ export default {
         },
         //初始化审核统计图表
         initActivitiOptions(dataList){
+            if(!dataList){
+                return
+            }
             //X轴坐标值
             let lineItemListX = [];
 
@@ -511,6 +593,9 @@ export default {
         },
         //初始化调度统计图表
         initDispatchOptions(dataList){
+            if(!dataList){
+                return
+            }
             //X轴坐标值
             let lineItemListX = [];
 
@@ -610,6 +695,9 @@ export default {
         },
         //初始化出车统计图表
         initDriverOptions(dataList){
+            if(!dataList){
+                return
+            }
             //X轴坐标值
             let lineItemListX = [];
 
@@ -688,19 +776,49 @@ export default {
         },
         //常用菜单点击
         handleTagClick(tag,index){
-           
+           this.$router.push({name: tag.menuUrl})
         },
         //新增常用菜单
         handleAddMenu(){
-
+            this.$refs.commonMenu.init(this.defaultMenuOptions);
+        },
+        //常用菜单添加回调
+        commonMenuSuccess(){
+            this.getMenuInfo();
         },
         //常用菜单删除
         handleTagClose(tag,index){
-           
+            this.$modal.confirm("是否删除所选菜单?").then(()=>{
+                this.removeMenuInfo(tag);
+            })
         },
         //待办条目点击
         handleTableClick(row, column, event){
+            let name = '';
+            let params = {
+                reqNo: row.reqNo,
+            }
            
+
+            if(row.statusName2 !==null){    //司机工作台
+                name = 'driverWorkBench';
+            }
+            if(row.status == 10){        //我的用车单
+                name = 'myCar';
+            }
+            if(row.status == 11){        //我的用车单
+                name = 'myCar';
+            }
+            if(row.status == 2){         //用车审批
+                name = 'examineCar';
+            }
+            if(row.status == 4){         //工作台
+                name = 'workspace'
+            }
+            this.$router.push({
+                name: name,
+                params,
+            })
         },
         //鼠标移入回调
         cellStyle(){
@@ -716,13 +834,45 @@ export default {
         },
         //预览点击
         handlePreviewClick(item){
-            let path = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + '/minio/inline?fileName='+ item.fileName;
-            
             if(item.fileName.includes('.pdf')){
+                let path = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + '/minio/inline?fileName='+ item.fileName;
                 window.open(path,'_blank');
             }else if(item.fileName.includes('.mp4')){
-                this.videoUrl = path;
+                this.videoUrl = process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + '/minio/inline2?fileName='+ item.fileName;
                 this.$refs.videoPreview.init(this.videoUrl,item.fileName)
+            }
+        },
+        //我的用车统计时间选择
+        handleVehicleDateChange(item){
+            this.checkDate(item)
+            this.getChartInfo('request');
+        },
+        //我的审核统计时间选择
+        handleActivitiDateChange(item){
+            this.checkDate(item)
+            this.getChartInfo('activiti');
+        },
+         //我的调度统计时间选择
+        handleDispatchDateChange(item){
+            this.checkDate(item)
+            this.getChartInfo('dispatch');
+        },
+         //我的出车统计时间选择
+        handleDriverDateChange(item){
+            this.checkDate(item)
+            this.getChartInfo('driver');
+        },
+        //设置时间
+        checkDate(item){
+            if('最近一年' === item.value){
+                this.startMonth = dayjs().add(-12, 'month').startOf('month').format('YYYY-MM');
+                this.endMonth = dayjs().add(0, 'month').endOf('month').format('YYYY-MM');
+            }else if('最近半年' === item.value){
+                this.startMonth = dayjs().add(-6, 'month').startOf('month').format('YYYY-MM');
+                this.endMonth = dayjs().add(0, 'month').endOf('month').format('YYYY-MM');
+            }else if('最近三个月' === item.value){
+                this.startMonth = dayjs().add(-3, 'month').startOf('month').format('YYYY-MM');
+                this.endMonth = dayjs().add(0, 'month').endOf('month').format('YYYY-MM');
             }
         },
     },
@@ -766,6 +916,11 @@ export default {
             & span:nth-child(4){
                 cursor: pointer;
             }
+        }
+        .title-empty {
+            font-size: 14px;
+            margin-left: 10px;
+            margin-top: 10px;
         }
     }
     .top-container {
@@ -813,13 +968,17 @@ export default {
 
                 ul {
                     width: 100%;
+                    z-index:99;
 
                     li {
-                        height: 27px;
+                        min-height: 27px;
                         font-size: 12px;
                         color: #5294ff;
+                        display: flex;
+                        margin-bottom: 5px;
 
                         span {
+                            width: calc(100% - 100px);
                             color: #222222;
                         }
                         a {
@@ -828,10 +987,11 @@ export default {
                             font-weight: 600;
                         }
                         & a:nth-child(2){
-                            margin-right: 20px;
+                            margin-right: 10px;
+                            margin-left: 5px;
                         }
                         & a:nth-child(3){
-                            margin-right: 10px;
+                            margin-right: 20px;
                         }
                     }
                 }
@@ -928,6 +1088,11 @@ export default {
 }
 ::v-deep .el-pagination__total {
     font-size: 12px !important;
+}
+::v-deep .pagination-container .el-pagination {
+    position: absolute;
+    right: 0px;
+    top: 10px;
 }
 ::v-deep .el-input--mini .el-input__inner {
     border-radius: 36px;

@@ -1,400 +1,425 @@
 <template>
-  <div class="container-calendar" :style="{'--theme':theme}">
-    <el-collapse v-model="activeNames">
-      <el-collapse-item name="1">
-        <template slot="title">
-          <i class="el-icon-caret-right" :style="activeNames.indexOf('1') != -1?'transform:rotate(90deg)':''"/>
-          <span class="title-right">可用车辆</span>
-          <p class="title-span">
-            <span >下表数量说明（按字体颜色）：</span>
-            <span>可用车辆数</span> 
-            <span>已预约车辆数</span>
-            <span>已受理车辆数</span>
-            <span>车辆总数</span>
-          </p>
-        </template>
-        <form-calendar :dateList="dateList" :assignTimey="assignTimey" :assignTimer="assignTimer" :usageDate="formData.usageDate"/>
-      </el-collapse-item>
-      <el-form :model="formData" label-width="112px">
-        <el-collapse-item name="2">
-          <template slot="title">
-            <i class="el-icon-caret-right" :style="activeNames.indexOf('2') != -1?'transform:rotate(90deg)':''"/>
-            <span class="title-right">用车信息</span>
-          </template>
-          <div class="form-row">
-            <el-row :gutter="24">
-              <el-col :span="8">
-                <el-form-item label="用车事由:" prop="reasonCode">
-                  <el-select
-                    v-model="formData.reasonCode"
-                    placeholder="请选择用车事由"
-                    clearable
-                    filterable
-                    disabled
-                  >
-                    <el-option v-for="item in dictionariesObj['1016']" 
-                      :key="item.code" 
-                      :label="item.name" 
-                      :value="item.code">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="用车需求:" prop="demandCode">
-                  <el-select
-                    v-model="formData.demandCode"
-                    placeholder="请选择用车需求"
-                    clearable
-                    filterable
-                    disabled
-                  >
-                    <el-option v-for="item in dictionariesObj['10018']"
-                      :key="item.code" 
-                      :label="item.name" 
-                      :value="item.code">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="是否长途:" prop="longDistanceTag">
-                  <el-radio-group v-model="formData.longDistanceTag" disabled>
-                    <el-radio :label="1">是</el-radio>
-                    <el-radio :label="0">否</el-radio>
-                  </el-radio-group>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="24">
-              <el-col :span="8">
-                <el-form-item label="乘坐人数:" prop="usagePersons">
-                  <el-input disabled v-model="formData.usagePersons" maxlength="200" placeholder="请输入乘坐人数" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="乘车人:" prop="userName">
-                  <el-input disabled v-model="formData.userName" maxlength="200" placeholder="请输入乘车人" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="联系电话:" prop="phone">
-                  <el-input disabled v-model="formData.phone" maxlength="200" placeholder="请输入联系电话" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="24">
-              <el-col :span="8">
-                <el-form-item label="用车日期:" prop="usageDate">
-                  <el-input v-model="formData.usageDate" disabled maxlength="200" placeholder="请选择用车日期" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="出发时间:" prop="usageTime">
-                  <el-time-picker
-                    v-model="formData.usageTime"
-                    value-format="HH:mm"
-                    format="HH:mm"
-                    disabled
-                    placeholder="请输入出发时间">
-                  </el-time-picker>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="预计时长:" prop="timeLength">
-                  <el-input disabled v-model="formData.timeLength" maxlength="10" placeholder="请输入预计时长" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="24">
-              <el-col :span="24">
-                <el-form-item label="出发地点:" prop="fromAddr">
-                  <form-address ref="formAddress1" :name="'出发地'" @addressSuccess="addressSuccessOut" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="24">
-              <el-col :span="24">
-                <el-form-item label="前往地点:" prop="toAddr">
-                  <form-address ref="formAddress2" :name="'目的地'" @addressSuccess="addressSuccessTo" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="24">
-              <el-col :span="8">
-                <el-form-item label="期望车型:" prop="hopeBrand">
-                  <el-select
-                    v-model="formData.hopeBrand"
-                    placeholder="请选择期望车型"
-                    clearable
-                    filterable
-                    disabled
-                  >
-                    <el-option v-for="item in dictionariesObj['101801']" 
-                      :key="item.code" 
-                      :label="item.name" 
-                      :value="item.code">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="优先保障:" prop="guarantee">
-                    <el-select
-                      v-model="formData.guarantee"
-                      placeholder="请选择优先保障类型"
-                      clearable
-                      filterable
-                      disabled
-                    >
-                      <el-option v-for="item in dictionariesObj['1679651627836055552']" 
-                        :key="item.code" 
-                        :label="item.name" 
-                        :value="item.code">
-                      </el-option>
-                    </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="24">
-              <el-col :span="24">
-                <el-form-item label="备注:" prop="remark">
-                  <el-input type="textarea" disabled style="width: 1000px" v-model="formData.remark" maxlength="200" placeholder="请输入备注" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </div>
-        </el-collapse-item>
-      </el-form>
-      <el-collapse-item name="3">
-        <template slot="title">
-          <i class="el-icon-caret-right" :style="activeNames.indexOf('3') != -1?'transform:rotate(90deg)':''"/>
-          <span class="title-right">派车信息</span>
-          <span
-            class="title-right-button"
-            @click.stop.prevent="addCarButton"
-          >
-            <el-button type="text"> <i class="el-icon-plus"></i> 新增车辆</el-button>
-          </span>
-        </template>
-        <form-information ref="formInformation" class="form-row"/>
-      </el-collapse-item>
-    </el-collapse>
-    <div class="dialog-footer">
-      <el-button type="primary" :loading="loading" @click="addRequest">确 定</el-button>
-      <el-button @click="closePush">关 闭</el-button>
+    <div class="app-container" v-loading="loading">
+        <!--申请信息-->
+        <div class="item-content-container">
+            <div class="title-container">
+                <img src="/static/icon_detail_unit.png"/>
+                <span>申请信息</span>
+            </div>
+            <div class="ul-parent">
+                <ul class="ul-container">
+                    <el-row>
+                        <li class="li-item">
+                            <span>用车事由：</span>
+                            <span>{{checkReason(formData.reasonCode)}}</span>
+                        </li>
+                        <li class="li-item">
+                            <span>用车需求：</span>
+                            <span>{{checkDemand(formData.demandCode)}}</span>
+                        </li>
+                        <li class="li-item">
+                            <span>是否长途：</span>
+                            <span>{{checkLongDistanceTag(formData.longDistanceTag)}}</span>
+                        </li>
+                        <li class="li-item">
+                            <span>乘坐人数：</span>
+                            <span>{{formData.usagePersons}}</span>
+                        </li>
+                    </el-row>
+                    <el-row>
+                        <li class="li-item">
+                            <span>期望车型：</span>
+                            <span>{{checkHopeBrand(formData.hopeBrand)}}</span>
+                        </li>
+                        <li class="li-item">
+                            <span>优先保障：</span>
+                            <span>{{checkGuarantee(formData.guarantee)}}</span>
+                        </li>
+                    </el-row>
+                    <el-row>
+                        <li class="li-item-all">
+                            <span>备注：</span>
+                            <span>{{formData.remark}}</span>
+                        </li>
+                    </el-row>
+                </ul>
+            </div>
+        </div>
+        <!--用车信息-->
+        <div class="item-content-container">
+            <div class="title-container">
+                <img src="/static/icon_dispatch_car.png"/>
+                <span>用车信息</span>
+            </div>
+            <div class="ul-parent">
+                <ul class="ul-container">
+                    <el-row>
+                        <li class="li-item">
+                            <span>乘车人：</span>
+                            <span>{{formData.userName}}</span>
+                        </li>
+                        <li class="li-item">
+                            <span>出发地点：</span>
+                            <span>{{formData.fromAddr}}</span>
+                        </li>
+                        <li class="li-item">
+                            <span>前往地点：</span>
+                            <span>{{formData.toAddr}}</span>
+                        </li>
+                        <li class="li-item">
+                            <span>联系电话：</span>
+                            <span>{{formData.phone}}</span>
+                        </li>
+                    </el-row>
+                    <el-row>
+                        <li class="li-item">
+                            <span>出发日期：</span>
+                            <span>{{formData.usageDate}}</span>
+                        </li>
+                        <li class="li-item">
+                            <span>出发时间：</span>
+                            <span>{{formData.usageTime}}</span>
+                        </li>
+                        <li class="li-item">
+                            <span>预计时长：</span>
+                            <span>{{formData.timeLength}} 小时</span>
+                        </li>
+                    </el-row>
+                </ul>
+            </div>
+        </div>
+        <!--派车信息-->
+        <div class="item-content-container">
+            <div class="title-container">
+                <img src="/static/icon_use_car.png"/>
+                <span>派车信息</span>
+            </div>
+            <div class="add-car-contaner">
+                <div class="add-car-title">
+                    <span>添加车辆：</span>
+                    <div class="add-car" @click="handleAddCarClick()">
+                        <img src="/static/icon_car.png" />
+                        <span>选择车辆</span>
+                    </div>
+                </div>
+                <dispatch-item ref="dispatchItem"/>
+                <div class="button-container">
+                    <el-button type="primary" round  @click="addRequest" size="small">保 存</el-button>
+                    <el-button round @click="closeCurrentPage" size="small">关 闭</el-button>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </template>
-
 <script>
-import { vehicleInfoGetAssignCount } from "@/api/vehicleInfo";
-import formAddress from "./components/formAddress";
-import formCalendar from "./components/formCalendar";
-import formInformation from "./components/formInformation";
-import getDict from "@/views/mixins/getDict"
+import { getListByParentId } from "@/api/system/dict"
+import dispatchItem from "./components/dispatchItem";
+
 export default {
-  name: "dispatchACar",
-  mixins: [getDict],
-  components: { formAddress, formCalendar, formInformation },
-  data() {
-    return {
-      loading: false,
-      dateList: [],
-      assignTimey: '2022-05-23',
-      assignTimer: '2022-05-29',
-      activeNames: ['1', '2', '3'],
-      dictionariesCode: [1016, 10018, 101801,'1679651627836055552'],
-      dictionariesObj: {'1016': [], '10018': [], '101801': [],'1679651627836055552':[]},
-      addCarInfoList: [],
-      formData: {
-        id: '',
-        reasonCode: '',
-        demandCode: '',
-        longDistanceTag: 0,
-        usagePersons: '',
-        userName: '',
-        phone: '',
-        usageDate: '',
-        usageTime: '',
-        timeLength: '',
-        fromAddr: '',
-        fromAreaId: '',
-        toAddr: '',
-        toAreaIdd: '',
-        hopeBrand: '',
-        remark: '',
-        source: 1,
-      },
-    };
-  },
-  computed: {
-    theme() {
-      return this.$store.state.settings.theme;
-    }
-  },  
-  created() {
-    for(const item of this.dictionariesCode){
-      this.getOperateDict(item);
-    }
-    this.$nextTick( () => {
-      if(this.$route.query.row){
-        let row = JSON.parse(this.$route.query.row);
-        this.vehicleInfoGetAssignCount(row);
-        this.formData = {
-          id: row.id,
-          reasonCode: row.reasonCode,
-          demandCode: row.demandCode,
-          longDistanceTag: row.longDistanceTag,
-          usagePersons: row.usagePersons,
-          userName: row.userName,
-          phone: row.phone,
-          usageDate: row.usageDate,
-          usageTime: row.usageTime,
-          timeLength: row.timeLength,
-          fromAddr: row.fromAddr,
-          fromAreaId: row.fromAreaId,
-          toAddr: row.toAddr,
-          toAreaIdd: row.toAreaIdd,
-          hopeBrand: row.hopeBrand,
-          remark: row.remark,
-          source: 1,
-          guarantee:row.guarantee,
+    name:'dispatchACar',
+    components: { dispatchItem },
+
+    data () {
+        return {
+            //遮罩层
+            loading:false,
+
+            //表单数据            
+            formData:{
+                usageDate:'',   //用车日期
+                reasonCode:'',      //用车事由
+                demandCode:'',      //用车需求
+                longDistanceTag:'', //是否长途
+                usagePersons:'',    //乘坐人数
+                hopeBrand:'',       //期望车型
+                guarantee:'',       //优先保障
+                remark:'',          //备注
+                userName:'',        //乘车人
+                userId:'',          //乘车人id
+                phone:'',           //乘车人电话
+                fromAddr: '',       //出发地点
+                fromAreaId: '',
+                toAddr: '',         //前往地点
+                toAreaIdd: '',
+                usageTime:'',       //用车时间
+                timeLength:'',     //预计时长
+                source: 1,          //来源
+                procDefId: '',
+                assignee: '',
+                candidateUser:[],
+            },
+            //用车事由数据
+            reasonOptions:[],
+            //用车需求数据
+            demandOptions:[],
+            //是否长途数据
+            longDistanceTagOptions:[
+                {
+                    code:'1',
+                    name:'是',
+                },
+                {
+                    code:'0',
+                    name:'否',
+                }
+            ],
+            //期望车型数据
+            hopeBrandOptions:[],
+            //优先保障数据
+            guaranteeOptions:[],
+            //已选中乘车人数据
+            defaultCheckedUser:[],
         }
-        this.$refs.formAddress1.init(row.fromAddr);
-        this.$refs.formAddress2.init(row.toAddr);
-      }
-    })
-  },
-  methods: {
-    async getOperateDict (code) {
-      const res = await this.getOperateDictList(code);
-      this.dictionariesObj[code] = res;
     },
-    weekCheckingIn(assignTime, type){
-      this.weekChecking_inloading = true
-      var now = new Date(assignTime);
-      var nowTime = now.getTime() ;
-      var day = now.getDay()|| 7;// 不加 || 7.周末会变成下周一
-      var oneDayTime = 24*60*60*1000 ;
-      var MondayTime = nowTime - (day-1)*oneDayTime ;//显示周一
-      var SundayTime =  nowTime + (7-day)*oneDayTime ;//显示周日
-      //调用方法
-      if(type == '周一'){
-        return this.formatDate(new Date(MondayTime));
-      }else if(type == '周日'){
-        return this.formatDate(new Date(SundayTime));
-      }
+    computed: {
+        visitedViews() {
+            return this.$store.state.tagsView.visitedViews
+        }
     },
-    //格式化日期：yyyy-MM-dd
-    formatDate(date) {
-      var myyear = date.getFullYear();
-      var mymonth = date.getMonth() + 1;
-      var myweekday = date.getDate();
-      if (mymonth < 10) {
-        mymonth = "0" + mymonth;
-      }
-      if (myweekday < 10) {
-        myweekday = "0" + myweekday;
-      }
-      return (myyear + "-" + mymonth + "-" + myweekday);
+    created() {
+        this.getReasonOptions();
+        this.getDemandOptions();
+        this.getHopeBrandOptions();
+        this.getGuaranteeOptions();
+
+        this.$nextTick( () => {
+            if(this.$route.query.row){
+                let row = JSON.parse(this.$route.query.row);
+                this.formData = Object.assign({}, this.formData,row);
+            }
+        })
     },
-    vehicleInfoGetAssignCount (row) {
-      let {unitCode, deptId} = row;
-      vehicleInfoGetAssignCount({unitCode, deptId,tunUnitCode: row.reassignUnitCode || ''}, row.reassignUnitCode).then(({data}) => {
-        let time_num = this.parseTime(data[0].assignTime, '{b}') - 1;
-        this.dateList = data.slice(0, data.length - time_num);
-        this.assignTimey = this.weekCheckingIn(this.dateList[0].assignTime, '周一');
-        this.assignTimer = this.weekCheckingIn(this.dateList[this.dateList.length - 1].assignTime, '周日');
-      })
+    methods: {
+        //获取用车事由数据
+        getReasonOptions(){
+            this.loading = true;
+
+            getListByParentId('1016').then(({data}) => {
+                this.loading = false;
+                this.reasonOptions = data;
+            }).catch((err) => {
+                this.loading = false;
+            })
+        },
+        //获取用车需求数据
+        getDemandOptions(){
+            this.loading = true;
+
+            getListByParentId('10018').then(({data}) => {
+                this.loading = false;
+                this.demandOptions = data;
+            }).catch((err) => {
+                this.loading = false;
+            })
+        },
+        //获取期望车型数据
+        getHopeBrandOptions(){
+            this.loading = true;
+
+            getListByParentId('101801').then(({data}) => {
+                this.loading = false;
+                this.hopeBrandOptions = data;
+            }).catch((err) => {
+                this.loading = false;
+            })
+        },
+        //获取优先保障数据
+        getGuaranteeOptions(){
+            this.loading = true;
+
+            getListByParentId('1679651627836055552').then(({data}) => {
+                this.loading = false;
+                this.guaranteeOptions = data;
+            }).catch((err) => {
+                this.loading = false;
+            })
+        },
+        //判断用车事由
+        checkReason(reasonCode){
+            let obj = this.reasonOptions.find((item) => {
+                return item.code = reasonCode;
+            })
+            return !!obj?obj.name:"";
+        },
+        //判断用车需求
+        checkDemand(demandCode){
+            let obj = this.demandOptions.find((item) => {
+                return item.code = demandCode;
+            })
+            return !!obj?obj.name:"";
+        },
+        //判断是否长途
+        checkLongDistanceTag(longDistanceTag){
+            let obj = this.longDistanceTagOptions.find((item) => {
+                return item.code = longDistanceTag + "";
+            })
+            return !!obj?obj.name:"";
+        },
+        //判断期望车型
+        checkHopeBrand(hopeBrand){
+            let obj = this.hopeBrandOptions.find((item) => {
+                return item.code = hopeBrand;
+            })
+            return !!obj?obj.name:"";
+        },
+        //判断优先保障
+        checkGuarantee(guarantee){
+            let obj = this.guaranteeOptions.find((item) => {
+                return item.code = guarantee;
+            })
+            return !!obj?obj.name:"";
+        },
+        //添加车辆
+        handleAddCarClick(){
+            this.$refs.dispatchItem.addCarItem();
+        },
+        //保存
+        addRequest(){
+            this.$refs.dispatchItem.addRequest();
+        },
+        //关闭当前页面
+        closeCurrentPage() {
+            this.visitedViews.forEach((item) => {
+                if (item.name === this.$route.name) {
+                    this.$tab.closePage(item).then(({ visitedViews }) => {
+                        this.$router.back();
+                    })
+                }
+            })
+        },
     },
-    addressSuccessOut (row) {
-      let {id, name} = row;
-      this.formData.fromAreaId = id;
-      this.formData.fromAddr = name;
-    },
-    addressSuccessTo (row) {
-      let {id, name} = row;
-      this.formData.toAreaIdd = id;
-      this.formData.toAddr = name;
-    },
-    addRequest () {
-      this.$refs.formInformation.addRequest();
-    },
-    closePush () {
-      this.$tab.closePage(this.$route).then(({ visitedViews }) => {
-        this.toLastView(visitedViews, this.$route);
-      })
-    },
-    addCarButton () {
-      this.$refs.formInformation.addCarButton();
-    },
-  },
-};
+}
 </script>
 <style lang="scss" scoped>
-  .container-calendar{
-    width: 100%;
-    height: 100%;
+.app-container {
+    box-sizing: border-box;
+    padding: 7px 9px;
+    background-color: #f1f3f8;
     overflow-y: auto;
-    .is-selected {
-      color: #{'var(--theme)'};
-    }
-    .el-icon-caret-right{
-      font-size: 20px;
-      color: #{'var(--theme)'};
-    }
-    ::v-deep .el-select,
-    .el-input,
-    .el-date-editor {
-        width: 95%;
-    }
-    .title-right{
-      font-weight: 600;
-      font-size: 15px;
-    }
-    .title-span{
-      margin-left: 38px;
-      font-style: oblique;
-      font-size: 12px;
-    }
-    .title-span{
-        span{
-            padding-left: 10px;
-            &:nth-child(2){
-                color: #d57b48;
+
+    .item-content-container {
+        background-color: #ffffff;
+        border-radius: 5px;
+        margin-bottom: 7px;
+        padding-bottom: 18px;
+
+        .title-container {
+            width: 100%;
+            height: 41px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #f3f5f7;
+
+            img {
+                margin-left: 4px;
+                width: 23px;
+                height: 23px;
             }
-            &:nth-child(3){
-                color: #6292ff;
+            span {
+                font-size: 14px;
+                color: #1b1e22;
             }
-            &:nth-child(4){
-                color: #4da32d;
+        }
+        .ul-parent {
+            overflow: hidden;
+            padding: 7px 20px 0px 40px;
+
+            .ul-container {
+                padding: 0px;
+                margin: 0px;
+                list-style: none;
+
+                .li-item {
+                    float: left;
+                    min-height: 24px;
+                    line-height: 24px;
+                    min-width: 24%;
+                    max-width: 24%;
+                    font-size: 12px;
+                    display: flex;
+                    color: #000000;
+                    margin-right: 10px;
+
+                    & span:nth-child(1) {
+                        width: 60px;
+                    }
+                    & span:nth-child(2) {
+                        width: calc(100% - 60px);
+                    }
+                } 
+                .li-item-all {
+                    width: 100%;
+                    font-size: 12px;
+                    color: #000000;
+                }
+                .li-button {
+                    width: 100%;
+                    position: relative;
+
+                    .button-container {
+                        margin: 0 auto;
+                        width:  200px;
+                        display: flex;
+                        justify-content: space-around;
+
+                        .el-button {
+                            width: 100px;
+                        }
+                    }
+                }
             }
-            &:nth-child(5){
-                color: #26413c;
+        }
+        .add-car-contaner {
+            padding-top: 10px;
+            overflow: hidden;
+            position: relative;
+
+            .add-car-title {
+                display: flex;
+                line-height: 24px;
+                line-height: 31px;
+                font-size: 12px;
+                border-bottom: 1px solid #f3f5f7;
+                padding-left: 40px;
+
+                .add-car {
+                    margin-left: 5px;
+                    width: 120px;
+                    border: 1px solid #f0f0f0;
+                    border-radius: 50px;
+                    text-align: center;
+                    margin-bottom: 10px;
+
+                    & :hover {
+                        cursor: pointer;
+                    }
+                    img {
+                        width: 16px;
+                        height: 16px;
+                        margin-right: 5px;
+                        transform: translateY(3px);
+                    }
+                    span {
+                        font-size: 12px;
+                    }
+                }
+                .add-car-info {
+                    width: 100%;
+                    display: flex;
+                }
+            }
+            .button-container {
+                margin: 0 auto;
+                margin-top: 20px;
+                width:  200px;
+                display: flex;
+                justify-content: space-around;
+
+                .el-button {
+                    width: 100px;
+                }
             }
         }
     }
-    .dialog-footer{
-      margin-top: 20px;
-      margin-bottom: 20px;
-      text-align: center;
-      .el-button--medium{
-        padding: 10px 32px;
-      }
-    }
-    .el-calendar-table{
-      .el-calendar-day{
-        padding: 0px;
-        height: 55px;
-        p{
-          margin: 0px;
-          text-align: center;
-        }
-      }
-    }
-    .form-row{
-      margin-left: 20px;
-    }
-  }
+}
 </style>

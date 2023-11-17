@@ -103,15 +103,17 @@ export default {
         async getLogisticsTrajectoryAll(simNumber,startTime,endTime){
             this.loading = true;
             let params = {
-                deviceId: simNumber,
+                phone: simNumber,
                 startTime: startTime,
                 endTime: endTime,
+                // startTime: '2023-10-01 00:01:00',
+                // endTime: '2023-11-10 00:10:00',
             }
-            await logisticsTrajectoryAll(params).then(({message}) => {
+            await logisticsTrajectoryAll(params).then(({data}) => {
                 this.loading = false;
                 this.replayList = [];
 
-                let tempArr = JSON.parse(message);
+                let tempArr = data;
 
                 tempArr.forEach((item) => {
                     if(new Date(item.locTime).getTime() > new Date(startTime).getTime() && 
@@ -119,6 +121,11 @@ export default {
                         this.replayList.push(item)
                     }
                 })
+
+                this.replayList.forEach((item) => {
+                    item.lng = item.lng / 1000000;
+                    item.lat = item.lat / 1000000;
+                })  
                 this.drawRoute();
             }).catch((err) => {
                 this.loading = false;
@@ -128,10 +135,12 @@ export default {
         async getLogisticsListAll(simNumber){
             this.loading = true;
             let params = {
-                deviceId:simNumber,
+                phone:simNumber,
             }
             await logisticsListAll(params).then(({data}) => {
                 this.loading = false;
+                data.lng = data.lng / 1000000;
+                data.lat = data.lat / 1000000;
                 this.drawCarLocation(data);
             }).catch((err) => {
                 this.loading = false;

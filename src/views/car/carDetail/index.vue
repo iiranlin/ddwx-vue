@@ -8,58 +8,66 @@
             </div>
             <div class="ul-parent">
                 <ul class="ul-container">
-                    <li class="li-item">
-                        <span>用车单位：</span>
-                        <span>{{vehicleData.unitName}}/{{vehicleData.deptName}}</span>
-                    </li>
-                    <li class="li-item">
-                        <span>用车事由：</span>
-                        <span>{{vehicleData.reason}}</span>
-                    </li>
-                    <li class="li-item">
-                        <span>用车需求：</span>
-                        <span>{{vehicleData.demand}}</span>
-                    </li>
-                    <li class="li-item">
-                        <span>是否长途：</span>
-                        <span>{{checkLongDistanceTag()}}</span>
-                    </li>
-                    <li class="li-item">
-                        <span>乘坐人数：</span>
-                        <span>{{vehicleData.usagePersons}}人</span>
-                    </li>
-                    <li class="li-item">
-                        <span>乘 车 人：</span>
-                        <span>{{vehicleData.userName}}</span>
-                    </li>
-                    <li class="li-item">
-                        <span>联系电话：</span>
-                        <span>{{vehicleData.phone}}</span>
-                    </li>
-                    <li class="li-item">
-                        <span>用车时间：</span>
-                        <span>{{parseTime(vehicleData.usageDate,'{m}-{d}')}} {{vehicleData.usageTime}}</span>
-                    </li>
-                    <li class="li-item">
-                        <span>预计时长：</span>
-                        <span>{{vehicleData.timeLength}}小时</span>
-                    </li>
-                    <li class="li-item">
-                        <span>期望车型：</span>
-                        <span>{{hopeBrandInfo}}</span>
-                    </li>
-                    <li class="li-item">
-                        <span>优先保障：</span>
-                        <span>{{checkGuarantee()}}</span>
-                    </li>
-                    <li class="li-item">
-                        <span>备注：</span>
-                        <span>{{vehicleData.remark || '未填写'}}</span>
-                    </li>
-                    <li class="li-item li-item-all">
-                        <span>用车行程：</span>
-                        <span>{{checkAddress()}}</span>
-                    </li>
+                    <el-row>
+                         <li class="li-item">
+                            <span>用车单位：</span>
+                            <span>{{vehicleData.unitName}}/{{vehicleData.deptName}}</span>
+                        </li>
+                        <li class="li-item">
+                            <span>用车事由：</span>
+                            <span>{{vehicleData.reason}}</span>
+                        </li>
+                        <li class="li-item">
+                            <span>用车需求：</span>
+                            <span>{{vehicleData.demand}}</span>
+                        </li>
+                        <li class="li-item">
+                            <span>是否长途：</span>
+                            <span>{{checkLongDistanceTag()}}</span>
+                        </li>
+                    </el-row>
+                    <el-row>
+                        <li class="li-item">
+                            <span>乘坐人数：</span>
+                            <span>{{vehicleData.usagePersons}}人</span>
+                        </li>
+                        <li class="li-item">
+                            <span>乘 车 人：</span>
+                            <span>{{vehicleData.userName}}</span>
+                        </li>
+                        <li class="li-item">
+                            <span>联系电话：</span>
+                            <span>{{vehicleData.phone}}</span>
+                        </li>
+                        <li class="li-item">
+                            <span>用车时间：</span>
+                            <span>{{parseTime(vehicleData.usageDate,'{m}-{d}')}} {{vehicleData.usageTime}}</span>
+                        </li>
+                    </el-row>
+                    <el-row>
+                        <li class="li-item">
+                            <span>预计时长：</span>
+                            <span>{{vehicleData.timeLength}}小时</span>
+                        </li>
+                        <li class="li-item">
+                            <span>期望车型：</span>
+                            <span>{{hopeBrandInfo}}</span>
+                        </li>
+                        <li class="li-item">
+                            <span>优先保障：</span>
+                            <span>{{checkGuarantee()}}</span>
+                        </li>
+                        <li class="li-item">
+                            <span>备注：</span>
+                            <span>{{vehicleData.remark || '未填写'}}</span>
+                        </li>
+                    </el-row>
+                    <el-row>    
+                        <li class="li-item-all">
+                            <span>用车行程：</span>
+                            <span>{{checkAddress()}}</span>
+                        </li>
+                    </el-row>
                 </ul>
             </div>
         </div>
@@ -71,72 +79,80 @@
             </div>
             <div :class="['ul-parent',reqAssignments.length > 1?'border-dashed':'']" v-for="item in reqAssignments" :key="item.id">
                 <ul class="ul-container border-bottom">
-                    <li class="li-item">
-                        <span>指派司机：</span>
-                        <span>{{checkDriver(item)}}</span>
-                    </li>
-                    <li class="li-item">
-                        <span>指派车辆：</span>
-                        <a href="#" v-if="item.status===5 || item.status===7" class="custom-link" @click="handleCarNumberClick(item)">{{item.carNumber}}</a>
-                        <span v-else>{{item.carNumber}}</span>
-                    </li>
-                    <li class="li-item">
-                        <span>出车里程：</span>
-                        <span>{{item.beginMiles}}公里</span>
-                    </li>
-                    <li class="li-item">
-                        <span>还车里程：</span>
-                        <span v-if="!!item.endMiles">{{item.endMiles}}公里</span>
-                        <span v-else>暂无数据</span>
-                    </li>
-                    <li class="li-item">
-                        <span>出车时间：</span>
-                        <span>{{parseTime(item.drivingTime,'{m}-{d} {h}:{i}') || '暂无数据'}}</span>
-                    </li>
-                    <li class="li-item">
-                        <span>还车时间：</span>
-                        <span>{{parseTime(item.overTime,'{m}-{d} {h}:{i}') || '暂无数据'}}</span>
-                    </li>
-                    <li class="li-item">
-                        <span>用户评价：</span>
-                        <span>{{item.evaluateContent || '未填写'}}</span>
-                    </li>
-                    <li class="li-item li-item-half">
-                        <span>总体评分：</span>
-                        <el-rate
-                            v-model="item.evaluateLevel"
-                            disabled
-                            show-text
-                            :texts="texts">
-                        </el-rate>
-                    </li>
-                    <li class="li-item li-item-half">
-                        <span>服务态度：</span>
-                        <el-rate
-                            v-model="item.evaluateService"
-                            disabled
-                            show-text
-                            :texts="texts">
-                        </el-rate>
-                    </li>
-                    <li class="li-item li-item-half">
-                        <span>驾驶水平：</span>
-                        <el-rate
-                            v-model="item.evaluateDriver"
-                            disabled
-                            show-text
-                            :texts="texts">
-                        </el-rate>
-                    </li>
-                    <li class="li-item li-item-half">
-                        <span>车内环境：</span>
-                        <el-rate
-                            v-model="item.evaluateIncar"
-                            disabled
-                            show-text
-                            :texts="texts">
-                        </el-rate>
-                    </li>
+                    <el-row>
+                        <li class="li-item">
+                            <span>指派司机：</span>
+                            <span>{{checkDriver(item)}}</span>
+                        </li>
+                        <li class="li-item">
+                            <span>指派车辆：</span>
+                            <a href="#" v-if="item.status===5 || item.status===7" class="custom-link" @click="handleCarNumberClick(item)">{{item.carNumber}}</a>
+                            <span v-else>{{item.carNumber}}</span>
+                        </li>
+                        <li class="li-item">
+                            <span>出车里程：</span>
+                            <span>{{item.beginMiles}}公里</span>
+                        </li>
+                        <li class="li-item">
+                            <span>还车里程：</span>
+                            <span v-if="!!item.endMiles">{{item.endMiles}}公里</span>
+                            <span v-else>暂无数据</span>
+                        </li>
+                    </el-row>
+                    <el-row>
+                        <li class="li-item">
+                            <span>出车时间：</span>
+                            <span>{{parseTime(item.drivingTime,'{m}-{d} {h}:{i}') || '暂无数据'}}</span>
+                        </li>
+                        <li class="li-item">
+                            <span>还车时间：</span>
+                            <span>{{parseTime(item.overTime,'{m}-{d} {h}:{i}') || '暂无数据'}}</span>
+                        </li>
+                        <li class="li-item">
+                            <span>用户评价：</span>
+                            <span>{{item.evaluateContent || '未填写'}}</span>
+                        </li>
+                    </el-row>
+                    <el-row>
+                        <li class="li-item li-item-half">
+                            <span>总体评分：</span>
+                            <el-rate
+                                v-model="item.evaluateLevel"
+                                disabled
+                                show-text
+                                :texts="texts">
+                            </el-rate>
+                        </li>
+                        <li class="li-item li-item-half">
+                            <span>服务态度：</span>
+                            <el-rate
+                                v-model="item.evaluateService"
+                                disabled
+                                show-text
+                                :texts="texts">
+                            </el-rate>
+                        </li>
+                    </el-row>
+                    <el-row>
+                        <li class="li-item li-item-half">
+                            <span>驾驶水平：</span>
+                            <el-rate
+                                v-model="item.evaluateDriver"
+                                disabled
+                                show-text
+                                :texts="texts">
+                            </el-rate>
+                        </li>
+                        <li class="li-item li-item-half">
+                            <span>车内环境：</span>
+                            <el-rate
+                                v-model="item.evaluateIncar"
+                                disabled
+                                show-text
+                                :texts="texts">
+                            </el-rate>
+                        </li>
+                    </el-row>
                 </ul>
             </div>
         </div>
@@ -370,10 +386,6 @@ export default {
             }
             return item.driver.substr(0,1) + '师傅';
         },
-        //行类名
-        rowClassName(){
-            return 'car-detail-row-class'
-        },
         //关闭当前页面
         closeCurrentPage() {
             this.visitedViews.forEach((item) => {
@@ -430,17 +442,29 @@ export default {
             float: left;
             min-height: 24px;
             line-height: 24px;
-            min-width: 25%;
-            max-width: 25%;
+            min-width: 24%;
+            max-width: 24%;
             font-size: 12px;
             display: flex;
             color: #000000;
+            margin-right: 10px;
+
+            & span:nth-child(1) {
+                width: 60px;
+            }
+            & span:nth-child(2) {
+                width: calc(100% - 60px);
+            }
         } 
         .li-item-all {
-            min-width: 100%;
+            width: 100%;
+            font-size: 12px;
+            color: #000000;
         }
         .li-item-half {
-            min-width: 50%;
+            min-width: 49%;
+            font-size: 12px;
+            color: #000000;
         }
         .table-container {
             padding: 10px 10px 0px 10px;

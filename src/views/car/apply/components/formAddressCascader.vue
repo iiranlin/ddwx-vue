@@ -1,49 +1,44 @@
 <template>
-    <div>
-        <el-row :gutter="24">
-            <el-col :span="6">
-                <el-cascader
-                    style="width:100%"
-                    ref="elCascader"
-                    v-model="cascaderIds"
-                    :options="treeOptions"
-                    :props="optionProps"
-                    placeholder="请选择出发地点"
-                    @change="handleCascaderChange">
-                </el-cascader>
-            </el-col>
-            <el-col :span="5">
-                <el-input v-model="formData.address" maxlength="50" placeholder="请输入详情地址" />
-            </el-col>
-            <el-col :span="2.5">
-                <div style="position: relative">
-                <el-dropdown class="dropdown-address" trigger="click">
-                    <el-button type="text" class="text-underline">选择常用地址</el-button>
-                
-                    <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item @click.native="echoView(item)" v-for="item in defaultAddressList" :key="item.id" divided>
-                            <div class="dropdown-div">
-                                <el-row :gutter="24">
-                                    <el-col :span="16">
-                                        <p class="dropdown-div-span">{{item.address}}</p>
-                                    </el-col>
-                                    <!-- <el-col :span="10">
-                                        <p  class="dropdown-div-p">{{item.areaLongName}}</p>
-                                    </el-col> -->
-                                    <el-col :span="8">
-                                        <p class="dropdown-div-span" v-if="item.defualtTag == '1'">默认<i class="address-svg el-icon-success"></i></p>
-                                    </el-col>
-                                </el-row>
-                            </div>
-                        </el-dropdown-item>
-                    </el-dropdown-menu>
-                </el-dropdown>
+    <div class="form-address-container">
+        <div class="select-address">
+            <el-cascader
+                style="width:100%"
+                ref="elCascader"
+                v-model="cascaderIds"
+                :options="treeOptions"
+                :props="optionProps"
+                placeholder="请选择出发地点"
+                size="small"
+                @change="handleCascaderChange">
+            </el-cascader>
+        </div>
+        <div class="detail-address">
+            <el-input v-model="formData.address" maxlength="50" placeholder="请输入详情地址" clearable size="small"/>
+        </div>
+        <el-dropdown class="dropdown-address button-address" trigger="click">
+                <div>
+                    <img src="/static/list_address.png" />
+                    <span>常用地址</span>
                 </div>
-            </el-col>
-            <el-col :span="2.5">
-                <el-button type="text" class="text-underline" @click="gcjcCommonAddressSaveorupdate">设为常用地址</el-button>
-            </el-col>
-        </el-row>
+                <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="echoView(item)" v-for="item in defaultAddressList" :key="item.id">
+                        <div class="dropdown-div">
+                            <el-row :gutter="24">
+                                <el-col :span="16">
+                                    <p class="dropdown-div-span">{{item.address}}</p>
+                                </el-col>
+                                <el-col :span="8">
+                                    <p class="dropdown-div-span" v-if="item.defualtTag == '1'">默认<i class="address-svg el-icon-success"></i></p>
+                                </el-col>
+                            </el-row>
+                        </div>
+                    </el-dropdown-item>
+                </el-dropdown-menu>
+       </el-dropdown>
+        <div class="button-address" @click="gcjcCommonAddressSaveorupdate">
+            <img src="/static/normal_address.png" />
+            <span>设为常用</span>
+        </div>
     </div>
 </template>
 <script>
@@ -219,16 +214,36 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.text-underline {
-    text-decoration: underline;
-}
+.form-address-container {
+    display: flex;
+    height: 33px;
 
-.dropdown-address{
-    overflow-y: auto;
+    .select-address {
+        width: 25%;
+    }
+    .detail-address {
+        width: 40%;
+        margin-left: 10px;
+    }
+    .button-address {
+        text-align: center;
+        width: 10%;
+        margin-left: 10px;
+        border-radius: 50px;
+        border: 1px solid #f0f0f0;
+        line-height: 31px;
 
-    .address-svg{
-        cursor: pointer;
-        color: #409EFF;
+        & :hover {
+            cursor: pointer;
+        }
+        img {
+            width: 21px;
+            height: 21px;
+            transform: translateY(5px);
+        }
+        span {
+            font-size: 12px;
+        }
     }
 }
 ::v-deep.el-dropdown-menu  {

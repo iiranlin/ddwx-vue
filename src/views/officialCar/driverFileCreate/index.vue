@@ -145,10 +145,11 @@
         <el-row>
           <el-col :span="22" :xs="24">
             <el-col :span="7">
-              <el-form-item label="驾照编号：" prop="license" :rules="[
+              <!-- <el-form-item label="驾照编号：" prop="license" :rules="[
           { required: true, message: '驾照编号不能为空', trigger: 'blur' },
           validateIDCard
-        ]">
+        ]"> -->
+              <el-form-item label="驾照编号：" prop="license">
                 <el-input v-model="form.license" size="mini" clearable maxlength="20"></el-input>
               </el-form-item>
             </el-col>
@@ -215,7 +216,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="7">
-              <el-form-item label="档案编号：" prop="fileNo" :rules="[{ required: true, message: '档案编号不能为空', trigger: 'blur' },validateNumber12]">
+              <!-- <el-form-item label="档案编号：" prop="fileNo" :rules="[{ required: true, message: '档案编号不能为空', trigger: 'blur' },validateNumber12]"> -->
+              <el-form-item label="档案编号：" prop="fileNo">
                 <el-input v-model="form.fileNo" size="mini" clearable maxlength="12"></el-input>
               </el-form-item>
             </el-col>
@@ -270,7 +272,7 @@
           </el-col>
         </el-row>
         <!--健康信息-->
-        <el-row :gutter="20">
+        <!-- <el-row :gutter="20">
           <el-col style="margin: 15px 10px">
             <i class="el-icon-caret-right title-icon"></i><span>健康信息</span>
           </el-col>
@@ -337,7 +339,7 @@
               </el-form-item>
             </el-col>
           </el-col>
-        </el-row>
+        </el-row> -->
       </el-form>
     </el-row>
   </div>
@@ -446,33 +448,33 @@ export default {
         // license: [
         //   { required: true, message: '驾照编号不能为空', trigger: 'blur' }
         // ],
-        driverPic: [
-          { required: true, message: '司机头像不能为空', trigger: 'change' }
-        ],
-        licenseType: [
-          { required: true, message: '驾照类型不能为空', trigger: ['blur', 'change'] }
-        ],
-        endDate: [
-          { required: true, message: '到期日期不能为空', trigger: 'blur' }
-        ],
-        firstDate: [
-          { required: true, message: '首次领证日期不能为空', trigger: 'blur' }
-        ],
+        // driverPic: [
+        //   { required: true, message: '司机头像不能为空', trigger: 'change' }
+        // ],
+        // licenseType: [
+        //   { required: true, message: '驾照类型不能为空', trigger: ['blur', 'change'] }
+        // ],
+        // endDate: [
+        //   { required: true, message: '到期日期不能为空', trigger: 'blur' }
+        // ],
+        // firstDate: [
+        //   { required: true, message: '首次领证日期不能为空', trigger: 'blur' }
+        // ],
         // fileNo: [
         //   { required: true, message: '档案编号不能为空', trigger: 'blur' }
         // ],
-        issuingUnit: [
-          { required: true, message: '发证单位不能为空', trigger: 'blur' }
-        ],
-        licenseFirstImg: [
-          { required: true, message: '驾照主页照片不能为空', trigger: 'change' }
-        ],
-        licenseSecondImg: [
-          { required: true, message: '驾照副页照片不能为空', trigger: 'change' }
-        ],
-        vaccinesSttuss: [
-          { required: true, message: '疫苗接种情况不能为空', trigger: ['blur', 'change'] }
-        ]
+        // issuingUnit: [
+        //   { required: true, message: '发证单位不能为空', trigger: 'blur' }
+        // ],
+        // licenseFirstImg: [
+        //   { required: true, message: '驾照主页照片不能为空', trigger: 'change' }
+        // ],
+        // licenseSecondImg: [
+        //   { required: true, message: '驾照副页照片不能为空', trigger: 'change' }
+        // ],
+        // vaccinesSttuss: [
+        //   { required: true, message: '疫苗接种情况不能为空', trigger: ['blur', 'change'] }
+        // ]
       },
       internshipEndDateRule:{
         required: true, message: '实习到期日期不能为空', trigger: ['blur', 'change']

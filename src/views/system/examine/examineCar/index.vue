@@ -34,6 +34,7 @@
       :numberShow="numberShow"
       :tableData="dataList"
       :property="property"
+      menuName="examineCar"
       @handleSelectionChange="handleSelectionChange"
       @handleButton="handleButton"
       @selectChange="selectChange"
@@ -94,6 +95,9 @@ export default {
   },
   created() {
     this.menuProperty();
+    if (this.$route.params.reqNo) {
+      this.formData = this.$route.params
+    }
     this.getList();
   },
   mounted() {},

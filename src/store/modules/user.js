@@ -19,6 +19,7 @@ const user = {
         roles: false,
         rank:'',
         userCode:'',
+        phone:'',
         permissions: []
     },
 
@@ -61,6 +62,9 @@ const user = {
         },
         SET_USER_CODE: (state, userCode) => {
             state.userCode = userCode
+        },
+        SET_USER_PHONE: (state, userPhone) => {
+            state.phone = userPhone
         },
         SET_PERMISSIONS: (state, permissions) => {
             state.permissions = permissions
@@ -120,6 +124,7 @@ const user = {
                         commit('SET_REAL_NAME', user.realName)
                         commit('SET_RANK', user.rank)
                         commit('SET_USER_CODE', user.userCode)
+                        commit('SET_USER_PHONE', user.phone)
                         
                         setCookie("unitCode", user.unitCode);
                         setCookie("phone", user.phone || '');

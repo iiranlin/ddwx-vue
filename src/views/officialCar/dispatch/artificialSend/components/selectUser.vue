@@ -99,13 +99,13 @@ export default {
     },
     methods:{
         //初始化
-        init(defaultCheckedUser){
+        init(defaultCheckedUser,deptId){
             this.openDataScope = true;
-            this.defaultChecked = defaultCheckedUser;
+            this.defaultChecked = JSON.parse(JSON.stringify(defaultCheckedUser));
 
             this.$nextTick(() => {
                 this.title = "选择乘车人";
-                this.initDefaultExpanded();
+                this.initDefaultExpanded(deptId);
                 this.initDefaultChecked();
             })
         },
@@ -122,10 +122,14 @@ export default {
             })
         },
         //初始化默认展开节点
-        initDefaultExpanded(){
-            this.defaultChecked.forEach((item) => {
-                this.defaultExpandedKeys.push(item.deptId)
-            })
+        initDefaultExpanded(deptId){
+            if(this.defaultChecked.length === 0){
+                this.defaultExpandedKeys.push(deptId)
+            }else{
+                this.defaultChecked.forEach((item) => {
+                    this.defaultExpandedKeys.push(item.deptId)
+                })
+            }
         },
         //初始化默认选中节点
         initDefaultChecked(){
@@ -144,6 +148,7 @@ export default {
                         id:nodes[i].id,
                         deptId:nodes[i].deptId,
                         realName:nodes[i].realName,
+                        phone:nodes[i].phone,
                     }
                     this.defaultChecked.push(obj)
                 }
@@ -174,7 +179,6 @@ export default {
                 this.defaultChecked.splice(index, 1);
             }
             this.initDefaultChecked();
-            
         },
         //确定
         handleConfirm(){
@@ -206,6 +210,7 @@ export default {
                 id:'',
                 deptId:'',
                 realName:this.inputText,
+                phone:'',
             }
             this.defaultChecked.push(obj)
         },

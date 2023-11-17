@@ -38,6 +38,15 @@ export function vehicleInfoIsRestriction(params) {
   })
 }
 
+//获取司机排班情况
+export function gcywVehicleRequestRequestTimeInfo(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywVehicleRequest/requestTimeInfo`,
+    method: 'get',
+    params
+  })
+}
+
 // 根据查询条件获取车辆下拉框
 export function getVehicleListAll(params) {
   return request({

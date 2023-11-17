@@ -70,7 +70,7 @@
                     <span>{{carInfo.speed}}</span>
                     <span>km/h</span>
                 </div>
-                <span class="speed-detail">当前转速：无</span>
+                <span class="speed-detail">当前转速：{{carInfo.rpm}}</span>
                 <ul>
                     <li>
                         <span>车辆型号：</span>
@@ -78,7 +78,7 @@
                     </li>
                     <li>
                         <span>联系电话：</span>
-                        <span>无</span>
+                        <span>{{carInfo.driverPhone || '无'}}</span>
                     </li>
                     <li>
                         <span>平均油耗：</span>
@@ -86,7 +86,7 @@
                     </li>
                     <li>
                         <span>发动机水温：</span>
-                        <span>无</span>
+                        <span>{{carInfo.waterTemperature || '无'}}</span>
                     </li>
                     <li>
                         <span>里程小计：</span>
@@ -94,7 +94,7 @@
                     </li>
                     <li>
                         <span>累计里程：</span>
-                        <span>无</span>
+                        <span>{{carInfo.mileageTotal || '无'}}</span>
                     </li>
                     <li>
                         <span>订单状态：</span>
@@ -113,11 +113,10 @@
                     </li>
                     <li>
                         <span>实时位置：</span>
-                        <span>{{carInfo.location}}</span>
+                        <span>{{carInfo.location || '无'}}</span>
                     </li>
                 </ul>
             </div>
-         
         </div>
     </div>
 </template>
@@ -128,6 +127,7 @@ gcywVehicleReqAssignmentDrivingGetAllCardInfos,
 logisticsGeocode} from '@/api/driver'
 import checkCarImagePath from '@/utils/carPath'
 import screenfull from 'screenfull'
+import axios from 'axios'
 
 let that;
 export default {
@@ -181,9 +181,15 @@ export default {
         async getLocationInfo() {
             this.loading = true
 
-            await logisticsDistribution().then(({ message }) => {
+            await logisticsDistribution().then(({ data }) => {
                 this.loading = false;
-                this.carLocationInfo = JSON.parse(message);
+                this.carLocationInfo = data;
+
+                this.carLocationInfo.forEach((item) => {
+                    item.lng = item.lng / 1000000;
+                    item.lat = item.lat / 1000000;
+                })
+
                 this.getVehicleInfo();
 
                 for (let i = 0; i < this.carLocationInfo.length; i++) {
@@ -212,12 +218,27 @@ export default {
                 this.$set(carLocationInfo, 'location', "");
                 return;
             }
+            // let params = {
+            //     lng:carLocationInfo.lng,
+            //     lat:carLocationInfo.lat,
+            // }
+            // logisticsGeocode(params).then(({message}) => {
+            //     this.$set(carLocationInfo, 'location', message.substr(1,message.length-2));
+            // }).catch((err) => {
+                
+            // })
             let params = {
-                lng:carLocationInfo.lng,
-                lat:carLocationInfo.lat,
+                type:'geocode',
+                postStr:{
+                    lon:carLocationInfo.lng,
+                    lat:carLocationInfo.lat,
+                    ver:1
+                }
             }
-            logisticsGeocode(params).then(({message}) => {
-                this.$set(carLocationInfo, 'location', message.substr(1,message.length-2));
+            axios.get('http://10.3.66.220/api/geocoder', {
+               params
+            }).then((response) => {
+                this.$set(carLocationInfo, 'location', response.data.result.formatted_address);
             }).catch((err) => {
                 
             })
@@ -225,22 +246,24 @@ export default {
         //初始化车辆信息列表数据
         initVehicleInfoList(){
             for (let i = 0; i < this.carLocationInfo.length; i++) {
-                let deviceId = this.carLocationInfo[i].deviceId;
+                let phone = this.carLocationInfo[i].phone;
 
                 this.$set(this.carLocationInfo[i], 'carBrand', '');
                 this.$set(this.carLocationInfo[i], 'carSeries', '');
                 this.$set(this.carLocationInfo[i], 'driver', '');
                 this.$set(this.carLocationInfo[i], 'carNumber', '');
                 this.$set(this.carLocationInfo[i], 'driverPic', '');
+                this.$set(this.carLocationInfo[i], 'driverPhone', '');
                 this.$set(this.carLocationInfo[i], 'checked', false);
 
                 for (let j = 0; j < this.carBaseInfo.length; j++) {
-                    if(deviceId == this.carBaseInfo[j].deviceId){
+                    if(phone == this.carBaseInfo[j].deviceId){
                         this.carLocationInfo[i].carBrand = this.carBaseInfo[j].carBrand || "";
                         this.carLocationInfo[i].carSeries = this.carBaseInfo[j].carSeries || "";
                         this.carLocationInfo[i].driver = this.carBaseInfo[j].driver || "";
                         this.carLocationInfo[i].carNumber = this.carBaseInfo[j].carNumber || "";
                         this.carLocationInfo[i].driverPic = this.carBaseInfo[j].driverPic || "";
+                        this.carLocationInfo[i].driverPhone = this.carBaseInfo[j].driverPhone || "";
                         break
                     }
                 }
@@ -259,7 +282,7 @@ export default {
             this.carInfo = item;
 
             this.carLocationInfo.forEach((itemLoc) => {
-                if(itemLoc.deviceId === item.deviceId){
+                if(itemLoc.phone === item.phone){
                     itemLoc.checked = true;
                 }else{
                     itemLoc.checked = false;

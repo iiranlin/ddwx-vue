@@ -23,6 +23,7 @@
       ></right-toolbar>
     </el-row>
     <form-data
+      :formDta="formData"
       :showSearch="showSearch"
       :searchArr="property.search || []"
       @handleQuery="handleQuery"
@@ -194,6 +195,10 @@ export default {
     this.getStatusOptions();
     this.getDeptOptions();
     this.menuProperty();
+    if (this.$route.params.reqNo) {
+      this.formData = this.$route.params;
+      this.dateRange = [];
+    }
     this.getList();
   },
   mounted() {

@@ -533,7 +533,7 @@ import { getAvailableDriver } from "@/api/gcjcDriverClass";
 import { getAllAvailableCar } from "@/api/car";
 import { vehicleInfoGetAssignCount } from "@/api/vehicleInfo";
 import { saveOrderDispatch } from "@/api/gcywVehicleRequest";
-import formAddress from "@/views/car/apply/components/formAddress";
+import formAddress from "./components/formAddress";
 import getDict from "@/views/mixins/getDict";
 import { limitInput, numToFixed2 } from '@/utils/index';
 import { getCookie } from '@/utils/auth';

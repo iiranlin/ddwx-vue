@@ -378,7 +378,7 @@ export default {
     },
 }
 </script>
-<style lang="scss" soped>
+<style lang="scss" scoped>
 .app-container {
     padding: 10px 15px;
     overflow: auto;

@@ -31,4 +31,31 @@ export function gcywVehicleRequestHomeInfo(params) {
     })
 }
 
+//首页-获取常用菜单
+export function usemenuList(params) {
+    return request({
+        url: `${VUE_APP_BASE_prefix}/usemenu/list`,
+        method: 'get',
+        params
+    })
+}
+
+//首页-保存常用菜单
+export function usemenuSave(data) {
+    return request({
+        url: `${VUE_APP_BASE_prefix}/usemenu/save`,
+        method: 'post',
+        data
+    })
+}
+
+//首页-删除常用菜单
+export function usemenuDelete(data) {
+    return request({
+        url: `${VUE_APP_BASE_prefix}/usemenu/delete`,
+        method: 'post',
+        data
+    })
+}
+
 
