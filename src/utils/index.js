@@ -486,7 +486,7 @@ export function limitInput(value, name) {
  * 只能输入数字
  */
 export function numberInput(value, name) {
-  this.formData[name] = value.replace(/[^\d]/g, '')
+  this.formData[name] = value.replace(/[^\d-]/g, '')
 }
 
 /**
