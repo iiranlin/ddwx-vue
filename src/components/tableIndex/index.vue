@@ -20,7 +20,7 @@
       :selectable="selectable"
       v-if="selectShow"
       type="selection"
-      width="50"
+      :width="selectionWidth"
       align="center"
       fixed="left"
     />
@@ -165,6 +165,10 @@
       id: {
         type: String,
         default: 'id'
+      },
+      selectionWidth:{
+        type: Number,
+        default: 50
       },
       // 是否开启行拖拽
       isRowDrop: {

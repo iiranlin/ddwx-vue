@@ -1,7 +1,7 @@
 <template>
     <el-form ref="elForm" :model="formData" :rules="rules" label-width="95px">
         <div class="dispatch-car-container" v-for="(carItem, index) in formData.carItemlist" :key="'id' + index">
-            <template v-if="carItem.status != 6 && carItem.restatus != 1 && !carItem.id">
+            <template v-if="carItem.status != 6 && carItem.restatus != 1">
                 <el-row :gutter="24">
                     <el-col :span="7">
                         <el-form-item label="指派车辆：" :prop="`carItemlist.${index}.car`" :rules="rules.car">
@@ -14,8 +14,8 @@
                                 filterable
                                 @change="carNumberChange(index)">
                                 <el-option v-for="item in vehicleList"
-                                    :key="item.carNumber" 
-                                    :label="item.carNumber" 
+                                    :key="item.carNumber"
+                                    :label="item.carNumber"
                                     :value="item">
                                 </el-option>
                             </el-select>
@@ -39,9 +39,9 @@
                                 ref="template"
                                 @change="driverChange(index)"
                                 @visible-change="(v) => visibleChange(v, 'template',index)">
-                                <el-option v-for="item in carItem.driverList" 
-                                    :key="item.driverCode" 
-                                    :label="item.driver" 
+                                <el-option v-for="item in carItem.driverList"
+                                    :key="item.driverCode"
+                                    :label="item.driver"
                                     :value="item">
                                 </el-option>
                             </el-select>
@@ -58,13 +58,13 @@
                             <i :class="[checkRestriction(carItem.restriction,carItem.car.carNumber)==='不限行'?'i-success':'i-error']" v-if="!!carItem.restriction"></i>
                             <span>{{checkRestriction(carItem.restriction,carItem.car.carNumber)}}</span>
                         </el-form-item>
-                    </el-col> 
+                    </el-col>
                     <el-col :span="5">
                         <div class="button-delete" @click="deleteCar(index)">
                             <i class="i-delete"></i>
                             <span>删除</span>
                         </div>
-                    </el-col> 
+                    </el-col>
                 </el-row>
                 <el-row :gutter="24">
                     <el-col :span="7">
@@ -94,11 +94,16 @@
 </template>
 
 <script>
-import { getRGAvailableDriver } from "@/api/gcjcDriverClass";
-import { vehicleInfoGetAvailableCar, vehicleInfoIsRestriction,gcywVehicleRequestRequestTimeInfo } from "@/api/vehicleInfo";
-import { saveOrderDispatch, reassignment,gcywVehicleRequestCheckRequestInfo } from "@/api/gcywVehicleRequest";
-import tipView from './tipView.vue';
-export default {
+  import {getRGAvailableDriver} from "@/api/gcjcDriverClass";
+  import {
+    gcywVehicleRequestRequestTimeInfo,
+    vehicleInfoGetAvailableCar,
+    vehicleInfoIsRestriction
+  } from "@/api/vehicleInfo";
+  import {gcywVehicleRequestCheckRequestInfo, reassignment, saveOrderDispatch} from "@/api/gcywVehicleRequest";
+  import tipView from './tipView.vue';
+
+  export default {
      components: { tipView },
 
     data() {
@@ -160,8 +165,32 @@ export default {
 
                 if(this.buttonCode === 'sendVehicle'){      //派车
                     this.addCarItem();
+                } else {
+                    this.echoCarItem()
                 }
             })
+        },
+        //改派回显车辆
+        echoCarItem(){
+          this.row.reqAssignments.map((item, index) => {
+            let obj = {
+              driver:{},
+              car:{},
+              restriction:'',
+              driverList: [], //隐藏后的司机数据
+              originDriverList:[],    //所有的司机数据
+              moreStaus:true,     ////是否显示司机更多按钮
+              driverTipValueOptions:[],   //司机排班数据
+              carTipValueOptions:[],   //车辆排班数据
+            }
+            let carItem = this.vehicleList.filter((car) => {
+              return car.vinNumber === item.vinNumber;
+            });
+            obj.id = item.id
+            obj.car = carItem[0]
+            this.formData.carItemlist.push(obj);
+            this.carNumberChange(index, item.driverId);
+          })
         },
         //添加车辆
         addCarItem(){
@@ -172,8 +201,8 @@ export default {
                 driverList: [], //隐藏后的司机数据
                 originDriverList:[],    //所有的司机数据
                 moreStaus:true,     ////是否显示司机更多按钮
-                driverTipValueOptions:[],   //司机排班数据  
-                carTipValueOptions:[],   //车辆排班数据 
+                driverTipValueOptions:[],   //司机排班数据
+                carTipValueOptions:[],   //车辆排班数据
             }
             this.formData.carItemlist.push(obj);
 
@@ -182,7 +211,7 @@ export default {
             this.carNumberChange(this.formData.carItemlist.length-1);
         },
         //车辆信息改变回调
-        carNumberChange (index) {
+        carNumberChange (index,driver) {
             let carNumber = this.formData.carItemlist[index].car.carNumber;
 
             //清除数据
@@ -192,7 +221,7 @@ export default {
             this.formData.carItemlist[index].originDriverList = [];
             this.formData.carItemlist[index].moreStaus = false;
             this.formData.carItemlist[index].carTipValueOptions = [];
-            
+
             if(!!carNumber){
                 //查询限行信息
                 this.vehicleInfoIsRestriction(carNumber, index);
@@ -200,7 +229,7 @@ export default {
                 //获取可选司机
                 let vinNumber = this.formData.carItemlist[index].car.vinNumber;
                 if(!!vinNumber){
-                    this.getRGAvailableDriver(this.row.reassignUnitCode || this.row.assignUnitCode || this.row.deptId, this.row.usageDate,vinNumber,index);
+                    this.getRGAvailableDriver(this.row.reassignUnitCode || this.row.assignUnitCode || this.row.deptId, this.row.usageDate,vinNumber,index,driver);
                 }
                 //获取车辆排班情况
                 let params = {
@@ -212,7 +241,7 @@ export default {
                         this.initCarTips(data,index);
                     }
                 }).catch((err) => {
-                    
+
                 })
             }
         },
@@ -237,7 +266,7 @@ export default {
                     this.initDriverTips(data,index);
                 }
             }).catch((err) => {
-                
+
             })
         },
         //初始化司机排班数据
@@ -257,11 +286,11 @@ export default {
             vehicleInfoIsRestriction(obj).then(({message}) => {
                 this.formData.carItemlist[index].restriction = message;
             }).catch((err) => {
-                
+
             })
         },
         //获取司机信息
-        getRGAvailableDriver (unitCode, usageDate,vinNumber,index) {
+        getRGAvailableDriver (unitCode, usageDate,vinNumber,index,driver) {
             let obj = {
                 classDateEnd: usageDate,
                 classDateStart: usageDate,
@@ -286,10 +315,20 @@ export default {
                 }
                 this.formData.carItemlist[index].driverList = driverList;
                 this.formData.carItemlist[index].originDriverList = originDriverList;
-                this.formData.carItemlist[index].driver = driverList[0];
+                if(this.buttonCode === 'sendVehicle'){      //派车
+                  this.formData.carItemlist[index].driver = driverList[0];
+                } else {
+                  let driverItem = originDriverList.filter((item) => {
+                    return item.driverCode === driver;
+                  });
+                  if (!driverList.includes(driverItem[0])) {
+                    this.handleMoreClick(index)
+                  }
+                  this.formData.carItemlist[index].driver = driverItem[0]
+                }
                 this.driverChange(index);
             }).catch((err) => {
-                
+
             })
         },
         //判断是否限行
@@ -310,9 +349,16 @@ export default {
         },
         //删除车辆
         deleteCar(index) {
-            this.formData.carItemlist.splice(index, 1);
+          if (this.buttonCode !== 'sendVehicle' && this.formData.carItemlist[index].id) {
+            this.row.reqAssignments.forEach(item => {
+              if (this.formData.carItemlist[index].id === item.id) {
+                item.restatus = "1";
+              }
+            })
+          }
+          this.formData.carItemlist.splice(index, 1);
         },
-        //保存        
+        //保存
         addRequest () {
             this.$refs.elForm.validate((valid) => {
                 if (valid) {
@@ -329,14 +375,14 @@ export default {
                             this.$modal.confirm(message +'是否继续派车？').then(() => {
                                 this.requestDispatch();
                             }).catch(() => {
-                
+
                             });
                         }else{
                             this.requestDispatch();
                         }
                     }).catch((err) => {
                         this.requestDispatch();
-                    })    
+                    })
                 }
             })
         },
@@ -348,49 +394,25 @@ export default {
             }
             //检查是否有重复司机
             for (let i = 0; i < this.formData.carItemlist.length; i++) {
-                if(!this.formData.carItemlist[i].id){
-                    let driverCode = this.formData.carItemlist[i].driver.driverCode;
+              let driverCode = this.formData.carItemlist[i].driver.driverCode;
 
-                    for (let j = i+1; j < this.formData.carItemlist.length; j++) {
-                        if(!this.formData.carItemlist[j].id){
-                            if(driverCode === this.formData.carItemlist[j].driver.driverCode){
-                                this.$modal.msgWarning('指派司机不能重复，请重新选择!');
-                                return
-                            }
-                        }
-                    }
+              for (let j = i+1; j < this.formData.carItemlist.length; j++) {
+                if(driverCode === this.formData.carItemlist[j].driver.driverCode){
+                  this.$modal.msgWarning('指派司机不能重复，请重新选择!');
+                  return
                 }
+              }
             }
             //检查是否有重复车辆
             for (let i = 0; i < this.formData.carItemlist.length; i++) {
-                if(!this.formData.carItemlist[i].id){
-                    let carNumber = this.formData.carItemlist[i].car.carNumber;
+              let carNumber = this.formData.carItemlist[i].car.carNumber;
 
-                    for (let j = i+1; j < this.formData.carItemlist.length; j++) {
-                        if(!this.formData.carItemlist[j].id){
-                            if(carNumber === this.formData.carItemlist[j].car.carNumber){
-                                this.$modal.msgWarning('指派车辆不能重复，请重新选择!');
-                                return
-                            }
-                        }
-                    }
+              for (let j = i+1; j < this.formData.carItemlist.length; j++) {
+                if(carNumber === this.formData.carItemlist[j].car.carNumber){
+                  this.$modal.msgWarning('指派车辆不能重复，请重新选择!');
+                  return
                 }
-            }
-            if(this.buttonCode !== 'sendVehicle'){
-                 //检查是否与改派前的车辆重复
-                for (let i = 0; i < this.formData.carItemlist.length; i++) {
-                    if(!this.formData.carItemlist[i].id){
-                        let carNumber = this.formData.carItemlist[i].car.carNumber;
-                        let driverCode = this.formData.carItemlist[i].driver.driverCode;
-
-                        for (let j = 0; j < this.row.reqAssignments.length; j++) {
-                            if(carNumber==this.row.reqAssignments[j].carNumber && driverCode==this.row.reqAssignments[j].driverId){
-                                this.$modal.msgWarning('派车信息重复，请重新选择!');
-                                return
-                            }
-                        }
-                    }
-                }
+              }
             }
             let obj = {
                 status: this.row.status,
@@ -407,37 +429,92 @@ export default {
                 toAddr: this.row.toAddr,
                 reqAssignments: []
             }
-            this.formData.carItemlist.forEach( (item) => {
-                obj.reqAssignments.push(
+            if(this.buttonCode !== 'sendVehicle'){
+              let num = 0
+              let carArr = []
+              this.formData.carItemlist.forEach(item => {
+                carArr.push(item.id)
+              })
+              for (let j = 0; j < this.row.reqAssignments.length; j++) {
+                if (!carArr.includes(this.row.reqAssignments[j].id) && this.row.reqAssignments[j].restatus === '1') {
+                  obj.reqAssignments.push(this.row.reqAssignments[j]);
+                }
+              }
+              outerLoop:
+              for (let i = 0; i < this.formData.carItemlist.length; i++) {
+                  let carNumber = this.formData.carItemlist[i].car.carNumber;
+                  let driverCode = this.formData.carItemlist[i].driver.driverCode;
+                  for (let j = 0; j < this.row.reqAssignments.length; j++) {
+                    if (this.formData.carItemlist[i].id === this.row.reqAssignments[j].id) {
+                      if (carNumber===this.row.reqAssignments[j].carNumber && driverCode===this.row.reqAssignments[j].driverId) {
+                        num++
+                        continue outerLoop
+                      }
+                      if (carNumber!==this.row.reqAssignments[j].carNumber || driverCode!==this.row.reqAssignments[j].driverId) {
+                        this.row.reqAssignments[j].restatus = "1";
+                        obj.reqAssignments.push(this.row.reqAssignments[j]);
+                        obj.reqAssignments.push(
+                          {
+                            id: null,
+                            restatus: this.formData.carItemlist[i].restatus || null,
+                            driver: this.formData.carItemlist[i].driver.realName,
+                            driverId: this.formData.carItemlist[i].driver.driverCode,
+                            driverPhone: this.formData.carItemlist[i].driver.phone,
+                            beginMiles: this.formData.carItemlist[i].car.startMiles,
+                            carNumber: this.formData.carItemlist[i].car.carNumber,
+                            conditionDesc: this.formData.carItemlist[i].car.conditionDesc,
+                            vinNumber: this.formData.carItemlist[i].car.vinNumber,
+                          })
+                        continue outerLoop
+                      }
+                    }
+                  }
+                  obj.reqAssignments.push(
                     {
-                        id: item.id || null,
-                        restatus: item.restatus || null,
-                        driver: item.driver.realName,
-                        driverId: item.driver.driverCode,
-                        driverPhone: item.driver.phone,
-                        beginMiles: item.car.startMiles,
-                        carNumber: item.car.carNumber,
-                        conditionDesc: item.car.conditionDesc,
-                        vinNumber: item.car.vinNumber,
+                      id: null,
+                      restatus: this.formData.carItemlist[i].restatus || null,
+                      driver: this.formData.carItemlist[i].driver.realName,
+                      driverId: this.formData.carItemlist[i].driver.driverCode,
+                      driverPhone: this.formData.carItemlist[i].driver.phone,
+                      beginMiles: this.formData.carItemlist[i].car.startMiles,
+                      carNumber: this.formData.carItemlist[i].car.carNumber,
+                      conditionDesc: this.formData.carItemlist[i].car.conditionDesc,
+                      vinNumber: this.formData.carItemlist[i].car.vinNumber,
                     })
-            })
+              }
+              if (num === this.formData.carItemlist.length && this.formData.carItemlist.length === this.row.reqAssignments.length) {
+                this.$modal.msgWarning('派车信息无变化，请重新选择!');
+                return
+              }
+            } else {
+              this.formData.carItemlist.forEach( (item) => {
+                obj.reqAssignments.push(
+                  {
+                    id: item.id || null,
+                    restatus: item.restatus || null,
+                    driver: item.driver.realName,
+                    driverId: item.driver.driverCode,
+                    driverPhone: item.driver.phone,
+                    beginMiles: item.car.startMiles,
+                    carNumber: item.car.carNumber,
+                    conditionDesc: item.car.conditionDesc,
+                    vinNumber: item.car.vinNumber,
+                  })
+              })
+            }
             if(this.buttonCode == 'sendVehicle'){
                 saveOrderDispatch(obj).then( ({message}) => {
                     this.$modal.msgSuccess(message);
                     this.$router.push({name:'workspace'});
                 }).catch((err) => {
-                    
+
                 })
             }else{
-                this.row.reqAssignments.forEach((item) => {
-                    item.restatus = "1";
-                    obj.reqAssignments.push(item);
-                })
                 reassignment(obj).then( ({message}) => {
                     this.$modal.msgSuccess(message);
                     this.$router.push({name:'workspace'});
                 }).catch((err) => {
-                    
+
                 })
             }
         },
@@ -453,7 +530,7 @@ export default {
                         const el = document.createElement("div");
                         el.className = "el-template-more";
                         // el.style ="line-height:50px;padding:0; color:#ffffff;";
-                        el.style.lineHeight = 50 + 'px';   
+                        el.style.lineHeight = 50 + 'px';
                         el.style.padding = 0 ;
                         el.style.color = "#ffffff" ;
                         el.innerHTML =`<span id='more' style="color:#409EFF;font-size:14px;font-weight:600;float:right;margin-right:20px;cursor:pointer;">更多司机</span>`;
@@ -494,7 +571,7 @@ export default {
         height: 16px;
         background-size: cover;
         background-position: center;
-        transform: translateY(2px);  
+        transform: translateY(2px);
     }
     .button-delete {
         width: 100px;

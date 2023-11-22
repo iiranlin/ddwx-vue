@@ -46,9 +46,9 @@
                                 clearable
                                 filterable
                                 size="small">
-                                <el-option v-for="item in reasonOptions" 
-                                    :key="item.code" 
-                                    :label="item.name" 
+                                <el-option v-for="item in reasonOptions"
+                                    :key="item.code"
+                                    :label="item.name"
                                     :value="item.code">
                                 </el-option>
                             </el-select>
@@ -63,8 +63,8 @@
                                 filterable
                                 size="small">
                                 <el-option v-for="item in demandOptions"
-                                    :key="item.code" 
-                                    :label="item.name" 
+                                    :key="item.code"
+                                    :label="item.name"
                                     :value="item.code">
                                 </el-option>
                             </el-select>
@@ -79,8 +79,8 @@
                                 filterable
                                 size="small">
                                 <el-option v-for="item in longDistanceTagOptions"
-                                    :key="item.code" 
-                                    :label="item.name" 
+                                    :key="item.code"
+                                    :label="item.name"
                                     :value="item.code">
                                 </el-option>
                             </el-select>
@@ -100,8 +100,8 @@
                                 filterable
                                 size="small">
                                 <el-option v-for="item in hopeBrandOptions"
-                                    :key="item.code" 
-                                    :label="item.name" 
+                                    :key="item.code"
+                                    :label="item.name"
                                     :value="item.code">
                                 </el-option>
                             </el-select>
@@ -116,8 +116,8 @@
                                 filterable
                                 size="small">
                                 <el-option v-for="item in guaranteeOptions"
-                                    :key="item.code" 
-                                    :label="item.name" 
+                                    :key="item.code"
+                                    :label="item.name"
                                     :value="item.code">
                                 </el-option>
                             </el-select>
@@ -251,21 +251,23 @@ export default {
             if (!value) {
                 return callback(new Error('请填写手机号码'));
             }
-            if(!this.pattern.test(value)){
-                return callback(new Error('手机号码格式有误,请输入正确的手机号码!'));
+            if(this.pattern.test(value) || this.mobPattern.test(value)){
+              return callback()
             }
-            return callback()
+            return callback(new Error('手机/固话号码格式有误,请输入正确的手机/固话号码!'));
         };
         return {
             //手机号验证规则
             pattern: /^1[3456789]\d{9}$/,
+            // 固定电话校验
+            mobPattern: /^((0\d{2,3})-)?(\d{5,8})$/,
             //遮罩层
             loading:false,
             //规则api
             limitInput: limitInput,
             numberInput: numberInput,
 
-            //表单数据            
+            //表单数据
             formData:{
                 usageDate:this.parseTime(new Date().getTime(),'{y}-{m}-{d}'),   //用车日期
                 reasonCode:'4',      //用车事由
@@ -294,7 +296,7 @@ export default {
             //车辆总数
             tasscount: 0,
             //周起始日期
-            assignTimey: undefined, 
+            assignTimey: undefined,
             //周结束日期
             assignTimer: undefined,
             //日期数据
@@ -489,7 +491,7 @@ export default {
             await userListAllForDept().then(({ data }) => {
                 this.unitOptions = data;
                 this.loading = false;
-            
+
             }).catch((err) => {
                 this.loading = false;
             })
@@ -586,7 +588,7 @@ export default {
         handleEnterClick(){
             //判断是否重复
             let result = this.defaultCheckedUser.some((item) => {
-                return !item.id && item.realName === this.inputUserName; 
+                return !item.id && item.realName === this.inputUserName;
             })
             if(result){
                 this.$modal.msgWarning("乘车人已存在，请重新选择!")
@@ -748,7 +750,7 @@ export default {
                 }
                 this.$router.push({name:'myCar'});
             }).catch((err) => {
-                
+
             })
         },
         //关闭当前页面
@@ -844,7 +846,7 @@ export default {
                     font-size: 12px;
                     display: flex;
                     color: #000000;
-                } 
+                }
                 .li-item-all {
                     min-width: 100%;
                 }
@@ -892,7 +894,7 @@ export default {
     }
     ::v-deep .el-input__icon {
         color:#409EFF;
-        
+
         &:hover {
             cursor: pointer;
         }
