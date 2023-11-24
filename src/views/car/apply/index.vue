@@ -177,7 +177,7 @@
                     </li>
                     <li class="li-item-time">
                         <el-form-item label="联系电话：" prop="phone">
-                            <el-input v-model="formData.phone" @input="numberInput($event,'phone')" maxlength="11" placeholder="请输入手机号码" size="small"/>
+                            <el-input v-model="formData.phone" @input="numberInput($event,'phone')" maxlength="13" placeholder="请输入手机/固话号码" size="small"/>
                         </el-form-item>
                         <el-form-item label="出发日期：" prop="usageDate">
                             <span>{{formData.usageDate}}</span>
@@ -249,7 +249,7 @@ export default {
         }
         var checkPhone = (rule, value, callback) => {
             if (!value) {
-                return callback(new Error('请填写手机号码'));
+                return callback(new Error('请填写手机/固话号码'));
             }
             if(this.pattern.test(value) || this.mobPattern.test(value)){
               return callback()

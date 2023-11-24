@@ -105,7 +105,7 @@ export default {
 
             this.$nextTick(() => {
                 this.title = "选择乘车人";
-                this.initDefaultExpanded(deptId);
+                this.initDefaultExpanded('dda2c17b1a0d4f238a4a40e17f5bc1f5');
                 this.initDefaultChecked();
             })
         },
@@ -116,7 +116,7 @@ export default {
             await userListAllForDept().then(({ data }) => {
                 this.unitOptions = data;
                 this.loading = false;
-              
+
             }).catch((err) => {
                 this.loading = false;
             })
@@ -157,7 +157,7 @@ export default {
         filterNode(value, data) {
             if (!value){
                 return true;
-            } 
+            }
             //data.属性必须对应defaultProps中label属性
             if(data.realName === null){
                  return data.deptName.indexOf(value) !== -1;
@@ -220,7 +220,7 @@ export default {
         },
         //关闭dialog回调
         handleDialogClose(){
-           
+
         }
     }
 }
@@ -234,7 +234,7 @@ export default {
     margin-top: 10px;
     height: 450px;
     overflow: auto;
-   
+
    .el-tree{
         display: inline-block;
         min-width:100% ;
@@ -269,7 +269,7 @@ export default {
         position: absolute;
         right: 200px;
         bottom: 10px;
-    }   
+    }
 }
 .input-container {
     margin-top: 10px;

@@ -120,7 +120,7 @@
         const sums = [];
         let targetColumenIndex = this.numberShow ? 1 : 0;
 
-        let notSum = ['departureDate', 'returnTime']
+        let notSum = ['departureDate', 'returnTime', 'startMiles', 'endMiles']
 
         columns.forEach((column, index) => {
           if (index === targetColumenIndex) {
