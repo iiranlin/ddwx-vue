@@ -14,8 +14,8 @@
                                 filterable
                                 @change="carNumberChange(index)">
                                 <el-option v-for="item in vehicleList"
-                                    :key="item.carNumber" 
-                                    :label="item.carNumber" 
+                                    :key="item.carNumber"
+                                    :label="item.carNumber"
                                     :value="item">
                                 </el-option>
                             </el-select>
@@ -28,7 +28,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="7">
-                        <el-form-item label="指派司机：" :prop="`carItemlist.${index}.driver`" :rules="rules.driver">                     
+                        <el-form-item label="指派司机：" :prop="`carItemlist.${index}.driver`" :rules="rules.driver">
                             <el-select
                                 v-model="carItem.driver"
                                 placeholder="请选择司机"
@@ -39,9 +39,9 @@
                                 ref="template"
                                 @change="driverChange(index)"
                                 @visible-change="(v) => visibleChange(v, 'template',index)">
-                                <el-option v-for="item in carItem.driverList" 
-                                    :key="item.driverCode" 
-                                    :label="item.driver" 
+                                <el-option v-for="item in carItem.driverList"
+                                    :key="item.driverCode"
+                                    :label="item.driver"
                                     :value="item">
                                 </el-option>
                             </el-select>
@@ -58,13 +58,13 @@
                             <i :class="[checkRestriction(carItem.restriction,carItem.car.carNumber)==='不限行'?'i-success':'i-error']" v-if="!!carItem.restriction"></i>
                             <span>{{checkRestriction(carItem.restriction,carItem.car.carNumber)}}</span>
                         </el-form-item>
-                    </el-col> 
+                    </el-col>
                     <el-col :span="5">
                         <div class="button-delete" @click="deleteCar(index)">
                             <i class="i-delete"></i>
                             <span>删除</span>
                         </div>
-                    </el-col> 
+                    </el-col>
                 </el-row>
                 <el-row :gutter="24">
                     <el-col :span="7">
@@ -136,7 +136,7 @@ export default {
         }
     },
     created() {
-        
+
     },
     methods: {
         //初始化信息
@@ -157,7 +157,7 @@ export default {
             vehicleInfoGetAvailableCar(obj, this.row.reassignUnitCode).then(({data}) => {
                 this.vehicleList = data
             }).catch((err) => {
-                
+
             })
         },
         //添加车辆
@@ -169,8 +169,8 @@ export default {
                 driverList: [], //隐藏后的司机数据
                 originDriverList:[],    //所有的司机数据
                 moreStaus:true,     //是否显示司机更多按钮
-                driverTipValueOptions:[],   //司机排班数据  
-                carTipValueOptions:[],   //车辆排班数据  
+                driverTipValueOptions:[],   //司机排班数据
+                carTipValueOptions:[],   //车辆排班数据
             }
             this.formData.carItemlist.push(obj);
 
@@ -189,7 +189,7 @@ export default {
             this.formData.carItemlist[index].originDriverList = [];
             this.formData.carItemlist[index].moreStaus = false;
             this.formData.carItemlist[index].carTipValueOptions = [];
-            
+
             if(!!carNumber){
                 //查询限行信息
                 this.vehicleInfoIsRestriction(carNumber, index);
@@ -209,7 +209,7 @@ export default {
                         this.initCarTips(data,index);
                     }
                 }).catch((err) => {
-                    
+
                 })
             }
         },
@@ -234,7 +234,7 @@ export default {
                     this.initDriverTips(data,index);
                 }
             }).catch((err) => {
-                
+
             })
         },
         //初始化司机排班数据
@@ -254,7 +254,7 @@ export default {
             vehicleInfoIsRestriction(obj).then(({message}) => {
                 this.formData.carItemlist[index].restriction = message;
             }).catch((err) => {
-                
+
             })
         },
         //获取司机信息
@@ -266,6 +266,7 @@ export default {
                 flag:  0,
                 unitCode: unitCode,
                 vinNumber:vinNumber,
+                usageTime: this.row.usageTime,
             }
             getRGAvailableDriver(obj).then(({data}) => {
                 //原始数据
@@ -286,7 +287,7 @@ export default {
                 this.formData.carItemlist[index].driver = driverList[0];
                 this.driverChange(index);
             }).catch((err) => {
-                
+
             })
         },
         //判断是否限行
@@ -313,11 +314,11 @@ export default {
         getCarItemList(){
             return this.formData.carItemlist.length;
         },
-        //保存        
+        //保存
         addRequest (row) {
             this.$refs.elForm.validate((valid) => {
                 if (valid) {
-                    this.requestDispatch(row); 
+                    this.requestDispatch(row);
                 }
             })
         },
@@ -378,7 +379,7 @@ export default {
                 this.$modal.msgSuccess(message);
                 this.$router.push({name:'workspace'});
             }).catch((err) => {
-                
+
             })
         },
         visibleChange(visible,refName,index) {
@@ -393,14 +394,15 @@ export default {
                         const el = document.createElement("div");
                         el.className = "el-template-more";
                         // el.style ="line-height:50px;padding:0; color:#ffffff;";
-                        el.style.lineHeight = 50 + 'px';   
+                        el.style.lineHeight = 50 + 'px';
                         el.style.padding = 0 ;
                         el.style.color = "#ffffff" ;
-                        el.innerHTML =`<span id='more' style="color:#409EFF;font-size:14px;font-weight:600;float:right;margin-right:20px;cursor:pointer;">更多司机</span>`;
+                        el.innerHTML =`<span id='more' style="color:#409eff;font-size:14px;font-weight:600;float:right;margin-right:20px;cursor:pointer;">更多司机</span>`;
                         popper.appendChild(el);
                         let element = el.firstChild;
                         element.onclick = () => {
                             this.handleMoreClick(index);
+                            element.style.display = 'none';
                         };
                     }
                 }else{
@@ -434,9 +436,9 @@ export default {
         height: 16px;
         background-size: cover;
         background-position: center;
-        transform: translateY(2px);  
+        transform: translateY(2px);
     }
-    
+
     .button-delete {
         width: 100px;
         position: absolute;

@@ -298,6 +298,7 @@
                 flag:  0,
                 unitCode: unitCode,
                 vinNumber:vinNumber,
+                usageTime: this.row.usageTime,
             }
             getRGAvailableDriver(obj).then(({data}) => {
                 //原始数据
@@ -321,10 +322,11 @@
                   let driverItem = originDriverList.filter((item) => {
                     return item.driverCode === driver;
                   });
-                  if (!driverList.includes(driverItem[0])) {
+                  if (driverItem[0] && !driverList.includes(driverItem[0])) {
+                    this.formData.carItemlist[index].moreStaus = false;
                     this.handleMoreClick(index)
                   }
-                  this.formData.carItemlist[index].driver = driverItem[0]
+                  this.formData.carItemlist[index].driver = driverItem[0] ? driverItem[0] : driverList[0]
                 }
                 this.driverChange(index);
             }).catch((err) => {
@@ -538,6 +540,7 @@
                         let element = el.firstChild;
                         element.onclick = () => {
                             this.handleMoreClick(index);
+                            element.style.display = 'none';
                         };
                     }
                 }else{

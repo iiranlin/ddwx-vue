@@ -124,7 +124,7 @@ export default {
             //遮罩层
             loading:false,
 
-            //表单数据            
+            //表单数据
             formData:{
                 usageDate:'',   //用车日期
                 reasonCode:'',      //用车事由
@@ -237,35 +237,35 @@ export default {
         //判断用车事由
         checkReason(reasonCode){
             let obj = this.reasonOptions.find((item) => {
-                return item.code = reasonCode;
+                return item.code === reasonCode;
             })
             return !!obj?obj.name:"";
         },
         //判断用车需求
         checkDemand(demandCode){
             let obj = this.demandOptions.find((item) => {
-                return item.code = demandCode;
+                return item.code === demandCode;
             })
             return !!obj?obj.name:"";
         },
         //判断是否长途
         checkLongDistanceTag(longDistanceTag){
             let obj = this.longDistanceTagOptions.find((item) => {
-                return item.code = longDistanceTag + "";
+                return item.code === longDistanceTag + "";
             })
             return !!obj?obj.name:"";
         },
         //判断期望车型
         checkHopeBrand(hopeBrand){
             let obj = this.hopeBrandOptions.find((item) => {
-                return item.code = hopeBrand;
+                return item.code === hopeBrand;
             })
             return !!obj?obj.name:"";
         },
         //判断优先保障
         checkGuarantee(guarantee){
             let obj = this.guaranteeOptions.find((item) => {
-                return item.code = guarantee;
+                return item.code === guarantee;
             })
             return !!obj?obj.name:"";
         },
@@ -346,7 +346,7 @@ export default {
                     & span:nth-child(2) {
                         width: calc(100% - 60px);
                     }
-                } 
+                }
                 .li-item-all {
                     width: 100%;
                     font-size: 12px;
