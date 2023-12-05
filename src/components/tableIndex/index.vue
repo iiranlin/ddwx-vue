@@ -505,4 +505,7 @@
   .el-tooltip__popper {
     max-width: 50%;
   }
+  .highlight-red {
+    color: #ed4646;
+  }
 </style>

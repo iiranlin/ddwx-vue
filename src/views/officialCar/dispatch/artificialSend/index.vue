@@ -449,6 +449,7 @@ export default {
             const { data } = await deptTree({unitId:this.formData.unitCode});
             this.deptOptions = data;
             // this.formData.deptId = this.deptId;
+            // this.formData.deptId = '1101000';// 生产需要替换成这个
             this.formData.deptId = 'dda2c17b1a0d4f238a4a40e17f5bc1f5';
 
             this.vehicleInfoGetAssignCount();
