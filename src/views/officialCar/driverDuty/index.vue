@@ -81,7 +81,7 @@
         </el-select>
       </el-col>
       <el-col :span="24" style="margin-bottom:40px;">
-        <el-table max-height="300px" :data="driverData" style="width:90%;margin-left:40px;" stripe
+        <el-table max-height="301px" :data="driverData" style="width:90%;margin-left:40px;" stripe
                   border v-show="SchedulingTypeValue === '1'">
           <el-table-column label="序号" type="index" align="center"></el-table-column>
           <el-table-column label="司机姓名" prop="driver" align="center"></el-table-column>
@@ -93,7 +93,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-table max-height="300px" :data="driverData" style="width:90%;margin-left:40px;" stripe
+        <el-table max-height="301px" :data="driverData" style="width:90%;margin-left:40px;" stripe
                   border v-show="SchedulingTypeValue === '2'">
           <el-table-column label="序号" type="index" align="center"></el-table-column>
           <el-table-column label="班组名称" prop="teamsName" align="center"></el-table-column>
