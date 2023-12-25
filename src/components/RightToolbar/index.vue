@@ -22,6 +22,7 @@
             <el-checkbox style="margin-right: 15px;" v-model="number" @change="numberChange">序号</el-checkbox>
             <el-checkbox style="margin-right: 15px;" v-show="isRowDropShow" v-model="rowDropSort" @change="rowDropSortChange">行排序</el-checkbox>
             <el-button size="mini" type="text" @click="clickReset">重置</el-button>
+            <el-button size="mini" type="text" @click="clickSave">保存</el-button>
           </div>
           <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
             <draggable v-model="columnsArr" @end="onEnd">
@@ -60,11 +61,15 @@
 </template>
 <script>
   import draggable from 'vuedraggable'
+  import { mapGetters } from 'vuex'
 
   export default {
     name: "RightToolbar",
     components: {
       draggable
+    },
+    computed:{
+      ...mapGetters(["userCode"]),
     },
     data() {
       return {
@@ -98,6 +103,20 @@
     watch: {
       'columns': {
         handler: function (newColumns) {
+          //根据本地保存的配置处初始化数据
+          let cacheColumnsArr = JSON.parse(localStorage.getItem(this.userCode));
+
+          if(cacheColumnsArr !== null){
+            let cacheObj = cacheColumnsArr.find((item) => {
+                return item.pageName === this.$route.name;
+            })
+            if(!!cacheObj){
+                newColumns = cacheObj.pageColumns;
+                this.number = cacheObj.numberShow;
+                this.numberChange(cacheObj.numberShow);
+            }
+          }
+
           this.columnsArr = JSON.parse(JSON.stringify(newColumns));
           let columnsArr = [];
           newColumns.forEach(item => {
@@ -197,7 +216,57 @@
         this.$emit('handleCheckAllChange', this.columnsArr)
       },
       clickReset() {
-        this.$emit('clickReset');
+        this.$modal.confirm("是否重置已保存的配置?").then(()=>{
+          let cacheColumnsArr = JSON.parse(localStorage.getItem(this.userCode));
+
+          if(cacheColumnsArr !== null){
+              let index = cacheColumnsArr.findIndex((item) => {
+                  return item.pageName === this.$route.name;
+              })
+              if(index !== -1){
+                  cacheColumnsArr.splice(index, 1);  
+                  localStorage.setItem(this.userCode,JSON.stringify(cacheColumnsArr));
+              }
+          }
+          this.$emit('clickReset');
+        }).catch((err) => {
+          
+        })
+      },
+      clickSave(){
+        this.$modal.confirm("是否保存所选配置?").then(()=>{
+          let cacheColumnsArr = JSON.parse(localStorage.getItem(this.userCode));
+
+          if(cacheColumnsArr === null){
+              let arr = [];
+
+              let cacheObj = {
+                 numberShow:this.number,
+                 pageName:this.$route.name,
+                 pageColumns:this.columnsArr,
+              }
+              arr.push(cacheObj);
+              localStorage.setItem(this.userCode,JSON.stringify(arr));
+          }else{
+              let cacheObj = cacheColumnsArr.find((item) => {
+                  return item.pageName === this.$route.name;
+              })
+              if(!!cacheObj){
+                  cacheObj.numberShow = this.number;
+                  cacheObj.pageColumns = this.columnsArr;
+              }else{
+                  let obj = {
+                    numberShow:this.number,
+                    pageName:this.$route.name,
+                    pageColumns:this.columnsArr,
+                  }
+                  cacheColumnsArr.push(obj);
+              }
+              localStorage.setItem(this.userCode,JSON.stringify(cacheColumnsArr));
+          }
+        }).catch((err) => {
+          
+        })
       }
     },
   };

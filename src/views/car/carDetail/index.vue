@@ -51,7 +51,7 @@
                         </li>
                         <li class="li-item">
                             <span>期望车型：</span>
-                            <span>{{hopeBrandInfo}}</span>
+                            <span class="highlight-blue">{{hopeBrandInfo}}</span>
                         </li>
                         <li class="li-item">
                             <span>优先保障：</span>
@@ -468,6 +468,10 @@ export default {
         }
         .table-container {
             padding: 10px 10px 0px 10px;
+        }
+        .highlight-blue {
+            color: #458cff;
+            font-weight: 700;
         }
     }
 }

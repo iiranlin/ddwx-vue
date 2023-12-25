@@ -36,16 +36,17 @@
                 </div>
                 <div class="wait-table-container">
                     <el-table ref="eltableWait" :data="waitOptions" height="260px" :cell-style="cellStyle" @row-click="handleTableClick">
-                        <el-table-column label="任务类型" align="left" width="120px" :show-overflow-tooltip="true">
+                        <el-table-column label="任务类型" align="left" width="80px" :show-overflow-tooltip="true">
                             <template slot-scope="scope">
                                 <i></i>
                                 <span class="span-type-name">{{waitOptions[scope.$index].typeName}}</span>
                             </template>
                         </el-table-column>
-                        <el-table-column label="任务名称" prop="typeNameDesc" align="left" width="120px" :show-overflow-tooltip="true"></el-table-column>
+                        <el-table-column label="任务名称" prop="typeNameDesc" align="left" width="80px" :show-overflow-tooltip="true"></el-table-column>
                         <el-table-column label="单据号" prop="reqNo" align="left" :show-overflow-tooltip="true"></el-table-column>
-                        <el-table-column label="提交部门" prop="deptName" align="left" width="120px" :show-overflow-tooltip="true"></el-table-column>
-                        <el-table-column label="提交人" prop="userName" align="left" width="160px" :show-overflow-tooltip="true"></el-table-column>
+                        <el-table-column label="提交部门" prop="deptName" align="left" width="80px" :show-overflow-tooltip="true"></el-table-column>
+                        <el-table-column label="提交人" prop="handleUserName" align="left" width="80px" :show-overflow-tooltip="true"></el-table-column>
+                        <el-table-column label="乘车人" prop="userName" align="left" width="80px" :show-overflow-tooltip="true"></el-table-column>
                         <el-table-column label="描述" prop="statusName" align="left" :show-overflow-tooltip="true"></el-table-column>
                     </el-table>
                     <pagination

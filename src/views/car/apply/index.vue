@@ -13,6 +13,11 @@
                         <span>辆</span>
                     </li>
                     <li>
+                        <span>司机总数：</span>
+                        <span class="driver-total-number">{{driverCount}}</span>
+                        <span>人</span>
+                    </li>
+                    <li>
                         <img src="/static/icon_car.png"/>
                         <span>可用车辆数</span>
                     </li>
@@ -192,7 +197,8 @@
                                     minTime:checkMinTime(),
                                 }"
                                 placeholder="请选择出发时间"
-                                size="small">
+                                size="small"
+                                @change="handleUsageTimeChange()">
                             </el-time-select>
                         </el-form-item>
                         <el-form-item label="预计时长:" prop="timeLength">
@@ -227,6 +233,7 @@ import selectUser from './components/selectUser.vue';
 import formAddressCascader from "./components/formAddressCascader";
 import activitiAssignee from "./components/activitiAssignee";
 import { mapGetters } from 'vuex';
+import { getRGAvailableDriver } from "@/api/gcjcDriverClass";
 
 export default {
     name:'apply',
@@ -295,6 +302,8 @@ export default {
             available: 0,
             //车辆总数
             tasscount: 0,
+            //司机总数
+            driverCount: 0,
             //周起始日期
             assignTimey: undefined,
             //周结束日期
@@ -373,6 +382,7 @@ export default {
             'deptId',
             'id',
             'phone',
+            'unitCode',
         ]),
     },
     created() {
@@ -484,6 +494,25 @@ export default {
                 this.loading = false;
             })
         },
+        //获取司机数据
+        getRGAvailableDriver(){
+            let obj = {
+                classDateEnd: this.formData.usageDate,
+                classDateStart: this.formData.usageDate,
+                classId: 'none',
+                flag:  0,
+                unitCode: this.unitCode,
+                vinNumber:'',
+                usageTime: this.formData.usageTime,
+            }
+            this.loading = true;
+            getRGAvailableDriver(obj).then(({data}) => {
+                this.driverCount = data.length;
+                this.loading = false;
+            }).catch((err) => {
+                this.loading = false;
+            })
+        },
         //获取乘车人树形数据
         async getUserListAllForDept(){
             this.loading = true;
@@ -529,6 +558,8 @@ export default {
             this.formData.usageDate = val;
             this.available = available;
             this.tasscount = tasscount;
+
+            this.getRGAvailableDriver();
         },
         //初始化默认用车人
         initDefaultUser(){
@@ -695,12 +726,17 @@ export default {
                 hh = '00'
             }
             this.formData.usageTime = hh +':'+ mf;
+            this.getRGAvailableDriver();
         },
         checkMinTime(){
             if(this.formData.usageDate === this.parseTime(new Date().getTime(),'{y}-{m}-{d}')){
                 return new Date().getHours()+':'+new Date().getMinutes();
             }
             return ''
+        },
+        //选择出发时间回调
+        handleUsageTimeChange(){
+            this.getRGAvailableDriver();
         },
         //保存
         addRequest(){
@@ -804,6 +840,11 @@ export default {
                     font-weight: 600;
                     margin-right: 5px;
                 }
+                .driver-total-number {
+                    color: #4587ff;
+                    font-weight: 600;
+                    margin-right: 5px;
+                }
                 li {
                     display: flex;
                     align-items: center;
@@ -818,12 +859,15 @@ export default {
                     margin-left: 0px;
                 }
                 & li:nth-child(2) {
-                    margin-left: 100px;
+                    margin-left: 20px;
                 }
                 & li:nth-child(3) {
                     margin-left: 60px;
                 }
                 & li:nth-child(4) {
+                    margin-left: 60px;
+                }
+                & li:nth-child(5) {
                     margin-left: 60px;
                 }
             }

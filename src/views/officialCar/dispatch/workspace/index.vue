@@ -293,7 +293,7 @@ export default {
         }
         this.$router.push({ name: 'dispatchACar', query: { row: JSON.stringify(rowObj), buttonCode: buttonCode } })
       } else if (buttonCode === 'reassignment') {
-        if (('5/7/8').indexOf(rowObj.status) == -1 || rowObj.reassignStr == '1') {
+        if (('5/7/8/9').indexOf(rowObj.status) == -1 || rowObj.reassignStr == '1') {
           this.$modal.msgWarning('当前状态不能改派！')
           return
         }
@@ -313,7 +313,6 @@ export default {
         }
         this.$refs.operate.init(rowObj)
       } else if (buttonCode === 'reassignReject') {
-        console.log(('5').indexOf(rowObj.status))
         if (rowObj.reassignStr != '0' || ('5').indexOf(rowObj.status) != -1) {
           this.$modal.msgWarning('当前状态不能转派拒绝！')
         } else {
@@ -366,7 +365,7 @@ export default {
         })
       }
       for (let i = 0; i < type.length; i++) {
-        if (('4/5/7/8').indexOf(type[i].status) == -1 || ('1').indexOf(type[i].reassignStr) != -1) {
+        if (('4/5/7/8/9').indexOf(type[i].status) == -1 || ('1').indexOf(type[i].reassignStr) != -1) {
           this.$modal.msgWarning('当前状态不能取消！')
           return
         }

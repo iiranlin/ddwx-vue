@@ -158,6 +158,7 @@
   import Sortable from 'sortablejs'
   import indexMixin from '@/views/mixins'
   import {rowDropSort} from '@/api/dept'
+  import { mapGetters } from 'vuex'
 
   export default {
     name: 'tableIndex',
@@ -240,6 +241,9 @@
         default: ''
       }
     },
+    computed:{
+      ...mapGetters(["userCode"]),
+    },
     data() {
       return {
         showIf: true,
@@ -266,8 +270,24 @@
       },
       'property.fields': {
         handler: function (newFields) {
-          this.propertyFields = JSON.parse(JSON.stringify(newFields))
-          this.propertyFieldsArr = JSON.parse(JSON.stringify(newFields))
+          let cacheColumnsArr = JSON.parse(localStorage.getItem(this.userCode));
+
+          if(cacheColumnsArr === null){
+            this.propertyFields = JSON.parse(JSON.stringify(newFields))
+            this.propertyFieldsArr = JSON.parse(JSON.stringify(newFields))
+          }else{
+            let cacheObj = cacheColumnsArr.find((item) => {
+                  return item.pageName === this.$route.name;
+            })
+            if(!!cacheObj){
+              this.propertyFields = cacheObj.pageColumns;
+              this.propertyFieldsArr = cacheObj.pageColumns;
+              this.numberShow = cacheObj.numberShow;
+            }else{
+              this.propertyFields = JSON.parse(JSON.stringify(newFields))
+              this.propertyFieldsArr = JSON.parse(JSON.stringify(newFields))
+            }
+          }
         }
       },
       // showIf: {

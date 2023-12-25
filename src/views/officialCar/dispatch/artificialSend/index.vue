@@ -213,7 +213,6 @@
                                     start: '00:00',
                                     step: '00:05',
                                     end: '23:55',
-                                    minTime:checkMinTime(),
                                 }"
                                 placeholder="请选择出发时间"
                                 size="small">
