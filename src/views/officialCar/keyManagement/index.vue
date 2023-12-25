@@ -40,7 +40,7 @@
                                     {{ node.label }}
                                     <i class="el-icon-help" v-if="data.boardClassify === '1'"></i>
                                 </span>
-                                
+
                                 <span class="el-tree-node__button">
                                     <i class="el-icon-edit" @click="handleTreeNodeEditClick(node,data)"></i>
                                     <i class="el-icon-delete" @click="handleTreeNodeDeleteClick(node,data)"></i>
@@ -67,6 +67,26 @@
                         <el-button  size="mini" class="custom_button" @click="handleCancelBindClick()" :disabled="selectionData.length!==1">
                             <svg-icon icon-class="switch-button" class="svg-button-icon"></svg-icon>解绑
                         </el-button>
+                    </el-col>
+                    <el-col :span="1.5" style="margin-top:2px;margin-bottom:5px;padding:0px;" v-show="layoutType === 'table'">
+                      <el-button  size="mini" class="custom_button" @click="getKeyDialog = true" :disabled="selectionData.length!==1">
+                        <svg-icon icon-class="switch-button" class="svg-button-icon"></svg-icon>开门
+                      </el-button>
+                    </el-col>
+<!--                    <el-col :span="1.5" style="margin-top:2px;margin-bottom:5px;padding:0px;" v-show="layoutType === 'table'">-->
+<!--                      <el-button  size="mini" class="custom_button" @click="handleSetLcdClick()" :disabled="selectionData.length===0">-->
+<!--                        <svg-icon icon-class="switch-button" class="svg-button-icon"></svg-icon>设置屏显-->
+<!--                      </el-button>-->
+<!--                    </el-col>-->
+                    <el-col :span="1.5" style="margin-top:2px;margin-bottom:5px;padding:0px;" v-show="layoutType === 'table'">
+                      <el-button  size="mini" class="custom_button" @click="handleSyncKyeStateClick()" :disabled="selectionData.length===0">
+                        <svg-icon icon-class="switch-button" class="svg-button-icon"></svg-icon>同步状态
+                      </el-button>
+                    </el-col>
+                    <el-col :span="1.5" style="margin-top:2px;margin-bottom:5px;padding:0px;" v-show="layoutType === 'table'">
+                      <el-button  size="mini" class="custom_button" @click="setSeatNoDialog = true">
+                        <svg-icon icon-class="switch-button" class="svg-button-icon"></svg-icon>设置编号
+                      </el-button>
                     </el-col>
                     <right-toolbar
                         ref="rightToolbar"
@@ -120,7 +140,10 @@
                 <el-row>
                     <el-form ref="elFormTable" :inline="true" :model="formTable" style="margin-top:-5px;margin-left:10px">
                         <div class='row-container'>
-                            <el-form-item label="层数" class="table-form-item"> 
+                            <el-form-item label="起始数" class="table-form-item">
+                              <el-input v-model="formTable.startNumber" @input="numberInput($event,'startNumber')" size="mini" maxlength="3" />
+                            </el-form-item>
+                            <el-form-item label="层数" class="table-form-item">
                                 <el-input v-model="formTable.rowNumber" @input="numberInput($event,'rowNumber')" size="mini" maxlength="2" />
                             </el-form-item>
                             <el-form-item class="table-form-item-select" label-width="0">
@@ -185,6 +208,43 @@
         <list-add-key-position ref="listAddKeyPosition" @listAddKeyPositionSuccess="listAddKeyPositionSuccess"></list-add-key-position>
         <!--表格绑定车辆弹框-->
         <table-bind-car ref="tableBindCar" @tableBindCarSuccess="tableBindCarSuccess"></table-bind-car>
+        <!--取/还钥匙弹框-->
+        <el-dialog :close-on-click-modal="false" title="取/还钥匙" :visible.sync="getKeyDialog" width="600px" append-to-body center>
+          <el-form :model="getKeyForm" :rules="getKeyRules" label-width="100px" v-loading="loading">
+            <el-row :span="24" :gutter="20">
+              <el-form-item label="类型" prop="keyType">
+                <el-radio-group v-model="getKeyForm.keyType">
+                  <el-radio :label="1">取钥匙</el-radio>
+                  <el-radio :label="2">还钥匙</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-row>
+            <el-row :span="24" :gutter="20">
+              <el-form-item label="备注">
+                <el-input type="textarea" v-model="getKeyForm.remark"></el-input>
+              </el-form-item>
+            </el-row>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="handleGetKeyClickSure">确定</el-button>
+            <el-button @click="handleCancelGetKey">取消</el-button>
+          </div>
+        </el-dialog>
+        <!-- 设置设备钥匙卡扣的编号 -->
+        <el-dialog :close-on-click-modal="false" title="设置设备钥匙卡扣编号" :visible.sync="setSeatNoDialog" width="600px" append-to-body center>
+          <el-form :model="setSeatNoForm" :rules="setSeatNoRules" label-width="100px" v-loading="loading">
+            <el-row :span="24" :gutter="20">
+              <el-form-item label="新编号" prop="newNo">
+                <el-input v-model="setSeatNoForm.newNo"></el-input>
+                <span style="color: red">确定之后，请在10秒之内选择设备按下按钮</span>
+              </el-form-item>
+            </el-row>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="handleSetSeatNoClickSure">确定</el-button>
+            <el-button @click="handleCancelSetSeatNo">取消</el-button>
+          </div>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -203,7 +263,11 @@ gcywCarkeySeatDelete,
 gcywCarkeySeatUpdate2,
 gcywCarkeySeatSave,
 gwycCarkeyBoardList,
-gcywCarkeySeatDeleteAll} from "@/api/keyManagement"
+gcywCarkeySeatDeleteAll,
+  gcywOpenBoardAndKey,
+  gcywSyncKyeState,
+  gcywSetLcdAll,
+  gcywSetSeatNo,} from "@/api/keyManagement"
 
 export default {
     name:"keyManagement",
@@ -212,6 +276,29 @@ export default {
 
     data() {
         return {
+            //设备设置编号弹窗
+            setSeatNoDialog: false,
+            setSeatNoForm:{
+              newNo: "",
+            },
+            //表单校验
+            setSeatNoRules: {
+              newNo: [
+                {required: true, message: "新编号不能为空", trigger: "blur"}
+              ],
+            },
+            //取钥匙弹窗
+            getKeyDialog: false,
+            getKeyForm:{
+              keyType: 1,
+              remark: "",
+            },
+            //表单校验
+            getKeyRules: {
+              keyType: [
+                {required: true, message: "请选择类型", trigger: "blur"}
+              ],
+            },
             numberShow: false,
             //输入框数字限制
             numberInput: numberInput,
@@ -261,18 +348,19 @@ export default {
             total:0,
             //表格生成参数
             formTable:{
+                startNumber:'1',
                 rowNumber:'6',
-                rowLanguage:'0',
+                rowLanguage:'1',
                 rowSort:'0',
                 columnNumber:'10',
                 columnLanguage:'1',
                 columnSort:'0',
             },
             languageOptions:[
-                {
-                    code:'0',
-                    value:'字母',
-                },
+                // {
+                //     code:'0',
+                //     value:'字母',
+                // },
                 {
                     code:'1',
                     value:'数字',
@@ -283,10 +371,10 @@ export default {
                     code:'0',
                     value:'正序',
                 },
-                {
-                    code:'1',
-                    value:'倒序',
-                }
+                // {
+                //     code:'1',
+                //     value:'倒序',
+                // }
             ],
             //表格数据
             keyPositionData:[],
@@ -362,8 +450,9 @@ export default {
                     this.layoutType = 'empty'
 
                     if(!type){      //表格重新生成删除所有数据，不需要初始化
+                        this.formTable.startNumber = '1';
                         this.formTable.rowNumber = '6';
-                        this.formTable.rowLanguage = '0';
+                        this.formTable.rowLanguage = '1';
                         this.formTable.rowSort = '0';
                         this.formTable.columnNumber = '10';
                         this.formTable.columnLanguage = '1';
@@ -384,6 +473,7 @@ export default {
                     let screenParams = JSON.parse(tableLayout.screenParams);
                     let tableParams = JSON.parse(tableLayout.tableParams);
 
+                    this.formTable.startNumber = screenParams.startNumber;
                     this.formTable.rowNumber = screenParams.rowNumber;
                     this.formTable.rowLanguage = screenParams.rowLanguage;
                     this.formTable.rowSort = screenParams.rowSort;
@@ -460,14 +550,14 @@ export default {
                 this.originalData = undefined;
             }
             this.treeLoading = true;
-                
+
             let params = {
                 id:data.id,
                 name:data.name,
             }
             gwycCarkeyBoardUpdate(params).then((res) => {
                 this.treeLoading = false;
-                
+
                 // 退出编辑状态
                 if (node.isEdit) {
                     this.$set(node, "isEdit", false);
@@ -482,7 +572,7 @@ export default {
             if(data.classify === '0'){
                 this.$modal.confirm('是否删除当前场地?').then(() => {
                     this.loading = true;
-                    
+
                     let params = {
                         areaId:data.id,
                         isDelete:'1',
@@ -552,7 +642,7 @@ export default {
             }else if(buttonCode === 'delete'){
                 this.$modal.confirm('是否删除当前钥匙位?').then(() => {
                     this.loading = true;
-                    
+
                     let params = {
                         id:this.selectionData[0].id,
                         boardId:this.selectionData[0].boardId,
@@ -579,7 +669,7 @@ export default {
                 this.$modal.confirm('重新生成表格将会清空所有已绑定数据，是否生成?').then(() => {
 
                     this.loading = true;
-                    
+
                     let params = {
                         boardId:this.formData.boardId,
                     }
@@ -588,7 +678,7 @@ export default {
                         this.$modal.msgSuccess(message)
 
                         this.getList('deleteAll');
-                        this.generateTable();
+                        this.generateTable2();
                     }).catch((err) => {
                         this.loading = false;
                     })
@@ -596,7 +686,7 @@ export default {
 
                 });
             }else {
-                 this.generateTable();
+                 this.generateTable2();
             }
         },
         //生成表格
@@ -621,7 +711,7 @@ export default {
             let cols = this.formTable.columnNumber * 1;
             let arr = []
 
-            let AescTempLetters = [];   
+            let AescTempLetters = [];
             let DescTempLetters = [];
 
             if(this.formTable.rowLanguage === '0'){
@@ -635,8 +725,8 @@ export default {
             for (let i = 0; i < rows; i++) {
                 arr[i] = []
                 for (let j = 0; j < cols; j++) {
-                    //层：字母 正序   列：数字 正序 
-                    if(this.formTable.rowLanguage === '0' && this.formTable.columnLanguage == '1' 
+                    //层：字母 正序   列：数字 正序
+                    if(this.formTable.rowLanguage === '0' && this.formTable.columnLanguage == '1'
                         && this.formTable.rowSort === '0' && this.formTable.columnSort === '0'){
                         arr[i][j] = {
                             position: AescTempLetters[i] + j,
@@ -644,8 +734,8 @@ export default {
                             vinNumber:'',
                         }
                     }
-                    //层：字母 倒序   列：数字 正序 
-                    if(this.formTable.rowLanguage === '0' && this.formTable.columnLanguage == '1' 
+                    //层：字母 倒序   列：数字 正序
+                    if(this.formTable.rowLanguage === '0' && this.formTable.columnLanguage == '1'
                         && this.formTable.rowSort === '1' && this.formTable.columnSort === '0'){
                         arr[i][j] = {
                             position: DescTempLetters[i] + j,
@@ -653,8 +743,8 @@ export default {
                             vinNumber:'',
                         }
                     }
-                    //层：字母 正序  列：数字 倒序 
-                    if(this.formTable.rowLanguage === '0' && this.formTable.columnLanguage == '1' 
+                    //层：字母 正序  列：数字 倒序
+                    if(this.formTable.rowLanguage === '0' && this.formTable.columnLanguage == '1'
                         && this.formTable.rowSort === '0' && this.formTable.columnSort === '1'){
                         arr[i][j] = {
                             position: AescTempLetters[i] + (cols-j-1),
@@ -662,8 +752,8 @@ export default {
                             vinNumber:'',
                         }
                     }
-                     //层：字母 倒序  列：数字 倒序 
-                    if(this.formTable.rowLanguage === '0' && this.formTable.columnLanguage == '1' 
+                     //层：字母 倒序  列：数字 倒序
+                    if(this.formTable.rowLanguage === '0' && this.formTable.columnLanguage == '1'
                         && this.formTable.rowSort === '1' && this.formTable.columnSort === '1'){
                         arr[i][j] = {
                             position: DescTempLetters[i] + (cols-j-1),
@@ -711,6 +801,44 @@ export default {
             }
             this.keyPositionData = arr;
         },
+        //生成表格2
+        generateTable2(){
+          if(!this.formTable.rowNumber || this.formTable.rowNumber === '0'){
+            this.$modal.msgWarning('层数不能为0或者空，请重新输入!');
+            return
+          }
+          if(!this.formTable.columnNumber || this.formTable.columnNumber === '0'){
+            this.$modal.msgWarning('列数不能为0或者空，请重新输入!');
+            return
+          }
+          if(this.formTable.rowNumber > 26 || this.formTable.columnNumber > 26){
+            this.$modal.msgWarning('层数或列数不能大于26，请重新输入!');
+            return
+          }
+          let rows = this.formTable.rowNumber * 1;
+          let cols = this.formTable.columnNumber * 1;
+          let arr = []
+          let num = this.formTable.startNumber * 1;
+          let strNum = ''
+          for (let i = 0; i < rows; i++) {
+            arr[i] = []
+            for (let j = 0; j < cols; j++) {
+              if(num < 10){
+                strNum = '0' + num
+              } else {
+                strNum = num
+              }
+              arr[i][j] = {
+                position: strNum,
+                carNumber: '双击绑定车辆',
+                vinNumber: '',
+                boxNo: '',
+              }
+              num++
+            }
+          }
+          this.keyPositionData = arr
+        },
         //表格双击绑定
         handleDbClick(index,childIndex,childItem){
             this.parentIndex = index;
@@ -739,7 +867,7 @@ export default {
             this.$modal.confirm('是否取消绑定当前钥匙位?').then(() => {
                 if(this.dataList.length === 1){
                     this.loading = true;
-                    
+
                     let params = {
                         boardId:this.selectionData[0].boardId,
                     }
@@ -777,7 +905,7 @@ export default {
                         this.loading = false;
                         this.$modal.msgSuccess(message)
                         this.getList();
-                    }).catch((err) => { 
+                    }).catch((err) => {
                         this.loading = false;
                         this.getList();
                     })
@@ -785,6 +913,80 @@ export default {
             }).catch(() => {
 
             });
+        },
+        // 存/取钥匙
+        handleGetKeyClickSure(){
+          if(this.selectionData.length === 1){
+            this.loading = true;
+            let params = {
+              boxNo:this.selectionData[0].boxNo,
+              seatName:this.selectionData[0].name,
+              carNumber:this.selectionData[0].carNumber,
+              vinNumber:this.selectionData[0].vinNumber,
+              id:this.selectionData[0].id,
+              keyType:this.getKeyForm.keyType,
+              remark:this.getKeyForm.remark,
+            }
+            gcywOpenBoardAndKey(params).then(({message}) => {
+              this.loading = false;
+              this.$modal.msgSuccess(message)
+              this.handleCancelGetKey()
+              setTimeout(() => {
+                this.getList();
+              }, 10000);
+            }).catch((err) => {
+              this.loading = false;
+            })
+          }
+        },
+        handleCancelGetKey(){
+          this.getKeyDialog = false
+          this.getKeyForm = {
+            keyType: 1,
+            remark: "",
+          }
+        },
+        // 设置屏显
+        handleSetLcdClick(){
+          if(this.selectionData.length !== 0){
+            this.loading = true;
+            gcywSetLcdAll(this.selectionData).then(({message}) => {
+              this.loading = false;
+              this.$modal.msgSuccess(message)
+            }).catch((err) => {
+              this.loading = false;
+            })
+          }
+        },
+        // 同步钥匙位上钥匙存取状态
+        handleSyncKyeStateClick(){
+          if(this.selectionData.length !== 0){
+            this.loading = true;
+            gcywSyncKyeState(this.selectionData).then(({message}) => {
+              this.loading = false;
+              this.$modal.msgSuccess(message)
+              this.getList();
+            }).catch((err) => {
+              this.loading = false;
+            })
+          }
+        },
+        // 设置设备钥匙卡扣的编号
+        handleSetSeatNoClickSure(){
+          this.loading = true;
+          gcywSetSeatNo(this.setSeatNoForm).then(({message}) => {
+            this.loading = false;
+            this.$modal.msgSuccess(message)
+            this.handleCancelSetSeatNo()
+          }).catch((err) => {
+            this.loading = false;
+          })
+        },
+        handleCancelSetSeatNo(){
+          this.setSeatNoDialog = false
+          this.setSeatNoForm = {
+            newNo: "",
+          }
         },
         //顶部列字段展示
         handleCheckAllChange(columns){
@@ -875,7 +1077,7 @@ export default {
         position: absolute;
         right: 10px;
         top: 10px;
-        
+
         .el-icon-edit {
             color: #66b1ff;
             margin-right: 5px;
@@ -920,9 +1122,9 @@ export default {
         margin-left: 40px;
         display: inline-block;
     }
-   
+
     .table-form-item {
-        width: 110px;
+        width: 125px;
 
         ::v-deep .el-form-item__content {
             width: 70px;

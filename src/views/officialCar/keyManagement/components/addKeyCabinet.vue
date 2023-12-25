@@ -5,9 +5,9 @@
                 <el-col :span="24" >
                     <el-form-item label="分类：" prop="classify">
                         <el-select v-model="form.classify" placeholder="请选择分类" style="width:100%">
-                            <el-option v-for="(item,index) in classifyOptions" 
-                                :key="index" 
-                                :label="item.value" 
+                            <el-option v-for="(item,index) in classifyOptions"
+                                :key="index"
+                                :label="item.value"
                                 :value="item.code"
                                 @click.native="handleClassifyChange(item)">
                             </el-option>
@@ -17,9 +17,9 @@
                 <el-col :span="24" v-if="!areaFlag">
                     <el-form-item label="场地：" prop="areaId">
                         <el-select v-model="form.areaId" placeholder="请选择场地" style="width:100%">
-                            <el-option v-for="(item,index) in areaOptions" 
-                                :key="index" 
-                                :label="item.name" 
+                            <el-option v-for="(item,index) in areaOptions"
+                                :key="index"
+                                :label="item.name"
                                 :value="item.id">
                             </el-option>
                         </el-select>
@@ -33,9 +33,9 @@
                 <el-col :span="24" v-if="!areaFlag">
                     <el-form-item label="类型：" prop="boardClassify">
                         <el-select v-model="form.boardClassify" placeholder="请选择类型" style="width:100%">
-                            <el-option v-for="(item,index) in boardClassifyOptions" 
-                                :key="index" 
-                                :label="item.value" 
+                            <el-option v-for="(item,index) in boardClassifyOptions"
+                                :key="index"
+                                :label="item.value"
                                 :value="item.code">
                             </el-option>
                         </el-select>
@@ -108,7 +108,6 @@ export default {
                 boardClassify:[
                     {required:true,message:"请选择类型!",trigger:"change"}
                 ],
-                
             }
         }
     },
@@ -175,8 +174,8 @@ export default {
                             boardClassify:this.form.boardClassify,
                         }
                         this.postGwycCarkeyBoardSave(params);
-                    } 
-                } 
+                    }
+                }
             })
         },
         //取消

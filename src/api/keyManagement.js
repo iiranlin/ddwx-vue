@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+
 let VUE_APP_BASE_PREFIX = process.env.VUE_APP_AUTH_SERVER;
 
 // 车辆钥匙柜-树
@@ -12,20 +13,20 @@ export function gwycCarkeyBoardTree(params) {
 
 //车辆钥匙柜-查询
 export function gwycCarkeyBoardList(params) {
-    return request({
-      url: `${VUE_APP_BASE_PREFIX}/gwycCarkeyBoard/list`,
-      method: 'get',
-      params
-    })
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/gwycCarkeyBoard/list`,
+    method: 'get',
+    params
+  })
 }
 
 //车辆钥匙柜-增加
 export function gwycCarkeyBoardSave(data) {
-    return request({
-      url: `${VUE_APP_BASE_PREFIX}/gwycCarkeyBoard/save`,
-      method: 'post',
-      data
-    })
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/gwycCarkeyBoard/save`,
+    method: 'post',
+    data
+  })
 }
 
 //车辆钥匙柜-修改
@@ -91,3 +92,38 @@ export function gcywCarkeySeatDeleteAll(data) {
   })
 }
 
+//车辆钥匙位-开门取钥匙
+export function gcywOpenBoardAndKey(data) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/gwycCarkeyBoard/openBoardAndKey`,
+    method: 'post',
+    data
+  })
+}
+
+//车辆钥匙位-同步钥匙位上钥匙状态 多选
+export function gcywSyncKyeState(data) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/gcywCarkeySeat/syncKyeState`,
+    method: 'post',
+    data
+  })
+}
+
+//车辆钥匙位-设置屏显 多选
+export function gcywSetLcdAll(data) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/gcywCarkeySeat/setLcdAll`,
+    method: 'post',
+    data
+  })
+}
+
+//车辆钥匙位-设置设备编号
+export function gcywSetSeatNo(params) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/gcywCarkeySeat/setSeatNo`,
+    method: 'get',
+    params
+  })
+}

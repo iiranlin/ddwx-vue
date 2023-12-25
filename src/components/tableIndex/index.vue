@@ -87,7 +87,8 @@
           <span v-else-if="propertyFieldsArr[index].fieldType === 'dict'"
                 :class="[propertyFieldsArr[index].fieldCode === 'guarantee' && scope.row[propertyFieldsArr[index].fieldCode] !=='0'?'highlight-red':'',
                    menuName === 'workspace' && propertyFieldsArr[index].fieldCode === 'status' && scope.row[propertyFieldsArr[index].fieldCode] ===4 ?'highlight-red':'',
-                   menuName === 'examineCar' && propertyFieldsArr[index].fieldCode === 'status' && scope.row[propertyFieldsArr[index].fieldCode] ===2 ?'highlight-red':'']">
+                   menuName === 'examineCar' && propertyFieldsArr[index].fieldCode === 'status' && scope.row[propertyFieldsArr[index].fieldCode] ===2 ?'highlight-red':'',
+                   propertyFieldsArr[index].fieldCode === 'keyState' && scope.row[propertyFieldsArr[index].fieldCode] ===1 ?'highlight-red':'']">
             {{
               scope.row[propertyFieldsArr[index].fieldCode]
                 | fieldFormat(propertyFieldsArr[index].fieldFormatArr)

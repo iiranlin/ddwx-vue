@@ -10,14 +10,19 @@
                 <el-col :span="24">
                     <el-form-item label="选择车辆：" prop="vinNumber">
                         <el-select v-model="form.vinNumber" placeholder="请选择车辆" style="width:100%">
-                            <el-option v-for="(item,index) in carOptions" 
-                                :key="index" 
-                                :label="item.carNumber" 
+                            <el-option v-for="(item,index) in carOptions"
+                                :key="index"
+                                :label="item.carNumber"
                                 :value="item.vinNumber"
                                 @click.native="handleCarChange(item)">
                             </el-option>
                         </el-select>
                     </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item label="箱门号：" prop="boxNo">
+                    <el-input v-model="form.boxNo"></el-input>
+                  </el-form-item>
                 </el-col>
             </el-row>
        </el-form>
@@ -53,11 +58,15 @@ export default {
                 carNumber:'',
                 vinNumber:'',
                 position:'',
+                boxNo:'',
             },
             //表单校验
             rules:{
                 vinNumber:[
                     {required:true,message:"请选择车辆!",trigger:"change"}
+                ],
+                boxNo:[
+                    {required:true,message:"请输入箱门号",trigger:"change"}
                 ],
             },
             //表格生成参数
@@ -96,7 +105,7 @@ export default {
                     this.form.isBindCarNumber = obj.carNumber;
                     this.form.carNumber = obj.carNumber;
                     this.form.vinNumber = obj.vinNumber;
-                   
+                    this.form.boxNo = obj.boxNo
                 }
                 this.getCarOptions();
             })
@@ -122,6 +131,7 @@ export default {
                 if (valid) {
                     this.keyPositionData[this.parentIndex][this.childIndex].carNumber = this.form.carNumber;
                     this.keyPositionData[this.parentIndex][this.childIndex].vinNumber = this.form.vinNumber;
+                    this.keyPositionData[this.parentIndex][this.childIndex].boxNo = this.form.boxNo;
 
                     let tableLayout = {
                         screenParams:JSON.stringify(this.formTable),
@@ -135,6 +145,8 @@ export default {
                             boardId:this.boardId,
                             name:this.form.position,
                             vinNumber:this.form.vinNumber,
+                            carNumber:this.form.carNumber,
+                            boxNo:this.form.boxNo,
                             boardPoint:JSON.stringify(tableLayout),
                         }
 
@@ -143,7 +155,7 @@ export default {
                             this.openDataScope = false;
                             this.$modal.msgSuccess(message)
                             this.$emit('tableBindCarSuccess');
-                        }).catch((err) => { 
+                        }).catch((err) => {
                             this.loading = false;
                             this.openDataScope = false;
                             this.$emit('tableBindCarSuccess');
@@ -154,6 +166,8 @@ export default {
                             boardId:this.boardId,
                             name:this.form.position,
                             vinNumber:this.form.vinNumber,
+                            carNumber:this.form.carNumber,
+                            boxNo:this.form.boxNo,
                             boardPoint:JSON.stringify(tableLayout),
                         }
                         gcywCarkeySeatSave(params).then(({message}) => {
@@ -167,7 +181,7 @@ export default {
                             this.$emit('tableBindCarSuccess','error');
                         })
                     }
-                } 
+                }
             })
         },
         //取消
@@ -180,6 +194,7 @@ export default {
             this.form.carNumber = '';
             this.form.vinNumber = '';
             this.form.position = '';
+            this.form.boxNo = '';
             this.formTable = {};
             this.keyPositionData = [];
             this.parentIndex = '';
