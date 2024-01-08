@@ -850,7 +850,8 @@ export default {
                 this.formTable,
                 this.keyPositionData,
                 this.formData.areaId,
-                this.formData.boardId);
+                this.formData.boardId,
+                this.currentTreeData.boardClassify);
         },
         //表格绑定车辆成功回调
         tableBindCarSuccess(type){
@@ -876,7 +877,7 @@ export default {
                         this.$modal.msgSuccess(message)
 
                         this.getList('deleteAll');
-                        this.generateTable();
+                        this.generateTable2();
                     }).catch((err) => {
                         this.loading = false;
                     })

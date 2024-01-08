@@ -20,7 +20,7 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="24">
-                  <el-form-item label="箱门号：" prop="boxNo">
+                  <el-form-item label="箱门号：" prop="boxNo" v-if="boardClassify !== '0'">
                     <el-input v-model="form.boxNo"></el-input>
                   </el-form-item>
                 </el-col>
@@ -81,6 +81,8 @@ export default {
             areaId:'',
             //钥匙柜id
             boardId:'',
+            //钥匙柜类型
+            boardClassify:'0',   //0普通 1智能
         }
     },
     created(){
@@ -88,7 +90,7 @@ export default {
     },
     methods:{
         //初始化
-        init(index,childIndex,obj,formTable,keyPositionData,areaId,boardId){
+        init(index,childIndex,obj,formTable,keyPositionData,areaId,boardId,boardClassify){
             this.openDataScope = true;
             this.isBind = obj.carNumber === "双击绑定车辆"?false:true;
 
@@ -99,6 +101,7 @@ export default {
                 this.keyPositionData = JSON.parse(JSON.stringify(keyPositionData))
                 this.areaId = areaId;
                 this.boardId = boardId;
+                this.boardClassify = boardClassify;
                 this.form.position = obj.position;
 
                 if(this.isBind){
