@@ -1,6 +1,6 @@
 <template>
    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="openDataScope" width="600px" append-to-body center @close="handleDialogClose()">
-       <el-form :model="form" :rules="rules" ref="elform" label-width="100px" v-loading="loading">
+       <el-form :model="form" :rules="rules" ref="elform" label-width="110px" v-loading="loading">
             <el-row :span="24" :gutter="20">
                 <el-col :span="24" >
                     <el-form-item label="分类：" prop="classify">
@@ -36,10 +36,21 @@
                             <el-option v-for="(item,index) in boardClassifyOptions"
                                 :key="index"
                                 :label="item.value"
-                                :value="item.code">
+                                :value="item.code"
+                                       @click.native="handleBoardClassifyChange(item)">
                             </el-option>
                         </el-select>
                     </el-form-item>
+                </el-col>
+                <el-col :span="24" v-if="!areaFlag">
+                  <el-form-item label="智能柜版本：" prop="boardVersion">
+                    <el-input v-model="form.boardVersion" maxlength="10"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24" v-if="!areaFlag">
+                  <el-form-item label="备注：">
+                    <el-input type="textarea" v-model="form.remark"></el-input>
+                  </el-form-item>
                 </el-col>
             </el-row>
        </el-form>
@@ -63,6 +74,8 @@ export default {
             openDataScope:false,
             //是否新建场地标识
             areaFlag:true,
+            // 是否是智能柜类型
+            boardTypeFlag: false,
             //分类数据
             classifyOptions:[
                 {
@@ -93,6 +106,7 @@ export default {
                 name:'',   //场地名称
                 areaId:'',  //场地id
                 boardClassify:'0',       //钥匙柜类型
+                boardVersion: '', // 智能柜版本
             },
             //表单校验
             rules:{
@@ -107,6 +121,9 @@ export default {
                 ],
                 boardClassify:[
                     {required:true,message:"请选择类型!",trigger:"change"}
+                ],
+                boardVersion:[
+                  {required:false,message:"智能柜版本不能为空!",trigger:"change"}
                 ],
             }
         }
@@ -156,6 +173,13 @@ export default {
                 this.$refs.elform.clearValidate();
             })
         },
+        // 选择类型回调
+        handleBoardClassifyChange(item){
+            this.rules.boardVersion[0].required = item.code === '1';
+            this.$nextTick(() => {
+                this.$refs.elform.clearValidate();
+            })
+        },
         //确定
         handleConfirm(){
             this.$refs.elform.validate((valid) => {
@@ -172,6 +196,8 @@ export default {
                             areaId:this.form.areaId,
                             name:this.form.name,
                             boardClassify:this.form.boardClassify,
+                            boardVersion:this.form.boardVersion,
+                            remark:this.form.remark,
                         }
                         this.postGwycCarkeyBoardSave(params);
                     }

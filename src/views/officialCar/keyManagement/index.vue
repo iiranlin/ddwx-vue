@@ -50,64 +50,46 @@
                     </el-tree>
                 </div>
             </el-col>
-            <!--右侧列表内容布局-->
-            <el-col :span="19" :xs="24" class="container_flex" style="padding:0" v-show="!isShowTable">
-                <el-row :gutter="24" class="container_flex-right_tree">
+            <!--普通柜展示-->
+            <span v-if="currentTreeData.boardClassify === '0'">
+                <!--右侧列表内容布局-->
+                <el-col :span="19" :xs="24" class="container_flex" style="padding:0" v-show="!isShowTable">
+                  <el-row :gutter="24" class="container_flex-right_tree">
                     <el-col :span="1.5" v-for="item in property.buttonTop" :key="item.id" style="margin-top:2px;padding:0px;">
-                        <button-top
-                            v-show="layoutType === 'list' || layoutType === 'empty'"
-                            :item="item"
-                            :multiple="multiple"
-                            :single="single"
-                            @newButton="newButton"
-                            class="cume-button">
-                        </button-top>
+                      <button-top
+                        v-show="layoutType === 'list' || layoutType === 'empty'"
+                        :item="item"
+                        :multiple="multiple"
+                        :single="single"
+                        @newButton="newButton"
+                        class="cume-button">
+                      </button-top>
                     </el-col>
                     <el-col :span="1.5" style="margin-top:2px;margin-bottom:5px;padding:0px;" v-show="layoutType === 'table'">
-                        <el-button  size="mini" class="custom_button" @click="handleCancelBindClick()" :disabled="selectionData.length!==1">
-                            <svg-icon icon-class="switch-button" class="svg-button-icon"></svg-icon>解绑
-                        </el-button>
-                    </el-col>
-                    <el-col :span="1.5" style="margin-top:2px;margin-bottom:5px;padding:0px;" v-show="layoutType === 'table'">
-                      <el-button  size="mini" class="custom_button" @click="getKeyDialog = true" :disabled="selectionData.length!==1">
-                        <svg-icon icon-class="switch-button" class="svg-button-icon"></svg-icon>开门
-                      </el-button>
-                    </el-col>
-<!--                    <el-col :span="1.5" style="margin-top:2px;margin-bottom:5px;padding:0px;" v-show="layoutType === 'table'">-->
-<!--                      <el-button  size="mini" class="custom_button" @click="handleSetLcdClick()" :disabled="selectionData.length===0">-->
-<!--                        <svg-icon icon-class="switch-button" class="svg-button-icon"></svg-icon>设置屏显-->
-<!--                      </el-button>-->
-<!--                    </el-col>-->
-                    <el-col :span="1.5" style="margin-top:2px;margin-bottom:5px;padding:0px;" v-show="layoutType === 'table'">
-                      <el-button  size="mini" class="custom_button" @click="handleSyncKyeStateClick()" :disabled="selectionData.length===0">
-                        <svg-icon icon-class="switch-button" class="svg-button-icon"></svg-icon>同步状态
-                      </el-button>
-                    </el-col>
-                    <el-col :span="1.5" style="margin-top:2px;margin-bottom:5px;padding:0px;" v-show="layoutType === 'table'">
-                      <el-button  size="mini" class="custom_button" @click="setSeatNoDialog = true">
-                        <svg-icon icon-class="switch-button" class="svg-button-icon"></svg-icon>设置编号
+                      <el-button  size="mini" class="custom_button" @click="handleCancelBindClick()" :disabled="selectionData.length!==1">
+                        <svg-icon icon-class="switch-button" class="svg-button-icon"></svg-icon>解绑
                       </el-button>
                     </el-col>
                     <right-toolbar
-                        ref="rightToolbar"
-                        style="margin-top:4px;padding-right:20px"
-                        :showSearch.sync="showSearch"
-                        :columns="property.fields"
-                        @queryTable="handleQuery"
-                        @numberChange="numberChange"
-                        @handleCheckAllChange="handleCheckAllChange"
-                        @clickReset="clickReset">
+                      ref="rightToolbar"
+                      style="margin-top:4px;padding-right:20px"
+                      :showSearch.sync="showSearch"
+                      :columns="property.fields"
+                      @queryTable="handleQuery"
+                      @numberChange="numberChange"
+                      @handleCheckAllChange="handleCheckAllChange"
+                      @clickReset="clickReset">
                     </right-toolbar>
-                </el-row>
-                <form-data
+                  </el-row>
+                  <form-data
                     :dateMultiple="true"
                     :formDta="formData"
                     :showSearch="showSearch"
                     :searchArr="property.search || []"
                     @handleQuery="handleQuery"
                     style="margin-top:-12px;margin-bottom:6px">
-                </form-data>
-                <table-index
+                  </form-data>
+                  <table-index
                     ref="tableIndex"
                     style="margin-top:-8px"
                     :tableIndexs="tableIndex"
@@ -119,88 +101,240 @@
                     @handleButton="handleButton"
                     @selectChange="selectChange"
                     @emitAblFilter="emitAblFilter">
-                </table-index>
-                <pagination
+                  </table-index>
+                  <pagination
                     v-show="total > 0"
                     :total="total"
                     :page.sync="listQuery.pageNum"
                     :limit.sync="listQuery.pageSize"
                     @pagination="getList"
                     style="margin-bottom:40px"/>
-            </el-col>
-            <!--右侧表格内容布局-->
-            <el-col :span="19" :xs="24" class="container_flex" style="padding:0" v-show="isShowTable">
-                <el-row :gutter="24" class="container_flex-right_tree">
+                </el-col>
+                <!--右侧表格内容布局-->
+                <el-col :span="19" :xs="24" class="container_flex" style="padding:0" v-show="isShowTable">
+                  <el-row :gutter="24" class="container_flex-right_tree">
                     <el-col :span="1.5" style="margin-top:2px;margin-bottom:5px;padding:0px;">
-                        <el-button  size="mini" class="custom_button" @click="handleGenerateTableClick()">
-                            <svg-icon icon-class="switch-button" class="svg-button-icon"></svg-icon>生成
-                        </el-button>
+                      <el-button  size="mini" class="custom_button" @click="handleGenerateTableClick()">
+                        <svg-icon icon-class="switch-button" class="svg-button-icon"></svg-icon>生成
+                      </el-button>
                     </el-col>
-                </el-row>
-                <el-row>
+                  </el-row>
+                  <el-row>
                     <el-form ref="elFormTable" :inline="true" :model="formTable" style="margin-top:-5px;margin-left:10px">
-                        <div class='row-container'>
-                            <el-form-item label="起始数" class="table-form-item">
-                              <el-input v-model="formTable.startNumber" @input="numberInput($event,'startNumber')" size="mini" maxlength="3" />
-                            </el-form-item>
-                            <el-form-item label="层数" class="table-form-item">
-                                <el-input v-model="formTable.rowNumber" @input="numberInput($event,'rowNumber')" size="mini" maxlength="2" />
-                            </el-form-item>
-                            <el-form-item class="table-form-item-select" label-width="0">
-                                <el-select v-model="formTable.rowLanguage" size="mini">
-                                    <el-option v-for="(item,index) in languageOptions" :key="index"
-                                        :label="item.value"
-                                        :value="item.code" >
-                                    </el-option>
-                                </el-select>
-                            </el-form-item>
-                            <el-form-item class="table-form-item-select" label-width="0">
-                                <el-select v-model="formTable.rowSort" size="mini">
-                                    <el-option v-for="(item,index) in sortOptions" :key="index"
-                                        :label="item.value"
-                                        :value="item.code" >
-                                    </el-option>
-                                </el-select>
-                            </el-form-item>
-                        </div>
-                        <div class='column-container'>
-                            <el-form-item label="列数" class="table-form-item column-begin">
-                                <el-input v-model="formTable.columnNumber" @input="numberInput($event,'columnNumber')" size="mini" maxlength="2" />
-                            </el-form-item>
-                            <el-form-item class="table-form-item-select" label-width="0">
-                                <el-select v-model="formTable.columnLanguage" size="mini">
-                                    <el-option v-for="(item,index) in languageOptions" :key="index"
-                                        :label="item.value"
-                                        :value="item.code" >
-                                    </el-option>
-                                </el-select>
-                            </el-form-item>
-                            <el-form-item class="table-form-item-select" label-width="0">
-                                <el-select v-model="formTable.columnSort" size="mini">
-                                    <el-option v-for="(item,index) in sortOptions" :key="index"
-                                        :label="item.value"
-                                        :value="item.code" >
-                                    </el-option>
-                                </el-select>
-                            </el-form-item>
-                        </div>
+                      <div class='row-container'>
+                        <el-form-item label="层数" class="table-form-item">
+                          <el-input v-model="formTable.rowNumber" @input="numberInput($event,'rowNumber')" size="mini" maxlength="2" />
+                        </el-form-item>
+                        <el-form-item class="table-form-item-select" label-width="0">
+                          <el-select v-model="formTable.rowLanguage" size="mini">
+                            <el-option v-for="(item,index) in languageOptionsPlain" :key="index"
+                                       :label="item.value"
+                                       :value="item.code" >
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                        <el-form-item class="table-form-item-select" label-width="0">
+                          <el-select v-model="formTable.rowSort" size="mini">
+                            <el-option v-for="(item,index) in sortOptionsPlain" :key="index"
+                                       :label="item.value"
+                                       :value="item.code" >
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </div>
+                      <div class='column-container'>
+                        <el-form-item label="列数" class="table-form-item column-begin">
+                          <el-input v-model="formTable.columnNumber" @input="numberInput($event,'columnNumber')" size="mini" maxlength="2" />
+                        </el-form-item>
+                        <el-form-item class="table-form-item-select" label-width="0">
+                          <el-select v-model="formTable.columnLanguage" size="mini">
+                            <el-option v-for="(item,index) in languageOptionsPlain" :key="index"
+                                       :label="item.value"
+                                       :value="item.code" >
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                        <el-form-item class="table-form-item-select" label-width="0">
+                          <el-select v-model="formTable.columnSort" size="mini">
+                            <el-option v-for="(item,index) in sortOptionsPlain" :key="index"
+                                       :label="item.value"
+                                       :value="item.code" >
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </div>
                     </el-form>
-                </el-row>
-                <div class="table-wapper">
+                  </el-row>
+                  <div class="table-wapper">
                     <table class="table-container" border='1' bordercolor="#eaeef5" cellspacing="0" v-if="keyPositionData.length" ref="table">
-                        <tr v-for="(item, index) in keyPositionData" :key="index">
-                            <td v-for="(childItem, childIndex) in item" :key="childIndex" class="table-td" @dblclick="handleDbClick(index,childIndex,childItem)">
-                                <p class="table-item-top">{{childItem.position}}</p>
-                                <p :class="[childItem.carNumber ==='双击绑定车辆'?'' : 'table-item-bottom-bind','table-item-bottom']">{{childItem.carNumber}}</p>
-                            </td>
-                        </tr>
+                      <tr v-for="(item, index) in keyPositionData" :key="index">
+                        <td v-for="(childItem, childIndex) in item" :key="childIndex" class="table-td" @dblclick="handleDbClick(index,childIndex,childItem)">
+                          <p class="table-item-top">{{childItem.position}}</p>
+                          <p :class="[childItem.carNumber ==='双击绑定车辆'?'' : 'table-item-bottom-bind','table-item-bottom']">{{childItem.carNumber}}</p>
+                        </td>
+                      </tr>
                     </table>
+                  </div>
+                </el-col>
+                <div class="content-change-control">
+                    <i :class="[isShowTable?'' : 'content-change-control-select','el-icon-s-operation']" @click="handleCheckList()"></i>
+                    <i :class="[isShowTable?'content-change-control-select' : '','el-icon-film']" @click="handleCheckTable()"></i>
                 </div>
-            </el-col>
-            <div class="content-change-control">
-                <i :class="[isShowTable?'' : 'content-change-control-select','el-icon-s-operation']" @click="handleCheckList()"></i>
-                <i :class="[isShowTable?'content-change-control-select' : '','el-icon-film']" @click="handleCheckTable()"></i>
-            </div>
+            </span>
+            <!--智能柜展示-->
+            <span v-else>
+                <!--右侧列表内容布局-->
+                <el-col :span="19" :xs="24" class="container_flex" style="padding:0" v-show="!isShowTable">
+                  <el-row :gutter="24" class="container_flex-right_tree">
+                    <el-col :span="1.5" v-for="item in property.buttonTop" :key="item.id" style="margin-top:2px;padding:0px;">
+                      <button-top
+                        v-show="layoutType === 'list' || layoutType === 'empty'"
+                        :item="item"
+                        :multiple="multiple"
+                        :single="single"
+                        @newButton="newButton"
+                        class="cume-button">
+                      </button-top>
+                    </el-col>
+                    <el-col :span="1.5" style="margin-top:2px;margin-bottom:5px;padding:0px;" v-show="layoutType === 'table'">
+                      <el-button  size="mini" class="custom_button" @click="handleCancelBindClick()" :disabled="selectionData.length!==1">
+                        <svg-icon icon-class="switch-button" class="svg-button-icon"></svg-icon>解绑
+                      </el-button>
+                    </el-col>
+                    <el-col :span="1.5" style="margin-top:2px;margin-bottom:5px;padding:0px;" v-show="layoutType === 'table'">
+                      <el-button  size="mini" class="custom_button" @click="getKeyDialog = true" :disabled="selectionData.length!==1">
+                        <svg-icon icon-class="switch-button" class="svg-button-icon"></svg-icon>开门
+                      </el-button>
+                    </el-col>
+                    <!--                    <el-col :span="1.5" style="margin-top:2px;margin-bottom:5px;padding:0px;" v-show="layoutType === 'table'">-->
+                    <!--                      <el-button  size="mini" class="custom_button" @click="handleSetLcdClick()" :disabled="selectionData.length===0">-->
+                    <!--                        <svg-icon icon-class="switch-button" class="svg-button-icon"></svg-icon>设置屏显-->
+                    <!--                      </el-button>-->
+                    <!--                    </el-col>-->
+                    <el-col :span="1.5" style="margin-top:2px;margin-bottom:5px;padding:0px;" v-show="layoutType === 'table'">
+                      <el-button  size="mini" class="custom_button" @click="handleSyncKyeStateClick()" :disabled="selectionData.length===0">
+                        <svg-icon icon-class="switch-button" class="svg-button-icon"></svg-icon>同步状态
+                      </el-button>
+                    </el-col>
+                    <el-col :span="1.5" style="margin-top:2px;margin-bottom:5px;padding:0px;" v-show="layoutType === 'table'">
+                      <el-button  size="mini" class="custom_button" @click="setSeatNoDialog = true">
+                        <svg-icon icon-class="switch-button" class="svg-button-icon"></svg-icon>设置编号
+                      </el-button>
+                    </el-col>
+                    <right-toolbar
+                      ref="rightToolbar"
+                      style="margin-top:4px;padding-right:20px"
+                      :showSearch.sync="showSearch"
+                      :columns="property.fields"
+                      @queryTable="handleQuery"
+                      @numberChange="numberChange"
+                      @handleCheckAllChange="handleCheckAllChange"
+                      @clickReset="clickReset">
+                    </right-toolbar>
+                  </el-row>
+                  <form-data
+                    :dateMultiple="true"
+                    :formDta="formData"
+                    :showSearch="showSearch"
+                    :searchArr="property.search || []"
+                    @handleQuery="handleQuery"
+                    style="margin-top:-12px;margin-bottom:6px">
+                  </form-data>
+                  <table-index
+                    ref="tableIndex"
+                    style="margin-top:-8px"
+                    :tableIndexs="tableIndex"
+                    :loading="loading"
+                    :tableData="dataList"
+                    :property="property"
+                    :numberShow="numberShow"
+                    @handleSelectionChange="handleSelectionChange"
+                    @handleButton="handleButton"
+                    @selectChange="selectChange"
+                    @emitAblFilter="emitAblFilter">
+                  </table-index>
+                  <pagination
+                    v-show="total > 0"
+                    :total="total"
+                    :page.sync="listQuery.pageNum"
+                    :limit.sync="listQuery.pageSize"
+                    @pagination="getList"
+                    style="margin-bottom:40px"/>
+                </el-col>
+                <!--右侧表格内容布局-->
+                <el-col :span="19" :xs="24" class="container_flex" style="padding:0" v-show="isShowTable">
+                  <el-row :gutter="24" class="container_flex-right_tree">
+                    <el-col :span="1.5" style="margin-top:2px;margin-bottom:5px;padding:0px;">
+                      <el-button  size="mini" class="custom_button" @click="handleGenerateTableClick()">
+                        <svg-icon icon-class="switch-button" class="svg-button-icon"></svg-icon>生成
+                      </el-button>
+                    </el-col>
+                  </el-row>
+                  <el-row>
+                    <el-form ref="elFormTable" :inline="true" :model="formTable" style="margin-top:-5px;margin-left:10px">
+                      <div class='row-container'>
+                        <el-form-item label="起始数" class="table-form-item">
+                          <el-input v-model="formTable.startNumber" @input="numberInput($event,'startNumber')" size="mini" maxlength="3" />
+                        </el-form-item>
+                        <el-form-item label="层数" class="table-form-item">
+                          <el-input v-model="formTable.rowNumber" @input="numberInput($event,'rowNumber')" size="mini" maxlength="2" />
+                        </el-form-item>
+                        <el-form-item class="table-form-item-select" label-width="0">
+                          <el-select v-model="formTable.rowLanguage" size="mini">
+                            <el-option v-for="(item,index) in languageOptions" :key="index"
+                                       :label="item.value"
+                                       :value="item.code" >
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                        <el-form-item class="table-form-item-select" label-width="0">
+                          <el-select v-model="formTable.rowSort" size="mini">
+                            <el-option v-for="(item,index) in sortOptions" :key="index"
+                                       :label="item.value"
+                                       :value="item.code" >
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </div>
+                      <div class='column-container'>
+                        <el-form-item label="列数" class="table-form-item column-begin">
+                          <el-input v-model="formTable.columnNumber" @input="numberInput($event,'columnNumber')" size="mini" maxlength="2" />
+                        </el-form-item>
+                        <el-form-item class="table-form-item-select" label-width="0">
+                          <el-select v-model="formTable.columnLanguage" size="mini">
+                            <el-option v-for="(item,index) in languageOptions" :key="index"
+                                       :label="item.value"
+                                       :value="item.code" >
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                        <el-form-item class="table-form-item-select" label-width="0">
+                          <el-select v-model="formTable.columnSort" size="mini">
+                            <el-option v-for="(item,index) in sortOptions" :key="index"
+                                       :label="item.value"
+                                       :value="item.code" >
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </div>
+                    </el-form>
+                  </el-row>
+                  <div class="table-wapper">
+                    <table class="table-container" border='1' bordercolor="#eaeef5" cellspacing="0" v-if="keyPositionData.length" ref="table">
+                      <tr v-for="(item, index) in keyPositionData" :key="index">
+                        <td v-for="(childItem, childIndex) in item" :key="childIndex" class="table-td" @dblclick="handleDbClick(index,childIndex,childItem)">
+                          <p class="table-item-top">{{childItem.position}}</p>
+                          <p :class="[childItem.carNumber ==='双击绑定车辆'?'' : 'table-item-bottom-bind','table-item-bottom']">{{childItem.carNumber}}</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </el-col>
+                <div class="content-change-control">
+                    <i :class="[isShowTable?'' : 'content-change-control-select','el-icon-s-operation']" @click="handleCheckList()"></i>
+                    <i :class="[isShowTable?'content-change-control-select' : '','el-icon-film']" @click="handleCheckTable()"></i>
+                </div>
+            </span>
         </el-row>
          <!--钥匙柜创建弹框-->
         <add-key-cabinet ref="addKeyCabinet" @addKeyCabinetSuccess="addKeyCabinetSuccess"></add-key-cabinet>
@@ -248,28 +382,29 @@
     </div>
 </template>
 <script>
-import buttonTop from "@/components/buttonTop"
-import formData from "@/components/formData"
-import tableIndex from "@/components/tableIndex"
-import addKeyCabinet from './components/addKeyCabinet'
-import listAddKeyPosition from "./components/listAddKeyPosition"
-import tableBindCar from "./components/tableBindCar"
-import indexMixin from "@/views/mixins"
-import { numberInput } from '@/utils/index';
-import {gcywCarkeySeatList,
-gwycCarkeyBoardTree,
-gwycCarkeyBoardUpdate,
-gcywCarkeySeatDelete,
-gcywCarkeySeatUpdate2,
-gcywCarkeySeatSave,
-gwycCarkeyBoardList,
-gcywCarkeySeatDeleteAll,
-  gcywOpenBoardAndKey,
-  gcywSyncKyeState,
-  gcywSetLcdAll,
-  gcywSetSeatNo,} from "@/api/keyManagement"
+  import buttonTop from "@/components/buttonTop"
+  import formData from "@/components/formData"
+  import tableIndex from "@/components/tableIndex"
+  import addKeyCabinet from './components/addKeyCabinet'
+  import listAddKeyPosition from "./components/listAddKeyPosition"
+  import tableBindCar from "./components/tableBindCar"
+  import indexMixin from "@/views/mixins"
+  import {numberInput} from '@/utils/index';
+  import {
+    gcywCarkeySeatDelete,
+    gcywCarkeySeatDeleteAll,
+    gcywCarkeySeatList,
+    gcywCarkeySeatUpdate2,
+    gcywOpenBoardAndKey,
+    gcywSetLcdAll,
+    gcywSetSeatNo,
+    gcywSyncKyeState,
+    gwycCarkeyBoardList,
+    gwycCarkeyBoardTree,
+    gwycCarkeyBoardUpdate,
+  } from "@/api/keyManagement"
 
-export default {
+  export default {
     name:"keyManagement",
     mixins:[indexMixin],
     components:{buttonTop,formData,tableIndex,addKeyCabinet,listAddKeyPosition,tableBindCar},
@@ -356,11 +491,27 @@ export default {
                 columnLanguage:'1',
                 columnSort:'0',
             },
+            languageOptionsPlain:[
+              {
+                  code:'0',
+                  value:'字母',
+              },
+              {
+                  code:'1',
+                  value:'数字',
+              }
+            ],
+            sortOptionsPlain:[
+              {
+                  code:'0',
+                  value:'正序',
+              },
+              {
+                  code:'1',
+                  value:'倒序',
+              }
+            ],
             languageOptions:[
-                // {
-                //     code:'0',
-                //     value:'字母',
-                // },
                 {
                     code:'1',
                     value:'数字',
@@ -371,10 +522,6 @@ export default {
                     code:'0',
                     value:'正序',
                 },
-                // {
-                //     code:'1',
-                //     value:'倒序',
-                // }
             ],
             //表格数据
             keyPositionData:[],
@@ -386,6 +533,8 @@ export default {
             childIndex:'',
             //当前选中节点对象
             currentTreeData:{},
+            // 列表全部字段
+            fields: []
         }
     },
     created(){
@@ -405,17 +554,31 @@ export default {
                     item.fieldFormat = JSON.parse(JSON.stringify(item.fieldFormat));
                 })
                 this.property = data;
+                this.fields = this.property.fields
             });
         },
         //获取分页数据
         async getList(type){
             this.loading = true;
 
+            let hide = ['boxNo', 'keyState']
             await gcywCarkeySeatList(Object.assign({}, this.listQuery,this.formData)).then(({data})=>{
                 this.dataList = data.list;
                 this.total = data.total;
                 this.loading = false;
 
+                // 普通柜展示列
+                if (this.currentTreeData.boardClassify === '0') {
+                    let fields = []
+                    this.property.fields.forEach((item) => {
+                        if (!hide.includes(item.fieldCode)) {
+                            fields.push(item)
+                        }
+                    })
+                    this.property.fields = fields
+                } else {
+                    this.property.fields = this.fields
+                }
                 this.getTableDate(type);
             }).catch((err) => {
                 this.loading = false;
@@ -452,7 +615,7 @@ export default {
                     if(!type){      //表格重新生成删除所有数据，不需要初始化
                         this.formTable.startNumber = '1';
                         this.formTable.rowNumber = '6';
-                        this.formTable.rowLanguage = '1';
+                        this.currentTreeData.boardClassify === '0' ? this.formTable.rowLanguage = '0' : this.formTable.rowLanguage = '1';
                         this.formTable.rowSort = '0';
                         this.formTable.columnNumber = '10';
                         this.formTable.columnLanguage = '1';
@@ -515,6 +678,7 @@ export default {
                 this.formData.boardId = data.id;
                 this.formData.boardName = data.name;
                 this.formData.name = '';
+                this.formData.boardClassify = data.boardClassify;
             }
             this.getList();
         },
@@ -678,7 +842,7 @@ export default {
                         this.$modal.msgSuccess(message)
 
                         this.getList('deleteAll');
-                        this.generateTable2();
+                        this.currentTreeData.boardClassify === '0' ? this.generateTable() : this.generateTable2();
                     }).catch((err) => {
                         this.loading = false;
                     })
@@ -686,7 +850,7 @@ export default {
 
                 });
             }else {
-                 this.generateTable2();
+                this.currentTreeData.boardClassify === '0' ? this.generateTable() : this.generateTable2();
             }
         },
         //生成表格
@@ -877,7 +1041,7 @@ export default {
                         this.$modal.msgSuccess(message)
 
                         this.getList('deleteAll');
-                        this.generateTable2();
+                        this.currentTreeData.boardClassify === '0' ? this.generateTable() : this.generateTable2();
                     }).catch((err) => {
                         this.loading = false;
                     })

@@ -151,6 +151,7 @@ export default {
                             carNumber:this.form.carNumber,
                             boxNo:this.form.boxNo,
                             boardPoint:JSON.stringify(tableLayout),
+                            boardClassify: this.boardClassify,
                         }
 
                         gcywCarkeySeatUpdate2(params).then(({message}) => {
@@ -172,6 +173,7 @@ export default {
                             carNumber:this.form.carNumber,
                             boxNo:this.form.boxNo,
                             boardPoint:JSON.stringify(tableLayout),
+                            boardClassify: this.boardClassify,
                         }
                         gcywCarkeySeatSave(params).then(({message}) => {
                             this.loading = false;

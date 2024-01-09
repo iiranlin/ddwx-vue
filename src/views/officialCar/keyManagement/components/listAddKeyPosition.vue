@@ -7,14 +7,19 @@
                         <span>{{checkAreaName()}}</span>
                     </el-form-item>
                 </el-col>
-                <el-col :span="24">
+                <el-col :span="24" v-show="boardClassify === '1'">
                   <el-form-item label="箱门号：" prop="boxNo">
                     <el-input v-model="form.boxNo" maxlength="3" placeholder="请输入箱门号"></el-input>
                   </el-form-item>
                 </el-col>
-                <el-col :span="24">
+                <el-col :span="24" v-if="boardClassify === '1'">
                     <el-form-item label="钥匙位号：" prop="name">
                         <el-input v-model="form.name" maxlength="3" placeholder="请输入钥匙位号"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24" v-else>
+                    <el-form-item label="名称：" prop="name">
+                        <el-input v-model="form.name" maxlength="10" placeholder="请输入钥匙位名称"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="24">
@@ -67,15 +72,16 @@ export default {
             //表单校验
             rules:{
                 boxNo:[
-                  {required:true,message:"箱门号不能为空!",trigger:"blur"}
+                    {required:true,message:"箱门号不能为空!",trigger:"blur"}
                 ],
                 name:[
-                    {required:true,message:"钥匙位号不能为空!",trigger:"blur"}
+                    {required:true,message:"钥匙位不能为空!",trigger:"blur"}
                 ],
                 vinNumber:[
                     {required:true,message:"请选择车辆!",trigger:"change"}
                 ],
-            }
+            },
+            boardClassify: ''
         }
     },
     created(){
@@ -86,6 +92,7 @@ export default {
         init(type,obj){
             this.openDataScope = true;
             this.type = type;
+            this.boardClassify = obj.boardClassify
 
             if(this.type === '0'){
                 this.form.areaId = obj.areaId;
@@ -101,6 +108,7 @@ export default {
                 this.form.carNumber = obj.carNumber;
             }
 
+            this.boardClassify === '0' ? this.rules.boxNo[0].required = false : this.rules.boxNo[0].required = true
             this.$nextTick(() => {
                 this.getCarOptions();
             })
@@ -130,6 +138,7 @@ export default {
                     if(this.type === '0'){
                         this.loading = true;
 
+                        this.form.boardClassify = this.boardClassify
                         this.form.carNumber = this.$refs.selVinNumber.selected.label
                         gcywCarkeySeatSave(Object.assign({},{boardPoint:'DIFF'}, this.form)).then((res) => {
                             this.loading = false;
@@ -147,7 +156,8 @@ export default {
                             vinNumber:this.form.vinNumber,
                             id:this.id,
                             boardPoint:'DIFF',
-                            carNumber:this.$refs.selVinNumber.selected.label
+                            carNumber:this.$refs.selVinNumber.selected.label,
+                            boardClassify: this.boardClassify
                         }
                         gcywCarkeySeatUpdate(params).then((res) => {
                             this.loading = false;
