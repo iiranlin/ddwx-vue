@@ -12,7 +12,7 @@
                         <span class="car-total-number">{{tasscount}}</span>
                         <span>辆</span>
                     </li>
-                    <li>
+                    <li v-if="false">
                         <span>司机总数：</span>
                         <span class="driver-total-number">{{driverCount}}</span>
                         <span>人</span>
@@ -858,16 +858,16 @@ export default {
                 & li:nth-child(1) {
                     margin-left: 0px;
                 }
+                // & li:nth-child(2) {
+                //     margin-left: 20px;
+                // }
                 & li:nth-child(2) {
-                    margin-left: 20px;
+                    margin-left: 60px;
                 }
                 & li:nth-child(3) {
                     margin-left: 60px;
                 }
                 & li:nth-child(4) {
-                    margin-left: 60px;
-                }
-                & li:nth-child(5) {
                     margin-left: 60px;
                 }
             }
