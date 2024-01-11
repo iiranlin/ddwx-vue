@@ -336,7 +336,7 @@
                 </div>
             </span>
         </el-row>
-         <!--钥匙柜创建弹框-->
+        <!--钥匙柜创建弹框-->
         <add-key-cabinet ref="addKeyCabinet" @addKeyCabinetSuccess="addKeyCabinetSuccess"></add-key-cabinet>
         <!--列表新建钥匙位弹框-->
         <list-add-key-position ref="listAddKeyPosition" @listAddKeyPositionSuccess="listAddKeyPositionSuccess"></list-add-key-position>
@@ -379,6 +379,32 @@
             <el-button @click="handleCancelSetSeatNo">取消</el-button>
           </div>
         </el-dialog>
+        <!--智能钥匙柜修改弹框-->
+        <el-dialog :close-on-click-modal="false" title="修改智能柜" :visible.sync="editBoardDialog" width="600px" append-to-body center>
+          <el-form :model="editBoardForm" :rules="editBoardFormRules" ref="editBoardForm" label-width="110px" v-loading="loading">
+            <el-row :span="24" :gutter="20">
+              <el-col :span="24">
+                <el-form-item label="智能柜名称：" prop="name">
+                  <el-input v-model="editBoardForm.name" maxlength="6"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item label="智能柜版本：" prop="boardVersion">
+                  <el-input v-model="editBoardForm.boardVersion" maxlength="10"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item label="智能柜地址：" prop="boardAddress">
+                  <el-input v-model="editBoardForm.boardAddress" maxlength="20"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="handleEditBoardConfirm">确定</el-button>
+            <el-button @click="editBoardDialog = false">取消</el-button>
+          </div>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -407,7 +433,7 @@
   export default {
     name:"keyManagement",
     mixins:[indexMixin],
-    components:{buttonTop,formData,tableIndex,addKeyCabinet,listAddKeyPosition,tableBindCar},
+    components:{buttonTop,formData,tableIndex,addKeyCabinet,listAddKeyPosition,tableBindCar,},
 
     data() {
         return {
@@ -534,7 +560,21 @@
             //当前选中节点对象
             currentTreeData:{},
             // 列表全部字段
-            fields: []
+            fields: [],
+            // 修改智能柜弹窗
+            editBoardDialog: false,
+            editBoardForm: {},
+            editBoardFormRules: {
+                name:[
+                    {required:true,message:"名称不能为空!",trigger:"change"}
+                ],
+                boardVersion:[
+                    {required:true,message:"智能柜版本不能为空!",trigger:"change"}
+                ],
+                boardAddress:[
+                    {required:true,message:"智能柜地址不能为空!",trigger:"change"}
+                ],
+            },
         }
     },
     created(){
@@ -679,11 +719,17 @@
                 this.formData.boardName = data.name;
                 this.formData.name = '';
                 this.formData.boardClassify = data.boardClassify;
+                this.formData.boardAddress = data.boardAddress;
             }
             this.getList();
         },
         //树形节点编辑点击
         handleTreeNodeEditClick(node, data){
+            if (data.boardClassify === '1') {
+                this.editBoardDialog = true
+                this.editBoardForm = Object.assign({}, data);
+                return
+            }
             //保存原始数据
             this.originalData = Object.assign({}, data);
             //显示输出框
@@ -1015,7 +1061,8 @@
                 this.keyPositionData,
                 this.formData.areaId,
                 this.formData.boardId,
-                this.currentTreeData.boardClassify);
+                this.currentTreeData.boardClassify,
+                this.currentTreeData.boardAddress);
         },
         //表格绑定车辆成功回调
         tableBindCarSuccess(type){
@@ -1091,6 +1138,7 @@
               id:this.selectionData[0].id,
               keyType:this.getKeyForm.keyType,
               remark:this.getKeyForm.remark,
+              boardAddress:this.selectionData[0].boardAddress,
             }
             gcywOpenBoardAndKey(params).then(({message}) => {
               this.loading = false;
@@ -1192,6 +1240,17 @@
         },
         tableRowClassName({row,rowIndex}){
             row.index = rowIndex + 1;
+        },
+        // 钥匙柜修改
+        handleEditBoardConfirm() {
+            this.loading = true;
+            gwycCarkeyBoardUpdate(this.editBoardForm).then((res) => {
+                this.loading = false;
+                this.editBoardDialog = false;
+                this.getTreeOptions();
+            }).catch((err) => {
+              this.loading = false;
+            })
         }
     },
     watch: {

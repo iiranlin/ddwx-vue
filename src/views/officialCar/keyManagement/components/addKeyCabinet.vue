@@ -48,6 +48,11 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="24" v-if="!areaFlag">
+                  <el-form-item label="智能柜地址：" prop="boardAddress">
+                    <el-input v-model="form.boardAddress" maxlength="20"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24" v-if="!areaFlag">
                   <el-form-item label="备注：">
                     <el-input type="textarea" v-model="form.remark"></el-input>
                   </el-form-item>
@@ -107,6 +112,7 @@ export default {
                 areaId:'',  //场地id
                 boardClassify:'0',       //钥匙柜类型
                 boardVersion: '', // 智能柜版本
+                boardAddress: '', // 智能柜地址
             },
             //表单校验
             rules:{
@@ -123,7 +129,10 @@ export default {
                     {required:true,message:"请选择类型!",trigger:"change"}
                 ],
                 boardVersion:[
-                  {required:false,message:"智能柜版本不能为空!",trigger:"change"}
+                    {required:false,message:"智能柜版本不能为空!",trigger:"change"}
+                ],
+                boardAddress:[
+                    {required:false,message:"智能柜地址不能为空!",trigger:"change"}
                 ],
             }
         }
@@ -135,6 +144,8 @@ export default {
         //初始化
         init(){
             this.openDataScope = true;
+            this.rules.boardVersion[0].required = false
+            this.rules.boardAddress[0].required = false
         },
         //获取场地信息
         async getGwycCarkeyBoardList(){
@@ -176,6 +187,7 @@ export default {
         // 选择类型回调
         handleBoardClassifyChange(item){
             this.rules.boardVersion[0].required = item.code === '1';
+            this.rules.boardAddress[0].required = item.code === '1';
             this.$nextTick(() => {
                 this.$refs.elform.clearValidate();
             })
@@ -197,6 +209,7 @@ export default {
                             name:this.form.name,
                             boardClassify:this.form.boardClassify,
                             boardVersion:this.form.boardVersion,
+                            boardAddress:this.form.boardAddress,
                             remark:this.form.remark,
                         }
                         this.postGwycCarkeyBoardSave(params);

@@ -81,7 +81,8 @@ export default {
                     {required:true,message:"请选择车辆!",trigger:"change"}
                 ],
             },
-            boardClassify: ''
+            boardClassify: '',
+            boardAddress: '',
         }
     },
     created(){
@@ -93,6 +94,7 @@ export default {
             this.openDataScope = true;
             this.type = type;
             this.boardClassify = obj.boardClassify
+            this.boardAddress = obj.boardAddress
 
             if(this.type === '0'){
                 this.form.areaId = obj.areaId;
@@ -139,6 +141,7 @@ export default {
                         this.loading = true;
 
                         this.form.boardClassify = this.boardClassify
+                        this.form.boardAddress = this.boardAddress
                         this.form.carNumber = this.$refs.selVinNumber.selected.label
                         gcywCarkeySeatSave(Object.assign({},{boardPoint:'DIFF'}, this.form)).then((res) => {
                             this.loading = false;
@@ -157,7 +160,8 @@ export default {
                             id:this.id,
                             boardPoint:'DIFF',
                             carNumber:this.$refs.selVinNumber.selected.label,
-                            boardClassify: this.boardClassify
+                            boardClassify: this.boardClassify,
+                            boardAddress: this.boardAddress
                         }
                         gcywCarkeySeatUpdate(params).then((res) => {
                             this.loading = false;

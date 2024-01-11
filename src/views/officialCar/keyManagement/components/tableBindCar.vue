@@ -83,6 +83,7 @@ export default {
             boardId:'',
             //钥匙柜类型
             boardClassify:'0',   //0普通 1智能
+            boardAddress:'',
         }
     },
     created(){
@@ -90,7 +91,7 @@ export default {
     },
     methods:{
         //初始化
-        init(index,childIndex,obj,formTable,keyPositionData,areaId,boardId,boardClassify){
+        init(index,childIndex,obj,formTable,keyPositionData,areaId,boardId,boardClassify,boardAddress){
             this.openDataScope = true;
             this.isBind = obj.carNumber === "双击绑定车辆"?false:true;
 
@@ -102,6 +103,7 @@ export default {
                 this.areaId = areaId;
                 this.boardId = boardId;
                 this.boardClassify = boardClassify;
+                this.boardAddress = boardAddress;
                 this.form.position = obj.position;
 
                 if(this.isBind){
@@ -152,6 +154,7 @@ export default {
                             boxNo:this.form.boxNo,
                             boardPoint:JSON.stringify(tableLayout),
                             boardClassify: this.boardClassify,
+                            boardAddress: this.boardAddress,
                         }
 
                         gcywCarkeySeatUpdate2(params).then(({message}) => {
@@ -174,6 +177,7 @@ export default {
                             boxNo:this.form.boxNo,
                             boardPoint:JSON.stringify(tableLayout),
                             boardClassify: this.boardClassify,
+                            boardAddress: this.boardAddress,
                         }
                         gcywCarkeySeatSave(params).then(({message}) => {
                             this.loading = false;
