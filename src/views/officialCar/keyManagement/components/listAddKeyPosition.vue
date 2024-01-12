@@ -24,7 +24,7 @@
                 </el-col>
                 <el-col :span="24">
                     <el-form-item label="车牌号：" prop="vinNumber">
-                        <el-select ref="selVinNumber" v-model="form.vinNumber" placeholder="请选择车辆" style="width:100%">
+                        <el-select ref="selVinNumber" v-model="form.vinNumber" filterable placeholder="请选择车辆" style="width:100%">
                             <el-option v-for="(item,index) in carOptions"
                                 :key="index"
                                 :label="item.carNumber"
