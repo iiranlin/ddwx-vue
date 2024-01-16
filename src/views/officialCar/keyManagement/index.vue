@@ -216,7 +216,7 @@
                         <svg-icon icon-class="switch-button" class="svg-button-icon"></svg-icon>同步状态
                       </el-button>
                     </el-col>
-                    <el-col :span="1.5" style="margin-top:2px;margin-bottom:5px;padding:0px;" v-show="layoutType === 'table'">
+                    <el-col :span="1.5" style="margin-top:2px;margin-bottom:5px;padding:0px;" v-show="this.formData.boardClassify === '1'">
                       <el-button  size="mini" class="custom_button" @click="setSeatNoDialog = true">
                         <svg-icon icon-class="switch-button" class="svg-button-icon"></svg-icon>设置编号
                       </el-button>
@@ -311,6 +311,14 @@
                         <el-form-item class="table-form-item-select" label-width="0">
                           <el-select v-model="formTable.columnSort" size="mini">
                             <el-option v-for="(item,index) in sortOptions" :key="index"
+                                       :label="item.value"
+                                       :value="item.code" >
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                        <el-form-item label="排列" style="margin-left: 40px;">
+                          <el-select v-model="formTable.arrange" class="table-form-item-select" size="mini">
+                            <el-option v-for="(item,index) in arrangeOptions" :key="index"
                                        :label="item.value"
                                        :value="item.code" >
                             </el-option>
@@ -516,6 +524,7 @@
                 columnNumber:'10',
                 columnLanguage:'1',
                 columnSort:'0',
+                arrange:'0',
             },
             languageOptionsPlain:[
               {
@@ -548,6 +557,16 @@
                     code:'0',
                     value:'正序',
                 },
+            ],
+            arrangeOptions:[
+              {
+                code:'0',
+                value:'横向',
+              },
+              {
+                code:'1',
+                value:'纵向',
+              },
             ],
             //表格数据
             keyPositionData:[],
@@ -1030,21 +1049,41 @@
           let arr = []
           let num = this.formTable.startNumber * 1;
           let strNum = ''
-          for (let i = 0; i < rows; i++) {
-            arr[i] = []
-            for (let j = 0; j < cols; j++) {
-              if(num < 10){
-                strNum = '0' + num
-              } else {
-                strNum = num
+          // 横向
+          if (this.formTable.arrange === '0') {
+            for (let i = 0; i < rows; i++) {
+              arr[i] = []
+              for (let j = 0; j < cols; j++) {
+                if(num < 10){
+                  strNum = '0' + num
+                } else {
+                  strNum = num
+                }
+                arr[i][j] = {
+                  position: strNum,
+                  carNumber: '双击绑定车辆',
+                  vinNumber: '',
+                  boxNo: '',
+                }
+                num++
               }
-              arr[i][j] = {
-                position: strNum,
-                carNumber: '双击绑定车辆',
-                vinNumber: '',
-                boxNo: '',
+            }
+          } else { // 纵向
+            for (let i = 0; i < rows; i++) {
+              arr[i] = []
+              for (let j = 0; j < cols; j++) {
+                if(j * rows + i + num < 10){
+                  strNum = '0' + (j * rows + i + num)
+                } else {
+                  strNum = j * rows + i + num
+                }
+                arr[i][j] = {
+                  position: strNum,
+                  carNumber: '双击绑定车辆',
+                  vinNumber: '',
+                  boxNo: '',
+                }
               }
-              num++
             }
           }
           this.keyPositionData = arr
