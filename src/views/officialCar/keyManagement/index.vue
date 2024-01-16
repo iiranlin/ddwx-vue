@@ -702,6 +702,7 @@
                     this.formTable.columnNumber = screenParams.columnNumber;
                     this.formTable.columnLanguage = screenParams.columnLanguage;
                     this.formTable.columnSort = screenParams.columnSort;
+                    this.formTable.arrange = screenParams.arrange;
                     this.keyPositionData = tableParams;
                 }
             }
