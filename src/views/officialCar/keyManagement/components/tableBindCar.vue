@@ -9,7 +9,8 @@
                 </el-col>
                 <el-col :span="24">
                     <el-form-item label="选择车辆：" prop="vinNumber">
-                        <el-select v-model="form.vinNumber" placeholder="请选择车辆" filterable style="width:100%">
+                        <el-select v-model="form.vinNumber" placeholder="请选择/输入车辆" default-first-option allow-create
+                                   filterable style="width:100%" @blur="vinNumberBlur">
                             <el-option v-for="(item,index) in carOptions"
                                 :key="index"
                                 :label="item.carNumber"
@@ -38,6 +39,16 @@ import {gcywCarkeySeatUpdate2,gcywCarkeySeatSave} from "@/api/keyManagement"
 
 export default {
     data() {
+        let validatorDh = (rule, value, callback) => {
+            if (!value) {
+                callback(new Error("请选择/输入车辆"));
+            } else if (!/(^[\u4E00-\u9FA5]{1}[A-Z0-9]{6}$)|(^[A-Z]{2}[A-Z0-9]{2}[A-Z0-9\u4E00-\u9FA5]{1}[A-Z0-9]{4}$)|(^[\u4E00-\u9FA5]{1}[A-Z0-9]{5}[挂学警军港澳]{1}$)|(^[A-Z]{2}[0-9]{5}$)|(^(08|38){1}[A-Z0-9]{4}[A-Z0-9挂学警军港澳]{1}$)/.test(this.form.carNumber)
+                        && this.form.carNumber) {
+                callback(new Error("请输入正确的车牌号"));
+            } else {
+                callback();
+            }
+        }
         return {
             id:'',
             //遮罩层
@@ -63,7 +74,7 @@ export default {
             //表单校验
             rules:{
                 vinNumber:[
-                    {required:true,message:"请选择车辆!",trigger:"change"}
+                    {required:true,validator:validatorDh,trigger:"change"},
                 ],
                 boxNo:[
                     {required:true,message:"请输入箱门号",trigger:"change"}
@@ -93,7 +104,7 @@ export default {
         //初始化
         init(index,childIndex,obj,formTable,keyPositionData,areaId,boardId,boardClassify,boardAddress){
             this.openDataScope = true;
-            this.isBind = obj.carNumber === "双击绑定车辆"?false:true;
+            this.isBind = obj.carNumber !== "双击绑定车辆";
 
             this.$nextTick(() => {
                 this.parentIndex = index;
@@ -210,7 +221,11 @@ export default {
             this.childIndex = '';
             this.areaId = '';
             this.boardId = '';
-        }
+        },
+        vinNumberBlur(e) {
+            this.form.vinNumber = e.target.value
+            this.form.carNumber = e.target.value
+        },
     }
 }
 </script>

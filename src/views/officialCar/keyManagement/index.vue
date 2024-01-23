@@ -840,6 +840,7 @@
         //跳转列表布局
         handleCheckList(){
             this.isShowTable = false;
+            this.getList();
         },
         //跳转表格布局
         handleCheckTable(){
