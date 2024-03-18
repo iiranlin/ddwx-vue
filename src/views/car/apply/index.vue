@@ -50,7 +50,8 @@
                                 placeholder="请选择用车事由"
                                 clearable
                                 filterable
-                                size="small">
+                                size="small"
+                                style="width:100%">
                                 <el-option v-for="item in reasonOptions"
                                     :key="item.code"
                                     :label="item.name"
@@ -66,7 +67,8 @@
                                 placeholder="请选择用车需求"
                                 clearable
                                 filterable
-                                size="small">
+                                size="small"
+                                style="width:100%">
                                 <el-option v-for="item in demandOptions"
                                     :key="item.code"
                                     :label="item.name"
@@ -82,7 +84,8 @@
                                 placeholder="请选择是否长途"
                                 clearable
                                 filterable
-                                size="small">
+                                size="small"
+                                style="width:100%">
                                 <el-option v-for="item in longDistanceTagOptions"
                                     :key="item.code"
                                     :label="item.name"
@@ -103,7 +106,8 @@
                                 placeholder="请选择期望车型"
                                 clearable
                                 filterable
-                                size="small">
+                                size="small"
+                                style="width:100%">
                                 <el-option v-for="item in hopeBrandOptions"
                                     :key="item.code"
                                     :label="item.name"
@@ -119,7 +123,8 @@
                                 placeholder="请选择优先保障"
                                 clearable
                                 filterable
-                                size="small">
+                                size="small"
+                                style="width:100%">
                                 <el-option v-for="item in guaranteeOptions"
                                     :key="item.code"
                                     :label="item.name"
@@ -198,6 +203,7 @@
                                 }"
                                 placeholder="请选择出发时间"
                                 size="small"
+                                style="width:100%"
                                 @change="handleUsageTimeChange()">
                             </el-time-select>
                         </el-form-item>

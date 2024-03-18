@@ -67,7 +67,7 @@
             </div>
             <div class="bottom-container">
                 <div class="speed">
-                    <span>{{carInfo.speed}}</span>
+                    <span>{{carInfo.speed / 10}}</span>
                     <span>km/h</span>
                 </div>
                 <span class="speed-detail">当前转速：{{carInfo.rpm}}</span>

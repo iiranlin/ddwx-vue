@@ -45,7 +45,8 @@
                                 placeholder="请选择用车单位"
                                 clearable
                                 filterable
-                                size="small">
+                                size="small"
+                                style="width:100%">
                                 <el-option v-for="item in unitOptions"
                                     :key="item.code"
                                     :label="item.unitName"
@@ -59,6 +60,7 @@
                             <select-tree
                                 :value="formData.deptId"
                                 :options="deptOptions"
+                                style="width:100%"
                                 @getValue="deptChange($event)"/>
                         </el-form-item>
                     </li>
@@ -69,7 +71,8 @@
                                 placeholder="请选择用车事由"
                                 clearable
                                 filterable
-                                size="small">
+                                size="small"
+                                style="width:100%">
                                 <el-option v-for="item in reasonOptions"
                                     :key="item.code"
                                     :label="item.name"
@@ -85,7 +88,8 @@
                                 placeholder="请选择用车需求"
                                 clearable
                                 filterable
-                                size="small">
+                                size="small"
+                                style="width:100%">
                                 <el-option v-for="item in demandOptions"
                                     :key="item.code"
                                     :label="item.name"
@@ -101,7 +105,8 @@
                                 placeholder="请选择是否长途"
                                 clearable
                                 filterable
-                                size="small">
+                                size="small"
+                                style="width:100%">
                                 <el-option v-for="item in longDistanceTagOptions"
                                     :key="item.code"
                                     :label="item.name"
@@ -122,7 +127,8 @@
                                 placeholder="请选择期望车型"
                                 clearable
                                 filterable
-                                size="small">
+                                size="small"
+                                style="width:100%">
                                 <el-option v-for="item in hopeBrandOptions"
                                     :key="item.code"
                                     :label="item.name"
@@ -138,7 +144,8 @@
                                 placeholder="请选择优先保障"
                                 clearable
                                 filterable
-                                size="small">
+                                size="small"
+                                style="width:100%">
                                 <el-option v-for="item in guaranteeOptions"
                                     :key="item.code"
                                     :label="item.name"
@@ -215,7 +222,8 @@
                                     end: '23:55',
                                 }"
                                 placeholder="请选择出发时间"
-                                size="small">
+                                size="small"
+                                style="width:100%">
                             </el-time-select>
                         </el-form-item>
                         <el-form-item label="预计时长:" prop="timeLength">
