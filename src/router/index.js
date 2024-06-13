@@ -90,6 +90,18 @@ export const constantRoutes = [
     component: () => import('@/views/officialCar/drivingRecordPrint'),
     hidden: true,
   },
+  {
+    path: '/driverDutyDataBoard',
+    name:'driverDutyDataBoard',
+    component: () => import('@/views/officialCar/driverDutyDataBoard'),
+    hidden: true,
+  },
+  {
+    path: '/dispatchBoard',
+    name:'dispatchBoard',
+    component: () => import('@/views/officialCar/dispatchBoard'),
+    hidden: true,
+  },
   
 ]
 

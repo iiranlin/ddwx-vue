@@ -225,7 +225,6 @@ dayjs.extend(quarterOfYear)
 export default {
     name: "Index",
     components: { videoPreview,commonMenu },
-
   
     data() {
         return {
@@ -903,7 +902,7 @@ export default {
             img {
                 margin-left: 4px;
                 width: 23px;
-                height: 23x;
+                height: 23px;
             }
             span {
                 font-size: 14px;

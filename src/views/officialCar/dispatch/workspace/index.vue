@@ -250,7 +250,6 @@ export default {
     autoChange(val){
       if(val){
           this.timer = setInterval(() => {
-            this.handleResetDept();
             this.handleQuery();
           }, 1000*60*1);
       }else{

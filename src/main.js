@@ -8,6 +8,7 @@ import './assets/styles/element-variables.scss'
 import "./assets/theme/index.css"
 import '@/assets/styles/index.scss' // global css
 import '@/assets/styles/ruoyi.scss' // ruoyi css
+import '@/assets/fontFamily/font.css'
 import App from './App'
 import store from './store'
 import router from './router'
@@ -15,6 +16,7 @@ import directive from './directive' // directive
 import plugins from './plugins' // plugins
 import { download } from '@/utils/request'
 import dayjs from 'dayjs'
+
 
 import './assets/icons' // icon
 import './permission' // permission control
@@ -49,6 +51,8 @@ import tableIndex from "@/components/tableIndex"
 import formData from "@/components/formData"
 // 通用头部按钮组件
 import buttonTop from "@/components/buttonTop"
+// 自动滚动插件
+import vueSeamlessScroll from 'vue-seamless-scroll'
 
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
@@ -81,6 +85,7 @@ Vue.component('buttonTop', buttonTop)
 Vue.use(directive)
 Vue.use(plugins)
 Vue.use(VueMeta)
+Vue.use(vueSeamlessScroll)
 DictData.install()
 
 /**

@@ -396,7 +396,7 @@ export default {
             img {
                 margin-left: 4px;
                 width: 23px;
-                height: 23x;
+                height: 23px;
             }
             span {
                 font-size: 14px;

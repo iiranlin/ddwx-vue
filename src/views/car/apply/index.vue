@@ -159,8 +159,7 @@
                                 size="small"
                                 :maxlength="10"
                                 :trigger-on-focus="false"
-                                @select="handleSelect"
-                                @keyup.enter.native="handleEnterClick">
+                                @select="handleSelect">
                                 <i slot="suffix" class="el-input__icon el-icon-user-solid" @click="handleUserNameClick()"></i>
                             </el-autocomplete>
                         </el-form-item>
@@ -601,6 +600,7 @@ export default {
         },
         //模糊搜索乘车人选中
         handleSelect(item){
+            console.log(item)
             this.inputUserName = item.realName;
 
             //判断是否重复
@@ -662,7 +662,7 @@ export default {
             })
             this.formData.userName = tempUserName;
             this.formData.userId = tempUserId;
-            this.formData.usagePersons = this.defaultCheckedUser.length;
+            // this.formData.usagePersons = this.defaultCheckedUser.length;
             this.formData.phone = this.defaultCheckedUser[0].phone;
         },
         //删除乘车人
@@ -681,7 +681,7 @@ export default {
             if(this.defaultCheckedUser.length == 0){
                 this.formData.userName = '';
                 this.formData.userId = '';
-                this.formData.usagePersons = '';
+                // this.formData.usagePersons = '';
                 this.formData.phone = '';
             }else{
                 this.selectUserSuccess(this.defaultCheckedUser);
