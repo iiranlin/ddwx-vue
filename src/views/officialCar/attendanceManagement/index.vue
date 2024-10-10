@@ -59,6 +59,8 @@
         </el-row>
         <!--弹出框-->
         <operate ref="operate" @operateSuccess="operateSuccess"></operate>
+        <!--调整安全天数弹出框-->
+        <change-operate ref="changeOperate" @changeOperateSuccess="changeOperateSuccess"></change-operate>
     </div>
 </template>
 <script>
@@ -69,10 +71,11 @@ import{gcjcDriverLeaveListPage,gcjcDriverLeaveDel} from "@/api/attendanceManagem
 import{largeScreenDriverSecureClean} from "@/api/largeScreen"
 import indexMixin from "@/views/mixins"
 import operate from "./components/operate"
+import changeOperate from "./components/changeOperate"
 
 export default {
     name:"attendanceManagement",
-    components:{buttonTop,formData,tableIndex,operate},
+    components:{buttonTop,formData,tableIndex,operate,changeOperate},
     mixins: [indexMixin],
 
     data() {
@@ -168,6 +171,8 @@ export default {
                         this.loading = false;
                     })
                 })
+            }else if(buttonCode==='change'){
+                this.$refs.changeOperate.init();
             }
         },
         //顶部列字段展示
@@ -202,11 +207,16 @@ export default {
         operateSuccess(){
             this.handleQuery();
         },
+        //调整安全天数回调
+        changeOperateSuccess(){
+
+        },
         //刷新列表数据
         handleQuery(row = {}){
             this.formData = Object.assign({}, this.formData,row);
             this.getList();
         },
+       
         tableRowClassName({row,rowIndex}){
             row.index = rowIndex + 1;
         }

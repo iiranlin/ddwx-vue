@@ -17,9 +17,11 @@
                                     :key="item.carNumber"
                                     :label="item.carNumber"
                                     :value="item">
+                                    <span :class="{'red-weight':item.isRestriction}">{{item.carNumber}}</span>
                                 </el-option>
                             </el-select>
                             <el-popover
+                                ref="popoverCar"
                                 placement="top"
                                 trigger="click">
                                 <tip-view :dateList="carItem.carTipValueOptions" title='车辆排班情况'></tip-view>
@@ -46,7 +48,8 @@
                                 </el-option>
                             </el-select>
                             <el-popover
-                                placement="top"
+                                ref="popoverDriver"
+                                placement="bottom"
                                 trigger="click">
                                 <tip-view :dateList="carItem.driverTipValueOptions" title='司机排班情况'></tip-view>
                                 <i slot="reference" class="i-tips"></i>
@@ -208,6 +211,7 @@ export default {
                     if(data.length !== 0){
                         this.initCarTips(data,index);
                     }
+                    this.$refs.popoverCar[index].doShow();
                 }).catch((err) => {
 
                 })
@@ -218,7 +222,7 @@ export default {
             let tipObj = {
                 tipArr:data,
             }
-            this.formData.carItemlist[index].carTipValueOptions.push(tipObj)
+            this.formData.carItemlist[index].carTipValueOptions.push(tipObj);
         },
         //司机信息改变回调
         driverChange(index){
@@ -233,6 +237,7 @@ export default {
                 if(data.length !== 0){
                     this.initDriverTips(data,index);
                 }
+                this.$refs.popoverDriver[index].doShow();
             }).catch((err) => {
 
             })
@@ -438,7 +443,6 @@ export default {
         background-position: center;
         transform: translateY(2px);
     }
-
     .button-delete {
         width: 100px;
         position: absolute;
@@ -469,7 +473,9 @@ export default {
         background-image:url('/static/icon_delete.png');
     }
 }
-
+.red-weight {
+    color: #ff0033;
+}
 ::v-deep .el-form-item__label {
     font-size: 12px;
     color: #1b1e22;
@@ -483,4 +489,5 @@ export default {
     padding-left: 0px !important;
     padding-right: 0px !important;
 }
+
 </style>

@@ -17,9 +17,11 @@
                                     :key="item.carNumber"
                                     :label="item.carNumber"
                                     :value="item">
+                                    <span :class="{'red-weight':item.isRestriction}">{{item.carNumber}}</span>
                                 </el-option>
                             </el-select>
                             <el-popover
+                                ref="popoverCar"
                                 placement="top"
                                 trigger="click">
                                 <tip-view :dateList="carItem.carTipValueOptions" title='车辆排班情况'></tip-view>
@@ -46,7 +48,8 @@
                                 </el-option>
                             </el-select>
                             <el-popover
-                                placement="top"
+                                ref="popoverDriver"
+                                placement="bottom"
                                 trigger="click">
                                 <tip-view :dateList="carItem.driverTipValueOptions" title='司机排班情况'></tip-view>
                                 <i slot="reference" class="i-tips"></i>
@@ -240,6 +243,7 @@
                     if(data.length !== 0){
                         this.initCarTips(data,index);
                     }
+                    this.$refs.popoverCar[index].doShow();
                 }).catch((err) => {
 
                 })
@@ -265,6 +269,7 @@
                 if(data.length !== 0){
                     this.initDriverTips(data,index);
                 }
+                this.$refs.popoverDriver[index].doShow();
             }).catch((err) => {
 
             })
@@ -605,6 +610,9 @@
     .i-delete {
         background-image:url('/static/icon_delete.png');
     }
+}
+.red-weight {
+    color: #ff0033;
 }
 ::v-deep .el-form-item__label {
     font-size: 12px;

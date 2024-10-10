@@ -11,6 +11,9 @@
               :single="single"
               @newButton="newButton"
               class="cume-button"
+              :upload-url="uploadUrl"
+              @uploadOnSuccess="uploadOnSuccess"
+              @uploadOnError="uploadOnError"
             >
             </button-top>
           </el-col>
@@ -69,8 +72,12 @@
 import buttonTop from '@/components/buttonTop'
 import formData from '@/components/formData'
 import tableIndex from '@/components/tableIndex'
-import { gcywInsuranceRecordListPage,gcywInsuranceRecordSubmit } from '@/api/driver'
+import { gcywInsuranceRecordListPage,
+gcywInsuranceRecordSubmit,
+gcywInsuranceRecordTemplateUrl,
+gcywInsuranceRecordImportUrl } from '@/api/driver'
 import indexMixin from '@/views/mixins'
+import { axiosDownloadExcel } from '@/api/download'
 
 export default {
   name: 'insuranceManagement',
@@ -101,7 +108,9 @@ export default {
       ids: [],
       //数据总数
       total: 0,
-      numberShow: false
+      numberShow: false,
+       // excel导入地址
+      uploadUrl: gcywInsuranceRecordImportUrl
     }
   },
   created() {
@@ -156,6 +165,8 @@ export default {
         this.handleDelete();
       }else if(buttonCode === 'submit'){
         this.handleSubmit();
+      }else if (buttonCode === 'template') {
+        axiosDownloadExcel(gcywInsuranceRecordTemplateUrl)
       }
     },
     //删除
@@ -258,7 +269,24 @@ export default {
     },
     tableRowClassName({ row, rowIndex }) {
       row.index = rowIndex + 1
-    }
+    },
+    // 上传成功
+    uploadOnSuccess(code, data, message) {
+      if (code === 0) {
+        this.$modal.msgSuccess('导入成功')
+        this.$router.push({
+          name: 'insuranceImport',
+          params: {
+            obj:data,         
+          },
+        })
+      } else {
+        this.$modal.msgError(message)
+      }
+    },
+    uploadOnError() {
+      this.$modal.msgError('上传失败, 数据格式有误')
+    },
   }
 
 }

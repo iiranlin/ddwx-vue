@@ -1,6 +1,6 @@
 <template>
     <div class="app-container" v-loading="loading">
-        <el-form ref="elForm" :model="formData" :rules="rules" label-width="85px">
+        <el-form ref="elForm" :model="formData" :rules="rules" label-width="115px">
         <!--可用车辆-->
         <div class="item-content-container">
             <div class="title-container">
@@ -174,42 +174,62 @@
                             </el-tag>
                         </div>
                     </li>
-                    <li>
+                    <el-row>
+                        <li class="li-item">
+                            <el-form-item label="乘车人联系电话：" prop="phone">
+                                <el-input v-model="formData.phone" @input="numberInput($event,'phone')" maxlength="13" placeholder="请输入手机/固话号码" size="small"/>
+                            </el-form-item>
+                        </li>
+                        <li class="li-item">
+                            <el-form-item label="经办人：" prop="handledUserManual">
+                                <el-input v-model="formData.handledUserManual" maxlength="4" placeholder="请输入经办人" size="small"/>
+                            </el-form-item>
+                        </li>
+                        <li class="li-item">
+                            <el-form-item label="经办人电话：" prop="handledPhoneManual">
+                                <el-input v-model="formData.handledPhoneManual" @input="numberInput($event,'handledPhoneManual')" maxlength="13" placeholder="请输入经办人电话" size="small"/>
+                            </el-form-item>
+                        </li>
+                    </el-row>
+                    <li class="li-item-all">
                         <el-form-item label="出发地点：" prop="fromAddr">
                             <form-address-cascader ref="formAddress" :name="'出发地'" @addressSuccess="addressSuccessOut" />
                         </el-form-item>
                     </li>
-                    <li>
+                    <li class="li-item-all">
                         <el-form-item label="前往地点：" prop="toAddr">
                             <form-address-cascader ref="toAddress" :name="'目的地'" @addressSuccess="addressSuccessTo" />
                         </el-form-item>
                     </li>
-                    <li class="li-item-time">
-                        <el-form-item label="联系电话：" prop="phone">
-                            <el-input v-model="formData.phone" @input="numberInput($event,'phone')" maxlength="13" placeholder="请输入手机/固话号码" size="small"/>
-                        </el-form-item>
-                        <el-form-item label="出发日期：" prop="usageDate">
-                            <span>{{formData.usageDate}}</span>
-                        </el-form-item>
-                        <el-form-item label="出发时间：" prop="usageTime">
-                            <el-time-select
-                                v-model="formData.usageTime"
-                                :picker-options="{
-                                    start: '00:00',
-                                    step: '00:05',
-                                    end: '23:55',
-                                    minTime:checkMinTime(),
-                                }"
-                                placeholder="请选择出发时间"
-                                size="small"
-                                style="width:100%"
-                                @change="handleUsageTimeChange()">
-                            </el-time-select>
-                        </el-form-item>
-                        <el-form-item label="预计时长:" prop="timeLength">
-                            <el-input v-model="formData.timeLength" @input="limitInput($event,'timeLength')" maxlength="5" placeholder="请输入预计时长" size="small"></el-input>
-                        </el-form-item>
-                    </li>
+                    <el-row>
+                        <li class="li-item">
+                            <el-form-item label="出发日期：" prop="usageDate">
+                                <span>{{formData.usageDate}}</span>
+                            </el-form-item>
+                        </li>
+                        <li class="li-item">
+                            <el-form-item label="出发时间：" prop="usageTime">
+                                <el-time-select
+                                    v-model="formData.usageTime"
+                                    :picker-options="{
+                                        start: '00:00',
+                                        step: '00:05',
+                                        end: '23:55',
+                                        minTime:checkMinTime(),
+                                    }"
+                                    placeholder="请选择出发时间"
+                                    size="small"
+                                    style="width:100%"
+                                    @change="handleUsageTimeChange()">
+                                </el-time-select>
+                            </el-form-item>
+                        </li>
+                        <li class="li-item">
+                            <el-form-item label="预计时长:" prop="timeLength">
+                                <el-input v-model="formData.timeLength" @input="limitInput($event,'timeLength')" maxlength="5" placeholder="请输入预计时长" size="small"></el-input>
+                            </el-form-item>
+                        </li>
+                     </el-row>
                     <li class="li-button">
                         <div class="button-container">
                             <el-button type="primary" round  @click="addRequest" size="small">保 存</el-button>
@@ -302,6 +322,8 @@ export default {
                 procDefId: '',
                 assignee: '',
                 candidateUser:[],
+                handledUserManual: '',  //经办人
+                handledPhoneManual: '', //经办人电话
             },
             //可用车辆数
             available: 0,
@@ -375,6 +397,12 @@ export default {
                 timeLength:[
                     {required:true,message:"请输入预计时长",trigger:"blur"}
                 ],
+                handledUserManual:[
+                    {required:true,message:"请输入经办人",trigger:"blur"}
+                ],
+                handledPhoneManual:[
+                    {required:true,message:"请输入经办人电话",trigger:"blur"}
+                ],
             },
         }
     },
@@ -428,6 +456,8 @@ export default {
                 this.$refs.toAddress.init(row.toAddr,row.toAreaIdd);
             }
             this.initUsageTime();
+            this.formData.handledUserManual = this.realName;
+            this.formData.handledPhoneManual = this.phone;
             // this.initDefaultUser();
         })
     },
@@ -891,7 +921,7 @@ export default {
                     float: left;
                     min-height: 24px;
                     line-height: 24px;
-                    min-width: 25%;
+                    min-width: 30%;
                     max-width: 25%;
                     font-size: 12px;
                     display: flex;
@@ -904,10 +934,13 @@ export default {
                     display: flex;
 
                     .user-name-input {
-                        width: 25%;
+                        width: 30%;
+                    }
+                    ::v-deep .el-autocomplete {
+                        width: 100%;
                     }
                     .user-name-tag {
-                        width: 70%;
+                        width: 65%;
                         margin-left: 10px;
                     }
                 }
@@ -958,5 +991,4 @@ export default {
         background: #ffffff;
     }
 }
-
 </style>

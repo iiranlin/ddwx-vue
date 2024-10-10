@@ -11,6 +11,9 @@
               :single="single"
               @newButton="newButton"
               class="cume-button"
+              :upload-url="uploadUrl"
+              @uploadOnSuccess="uploadOnSuccess"
+              @uploadOnError="uploadOnError"
             >
             </button-top>
           </el-col>
@@ -68,8 +71,13 @@
 import buttonTop from '@/components/buttonTop'
 import formData from '@/components/formData'
 import tableIndex from '@/components/tableIndex'
-import { getMaintenanceRecordByPage,maintenanceRecordSubmit,maintenanceRecordDelete } from '@/api/maintenanceRecord'
+import { getMaintenanceRecordByPage,
+maintenanceRecordSubmit,
+maintenanceRecordDelete,
+maintenanceRecordTemplateUrl,
+maintenanceRecordImportUrl } from '@/api/maintenanceRecord'
 import indexMixin from "@/views/mixins"
+import { axiosDownloadExcel } from '@/api/download'
 
 export default {
   name: 'maintenanceManagement',
@@ -101,7 +109,9 @@ export default {
       //已选中条目的id
       ids: [],
       //数据总数
-      total: 0
+      total: 0,
+      // excel导入地址
+      uploadUrl: maintenanceRecordImportUrl
     }
   },
   created() {
@@ -156,6 +166,8 @@ export default {
         this.handleDelete();
       }else if (buttonCode === 'submit') {
         this.handleSubmit();
+      }else if (buttonCode === 'template') {
+        axiosDownloadExcel(maintenanceRecordTemplateUrl)
       }
     },
     //删除
@@ -264,6 +276,23 @@ export default {
     },
     tableRowClassName({ row, rowIndex }) {
       row.index = rowIndex + 1
+    },
+    // 上传成功
+    uploadOnSuccess(code, data, message) {
+      if (code === 0) {
+        this.$modal.msgSuccess('导入成功')
+        this.$router.push({
+          name: 'maintenanceImport',
+          params: {
+            obj:data,         
+          },
+        })
+      } else {
+        this.$modal.msgError(message)
+      }
+    },
+    uploadOnError() {
+      this.$modal.msgError('上传失败, 数据格式有误')
     },
     
   }

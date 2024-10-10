@@ -1,155 +1,138 @@
 <template>
     <div class="board-container" id="container_max">
         <!--顶部-->
-        <div class="top-container">
-            <div class="top-left-container">
+        <div class="tip-container">
+            <div class="left-container">
+                <img src="/static/board/driver-board-logo.png" />
                 <span>安全驾驶，从我做起，累计安全行驶</span>
                 <span>{{secureDayNumber}}</span>
                 <span>天</span>
             </div>
-            <div class="top-right-container">
+            <div class="right-container">
                 <span>{{currentTime}}</span>
-                <img src="/static/driver-board-pie.webp"/>
-                <img src="/static/driver-board-pie.webp"/>
+                <img src="/static/board/btn-full-screen.png" @click="fullScreenClick()"/>
+                <img v-if="showVoice" src="/static/board/btn-sound-close.png" @click="voiceToggleClick()"/>
+                <img v-else src="/static/board/btn-sound-open.png" @click="voiceToggleClick()"/>
             </div>
         </div>
-        <!--中部-->
-        <div class="middle-container">
-            <!--值班人员-->
-            <div class="on-duty">
+        <div class="top-container">
+            <!--通知信息-->
+            <div class="message-container">
                 <div class="title-container">
-                    <span>{{onDutyNumber}}</span>
-                    <span>人</span>
+                    <img src="/static/board/message-title.png"/>
                 </div>
-                <div class="on-duty-container">
-                    <el-carousel trigger="click" :autoplay="true" arrow="never" interval="15000">
-                        <el-carousel-item v-for="(carouselItem,carouselIndex) in onDutyList" :key="carouselIndex">
-                            <ul>
-                                <li v-for="(item,index) in carouselItem" :key="index">
-                                    <div class="li-item">
-                                        <img :src="checkDriverPic(item.driverPic)" onerror="this.src='/static/driver-board-on-duty-user-default.webp'">
-                                        <div class="li-info">
-                                            <span class="dirver-name">{{item.driver}}</span>
-                                            <div class="car-info">
-                                                <span>{{item.carNumber}}</span>
-                                                <span>{{item.carBrand}}{{item.carSeries}}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </el-carousel-item>
-                    </el-carousel>    
-                </div>
-            </div>
-            <div class="middle-content">
-                <!--已出车-->
-                <div class="over-departure">
-                    <div class="title-container">
-                        <img src="/static/driver-board-over-departure-title-bg.webp"/>
-                        <span>{{overDepartureNumber}}</span>
-                        <span>辆</span>
-                    </div>
-                    <div class="over-departure-container">
-                        <el-carousel trigger="click" :autoplay="true" arrow="never" interval="15000">
-                            <el-carousel-item v-for="(carouselItem,carouselIndex) in overDepartureList" :key="carouselIndex">
-                                <ul>
-                                    <li v-for="(item,index) in carouselItem" :key="index">
-                                        <div class="li-item">
-                                            <div class="car-image">   
-                                                <img :src="checkCarImagePath(item.carBrand, item.carSeries)">
-                                            </div>
-                                            <div class="li-info">
-                                                <span class="dirver-name">{{item.driver}}</span>
-                                                <div class="car-info">
-                                                    <span>{{item.carNumber}}</span>
-                                                    <span>起点：{{item.fromAddr}}</span>
-                                                    <span>{{item.carBrand}}{{item.carSeries}}</span>
-                                                    <span>终点：{{item.toAddr}}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </el-carousel-item>
-                        </el-carousel>    
-                    </div>
-                </div>
-                <!--休假/请假-->
-                <div class="vacation-leave">
-                    <div class="title-container">
-                        <img src="/static/dirver-board-vacation-leave-title-bg.webp"/>
-                        <span>{{vacationLeaveNumber}}</span>
-                        <span>人</span>
-                    </div>
-                    <div class="vacation-leave-container">
-                        <el-carousel trigger="click" :autoplay="true" arrow="never" interval="15000">
-                            <el-carousel-item v-for="(carouselItem,carouselIndex) in vacationLeaveList" :key="carouselIndex">
-                                <ul>
-                                    <li v-for="(item,index) in carouselItem" :key="index">
-                                        <div class="li-item">
-                                            <img :src="checkDriverPic(item.driverPic)" onerror="this.src='/static/driver-board-on-duty-user-default.webp'">
-                                            <div class="li-info">
-                                                <span class="dirver-name">{{item.driverName}}</span>
-                                                <div class="car-info">
-                                                    <span>{{item.carNumber}}</span>
-                                                    <span>{{item.carBrand}}{{item.carSeries}}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </el-carousel-item>
-                        </el-carousel>    
-                    </div>
-                </div>
-                <!--滚动屏-->
-                <div class="rolling-board">
+                <div class="content-container">
                     <vue-seamless-scroll :data="scrollList" :class-option="classOption" class="seamless-warp">
                         <ul>
                             <li v-for="(item, index) in scrollList" :key="index">
-                                <span>{{checkDriver(item)}}</span>
+                                <span :class="[item.largeMsg == currentMsg?'currentSepak': 'nomalSpeak']">{{checkDriver(item)}}</span>
                                 <span>{{checkMsg(item)}}</span>
                             </li>
                         </ul>
                     </vue-seamless-scroll>
                 </div>
             </div>
-            <!--待出车-->
-            <div class="wait-departure">
+            <!--已出车-->
+            <div class="over-container">
                 <div class="title-container">
-                    <span>{{waitDepartureNumber}}</span>
+                    <img src="/static/board/over-title.png"/>
+                    <span>{{overDepartureNumber}}</span>
                     <span>辆</span>
                 </div>
-                <div class="wait-departure-container">
-                    <el-carousel trigger="click" :autoplay="true" arrow="never" interval="15000">
-                        <el-carousel-item v-for="(carouselItem,carouselIndex) in waitDepartureList" :key="carouselIndex">
+                <div class="content-container">
+                    <el-carousel trigger="click" :autoplay="true" :interval="interval" direction="vertical" >
+                        <el-carousel-item v-for="(carouselItem,carouselIndex) in overDepartureList" :key="carouselIndex">
                             <ul>
                                 <li v-for="(item,index) in carouselItem" :key="index">
-                                    <div class="li-item">
-                                        <div class="time-info">
-                                            <img src="/static/driver-board-clock.webp"/>
-                                            <span>{{item.usageDate}}&nbsp;{{item.usageTime}}</span>
-                                        </div>
-                                        <div class="car-info">
-                                            <span class="dirver-name">{{item.driver}}</span>
-                                            <span>{{item.carNumber}}</span>
-                                            <span>{{item.carBrand}}{{item.carSeries}}</span>
-                                        </div>
+                                    <div class="car-img">
+                                        <img :src="checkCarImagePath(item.carBrand, item.carSeries)">
                                     </div>
+                                    <span class="dirver-name">{{item.driver}}</span>
+                                    <span class="car-number">{{item.carNumber}}</span>
+                                    <img class="icon" src="/static/board/icon-grids.png" />
                                 </li>
                             </ul>
                         </el-carousel-item>
-                    </el-carousel>    
+                    </el-carousel>
+                    <!-- <img class="btn-next" src="/static/board/btn-next.png" />
+                    <img class="btn-pre" src="/static/board/btn-pre.png" /> -->
                 </div>
             </div>
         </div>
-        <!--底部-->
-        <div class="bottom-container">
-            <img src="/static/driver-board-full-screen.webp" @click="fullScreenClick()"/>
-            <img v-if="showVoice" src="/static/driver-board-voice-close.png" @click="voiceToggleClick()"/>
-            <img v-else src="/static/driver-board-voice-open.webp" @click="voiceToggleClick()"/>
+        <div class="middle-container">
+            <!--待出车-->
+            <div class="wait-container">
+                <div class="title-container">
+                    <img src="/static/board/wait-title.png"/>
+                    <span>{{waitDepartureNumber}}</span>
+                    <span>辆</span>
+                </div>
+                <div class="content-container">
+                    <el-carousel trigger="click" :autoplay="true" :interval="interval" direction="vertical" >
+                        <el-carousel-item v-for="(carouselItem,carouselIndex) in waitDepartureList" :key="carouselIndex">
+                            <ul>
+                                <li v-for="(item,index) in carouselItem" :key="index">
+                                    <img src="/static/board/icon-time.png" />
+                                    <span class="time">{{item.usageDate}}&nbsp;{{item.usageTime}}</span>
+                                    <span class="driver-name">{{item.driver}}</span>
+                                    <span class="car-number">{{item.carNumber}}</span>
+                                    <span class="car-brand">{{item.carBrand}}{{item.carSeries}}</span>
+                                </li>
+                            </ul>
+                        </el-carousel-item>
+                    </el-carousel>
+                </div>
+            </div>
         </div>
+        <div class="bottom-container">
+            <!--值班人员-->
+            <div class="duty-container">
+                <div class="title-container">
+                    <img src="/static/board/duty-title.png"/>
+                    <span>{{onDutyNumber}}</span>
+                    <span>人</span>
+                </div>
+                <div class="content-container">
+                    <el-carousel trigger="click" :autoplay="true" :interval="interval" direction="vertical" >
+                        <el-carousel-item v-for="(carouselItem,carouselIndex) in onDutyList" :key="carouselIndex">
+                            <ul>
+                                <li v-for="(item,index) in carouselItem" :key="index">
+                                    <div class="driver-img">
+                                        <img :src="checkDriverPic(item.driverPic)" onerror="this.src='/static/board/user-default.webp'">
+                                    </div>
+                                    <span class="duty-name">{{item.driver}}</span>
+                                    <span class="car-number">{{item.carNumber}}</span>
+                                </li>
+                            </ul>
+                        </el-carousel-item>
+                    </el-carousel>
+                </div>
+            </div>
+            <!--休假/请假-->
+            <div class="leave-container">
+                <div class="title-container">
+                    <img src="/static/board/leave-title.png"/>
+                    <span>{{vacationLeaveNumber}}</span>
+                    <span>人</span>
+                </div>
+                <div class="content-container">
+                    <el-carousel trigger="click" :autoplay="true" :interval="interval" direction="vertical" >
+                        <el-carousel-item v-for="(carouselItem,carouselIndex) in vacationLeaveList" :key="carouselIndex">
+                            <ul>
+                                <li v-for="(item,index) in carouselItem" :key="index">
+                                    <div class="driver-img">
+                                        <img :src="checkDriverPic(item.driverPic)" onerror="this.src='/static/board/user-default.webp'">
+                                    </div>
+                                    <span class="duty-name">{{item.driverName}}</span>
+                                    <span class="car-number">{{item.carNumber}}</span>
+                                </li>
+                            </ul>
+                        </el-carousel-item>
+                    </el-carousel>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-bg"></div>
     </div>
 </template>
 <script>
@@ -163,7 +146,11 @@ import checkCarImagePath from '@/utils/carPath'
 import Speech from 'speak-tts'
 import dayjs from 'dayjs'
 
+let that;
 export default {
+    beforeCreate() {
+        that = this
+    },
     
     data() {
         return {
@@ -194,7 +181,23 @@ export default {
             //待出车数量
             waitDepartureNumber:'0',
             //滚动屏数据
-            scrollList:[],
+            scrollList:[
+                {
+                    largeMsg: "张三 测试数据1"
+                },
+                {
+                    largeMsg: "李四 测试数据1"
+                },
+                {
+                    largeMsg: "王五 测试数据1"
+                },
+                {
+                    largeMsg: "赵六 测试数据1"
+                },
+                {
+                    largeMsg: "测试 测试数据1"
+                },
+            ],
             //滚动屏参数
             classOption: {
                 step: 0.2
@@ -211,10 +214,14 @@ export default {
             scrollFlag:'init',
             //语音播报对象
             speech: null,
+            //轮播图间隔
+            interval:15000,
+            //当前播报的内容
+            currentMsg: '',
         }
     },
     mounted() {
-        const that = this;
+        // var that = this;
         screenfull.on('change', function() {
             if(screenfull.isFullscreen){
                 that.showFullScreen = true;
@@ -229,7 +236,6 @@ export default {
         this.speechInit() 
     },
     created() {
-        // this.scrollFlag = 'init'
         this.resizeScreen();
 
         this.currentTimer = setInterval(() => {
@@ -277,7 +283,6 @@ export default {
             largeScreenDriverSecureDay().then(({message}) => {
                 this.loading = false
                 this.secureDayNumber = message;
-              
             }).catch((err) => {
                 this.loading = false
             })
@@ -303,7 +308,7 @@ export default {
                         item.carSeries = item.carSeries.split(',')[0];
                     }
                 })
-                this.onDutyList = this.encapsulationList(9,dataList);
+                this.onDutyList = this.encapsulationList(8,dataList);
             }).catch((err) => {
                 this.loading = false
             })
@@ -323,7 +328,7 @@ export default {
                     item.fromAddr = item.fromAddr.split(' ')[1];
                     item.toAddr = item.toAddr.split(' ')[1];
                 })
-                this.overDepartureList = this.encapsulationList(10,data);
+                this.overDepartureList = this.encapsulationList(9,data);
             }).catch((err) => {
                 this.loading = false
             })
@@ -334,8 +339,8 @@ export default {
 
             largeScreenDriverLeave().then(({data}) => {
                 this.loading = false
-            
                 this.vacationLeaveNumber = data.length;
+
                 data.forEach((item) => {
                     if(item.carNumber){
                         item.carNumber = item.carNumber.split(',')[0];
@@ -347,7 +352,7 @@ export default {
                         item.carSeries = item.carSeries.split(',')[0];
                     }
                 })
-                this.vacationLeaveList = this.encapsulationList(4,data);
+                this.vacationLeaveList = this.encapsulationList(6,data);
             }).catch((err) => {
                 this.loading = false
             })
@@ -361,9 +366,9 @@ export default {
             }
             largeScreenDriverRequest(params).then(({data}) => {
                 this.loading = false
-            
+
                 this.waitDepartureNumber = data.length;
-                this.waitDepartureList = this.encapsulationList(9,data);
+                this.waitDepartureList = this.encapsulationList(10,data);
             }).catch((err) => {
                 this.loading = false
             })
@@ -379,8 +384,9 @@ export default {
                 this.loading = false;
                 this.scrollFlag = data.flag;
 
-                this.scrollList = this.initScrollList([...this.scrollList,...data.data])
-                this.speakTtsSpeech(data.data);
+                // this.scrollList = this.initScrollList([...this.scrollList,...data.data])
+                // this.speakTtsSpeech(data.data);
+                this.speakTtsSpeech(this.scrollList);
             }).catch((err) => {
                 this.loading = false
             })
@@ -394,7 +400,7 @@ export default {
                 let targetTime = dayjs(item.dateStr);
                 // 计算时间差（单位：毫秒）
                 let diff = nowTime.diff(targetTime);
-                console.log(diff)
+               
                 // 判断时间差是否小于5分钟
                 if(diff < 300000){
                     tempArr.push(item)
@@ -446,7 +452,7 @@ export default {
         },
         //判断滚动信息
         checkMsg(item){
-             return item.largeMsg.split(" ")[1];
+            return item.largeMsg.split(" ")[1];
         },
         //声音开关点击
         voiceToggleClick(){
@@ -473,9 +479,15 @@ export default {
                     text: voiceData[i].largeMsg,// 播放的文本内容
                     listeners: {
                         // 开始播放
-                        onstart: () => { console.log("Start utterance")},
+                        onstart: () => { 
+                            that.currentMsg = voiceData[i].largeMsg;
+                        },
                         // 判断播放是否完毕
-                        onend: () => { console.log("End utterance")},
+                        onend: () => { 
+                            if(i == voiceData.length -1){
+                                that.currentMsg = '';
+                            }
+                        },
                         // 恢复播放
                         onresume: () => { console.log("Resume utterance") },
                     },
@@ -499,468 +511,118 @@ export default {
 .board-container {
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
     background:linear-gradient(180deg,#331a88 0%,#0b1556 100%);
+    overflow: auto;
 
-    .top-container {
+    .tip-container {
         width: 100%;
         height: 0.74rem;
-        background: url('/static/driver-board-top-bg.png') no-repeat center top;
+        display: flex;
+        justify-content: space-between;
+        background: url('/static/board/title-bg.png') no-repeat center top;
         background-size: contain;
 
-        .top-left-container {
+        .left-container {
             height: 100%;
-            margin-left: 0.8rem;
-            color: #ffffff;
-            float: left;
             display: flex;
-            align-items: center;
-
-            & span:nth-child(1){
-                font-size: 0.14rem;
+            
+            img {
+                width: 0.64rem;
+                height: 0.64rem;
+                margin-top: 0.11rem;
+                margin-left: 0.05rem;
             }
             & span:nth-child(2){
-                font-size: 0.22rem;
-                font-family: 'LcdD';
-                margin-left: 0.05rem;
-                margin-right: 0.05rem;
+                font-size: 0.14rem;
+                color: #ffffff;
+                margin-top: 0.33rem;
             }
             & span:nth-child(3){
+                font-size: 0.24rem;
+                font-family: 'LcdD';
+                color: #ffffff;
+                margin-left: 0.04rem;
+                margin-right: 0.06rem;
+                margin-top: 0.27rem;
+            }
+            & span:nth-child(4){
                 font-size: 0.14rem;
+                color: #ffffff;
+                margin-top: 0.33rem;
             }
         }
-        .top-right-container {
-            height: 100%;
-            float: right;
-            margin-right: 0.15rem;
+        .right-container {
             display: flex;
-            align-items: center;
 
-            img {
-                width: 0.34rem;
-                height: 0.34rem;
-            }
-            & span:nth-child(1){
+            span {
                 font-size: 0.2rem;
-                color: #88f2fd;
+                color: #CEF2FF;
                 font-family: 'LcdD';
-                margin-right: 0.24rem;
+                margin-top: 0.23rem;
+                margin-right: 0.64rem;
             }
-            & img:nth-child(2){
-                margin-right: 0.1rem;
+            & img:nth-child(2) {
+                width: 0.44rem;
+                height: 0.36rem;
+                margin-right: 0.12rem;
+                margin-top: 0.17rem;
+
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+            & img:nth-child(3) {
+                width: 0.44rem;
+                height: 0.36rem;
+                margin-right: 0.24rem;
+                margin-top: 0.17rem;
+
+                &:hover {
+                    cursor: pointer;
+                }
             }
         }
     }
-    .middle-container {
-        margin-top: 0.11rem;
+    .top-container {
+        width: 100%;
+        height: 3.49rem;
+        margin-top: 0.1rem;
+        box-sizing: border-box;
+        padding-left: 0.24rem;
+        padding-right: 0.24rem;
         display: flex;
         justify-content: space-between;
-        margin-left: 0.46rem;
-        margin-right: 0.46rem;
-        height: calc(100% - 0.74rem);
 
-        .on-duty {
-            width: 3.34rem;
-            height: calc(100% - 0.7rem);
-            background-image: url("/static/driver-board-middle-left-bg.webp");
-            background-size: 3.34rem 100%;
-            background-repeat: no-repeat;
+        .message-container {
+            width: 10.63rem;
+            height: 3.49rem;
+            background: url('/static/board/message-bg.png') no-repeat center;
+            background-size: contain;
+            margin-right: 0.16rem;
 
             .title-container {
-                height: 0.56rem;
-                background-image: url("/static/driver-board-on-duty-title-bg.webp");
-                background-size: contain;
-                background-repeat: no-repeat;
+                width: 100%;
+                height: 0.54rem;
                 display: flex;
+                align-items: center;
 
-                & span:nth-child(1){
-                    font-size: 0.14rem;
-                    color: #c2fe66;
-                    font-family: 'LcdD';
-                    margin-left: 1.75rem;
-                    margin-top: 0.27rem;
-                }
-                & span:nth-child(2){
-                    font-size: 0.14rem;
-                    color: #c2fe66;
-                    margin-top: 0.25rem;
-                    margin-left: 0.05rem;
+                img {
+                    width: 1.7rem;
+                    height: 0.54rem;
                 }
             }
-            .on-duty-container {
-                height: calc(100% - 0.56rem);
-
-                ::v-deep .el-carousel {
-                    height: 100%;
-                }
-                ::v-deep .el-carousel__container {
-                    height: 100%;
-                }
-                //轮播图指示器样式 未进入此页面的样式
-                ::v-deep .el-carousel__button {
-                    width: 0.1rem;
-                    height: 0.1rem;
-                    background: #3d8b9b;
-                    border-radius: 50%;
-                    opacity: 1;
-                }
-                //滚动到此页面的样式
-                ::v-deep .is-active .el-carousel__button {
-                    width: 0.1rem;
-                    height: 0.1rem;
-                    background: #94fe68;
-                    border-radius: 50%;
-                    opacity: 1;
-                }
-                ::v-deep .el-carousel__button {
-                    position: relative;
-                    top: 0.05rem;
-                }
-                ::v-deep .el-carousel__indicators {
-                    width: 100%;
-                    text-align: left;
-                    padding: 0 0.3rem;
-                }
-                ul {
-                    list-style: none;
-                    margin: 0;
-                    padding: 0;
-                    margin-top: 0.21rem;
-
-                    li {
-                        width: 2.7rem;
-                        height: 0.72rem;
-                        margin-left: 0.36rem;
-                        margin-bottom: 0.2rem;
-                        background-image: url("/static/driver-board-on-duty-li-bg.webp");
-                        background-size: contain;
-                        background-repeat: no-repeat;
-
-                        .li-item {
-                            display: flex;
-                            width: 100%;
-                            height: 100%;
-
-                            img {
-                                width: 0.63rem;
-                                height: 0.63rem;
-                            }
-                            .li-info {
-                                margin-left: 0.12rem;
-                                display: flex;
-                                flex-direction: column;
-
-                                .dirver-name {
-                                    margin-top: 0.08rem;
-                                    font-size: 0.16rem;
-                                    color: #ffffff;
-                                    font-weight: 600;
-                                }
-                                .car-info {
-                                    display: flex;
-                                    margin-top: 0.07rem;
-
-                                    & span:nth-child(1){
-                                        font-size: 0.12rem;
-                                        color: #b8ffe7;
-                                    }
-                                    & span:nth-child(2){
-                                        margin-left: 0.14rem;
-                                        font-size: 0.12rem;
-                                        color: #b8ffe7;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        .middle-content {
-            display: flex;
-            flex-direction: column;
-
-            .over-departure {
-                width: 11.26rem;
-                height: 5.72rem;
-                background-image: url("/static/driver-board-over-departure-bg.webp");
-                background-size: 11.26rem 100%;
-                background-repeat: no-repeat;
-
-                ::v-deep .el-carousel {
-                    height: 100%;
-                }
-                ::v-deep .el-carousel__container {
-                    height: 100%;
-                }
-                //轮播图指示器样式 未进入此页面的样式
-                ::v-deep .el-carousel__button {
-                    // width: 1.2rem;
-                    height: 0.04rem;
-                    background: #3d8b9b;
-                    opacity: 1;
-                }
-                //滚动到此页面的样式
-                ::v-deep .is-active .el-carousel__button {
-                    // width: 1.2rem;
-                    height: 0.04rem;
-                    background: #94fe68;
-                    opacity: 1;
-                }
-                ::v-deep .el-carousel__button {
-                    position: relative;
-                    top: 5px;
-                }
-                .title-container {
-                    margin-top: 0.16rem;
-                    margin-left: 0.23rem;
-                    height: 0.33rem;
-                    display: flex;
-
-                    img {
-                        width: 1.23rem;
-                        height: 0.33rem;
-                    }
-                    & span:nth-child(2){
-                        font-size: 0.14rem;
-                        color: #c2fe66;
-                        font-family: 'LcdD';
-                        margin-top: 0.09rem;
-                        margin-left: 0.1rem;
-                    }
-                    & span:nth-child(3){
-                        font-size: 0.14rem;
-                        color: #c2fe66;
-                        margin-top: 0.09rem;
-                        margin-left: 0.05rem;
-                    }
-                }
-                .over-departure-container {
-                    height: calc(100% - 0.56rem);
-
-                    ul {
-                        list-style: none;
-                        margin: 0;
-                        padding: 0;
-                        margin-top: 0.24rem;
-
-                        li {
-                            width: 5.2rem;
-                            height: 0.74rem;
-                            margin-bottom: 0.19rem;
-                            margin-left: 0.32rem;
-                            float: left;
-                            background-image: url("/static/driver-board-over-departure-li-bg.webp");
-                            background-size: contain;
-                            background-repeat: no-repeat;
-
-                            .li-item {
-                                display: flex;
-
-                                .car-image {
-                                    display: flex;
-                                    width: 0.64rem;
-                                    height: 0.64rem;
-                                    padding: 0.01rem;
-                                    background-image: url("/static/driver-board-over-departure-car-bg.webp");
-                                    background-size: contain;
-                                    background-repeat: no-repeat;
-
-                                    img {
-                                        vertical-align: middle;
-                                        width: 0.63rem;
-                                        height: 0.63rem;
-                                    }
-                                }
-                                .li-info {
-                                    width: 100%;
-                                    margin-left: 0.12rem;
-                                    display: flex;
-                                    flex-direction: column;
-
-                                    .dirver-name {
-                                        font-size: 0.16rem;
-                                        color: #ffffff;
-                                        font-weight: 600;
-                                    }
-                                    .car-info {
-                                        margin-top: 0.03rem;
-
-                                        span {
-                                            font-size: 0.12rem;
-                                            color: #b8ffe7;
-                                            float: left;
-                                            margin-bottom: 0.03rem;
-                                            position: relative;
-                                        }
-                                        & span:nth-child(1n){
-                                            width: 40%;
-                                        }
-                                        & span:nth-child(2n){
-                                            width: 60%;
-                                        }
-                                        & span:nth-child(2n)::after{
-                                            content: "";
-                                            width: 0.06rem;
-                                            height: 0.06rem;
-                                            background-color: #88fd1b;
-                                            border-radius: 50%;
-                                            position: absolute;
-                                            left: -0.1rem;
-                                            top: 0.05rem
-                                        }
-                                        & span:nth-child(4n)::after{
-                                            content: "";
-                                            width: 0.06rem;
-                                            height: 0.06rem;
-                                            background-color: #ad70ff;
-                                            border-radius: 50%;
-                                            position: absolute;
-                                            left: -0.1rem;
-                                            top: 0.05rem
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        & li:nth-child(2n){
-                            margin-left: 0.42rem;
-                        }
-                    }
-                }
-            }   
-            .vacation-leave {
-                width: 11.26rem;
-                height: 1.87rem;
-                margin-top: 0.16rem;
-                background-image: url("/static/driver-board-vacation-leave-bg.webp");
-                background-size: 11.26rem 100%;
-                background-repeat: no-repeat; 
-
-                ::v-deep .el-carousel {
-                    height: 100%;
-                }
-                ::v-deep .el-carousel__container {
-                    height: 100%;
-                }
-                //轮播图指示器样式 未进入此页面的样式
-                ::v-deep .el-carousel__button {
-                    // width: 1.2rem;
-                    height: 0.04rem;
-                    background: #3d8b9b;
-                    opacity: 1;
-                }
-                //滚动到此页面的样式
-                ::v-deep .is-active .el-carousel__button {
-                    // width: 1.2rem;
-                    height: 0.04rem;
-                    background: #94fe68;
-                    opacity: 1;
-                }
-                ::v-deep .el-carousel__button {
-                    position: relative;
-                    top: 5px;
-                }
-                .title-container {
-                    margin-top: 0.16rem;
-                    margin-left: 0.22rem;
-                    height: 0.33rem;
-                    display: flex;
-
-                    img {
-                        width: 1.61rem;
-                        height: 0.33rem;
-                    }
-                    & span:nth-child(2){
-                        font-size: 0.14rem;
-                        color: #c2fe66;
-                        font-family: 'LcdD';
-                        margin-top: 0.09rem;
-                        margin-left: 0.1rem;
-                    }
-                    & span:nth-child(3){
-                        font-size: 0.14rem;
-                        color: #c2fe66;
-                        margin-top: 0.09rem;
-                        margin-left: 0.05rem;
-                    }
-                }
-                .vacation-leave-container {
-                    height: calc(100% - 0.56rem);
-
-                    ul {
-                        list-style: none;
-                        margin: 0;
-                        padding: 0;
-                        margin-top: 0.18rem;
-
-                        li {
-                            width: 2.54rem;
-                            height: 0.74rem;
-                            margin-left: 0.2rem;
-                            float: left;
-                            background-image: url("/static/driver-board-vacation-leave-li-bg.webp");
-                            background-size: contain;
-                            background-repeat: no-repeat;
-
-                            .li-item {
-                                display: flex;
-                                width: 100%;
-                                height: 100%;
-
-                                img {
-                                    width: 0.49rem;
-                                    height: 0.49rem;
-                                    margin-top: 0.12rem;
-                                }
-                                .li-info {
-                                    margin-left: 0.12rem;
-                                    display: flex;
-                                    flex-direction: column;
-
-                                    .dirver-name {
-                                        margin-top: 0.14rem;
-                                        font-size: 0.16rem;
-                                        color: #ffffff;
-                                        font-weight: 600;
-                                    }
-                                    .car-info {
-                                        display: flex;
-                                        margin-top: 0.07rem;
-
-                                        & span:nth-child(1){
-                                            font-size: 0.12rem;
-                                            color: #b8ffe7;
-                                        }
-                                        & span:nth-child(2){
-                                            margin-left: 0.14rem;
-                                            font-size: 0.12rem;
-                                            color: #b8ffe7;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        & li:nth-child(1){
-                            margin-left: 0.32rem;
-                        }
-                    }
-                }
-
-            }
-            .rolling-board {
-                width: 11.26rem;
-                height: 1.86rem;
-                margin-top: 0.16rem;
-                background-image: url("/static/driver-board-rolling-board-bg.webp");
-                background-size: 11.26rem 100%;
-                background-repeat: no-repeat;
+            .content-container {
+                width: 10.63rem;
+                height: calc(100% - 0.54rem);
+                padding-left: 0.15rem;
+                padding-right: 0.44rem;
+                margin-top: 0.2rem;
+                box-sizing: border-box;
+                position: relative;
 
                 .seamless-warp {
-                    height: calc(100% - 0.5rem);
+                    height: calc(100% - 0.54rem);
                     overflow: hidden;
-                    margin-top: 0.26rem;
                 }
                 ul {
                     margin: 0;
@@ -969,156 +631,235 @@ export default {
 
                     li {
                         display: flex;
-                        font-size: 0.14rem;
-                        margin-left: 0.37rem;
-                        margin-bottom: 0.09rem;
+                        min-height: 0.44rem;
+                        margin-bottom: 0.1rem;
+                        background: linear-gradient(0deg, #1d94ff5b 0%, #001cb115 100%);
 
                         & span:nth-child(1){
-                            color: #c2fe66;
+                            color: #C2FF66;
                             position: relative;
                             display: inline-block;
+                            font-size: 0.18rem;
                             width: 0.6rem;
-
-                            &::after {
-                                content: "";
-                                width: 0.05rem;
-                                height: 0.05rem;
-                                background-color: #88fd1b;
-                                position: absolute;
-                                left: -0.15rem;
-                                top: 0.08rem;
-                            }
+                            margin-left: 0.47rem;
                         }
                         & span:nth-child(2){
                             color: #ffffff;
                             margin-left: 0.1rem;
+                            font-size: 0.18rem;
+                        }
+                        .currentSepak::after{
+                            content: "";
+                            width: 0.17rem;
+                            height: 0.15rem;
+                            background: url('/static/board/icon-speak.png') no-repeat center;
+                            background-size: contain;
+                            position: absolute;
+                            left: -0.25rem;
+                            top: 0.05rem;
+                        }
+                        .nomalSpeak::after {
+                            content: "";
+                            width: 0.05rem;
+                            height: 0.05rem;
+                            background-color: #FFD942;
+                            position: absolute;
+                            left: -0.15rem;
+                            top: 0.08rem;
                         }
                     }
                 }
             }
-
         }
-        .wait-departure {
-            width: 3.34rem;
-            height: calc(100% - 0.7rem);;
-            background-image: url("/static/driver-board-middle-right-bg.webp");
-            background-size: 3.34rem 100%;
-            background-repeat: no-repeat;
+        .over-container {
+            width: 7.93rem;
+            height: 3.49rem;
+            background: url('/static/board/over-bg.png') no-repeat center;
+            background-size: contain;
 
             .title-container {
-                height: 0.56rem;
-                background-image: url("/static/driver-board-wait-departure-title-bg.webp");
-                background-size: contain;
-                background-repeat: no-repeat;
+                width: 100%;
+                height: 0.54rem;
                 display: flex;
 
-                & span:nth-child(1){
-                    font-size: 0.14rem;
-                    color: #c2fe66;
-                    font-family: 'LcdD';
-                    margin-left: 1.53rem;
-                    margin-top: 0.27rem;
+                img {
+                    width: 1.45rem;
+                    height: 0.54rem;
                 }
                 & span:nth-child(2){
-                    font-size: 0.14rem;
-                    color: #c2fe66;
-                    margin-top: 0.25rem;
+                    font-size: 0.16rem;
+                    color: #F1FFD1;
+                    font-family: 'LcdD';
+                    margin-left: 0.04rem;
+                    margin-top: 0.22rem;
+                }
+                & span:nth-child(3){
+                    font-size: 0.16rem;
+                    color: #F1FFD1;
                     margin-left: 0.05rem;
+                    margin-top: 0.20rem;
                 }
             }
-            .wait-departure-container {
-                height: calc(100% - 0.56rem);
+            .content-container {
+                width: 100%;
+                height: calc(100% - 0.54rem);
+                box-sizing: border-box;
+                padding-left: 0.4rem;
+                position: relative;
 
-                ::v-deep .el-carousel {
-                    height: 100%;
-                }
-                ::v-deep .el-carousel__container {
-                    height: 100%;
-                }
-                //轮播图指示器样式 未进入此页面的样式
-                ::v-deep .el-carousel__button {
-                    width: 0.1rem;
-                    height: 0.1rem;
-                    background: #3d8b9b;
-                    border-radius: 50%;
-                    opacity: 1;
-                }
-                //滚动到此页面的样式
-                ::v-deep .is-active .el-carousel__button {
-                    width: 0.1rem;
-                    height: 0.1rem;
-                    background: #94fe68;
-                    border-radius: 50;
-                    opacity: 1;
-                }
-                ::v-deep .el-carousel__button {
-                    position: relative;
-                    top: 0.05rem;
-                }
-                ::v-deep .el-carousel__indicators {
-                    width: 100%;
-                    text-align: right;
-                    padding: 0 0.26rem;
-                }
                 ul {
-                    list-style: none;
                     margin: 0;
                     padding: 0;
-                    margin-top: 0.27rem;
+                    list-style: none;
 
                     li {
-                        width: 3.4rem;
-                        height: 0.68rem;
-                        margin-left: 0.24rem;
-                        margin-bottom: 0.24rem;
-                        background-image: url("/static/driver-board-wait-departure-li-bg.webp");
-                        background-size: contain;
-                        background-repeat: no-repeat;
+                        width: 2.17rem;
+                        height: 0.72rem;
+                        display: flex;
+                        align-items: center;
+                        float: left;
+                        margin-right: 0.2rem;
+                        margin-top: 0.15rem;
+                        position: relative;
+                        background: linear-gradient(270deg, #0c7f3a78 0%, #1a335680 49%, #1e1a5f78 100%);
 
-                        .li-item {
+                        .car-img {
+                            width: 0.62rem;
+                            height: 0.62rem;
                             display: flex;
-                            flex-direction: column;
-                            width: 100%;
-                            height: 100%;
+                            align-items: center;
+                            background: url('/static/board/over-border.png') no-repeat center top;
+                            background-size: contain;
 
-                            .time-info {
-                                display: flex;
-                                align-items: center;
-
-                                img {
-                                    width: 0.22rem;
-                                    height: 0.22rem;
-                                }
-                                span {
-                                    margin-left: 0.09rem;
-                                    font-size: 0.16rem;
-                                    color: #7dd6fd;
-                                    font-family: 'LcdD';
-                                }
+                            img {
+                                width: 0.55rem;
+                                height: 0.55rem;
+                                margin: 0 auto;
                             }
-                            .car-info {
-                                display: flex;
-                                margin-top: 0.11rem;
-                                align-items: center;
+                        }
+                        .dirver-name {
+                            color: #ffffff;
+                            font-size: 0.18rem;
+                            position: absolute;
+                            left: 0.75rem;
+                            top: 0.15rem;
+                        }
+                        .car-number {
+                            color: #A2FFAF;
+                            font-size: 0.12rem;
+                            position: absolute;
+                            left: 0.75rem;
+                            top: 0.42rem;
+                        }
+                        .icon {
+                            width: 0.13rem;
+                            height: 0.13rem;
+                            position: absolute;
+                            right: 0.06rem;
+                            bottom: 0.04rem;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .middle-container {
+        width: 100%;
+        height: 2.79rem;
+        margin-top: 0.2rem;
+        box-sizing: border-box;
+        padding-left: 0.24rem;
+        padding-right: 0.24rem;
+      
+        .wait-container {
+            width: 100%;
+            height: 100%;
+            background: url('/static/board/wait-bg.png') no-repeat center;
+            background-size: contain;
 
-                                & span:nth-child(1) {
-                                    font-size: 0.16rem;
-                                    color: #ffffff;
-                                    font-weight: 600;
-                                    margin-left: 0.31rem;
-                                    width: 0.65rem;
-                                }
-                                & span:nth-child(2){
-                                    margin-left: 0.64rem;
-                                    font-size: 0.12rem;
-                                    color: #b8ffe7;
-                                }
-                                & span:nth-child(3){
-                                    margin-left: 0.14rem;
-                                    font-size: 0.12rem;
-                                    color: #b8ffe7;
-                                }
-                            }
+            .title-container {
+                width: 100%;
+                height: 0.54rem;
+                display: flex;
+
+                img {
+                    width: 1.45rem;
+                    height: 0.54rem;
+                }
+                & span:nth-child(2){
+                    font-size: 0.16rem;
+                    color: #F9FF66;
+                    font-family: 'LcdD';
+                    margin-left: 0.04rem;
+                    margin-top: 0.22rem;
+                }
+                & span:nth-child(3){
+                    font-size: 0.16rem;
+                    color: #F9FF66;
+                    margin-left: 0.05rem;
+                    margin-top: 0.20rem;
+                }
+            }
+            .content-container {
+                width: 100%;
+                height: calc(100% - 0.54rem);
+                box-sizing: border-box;
+                padding-left: 0.28rem;
+                position: relative;
+
+                ul {
+                    margin: 0;
+                    padding: 0;
+                    list-style: none;
+
+                    li {
+                        width: 3.45rem;
+                        height: 0.86rem;
+                        display: flex;
+                        align-items: center;
+                        float: left;
+                        margin-top: 0.15rem;
+                        margin-right: 0.2rem;
+                        position: relative;
+                        background: url('/static/board/wait-item-bg.png') no-repeat center top;
+                        background-size: contain;
+
+                        img {
+                            width: 0.2rem;
+                            height: 0.2rem;
+                            position: absolute;
+                            left: 0.12rem;
+                            top: 0.17rem;
+                        }
+                        .time {
+                            color: #FFF6DA;
+                            font-size: 0.16rem;
+                            font-family: 'LcdD';
+                            position: absolute;
+                            left: 0.41rem;
+                            top: 0.17rem;
+                        }
+                        .driver-name {
+                            color: #FFFFFF;
+                            font-weight: 600;
+                            font-size: 0.18rem;
+                            position: absolute;
+                            left: 0.42rem;
+                            top: 0.44rem;
+                        }
+                        .car-number {
+                            color: #FFFFFF;
+                            font-size: 0.14rem;
+                            position: absolute;
+                            left: 1.65rem;
+                            top: 0.46rem;
+                        }
+                        .car-brand {
+                            color: #FFFFFF;
+                            font-size: 0.14rem;
+                            position: absolute;
+                            left: 2.55rem;
+                            top: 0.46rem;
                         }
                     }
                 }
@@ -1126,36 +867,218 @@ export default {
         }
     }
     .bottom-container {
-        position: fixed;
-        bottom: 0;
-        left: 0;
         width: 100%;
-        height: 0.67rem;
-        background: url('/static/driver-board-bottom-bg.webp') no-repeat;
-        background-size: contain;
+        height: 2.89rem;
+        margin-top: 0.2rem;
+        box-sizing: border-box;
+        padding-left: 0.24rem;
+        padding-right: 0.24rem;
+        display: flex;
+        justify-content: space-between;
 
-        & img:nth-child(1){
-            width: 1.29rem;
-            height: 0.35rem;
-            margin-right: 0.14rem;
-            margin-top: 0.09rem;
-            float: right;
+        .duty-container {
+            width: 10.63rem;
+            height: 2.89rem;
+            background: url('/static/board/duty-bg.png') no-repeat center;
+            background-size: contain;
+            margin-right: 0.16rem;
 
-            &:hover {
-                cursor: pointer;
+            .title-container {
+                width: 100%;
+                height: 0.54rem;
+                display: flex;
+                align-items: center;
+
+                img {
+                    width: 1.7rem;
+                    height: 0.54rem;
+                }
+                & span:nth-child(2){
+                    font-size: 0.16rem;
+                    color: #F1FFD1;
+                    font-family: 'LcdD';
+                    margin-left: 0.04rem;
+                    margin-top: 0.1rem;
+                }
+                & span:nth-child(3){
+                    font-size: 0.16rem;
+                    color: #F1FFD1;
+                    margin-left: 0.05rem;
+                    margin-top: 0.08rem;
+                }
+            }
+            .content-container {
+                width: 100%;
+                height: calc(100% - 0.54rem);
+                box-sizing: border-box;
+                padding-left: 0.36rem;
+                position: relative;
+
+                ul {
+                    margin: 0;
+                    padding: 0;
+                    list-style: none;
+
+                    li {
+                        width: 2.31rem;
+                        height: 0.82rem;
+                        display: flex;
+                        align-items: center;
+                        float: left;
+                        margin-right: 0.16rem;
+                        margin-top: 0.2rem;
+                        position: relative;
+                        background: url('/static/board/duty-item-bg.png') no-repeat center top;
+                        background-size: contain;
+
+                        .driver-img {
+                            width: 0.62rem;
+                            height: 0.62rem;
+                            display: flex;
+                            align-items: center;
+                            background: url('/static/board/duty-border.png') no-repeat center top;
+                            background-size: contain;
+
+                            img {
+                                width: 0.52rem;
+                                height: 0.52rem;
+                                margin: 0 auto;
+                            }
+                        }
+                        .duty-name {
+                            color: #ffffff;
+                            font-size: 0.18rem;
+                            position: absolute;
+                            left: 0.75rem;
+                            top: 0.16rem;
+                        }
+                        .car-number {
+                            color: #FFFFFF;
+                            font-size: 0.14rem;
+                            position: absolute;
+                            left: 0.75rem;
+                            top: 0.46rem;
+                        }
+                    }
+                }
             }
         }
-        & img:nth-child(2){
-            width: 0.45rem;
-            height: 0.36rem;
-            margin-right: 1.84rem;
-            margin-top: 0.09rem;
-            float: right;
+        .leave-container {
+            width: 7.93rem;
+            height: 2.89rem;
+            background: url('/static/board/leave-bg.png') no-repeat center;
+            background-size: contain;
 
-            &:hover {
-                cursor: pointer;
+            .title-container {
+                width: 100%;
+                height: 0.54rem;
+                display: flex;
+                align-items: center;
+
+                img {
+                    width: 1.7rem;
+                    height: 0.54rem;
+                }
+                & span:nth-child(2){
+                    font-size: 0.16rem;
+                    color: #F1FFD1;
+                    font-family: 'LcdD';
+                    margin-left: 0.04rem;
+                    margin-top: 0.1rem;
+                }
+                & span:nth-child(3){
+                    font-size: 0.16rem;
+                    color: #F1FFD1;
+                    margin-left: 0.05rem;
+                    margin-top: 0.08rem;
+                }
+            }
+            .content-container {
+                width: 100%;
+                height: calc(100% - 0.54rem);
+                box-sizing: border-box;
+                padding-left: 0.36rem;
+                position: relative;
+
+                ul {
+                    margin: 0;
+                    padding: 0;
+                    list-style: none;
+
+                    li {
+                        width: 2.25rem;
+                        height: 0.82rem;
+                        display: flex;
+                        align-items: center;
+                        float: left;
+                        margin-right: 0.16rem;
+                        margin-top: 0.2rem;
+                        position: relative;
+                        background: url('/static/board/leave-item-bg.png') no-repeat center top;
+                        background-size: contain;
+
+                        .driver-img {
+                            width: 0.62rem;
+                            height: 0.62rem;
+                            display: flex;
+                            align-items: center;
+                            background: url('/static/board/leave-border.png') no-repeat center top;
+                            background-size: contain;
+
+                            img {
+                                width: 0.52rem;
+                                height: 0.52rem;
+                                margin: 0 auto;
+                            }
+                        }
+                        .duty-name {
+                            color: #ffffff;
+                            font-size: 0.18rem;
+                            position: absolute;
+                            left: 0.75rem;
+                            top: 0.16rem;
+                        }
+                        .car-number {
+                            color: #FFFFFF;
+                            font-size: 0.14rem;
+                            position: absolute;
+                            left: 0.75rem;
+                            top: 0.46rem;
+                        }
+                    }
+                }
             }
         }
     }
+    .bottom-bg {
+        width: 100%;
+        height: 0.39rem;
+       
+        background: url('/static/board/bottom-bg.png') no-repeat center top;
+        background-size: contain;
+    }
+}
+::v-deep .el-carousel--vertical {
+    height: 100%
+}
+::v-deep .el-carousel__container {
+    height: 100%;
+}
+::v-deep .el-carousel__indicators--vertical {
+    right: 0.1rem;
+}
+//轮播图指示器样式 未进入此页面的样式
+::v-deep .el-carousel__button {
+    width: 0.04rem;
+    height: 0.4rem;
+    background: #68FFE3;
+    opacity: 1;
+}
+//滚动到此页面的样式
+::v-deep .is-active .el-carousel__button {
+    width: 0.04rem;
+    height: 0.4rem;
+    background: #94fe68;
+    opacity: 1;
 }
 </style>

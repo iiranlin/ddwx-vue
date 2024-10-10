@@ -12,6 +12,9 @@ export const carFeeExportUrl = `${path}${VUE_APP_BASE_prefix}/vehicleInfo/getSta
 // 行车记录导出地址
 export const gcywDrivingRecordExportList = `${VUE_APP_BASE_prefix}/gcywDrivingRecord/exportList`
 
+export const gcywInsuranceRecordTemplateUrl = `${VUE_APP_BASE_prefix}/gcywInsuranceRecord/template`
+export const gcywInsuranceRecordImportUrl = `${path}/${VUE_APP_BASE_prefix}/gcywInsuranceRecord/import`
+
 //班次字典-班次列表-分页
 export function gcjcClassListPage(params) {
   return request({
@@ -121,6 +124,15 @@ export function getUnitDictList() {
 export function gcjcDriverListPage(params) {
   return request({
     url: `${VUE_APP_BASE_prefix}/gcjcDriver/listPage`,
+    method: 'get',
+    params
+  })
+}
+
+//司机档案-司机列表-不分页
+export function gcjcDriverList(params) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcjcDriver/list`,
     method: 'get',
     params
   })
@@ -700,6 +712,15 @@ export function getListByParentSchedulingType(params) {
 export function getSchedulingTypeByClass(data) {
   return request({
     url: `${VUE_APP_BASE_prefix}/gcjcDriverClass/getSchedulingTypeByClass`,
+    method: 'post',
+    data
+  })
+}
+
+//保险管理-导入保存
+export function gcywInsuranceRecordImportSave(data) {
+  return request({
+    url: `${VUE_APP_BASE_prefix}/gcywInsuranceRecord/import/save`,
     method: 'post',
     data
   })

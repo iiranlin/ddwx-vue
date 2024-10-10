@@ -29,7 +29,7 @@
                     <el-row>
                         <li class="li-item">
                             <span>期望车型：</span>
-                            <span>{{checkHopeBrand(formData.hopeBrand)}}</span>
+                            <span :class="['hope-brand',checkHopeBrandStyle(checkHopeBrand(formData.hopeBrand))]">{{checkHopeBrand(formData.hopeBrand)}}</span>
                         </li>
                         <li class="li-item">
                             <span>优先保障：</span>
@@ -262,6 +262,19 @@ export default {
             })
             return !!obj?obj.name:"";
         },
+         //匹配期望车型样式
+        checkHopeBrandStyle(hopeBrandInfo){
+            console.log(hopeBrandInfo)
+            if(hopeBrandInfo == '微型客车' || hopeBrandInfo == '轿车'){
+                return 'hope-brand-jiaoche'
+            }else if(hopeBrandInfo == 'SUV' || hopeBrandInfo == '越野车'){
+                return 'hope-brand-yueye'
+            }else if(hopeBrandInfo == '6-9座小型客车'){
+                return 'hope-brand-shangwu'
+            }else {
+                return 'hope-brand-kaosite'
+            }
+        },
         //判断优先保障
         checkGuarantee(guarantee){
             let obj = this.guaranteeOptions.find((item) => {
@@ -420,6 +433,32 @@ export default {
                 }
             }
         }
+        .hope-brand {
+            padding-left: 10px;
+            padding-right: 10px;
+            border-radius: 50px;
+            width: initial !important;
+        }
     }
+}
+.hope-brand-jiaoche {
+    border: 1px solid #f0f0f0;
+    background: #ffffff;
+    color: #000000;
+}
+.hope-brand-yueye {
+    background: #004d40;
+    color: #ffffff;
+    border: 1px solid #004d40;
+}
+.hope-brand-shangwu {
+    background: #000000;
+    color: #ffffff;
+    border: 1px solid #000000;
+}
+.hope-brand-kaosite {
+    background: #DAA520;
+    color: #ffffff;
+    border: 1px solid #DAA520;
 }
 </style>

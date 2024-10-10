@@ -115,7 +115,7 @@ export default {
   },
   mounted() {
     this.menuProperty();
-    if (this.$route.params) {
+    if (this.$route.params.reqNo || this.$route.params.status) {
       this.formData = this.$route.params;
     }
     this.getList()

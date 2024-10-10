@@ -36,23 +36,33 @@
                             <span>{{vehicleData.userName}}</span>
                         </li>
                         <li class="li-item">
-                            <span>联系电话：</span>
+                            <span>乘车人联系电话：</span>
                             <span>{{vehicleData.phone}}</span>
+                        </li>
+                        <li class="li-item">
+                            <span>经 办 人：</span>
+                            <span>{{vehicleData.handledUserManual}}</span>
+                        </li>
+                    </el-row>
+                    <el-row>
+                        <li class="li-item">
+                            <span>经办人联系电话：</span>
+                            <span>{{vehicleData.handledPhoneManual}}</span>
                         </li>
                         <li class="li-item">
                             <span>用车时间：</span>
                             <span>{{parseTime(vehicleData.usageDate,'{m}-{d}')}} {{vehicleData.usageTime}}</span>
                         </li>
-                    </el-row>
-                    <el-row>
                         <li class="li-item">
                             <span>预计时长：</span>
                             <span>{{vehicleData.timeLength}}小时</span>
                         </li>
                         <li class="li-item">
                             <span>期望车型：</span>
-                            <span class="highlight-blue">{{hopeBrandInfo}}</span>
+                            <span :class="['hope-brand',checkHopeBrandStyle(hopeBrandInfo)]">{{hopeBrandInfo}}</span>
                         </li>
+                    </el-row>
+                    <el-row>
                         <li class="li-item">
                             <span>优先保障：</span>
                             <span>{{checkGuarantee()}}</span>
@@ -299,6 +309,18 @@ export default {
                 this.loading = false;
             })
         },
+        //匹配期望车型样式
+        checkHopeBrandStyle(hopeBrandInfo){
+            if(hopeBrandInfo == '微型客车' || hopeBrandInfo == '轿车'){
+                return 'hope-brand-jiaoche'
+            }else if(hopeBrandInfo == 'SUV' || hopeBrandInfo == '越野车'){
+                return 'hope-brand-yueye'
+            }else if(hopeBrandInfo == '6-9座小型客车'){
+                return 'hope-brand-shangwu'
+            }else {
+                return 'hope-brand-kaosite'
+            }
+        },
         //车牌号点击跳转北斗设备
         handleCarNumberClick(item){
             this.loading = true;
@@ -450,10 +472,10 @@ export default {
             margin-right: 10px;
 
             & span:nth-child(1) {
-                width: 60px;
+                white-space: nowrap;
             }
             & span:nth-child(2) {
-                width: calc(100% - 60px);
+
             }
         } 
         .li-item-all {
@@ -469,12 +491,34 @@ export default {
         .table-container {
             padding: 10px 10px 0px 10px;
         }
-        .highlight-blue {
-            color: #458cff;
-            font-weight: 700;
+        .hope-brand {
+            padding-left: 10px;
+            padding-right: 10px;
+            border-radius: 50px;
         }
     }
 }
+.hope-brand-jiaoche {
+    border: 1px solid #f0f0f0;
+    background: #ffffff;
+}
+.hope-brand-yueye {
+    background: #004d40;
+    color: #ffffff;
+    border: 1px solid #004d40;
+}
+.hope-brand-shangwu {
+    background: #000000;
+    color: #ffffff;
+    border: 1px solid #000000;
+}
+.hope-brand-kaosite {
+    background: #DAA520;
+    color: #ffffff;
+    border: 1px solid #DAA520;
+}
+
+
 .border-dashed {
     border-bottom: 1px dashed #f3f5f7;
 }

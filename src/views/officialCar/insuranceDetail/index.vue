@@ -62,11 +62,7 @@
             <el-row>
                 <el-col :span="24" :xs="24" style="width:90%;padding: 0px 0px 40px 40px">
                     <el-table ref="eltable" max-height="300px" :data="form.items" stripe border>
-                        <el-table-column label="险种" align="center">
-                            <template slot-scope="scope">
-                                <span>{{checkType(form.items[scope.$index].insrType)}}</span>
-                            </template>
-                        </el-table-column>
+                        <el-table-column label="险种" align="center" prop="insrType"></el-table-column>
                         <el-table-column label="保费" align="center" prop="insrFee"></el-table-column>
                         <el-table-column label="保额" align="center" prop="insrPaidAmount"></el-table-column>
                     </el-table>
