@@ -27,11 +27,11 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
-    <div class="notice-button">
-      <el-tooltip content="消息通知" placement="bottom">
+    <div class="notice-button" @click="handleNoticeClick()">
+      <!-- <el-tooltip content="消息通知" placement="bottom">
               <i class="el-icon-chat-dot-round"></i>
-      </el-tooltip>
-      <!-- <el-button type="primary">消息通知</el-button>-->
+      </el-tooltip> -->
+      <i class="el-icon-chat-dot-round"></i>
       </div>
     <update-password ref="updatePassword"></update-password>
   </div>
@@ -57,7 +57,7 @@ export default {
     SizeSelect,
     Search,
     Sidebara,
-    UpdatePassword
+    UpdatePassword,
   },
   computed: {
     ...mapGetters([
@@ -114,7 +114,15 @@ export default {
     /**修改密码*/
     updatePwd() {
       this.$refs.updatePassword.initUpdatePassword(true, false)
-    }
+    },
+    handleNoticeClick(){
+      this.$router.push({
+        name: 'myMessage',
+        params: {
+          
+        },
+      })
+    },
   }
 }
 </script>
@@ -173,6 +181,10 @@ export default {
     height: 100%;
        line-height: 60px;
     color: #409EFF;
+
+    & :hover {
+      cursor: pointer;
+    }
   }
   .right-menu {
     float: right;

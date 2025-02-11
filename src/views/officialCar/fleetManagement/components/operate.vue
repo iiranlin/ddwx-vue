@@ -24,6 +24,24 @@
                         <el-input v-model="form.fleetName" size="small" maxlength="10"></el-input>
                     </el-form-item>
                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="车队属性：" prop="fleetType">
+                       <el-select
+                            v-model="form.fleetType"
+                            filterable
+                            placeholder="请选择车队属性"
+                            clearable
+                            size="small"
+                            style="width:100%">
+                            <el-option
+                                v-for="item in fleetTypeOptions"
+                                :key="item.code"
+                                :label="item.name"
+                                :value="item.code">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+               </el-col>
            </el-row>
        </el-form>
        <div slot="footer" class="dialog-footer">
@@ -35,6 +53,8 @@
 <script>
 import {gcjcFleetCreate,gcjcFleetDetail,gcjcFleetModify} from "@/api/driver"
 import {getAllAvailableUnit} from "@/api/system/unit"
+import { getListByParentCode } from '@/api/system/dict'
+
 export default {
     data() {
         return {
@@ -53,10 +73,13 @@ export default {
                 fleetCode:"",
                 fleetName:"",
                 unitName:"",
-                unitCode:""
+                unitCode:"",
+                fleetType:'',
             },
             //单位数据
             unitData:[],
+            //车队属性数据
+            fleetTypeOptions:[],
             //表单校验
             rules:{
                 unitCode:[
@@ -67,12 +90,16 @@ export default {
                 ],
                 fleetName:[
                     {required:true,message:"车队名称不能为空",trigger:"blur"}
-                ]
+                ],
+                fleetType:[
+                    {required:true,message:"车队属性不能为空",trigger:"change"}
+                ],
             }
         }
     },
     created(){
         this.getUnitDictList();
+        this.getFleetTypeOptions();
     },
     methods:{
         //初始化
@@ -87,6 +114,17 @@ export default {
                     this.title = "修改车队"
                     this.getFleetDetail();
                 }
+            })
+        },
+        //获取车队属性字典
+        getFleetTypeOptions(){
+            this.loading = true;
+            
+            getListByParentCode("fleeType").then(({data}) => {
+                this.loading = false;
+                this.fleetTypeOptions = data;
+            }).catch((err) => {
+                this.loading = false;
             })
         },
         //获取单位列表

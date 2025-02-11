@@ -127,23 +127,23 @@
                     </el-carousel>
                 </div>
             </div>
-            <!--出车中-->
+            <!--司机队列-->
             <div class="over-dispatch-container">
                 <div class="title-container">
-                    <img src="/static/board/over-dispatch-title.png"/>
-                    <span>{{overDispatchNumber || 0}}</span>
-                    <span>辆</span>
+                    <img src="/static/board/driver-title.png"/>
+                    <span>{{driverNumber || 0}}</span>
+                    <span>人</span>
                 </div>
                 <div class="content-container">
-                    <el-carousel trigger="click" :autoplay="true" :interval="interval" direction="vertical" >
-                        <el-carousel-item v-for="(carouselItem,carouselIndex) in overDispatchList" :key="carouselIndex">
+                    <el-carousel trigger="click" :autoplay="false" :interval="interval" direction="vertical" indicator-position="none">
+                        <el-carousel-item v-for="(carouselItem,carouselIndex) in driverList" :key="carouselIndex">
                             <ul>
                                 <li v-for="(item,index) in carouselItem" :key="index">
                                     <div class="car-img">
-                                        <img :src="checkCarImagePath(item.carBrand, item.carSeries)">
+                                        <img :src="checkDriverPic(item.driverPic)" onerror="this.src='/static/board/user-default.webp'">
                                     </div>
-                                    <span class="dirver-name">{{item.driver}}</span>
-                                    <span class="car-number">{{item.carNumber}}</span>
+                                    <span class="dirver-name">{{item.realName}}</span>
+                                    <!-- <span class="car-number">{{item.carNumber}}</span> -->
                                     <img class="icon" src="/static/board/icon-grids.png" />
                                 </li>
                             </ul>
@@ -182,11 +182,20 @@
 import screenfull from 'screenfull'
 import {largeScreenRequestCount,
 largeScreenDriverRequest,
-largeScreenRequestDispatch} from "@/api/largeScreen"
+largeScreenRequestDispatch,
+largeScreenGetTeamDrivers} from "@/api/largeScreen"
 import checkCarImagePath from '@/utils/carPath'
+import { getRGAvailableDriver } from "@/api/gcjcDriverClass";
+import { mapGetters } from 'vuex';
 
 export default {
     name: 'dispatchBoard',
+
+    computed: {
+        ...mapGetters([
+            'unitCode',
+        ]),
+    },
 
     data() {
         return {
@@ -210,10 +219,10 @@ export default {
             waitDispatchList:[],
             //待派车数量
             waitDispatchNumber:'',
-            //出车中数据
-            overDispatchList:[],
-            //出车中数量
-            overDispatchNumber:'',
+            //司机队列数据
+            driverList:[],
+            //司机队列数量
+            driverNumber:'',
             //车辆图片
             checkCarImagePath,
             //轮播图间隔
@@ -242,7 +251,7 @@ export default {
         }, 1000);
         this.requestTimer = setInterval(() => {
             this.getPageRequest();
-        }, 300000);
+        }, 60000);
 
         this.getPageRequest();
 
@@ -270,7 +279,7 @@ export default {
             this.getNumberInfo();
             this.getWaitOrderList();
             this.getWaitDepartureList();
-            this.getOverDispatchList();
+            this.getDriverList();
             this.getWaitDispatchList();
         },
         //获取数量
@@ -317,17 +326,33 @@ export default {
                 this.loading = false
             })
         },
-        //获取出车中数据
-        getOverDispatchList() {
+        //获取司机队列数据
+        getDriverList() {
             this.loading = true
 
             let params = {
-                drivingFlag: '1',
+                classDateEnd: this.parseTime(new Date().getTime(),'{y}-{m}-{d}'),
+                classDateStart: this.parseTime(new Date().getTime(),'{y}-{m}-{d}'),
+                classId: 'none',
+                flag:  0,
+                unitCode: this.unitCode,
+                vinNumber: 'ceshi',
+                usageTime: this.parseTime(new Date().getTime(),'{h}:{i}'),
+                fleetType: 0,
             }
-            largeScreenDriverRequest(params).then(({data}) => {
+            getRGAvailableDriver(params).then(({data}) => {
                 this.loading = false
-                this.overDispatchNumber = data.length;
-                this.overDispatchList = this.encapsulationList(9,data);
+
+                let tempArr = data.filter((item) => {
+                    return item.type == '1';
+                })
+                if(tempArr.length > 0){
+                    this.driverNumber = tempArr.length;
+                    this.driverList = this.encapsulationList(9,tempArr);
+                }else{
+                    this.driverNumber = data.length;
+                    this.driverList = this.encapsulationList(9,data);
+                }
             }).catch((err) => {
                 this.loading = false
             })
@@ -369,6 +394,13 @@ export default {
         //获取地址右侧数据
         checkAddressRight(arr){
             return arr.split(' ')[1];
+        },
+         //拼接司机头像地址
+        checkDriverPic(fileName){
+            if(!fileName){
+                return '';
+            }
+            return process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+fileName;
         },
         //全屏点击
         fullScreenClick(){
@@ -1055,14 +1087,14 @@ export default {
 //轮播图指示器样式 未进入此页面的样式
 ::v-deep .el-carousel__button {
     width: 0.04rem;
-    height: 0.4rem;
+    // height: 0.4rem;
     background: #68FFE3;
     opacity: 1;
 }
 //滚动到此页面的样式
 ::v-deep .is-active .el-carousel__button {
     width: 0.04rem;
-    height: 0.4rem;
+    // height: 0.4rem;
     background: #94fe68;
     opacity: 1;
 }

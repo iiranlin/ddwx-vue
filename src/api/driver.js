@@ -13,7 +13,7 @@ export const carFeeExportUrl = `${path}${VUE_APP_BASE_prefix}/vehicleInfo/getSta
 export const gcywDrivingRecordExportList = `${VUE_APP_BASE_prefix}/gcywDrivingRecord/exportList`
 
 export const gcywInsuranceRecordTemplateUrl = `${VUE_APP_BASE_prefix}/gcywInsuranceRecord/template`
-export const gcywInsuranceRecordImportUrl = `${path}/${VUE_APP_BASE_prefix}/gcywInsuranceRecord/import`
+export const gcywInsuranceRecordImportUrl = `${process.env.VUE_APP_BASE_API}/${VUE_APP_BASE_prefix}/gcywInsuranceRecord/import`
 
 //班次字典-班次列表-分页
 export function gcjcClassListPage(params) {

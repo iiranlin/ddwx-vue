@@ -1,44 +1,31 @@
 <template>
-    <!-- 分配角色数据权限对话框 -->
-    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="openDataScope" width="500px" append-to-body v-loading="loading">
-      <el-form ref="elForm" :model="form" :rules="rules" label-width="85px">
-        <el-form-item label="通知标题:" prop="noticeTitle">
-          <el-input v-model="form.noticeTitle" />
-        </el-form-item>
-      <!-- </el-form> -->
-      <!-- <el-form ref="elForm" :model="form" :rules="rules" label-width="85px"> -->
-        <el-form-item label="通知内容:" prop="noticeMessage">
-          <el-input v-model="form.noticeMessage" />
-        </el-form-item>
-      </el-form>
-      <!-- <el-form ref="elForm" :model="form" :rules="rules" label-width="85px">
-        <el-form-item label="分组:" prop="groupCode">
-          <el-select
-          v-model="form.groupCode"
-          placeholder="角色分组"
-          size="small"
-          style="width: 240px"
-        >
-          <el-option
-            v-for="group in roleGroup"
-            :key="group.code"
-            :label="group.name"
-            :value="group.code"
-          />
-        </el-select>
-        </el-form-item>
-      </el-form> -->
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="type == 'create'?submitDataScope():noticeModify()">确 定</el-button>
-        <el-button @click="openDataScope = false">取 消</el-button>
-      </div>
-    </el-dialog>
+  <el-dialog :title="title" :visible.sync="openDataScope" append-to-body v-loading="loading">
+    <el-form ref="elForm" :model="form" :rules="rules" label-width="85px">
+      <el-row :gutter="20">
+        <el-col :span="24" :offset="0">
+          <el-form-item label="通知标题:" prop="noticeTitle">
+            <el-input :maxlength="50" v-model="form.noticeTitle" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-form-item label="通知内容:" prop="noticeMessage">
+        <Editor :value="form.noticeMessage" :min-height="200" @on-change="onChange"></Editor>
+      </el-form-item>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button type="primary" @click="type == 'create' ? submitDataScope() : noticeModify()">确 定</el-button>
+      <el-button @click="openDataScope = false">取 消</el-button>
+    </div>
+  </el-dialog>
 </template>
 
 <script>
-import {roleDetail, roleModify, roleGroupList} from '@/api/system/role'
-import {noticeCreate,noticeDetail,noticeModify} from '@/api/system/notice'
+import Editor from '@/components/Editor';
+import { noticeCreate, noticeDetail, noticeModify } from '@/api/system/notice';
 export default {
+  components: {
+    Editor,
+  },
   data() {
     return {
       loading: false,
@@ -47,73 +34,79 @@ export default {
       id: '',
       openDataScope: false,
       form: {
-          noticeTitle: '',
-          noticeMessage: ''
-          // groupCode: '0'
+        noticeTitle: '',
+        noticeMessage: '',
+        falg: 0,
       },
-      roleGroup:[],
-      // 表单校验
       rules: {
         noticeTitle: [
-          { required: true, message: "通知标题不能为空", trigger: "blur" }
+          { required: true, message: '通知标题不能为空', trigger: 'blur' },
+          {
+            trigger: 'blur',
+            validator: (rule, value, callback) => {
+              let reg = /\S/;
+              if (!reg.test(value)) {
+                callback(new Error('通知标题不能为空'));
+              } else {
+                callback();
+              }
+            },
+          },
         ],
-      }
-    }
-  },
-  created() {
-    // this.roleGroupList()
+      },
+    };
   },
   methods: {
     /** 提交按钮（数据权限） */
-    init (type, id) {
-        this.type = type;
-        this.id = id;
-        
-        this.openDataScope = true;
-      if(this.$refs.elForm)this.$refs.elForm.resetFields();
-        this.$nextTick(() => {            
-            if(type === 'update'){
-              this.title = "修改通知";
-              this.noticeDetail(id);
-            }
-        })
+    init(type, id) {
+      this.type = type;
+      this.id = id;
+
+      this.openDataScope = true;
+      if (this.$refs.elForm) this.$refs.elForm.resetFields();
+      this.$nextTick(() => {
+        if (type === 'update') {
+          this.title = '修改通知';
+          this.noticeDetail(id);
+        } else if (type === 'create') {
+          this.title = '新增通知';
+        }
+      });
     },
-    roleGroupList(){
-      roleGroupList().then( ({data}) => {
-        this.roleGroup = data;
-      })
-    },
-    noticeDetail (id) {
-      noticeDetail(id).then( ({data}) => {
+    noticeDetail(id) {
+      noticeDetail(id).then(({ data }) => {
         this.form = data;
-      })
+      });
     },
-    submitDataScope () {
-      this.$refs["elForm"].validate(valid => {
-        if(valid){
-          this.loading = true;
+    submitDataScope() {
+      this.$refs['elForm'].validate((valid) => {
+        if (valid) {
+          this.form.noticeMessage = this.form.noticeMessage.replace('img', 'img1')
+
           noticeCreate(this.form).then(({message}) => {
             this.$modal.msgSuccess(message);
             this.openDataScope = false;
-            this.loading = false;
-            this.$emit('operateSuccess')
+            this.$emit('operateSuccess');
           });
         }
-      })
+      });
     },
-    noticeModify () {
-      this.$refs["elForm"].validate(valid => {
-        if(valid){
-          this.loading = true;
-          noticeModify(Object.assign({}, this.form, {id: this.id})).then(({message}) => {
+    noticeModify() {
+      this.$refs['elForm'].validate((valid) => {
+        if (valid) {
+          this.form.noticeMessage = this.form.noticeMessage.replace('img', 'img1')
+
+          noticeModify(Object.assign({}, this.form, { id: this.id })).then(({message}) => {
             this.$modal.msgSuccess(message);
             this.openDataScope = false;
-            this.loading = false;
-            this.$emit('operateSuccess')
+            this.$emit('operateSuccess');
           });
         }
-      })
-    }
-  }
+      });
+    },
+    onChange({ html, text, quill }) {
+      this.form.noticeMessage = html;
+    },
+  },
 };
 </script>

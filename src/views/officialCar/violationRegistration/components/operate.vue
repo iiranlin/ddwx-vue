@@ -111,7 +111,7 @@ export default {
         driverId: '',
         driver: '',     //违章司机
         peccancyContent: '',    //违章内容
-        peccancyDate: this.parseTime(new Date().getTime()), //违章日期，
+        peccancyDate: this.parseTime(new Date().getTime(),'{y}-{m}-{d}'), //违章日期，
         peccancyAddress: '北京',  //违章地点
         peccancyScort: '0',  //扣分
         peccancyFree: '0',   //罚款

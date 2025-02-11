@@ -85,8 +85,31 @@
             </div>
         </div>
         <div class="bottom-container">
-            <!--值班人员-->
+            <!--司机队列-->
             <div class="duty-container">
+                <div class="title-container">
+                    <img src="/static/board/driver-title.png"/>
+                    <span>{{dirverNumber}}</span>
+                    <span>人</span>
+                </div>
+                <div class="content-container">
+                    <el-carousel trigger="click" :autoplay="false" :interval="interval" direction="vertical" indicator-position="none">
+                        <el-carousel-item v-for="(carouselItem,carouselIndex) in driverList" :key="carouselIndex">
+                            <ul>
+                                <li v-for="(item,index) in carouselItem" :key="index">
+                                    <div class="driver-img">
+                                        <img :src="checkDriverPic(item.driverPic)" onerror="this.src='/static/board/user-default.webp'">
+                                    </div>
+                                    <span class="duty-name">{{item.realName}}</span>
+                                    <!-- <span class="car-number">{{item.carNumber}}</span> -->
+                                </li>
+                            </ul>
+                        </el-carousel-item>
+                    </el-carousel>
+                </div>
+            </div>
+            <!--值班人员-->
+            <div class="leave-container">
                 <div class="title-container">
                     <img src="/static/board/duty-title.png"/>
                     <span>{{onDutyNumber}}</span>
@@ -108,29 +131,6 @@
                     </el-carousel>
                 </div>
             </div>
-            <!--休假/请假-->
-            <div class="leave-container">
-                <div class="title-container">
-                    <img src="/static/board/leave-title.png"/>
-                    <span>{{vacationLeaveNumber}}</span>
-                    <span>人</span>
-                </div>
-                <div class="content-container">
-                    <el-carousel trigger="click" :autoplay="true" :interval="interval" direction="vertical" >
-                        <el-carousel-item v-for="(carouselItem,carouselIndex) in vacationLeaveList" :key="carouselIndex">
-                            <ul>
-                                <li v-for="(item,index) in carouselItem" :key="index">
-                                    <div class="driver-img">
-                                        <img :src="checkDriverPic(item.driverPic)" onerror="this.src='/static/board/user-default.webp'">
-                                    </div>
-                                    <span class="duty-name">{{item.driverName}}</span>
-                                    <span class="car-number">{{item.carNumber}}</span>
-                                </li>
-                            </ul>
-                        </el-carousel-item>
-                    </el-carousel>
-                </div>
-            </div>
         </div>
         <div class="bottom-bg"></div>
     </div>
@@ -139,17 +139,24 @@
 import screenfull from 'screenfull'
 import {largeScreenDriverClass,
 largeScreenDriverRequest,
-largeScreenDriverLeave,
+largeScreenGetTeamDrivers,
 largeScreenDriverMsg,
 largeScreenDriverSecureDay} from "@/api/largeScreen"
 import checkCarImagePath from '@/utils/carPath'
 import Speech from 'speak-tts'
 import dayjs from 'dayjs'
+import { getRGAvailableDriver } from "@/api/gcjcDriverClass";
+import { mapGetters } from 'vuex';
 
 let that;
 export default {
     beforeCreate() {
         that = this
+    },
+    computed: {
+        ...mapGetters([
+            'unitCode',
+        ]),
     },
     
     data() {
@@ -172,32 +179,16 @@ export default {
             overDepartureList:[],
             //已出车数数量
             overDepartureNumber:'0',
-            //休假请假人员
-            vacationLeaveList:[],
-            //休假请假人员数量
-            vacationLeaveNumber:'0',
+            //司机队列数据
+            driverList:[],
+            //司机队列人员数量
+            dirverNumber:'0',
             //待出车数据
             waitDepartureList:[],
             //待出车数量
             waitDepartureNumber:'0',
             //滚动屏数据
-            scrollList:[
-                {
-                    largeMsg: "张三 测试数据1"
-                },
-                {
-                    largeMsg: "李四 测试数据1"
-                },
-                {
-                    largeMsg: "王五 测试数据1"
-                },
-                {
-                    largeMsg: "赵六 测试数据1"
-                },
-                {
-                    largeMsg: "测试 测试数据1"
-                },
-            ],
+            scrollList:[],
             //滚动屏参数
             classOption: {
                 step: 0.2
@@ -221,7 +212,6 @@ export default {
         }
     },
     mounted() {
-        // var that = this;
         screenfull.on('change', function() {
             if(screenfull.isFullscreen){
                 that.showFullScreen = true;
@@ -243,7 +233,7 @@ export default {
         }, 1000);
         this.requestTimer = setInterval(() => {
             this.getPageRequest();
-        }, 300000);
+        }, 60000);
         this.scrollTimer = setInterval(() => {
             this.getScrollList();
         }, 60000);
@@ -273,7 +263,7 @@ export default {
             this.getSecureDay();
             this.getOnDutyList();
             this.getOverDepartureList();
-            this.getVacationLeaveList();
+            this.getDriverList();
             this.getWaitDepartureList();
         },
         //获取安全行驶天数
@@ -308,7 +298,7 @@ export default {
                         item.carSeries = item.carSeries.split(',')[0];
                     }
                 })
-                this.onDutyList = this.encapsulationList(8,dataList);
+                this.onDutyList = this.encapsulationList(6,dataList);
             }).catch((err) => {
                 this.loading = false
             })
@@ -333,26 +323,33 @@ export default {
                 this.loading = false
             })
         },
-        //获取请假休假人员
-        getVacationLeaveList() {
+        //获取司机数量
+        getDriverList() {
             this.loading = true
 
-            largeScreenDriverLeave().then(({data}) => {
+            let params = {
+                classDateEnd: this.parseTime(new Date().getTime(),'{y}-{m}-{d}'),
+                classDateStart: this.parseTime(new Date().getTime(),'{y}-{m}-{d}'),
+                classId: 'none',
+                flag:  0,
+                unitCode: this.unitCode,
+                vinNumber: 'ceshi',
+                usageTime: this.parseTime(new Date().getTime(),'{h}:{i}'),
+                fleetType: 0,
+            }
+            getRGAvailableDriver(params).then(({data}) => {
                 this.loading = false
-                this.vacationLeaveNumber = data.length;
 
-                data.forEach((item) => {
-                    if(item.carNumber){
-                        item.carNumber = item.carNumber.split(',')[0];
-                    }
-                    if(item.carBrand){
-                        item.carBrand = item.carBrand.split(',')[0];
-                    }
-                    if(item.carSeries){
-                        item.carSeries = item.carSeries.split(',')[0];
-                    }
+                let tempArr = data.filter((item) => {
+                    return item.type == '1';
                 })
-                this.vacationLeaveList = this.encapsulationList(6,data);
+                if(tempArr.length > 0){
+                    this.dirverNumber = tempArr.length;
+                    this.driverList = this.encapsulationList(8,tempArr);
+                }else{
+                    this.dirverNumber = data.length;
+                    this.driverList = this.encapsulationList(8,data);
+                }
             }).catch((err) => {
                 this.loading = false
             })
@@ -366,8 +363,8 @@ export default {
             }
             largeScreenDriverRequest(params).then(({data}) => {
                 this.loading = false
-
                 this.waitDepartureNumber = data.length;
+                
                 this.waitDepartureList = this.encapsulationList(10,data);
             }).catch((err) => {
                 this.loading = false
@@ -384,8 +381,7 @@ export default {
                 this.loading = false;
                 this.scrollFlag = data.flag;
 
-                // this.scrollList = this.initScrollList([...this.scrollList,...data.data])
-                // this.speakTtsSpeech(data.data);
+                this.scrollList = this.initScrollList([...this.scrollList,...data.data])
                 this.speakTtsSpeech(this.scrollList);
             }).catch((err) => {
                 this.loading = false
@@ -813,7 +809,7 @@ export default {
                     list-style: none;
 
                     li {
-                        width: 3.45rem;
+                        width: 3.35rem;
                         height: 0.86rem;
                         display: flex;
                         align-items: center;
@@ -1059,7 +1055,7 @@ export default {
     }
 }
 ::v-deep .el-carousel--vertical {
-    height: 100%
+    height: 90%
 }
 ::v-deep .el-carousel__container {
     height: 100%;
@@ -1070,14 +1066,14 @@ export default {
 //轮播图指示器样式 未进入此页面的样式
 ::v-deep .el-carousel__button {
     width: 0.04rem;
-    height: 0.4rem;
+    // height: 0.4rem;
     background: #68FFE3;
     opacity: 1;
 }
 //滚动到此页面的样式
 ::v-deep .is-active .el-carousel__button {
     width: 0.04rem;
-    height: 0.4rem;
+    // height: 0.4rem;
     background: #94fe68;
     opacity: 1;
 }

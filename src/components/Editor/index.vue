@@ -6,6 +6,7 @@
       :on-success="handleUploadSuccess"
       :on-error="handleUploadError"
       name="file"
+      :data="uploadData"
       :show-file-list="false"
       :headers="headers"
       style="display: none"
@@ -18,11 +19,36 @@
 </template>
 
 <script>
-// import Quill from "quill";
+import Quill from "quill";
 import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 import { getToken } from "@/utils/auth";
+
+// 源码中是import直接倒入，这里要用Quill.import引入
+const Link = Quill.import("formats/link");
+// 自定义a链接
+class FileBlot extends Link {
+   
+  // 继承Link Blot
+  static create (value) {
+    let node = undefined;
+    if (value && !value.href) {
+      // 适应原本的Link Blot
+      node = super.create(value)
+    } else {
+      // 自定义Link Blot
+      node = super.create(value.href)
+      node.href = value.href
+      node.innerText = value.innerText
+      node.setAttribute('download', value.innerText);  // 左键点击即下载
+    }
+    return node;
+  }
+}
+FileBlot.blotName = "link" // 这里不用改，如果需要也可以保留原来的，这里用个新的blot
+FileBlot.tagName = "A"
+Quill.register(FileBlot) // 注册link
 
 export default {
   name: "Editor",
@@ -50,7 +76,7 @@ export default {
     // 上传文件大小限制(MB)
     fileSize: {
       type: Number,
-      default: 5,
+      default: 30,
     },
     /* 类型（base64格式、url格式） */
     type: {
@@ -60,9 +86,12 @@ export default {
   },
   data() {
     return {
-      uploadUrl: process.env.VUE_APP_BASE_API + "/common/upload", // 上传的图片服务器地址
+      uploadUrl: process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + '/minio/upload', // 上传的图片服务器地址
       headers: {
         Authorization: "Bearer " + getToken()
+      },
+      uploadData: {
+        type: "8"
       },
       Quill: null,
       currentValue: "",
@@ -172,19 +201,30 @@ export default {
       // 获取富文本组件实例
       let quill = this.Quill;
       // 如果上传成功
-      if (res.code == 200) {
+      if (res.code == 0) {
         // 获取光标所在位置
         let length = quill.getSelection().index;
-        // 插入图片  res.url为服务器返回的图片地址
-        quill.insertEmbed(length, "image", process.env.VUE_APP_BASE_API + res.fileName);
-        // 调整光标到最后
-        quill.setSelection(length + 1);
+
+        if (['png','jpeg', 'jpg', 'gif', 'bmp', 'webp'].indexOf(res.data.fileType) < 0) {
+          quill.insertEmbed(length, "link", 
+            {
+              href: process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/download?fileName="+res.data.fileName, 
+              innerText: res.data.originalFileName,
+            },
+          );
+          // 调整光标到最后
+          quill.setSelection(length + res.data.originalFileName.length + 1);
+        } else {
+          quill.insertEmbed(length, "image", process.env.VUE_APP_BASE_API + process.env.VUE_APP_AUTH_SERVER + "/minio/getPic?fileName="+ res.data.fileName);
+          // 调整光标到最后
+          quill.setSelection(length + 1);
+        }
       } else {
-        this.$message.error("图片插入失败");
+        this.$message.error("插入失败");
       }
     },
     handleUploadError() {
-      this.$message.error("图片插入失败");
+      this.$message.error("插入失败");
     },
   },
 };

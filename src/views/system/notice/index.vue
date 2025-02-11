@@ -72,6 +72,7 @@ import {
   noticePage,
   noticeDeleteBatch,
   noticePublish,
+  noticeCancel,
 } from "@/api/system/notice";
 import indexMixin from "@/views/mixins";
 import operate from "./components/operate";
@@ -152,9 +153,17 @@ export default {
       } else if (buttonCode === 'create') {
         this.handleCreate()
       }  else if (buttonCode === 'publish') {
+        if(row.flag != '0'){
+          this.$modal.msgWarning('已发布通知无法重复发布！')
+          return
+        }
         this.handlePublishNotice(row.id)
-      } else if (buttonCode === 'publishLog') {
-        this.handlePublishLog(row)
+      } else if (buttonCode === 'cancelPublish') {
+        if(row.flag == '0'){
+          this.$modal.msgWarning('未发布通知无法取消发布！')
+          return
+        }
+        this.handleCancelPublishNotice(row.id)
       }
     },
     //新建
@@ -191,9 +200,18 @@ export default {
         })
         .catch(() => {});
     },
-    //发布日志
-    handlePublishLog(row) {
-      this.$refs.publishLog.open(row);
+    //取消发布
+    handleCancelPublishNotice(id) {
+      this.$modal
+        .confirm("是否确认取消发布通知?")
+        .then(function () {
+          return noticeCancel(id);
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("取消发布成功");
+        })
+        .catch(() => {});
     },
     //新建成功回调
     operateSuccess() {

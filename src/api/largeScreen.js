@@ -73,5 +73,14 @@ export function largeScreenRequestDispatch(params) {
     })
 }
 
+//司机队列
+export function largeScreenGetTeamDrivers(params) {
+    return request({
+        url: `${VUE_APP_BASE_prefix}/largeScreen/getTeamDrivers`,
+        method: 'get',
+        params
+    })
+}
+
 
 

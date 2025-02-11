@@ -50,11 +50,38 @@ export function noticePublish(id) {
     method: 'get'
   })
 }
+export function noticeCancel(id) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/notice/cancel/${id}`,
+    method: 'get'
+  })
+}
 export function noticeLog(id,params) {
   return request({
     url: `${VUE_APP_BASE_PREFIX}/notice/log/${id}`,
     method: 'get',
     params
+  })
+}
+
+export function noticeUser(params) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/notice/user`,
+    method: 'get',
+    params
+  })
+}
+
+export function noticeReaded(id) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/notice/readed/${id}`,
+    method: 'get'
+  })
+}
+export function noticeReadedAll(id) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/notice/readedAll`,
+    method: 'get'
   })
 }
 

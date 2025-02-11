@@ -205,6 +205,8 @@
          <video-preview ref="videoPreview"></video-preview>
          <!--常用菜单-->
         <common-menu ref="commonMenu" @commonMenuSuccess='commonMenuSuccess'></common-menu>
+         <!--通知弹框-->
+        <notice-detail ref="noticeDetail"></notice-detail>
     </div>
 </template>
 <script>
@@ -214,9 +216,11 @@ documentList,
 gcywVehicleRequestHomeInfo,
 usemenuList,
 usemenuDelete} from '@/api/home.js'
+import {noticeUser} from "@/api/system/notice";
 import { axiosDownloadExcel } from '@/api/download'
 import videoPreview from './components/videoPreview'
 import commonMenu from './components/commonMenu.vue';
+import noticeDetail from '@/components/NoticeDetail';
 import echarts from "echarts";
 import dayjs from 'dayjs'
 let quarterOfYear = require('dayjs/plugin/quarterOfYear')//day.js季度插件
@@ -224,7 +228,7 @@ dayjs.extend(quarterOfYear)
 
 export default {
     name: "Index",
-    components: { videoPreview,commonMenu },
+    components: { videoPreview,commonMenu,noticeDetail },
   
     data() {
         return {
@@ -284,7 +288,6 @@ export default {
         };
     },
     mounted() {
-        
     },
     created() {
         //修改Lottie图片路径
@@ -302,6 +305,7 @@ export default {
         this.getMenuInfo();
         this.getDocumentList();
         this.getChartInfo('');
+        this.getWaitNoticeUser();
     },
     methods: {
         //获取待办事项
@@ -366,7 +370,6 @@ export default {
                 endMonth: this.endMonth,
                 homeType:homeType,
             }
-            
             gcywVehicleRequestHomeInfo(params).then(({data}) => {
                 this.loading = false;
                 
@@ -401,6 +404,23 @@ export default {
                     this.$nextTick(() => {
                         this.initDriverOptions(data.driver);
                     })
+                }
+            }).catch((err) => {
+                this.loading = false;
+            })
+        },
+        //获取未读通知信息
+        getWaitNoticeUser(){
+            this.loading = true;
+
+            let params = {
+                scanFlag: '0',
+            }
+            noticeUser(params).then(({data}) => {
+                this.loading = false;
+                
+                if(data && data.list && data.list.length > 0){
+                    this.$refs.noticeDetail.init(data.list[0]);
                 }
             }).catch((err) => {
                 this.loading = false;
