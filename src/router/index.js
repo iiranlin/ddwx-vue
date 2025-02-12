@@ -84,25 +84,6 @@ export const constantRoutes = [
     ],
     hidden: true,
   },
-  {
-    path: '/drivingRecordPrint/:obj',
-    name:'drivingRecordPrint',
-    component: () => import('@/views/officialCar/drivingRecordPrint'),
-    hidden: true,
-  },
-  {
-    path: '/driverDutyDataBoard',
-    name:'driverDutyDataBoard',
-    component: () => import('@/views/officialCar/driverDutyDataBoard'),
-    hidden: true,
-  },
-  {
-    path: '/dispatchBoard',
-    name:'dispatchBoard',
-    component: () => import('@/views/officialCar/dispatchBoard'),
-    hidden: true,
-  },
-  
 ]
 
 // 动态路由，基于用户权限动态去加载
