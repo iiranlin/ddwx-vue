@@ -60,49 +60,51 @@
             : renderHeader
         "
       >
-        <template slot-scope="scope">
-          <span
-            v-if="
-              propertyFieldsArr[index].fieldType != null &&
-              propertyFieldsArr[index].fieldType.indexOf('date') != -1
-            "
-          >{{
-              parseTime(
-                scope.row[propertyFieldsArr[index].fieldCode],
-                propertyFieldsArr[index].fieldFormatDate
-              )
-            }}</span
-          >
-          <span
-            v-else-if="propertyFieldsArr[index].menuName == menuName && propertyFieldsArr[index].fieldType === 'dict'">
-            <el-switch
-              v-model="scope.row[propertyFieldsArr[index].fieldCode]"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-              active-value="0"
-              inactive-value="1" @change="changeSwitch(scope.row)"
+        <template v-slot="scope">
+          <slot :name="`column-${propertyFieldsArr[index].fieldCode}`" :row="scope.row">
+            <span
+              v-if="
+                propertyFieldsArr[index].fieldType != null &&
+                propertyFieldsArr[index].fieldType.indexOf('date') != -1
+              "
+            >{{
+                parseTime(
+                  scope.row[propertyFieldsArr[index].fieldCode],
+                  propertyFieldsArr[index].fieldFormatDate
+                )
+              }}</span
             >
-            </el-switch>
-          </span>
-          <span v-else-if="propertyFieldsArr[index].fieldType === 'dict'"
-                :class="[propertyFieldsArr[index].fieldCode === 'guarantee' && scope.row[propertyFieldsArr[index].fieldCode] !=='0'?'highlight-red':'',
-                   menuName === 'workspace' && propertyFieldsArr[index].fieldCode === 'status' && scope.row[propertyFieldsArr[index].fieldCode] ===4 ?'highlight-red':'',
-                   menuName === 'examineCar' && propertyFieldsArr[index].fieldCode === 'status' && scope.row[propertyFieldsArr[index].fieldCode] ===2 ?'highlight-red':'',
-                   propertyFieldsArr[index].fieldCode === 'keyState' && scope.row[propertyFieldsArr[index].fieldCode] ===1 ?'highlight-red':'']">
-            {{
-              scope.row[propertyFieldsArr[index].fieldCode]
-                | fieldFormat(propertyFieldsArr[index].fieldFormatArr)
-            }}
-          </span>
-          <span v-else-if="item.link">
-            <el-link
-              class="underline ellipsis"
-              type="primary"
-              @click="clickLink(scope.row, item.fieldCode, item.link)"
-            >{{ scope.row[propertyFieldsArr[index].fieldCode] }}</el-link
-            >
-          </span>
-          <span v-else>{{ scope.row[propertyFieldsArr[index].fieldCode] }}</span>
+            <span
+              v-else-if="propertyFieldsArr[index].menuName == menuName && propertyFieldsArr[index].fieldType === 'dict'">
+              <el-switch
+                v-model="scope.row[propertyFieldsArr[index].fieldCode]"
+                active-color="#13ce66"
+                inactive-color="#ff4949"
+                active-value="0"
+                inactive-value="1" @change="changeSwitch(scope.row)"
+              >
+              </el-switch>
+            </span>
+            <span v-else-if="propertyFieldsArr[index].fieldType === 'dict'"
+                  :class="[propertyFieldsArr[index].fieldCode === 'guarantee' && scope.row[propertyFieldsArr[index].fieldCode] !=='0'?'highlight-red':'',
+                     menuName === 'workspace' && propertyFieldsArr[index].fieldCode === 'status' && scope.row[propertyFieldsArr[index].fieldCode] ===4 ?'highlight-red':'',
+                     menuName === 'examineCar' && propertyFieldsArr[index].fieldCode === 'status' && scope.row[propertyFieldsArr[index].fieldCode] ===2 ?'highlight-red':'',
+                     propertyFieldsArr[index].fieldCode === 'keyState' && scope.row[propertyFieldsArr[index].fieldCode] ===1 ?'highlight-red':'']">
+              {{
+                scope.row[propertyFieldsArr[index].fieldCode]
+                  | fieldFormat(propertyFieldsArr[index].fieldFormatArr)
+              }}
+            </span>
+            <span v-else-if="item.link">
+              <el-link
+                class="underline ellipsis"
+                type="primary"
+                @click="clickLink(scope.row, item.fieldCode, item.link)"
+              >{{ scope.row[propertyFieldsArr[index].fieldCode] }}</el-link
+              >
+            </span>
+            <span v-else>{{ scope.row[propertyFieldsArr[index].fieldCode] }}</span>
+          </slot>
         </template>
       </el-table-column>
     </template>
