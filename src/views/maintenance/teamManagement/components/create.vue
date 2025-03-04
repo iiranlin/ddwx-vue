@@ -19,17 +19,33 @@
       <el-row :span="24" :gutter="20">
         <el-col :span="24">
           <el-form-item :label="'班组类型'" prop="teamType">
-            <el-input v-model="form.teamType" maxlength="240"></el-input>
+            <el-input
+              v-model="form.teamType"
+              maxlength="240"
+              placeholder="请输入班组类型"
+            ></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="24">
           <el-form-item :label="'班组名称'" prop="teamName">
-            <el-input v-model="form.teamName" maxlength="240"></el-input>
+            <el-input
+              v-model="form.teamName"
+              maxlength="240"
+              placeholder="请输入班组名称"
+            ></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item :label="'维修类型'" prop="deptName">
-            <el-input v-model="form.deptName" maxlength="240"></el-input>
+          <el-form-item :label="'维修类型'" prop="equipmentTypeIds">
+            <el-select style="width: 100%;" v-model="form.equipmentTypeIds" multiple filterable placeholder="请选择维修类型" @change="handleSelectionChange">
+              <el-option
+                v-for="item in equipmentTypeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
           </el-form-item>
         </el-col>
       </el-row>
@@ -56,7 +72,10 @@ export default {
       form: {
         teamType: "",
         teamName: "",
+        equipmentType: "",
+        equipmentTypeIds: [],
       },
+      equipmentTypeOptions: [],
       //表单校验
       rules: {
         teamType: [
@@ -72,20 +91,40 @@ export default {
       },
     };
   },
-  created() {},
+
   methods: {
+    // 获取设备枚举不分页
+    getEquipmentType() {
+      ResourceManagement.getDeviceTypeListAll().then(({ data }) => {
+        console.log(data, "data");
+        this.equipmentTypeOptions = data.map((item) => {
+          return {
+            label: item.typeName,
+            value: item.id,
+          };
+        });
+      });
+    },
     //初始化
     init() {
-      this.isEdit = false
+      this.form = {
+        teamType: "",
+        teamName: "",
+        equipmentType: "",
+        equipmentTypeIds: [],
+      }
+      this.isEdit = false;
       this.openDataScope = true;
       this.$nextTick(() => {
         this.title = "新建班组";
       });
+      this.getEquipmentType();
     },
     // 编辑初始化
     async updateInit(id) {
       this.isEdit = true;
       this.openDataScope = true;
+      this.getEquipmentType();
       await ResourceManagement.getTeamById(id).then(({ data }) => {
         this.form = Object.assign({}, data);
         this.$nextTick(() => {
@@ -121,7 +160,15 @@ export default {
     //关闭dialog回调
     handleDialogClose() {
       this.$refs.elform.resetFields();
-      thit.feedBackTypeOptions = [];
+    },
+    handleSelectionChange(selectedValues) {
+      // 获取选中的数据详情
+      const selectedItems = this.equipmentTypeOptions.filter(item =>
+        selectedValues.includes(item.value)
+      );
+      this.form.equipmentType = selectedItems.map(item => item.label).join(",");
+
+      console.log("选中的数据详情:", selectedItems);
     },
   },
 };

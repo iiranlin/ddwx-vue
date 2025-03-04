@@ -155,7 +155,7 @@ export default {
       } else if (buttonCode === "update") {
         this.$refs.create.updateInit(ids);
       } else if (buttonCode === "delete") {
-        this.$confirm("是否删除该条数据？", "提示", {
+        this.$confirm("删除班组后无法重新恢复，请确认！", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning",
@@ -166,9 +166,6 @@ export default {
               this.handleQuery();
             });
           })
-          .catch(() => {
-            this.$message.info("已取消删除");
-          });
       }
     },
     //顶部列字段展示
