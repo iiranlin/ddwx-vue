@@ -289,6 +289,7 @@ export default {
     handleCreate() {
       this.$refs.elform.validate(async (valid) => {
         if (valid) {
+          Reflect.deleteProperty(this.form, 'operateLogs')
           this.loading = true;
           await WorkOrderManagement[
             this.isEdit ? `updateWorkOrder` : `addWorkOrder`

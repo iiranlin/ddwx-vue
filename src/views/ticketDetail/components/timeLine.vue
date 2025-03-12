@@ -1,6 +1,5 @@
 <template>
-  <el-card>
-    <div class="section-title">处理进度</div>
+  <el-card style="height: 500px; overflow-y: scroll;">
     <div class="info-card">
       <div class="timeline">
         <div
@@ -35,7 +34,10 @@
                 >
               </div>
               <!-- 评分 -->
-              <div v-if="item.evaluateLevel" style="display: flex; gap: 40px; margin-bottom: 10px">
+              <div
+                v-if="item.evaluateLevel"
+                style="display: flex; gap: 40px; margin-bottom: 10px"
+              >
                 <span style="display: flex">
                   响应速度：
                   <el-rate :colors="colors" disabled :value="3"></el-rate>

@@ -20,10 +20,10 @@
         <el-col :span="24">
           <el-form-item :label="'归属班组'" prop="teamId">
             <el-select
-              style="width: 100%"
+              style="width: 60%"
               v-model="form.teamId"
               filterable
-              placeholder="请选择维修类型"
+              placeholder="请选择归属班组"
               @change="handleSelectionChange"
             >
               <el-option
@@ -34,11 +34,18 @@
               >
               </el-option>
             </el-select>
+            <span style="margin-left: 10px">班工长：{{ currentForeman }}</span>
           </el-form-item>
         </el-col>
         <el-col :span="24">
           <el-form-item :label="'姓名'" prop="userId">
-           <el-select style="width: 100%;" v-model="form.userId" filterable  placeholder="请选择姓名" @change="userChange">
+            <el-select
+              style="width: 100%"
+              v-model="form.userId"
+              filterable
+              placeholder="请选择姓名"
+              @change="userChange"
+            >
               <el-option
                 v-for="item in userOptions"
                 :key="item.value"
@@ -50,9 +57,9 @@
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item :label="'员工工号'" prop="userCode"  >
+          <el-form-item :label="'员工工号'" prop="userCode">
             <el-input
-            :disabled="true"
+              :disabled="true"
               v-model="form.userCode"
               maxlength="240"
               placeholder="请输入员工工号"
@@ -117,6 +124,8 @@ export default {
       title: "",
       //显示隐藏
       openDataScope: false,
+      // 当前班工长
+      currentForeman: "",
       //表单数据
       form: {
         teamId: "",
@@ -158,10 +167,15 @@ export default {
         console.log(data, "data");
         this.teamTypeOptions = data.map((item) => {
           return {
+            ...item,
             label: item.teamName,
             value: item.id,
           };
         });
+
+        this.currentForeman = this.teamTypeOptions.find(
+          (x) => x.id === this.form?.teamId
+        )?.leaderName;
       });
     },
     // 获取所有用户人员信息
@@ -171,7 +185,7 @@ export default {
         pageSize: 30,
         total: 0,
         status: 0,
-      }).then(({ data :{list}}) => {
+      }).then(({ data: { list } }) => {
         console.log(list, "data");
         this.userOptions = list.map((item) => {
           return {
@@ -180,6 +194,10 @@ export default {
             value: item.id,
           };
         });
+
+        this.form.userCode = this.userOptions.find(
+          (x) => x.id === this.form?.userId
+        )?.userCode;
       });
     },
 
@@ -195,6 +213,7 @@ export default {
         job: "",
         foreman: 0,
       };
+      this.currentForeman = "";
       this.isEdit = false;
       this.openDataScope = true;
       this.$nextTick(() => {
@@ -211,6 +230,7 @@ export default {
       this.getUserList();
       await ResourceManagement.getRepairById(id).then(({ data }) => {
         this.form = Object.assign({}, data);
+
         this.$nextTick(() => {
           this.title = "编辑班组";
         });
@@ -247,20 +267,21 @@ export default {
     },
     handleSelectionChange(selectedValues) {
       // 获取选中的数据详情
-      const selectedItems = this.teamTypeOptions.find(item =>
+      const selectedItems = this.teamTypeOptions.find((item) =>
         selectedValues.includes(item.value)
       );
-      this.form.teamName = selectedItems.label
+      this.currentForeman = selectedItems.leaderName;
+      this.form.teamName = selectedItems.label;
     },
     userChange(selectedValues) {
       // 获取选中的数据详情
-      const selectedItems = this.userOptions.find(item =>
+      const selectedItems = this.userOptions.find((item) =>
         selectedValues.includes(item.value)
       );
-      this.form.name = selectedItems.label
-      this.form.userCode = selectedItems.userCode
-      this.form.phone = this.form.phone || selectedItems.phone
-      this.form.landline = this.form.landline|| selectedItems.landline
+      this.form.name = selectedItems.label;
+      this.form.userCode = selectedItems.userCode;
+      this.form.phone = this.form.phone || selectedItems.phone;
+      this.form.landline = this.form.landline || selectedItems.landline;
     },
   },
 };

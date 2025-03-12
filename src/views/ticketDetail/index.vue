@@ -3,86 +3,97 @@
     <!-- 头部标题 -->
     <h2 class="page-title">维修工单</h2>
 
-    <!-- 工单信息卡片 -->
-    <div>
-      <span class="section-title">工单信息</span>
-    </div>
-    <div class="info-card">
-      <el-descriptions :column="2" border>
-        <!-- 左侧信息 -->
-        <el-descriptions-item label="工单编号">{{
-          details.orderNum
-        }}</el-descriptions-item>
-        <el-descriptions-item label="优先级">
-          <el-tag type="info" size="small">{{ details.urgency }}</el-tag>
-        </el-descriptions-item>
-        <el-descriptions-item label="联系人">{{
-          details.contactName
-        }}</el-descriptions-item>
-        <el-descriptions-item label="联系电话">{{
-          details.contactPhone
-        }}</el-descriptions-item>
+    <template>
+      <!-- 工单信息卡片 -->
+      <div>
+        <span class="section-title">工单信息</span>
+      </div>
+      <div class="info-card">
+        <el-descriptions :column="2" border>
+          <!-- 左侧信息 -->
+          <el-descriptions-item label="工单编号">{{
+            details.orderNum
+          }}</el-descriptions-item>
+          <el-descriptions-item label="优先级">
+            <el-tag type="info" size="small">{{ details.urgency }}</el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item label="联系人">{{
+            details.contactName
+          }}</el-descriptions-item>
+          <el-descriptions-item label="联系电话">{{
+            details.contactPhone
+          }}</el-descriptions-item>
 
-        <!-- 右侧信息 -->
-        <el-descriptions-item label="提交时间">{{
-          details.createTime
-        }}</el-descriptions-item>
-        <el-descriptions-item label="故障场所">{{
-          details.faultSiteName
-        }}</el-descriptions-item>
-        <el-descriptions-item label="故障位置">{{
-          details.faultAddr
-        }}</el-descriptions-item>
-        <el-descriptions-item label="故障描述">
-          <div class="description-text">{{ details.remark }}</div>
-        </el-descriptions-item>
-      </el-descriptions>
-    </div>
+          <!-- 右侧信息 -->
+          <el-descriptions-item label="提交时间">{{
+            details.createTime
+          }}</el-descriptions-item>
+          <el-descriptions-item label="故障场所">{{
+            details.faultSiteName
+          }}</el-descriptions-item>
+          <el-descriptions-item label="故障位置">{{
+            details.faultAddr
+          }}</el-descriptions-item>
+          <el-descriptions-item label="故障描述">
+            <div class="description-text">{{ details.remark }}</div>
+          </el-descriptions-item>
+        </el-descriptions>
+      </div>
+    </template>
 
-    <!-- 维修信息卡片 -->
-    <div class="section-title">维修信息</div>
-    <div class="info-card">
-      <el-descriptions :column="2" border>
-        <el-descriptions-item label="维修班组">{{
-          details.teamName
-        }}</el-descriptions-item>
-        <el-descriptions-item label="工长电话">
-          {{ details.foreman ? details.foreman.phone : "" }} /
-          {{ details.foreman ? details.foreman.landline : "" }}
-        </el-descriptions-item>
-        <el-descriptions-item label="分配时间">{{
-          details.assignTime
-        }}</el-descriptions-item>
-        <el-descriptions-item label="维修人员">{{
-          details.personnelNames
-        }}</el-descriptions-item>
-        <el-descriptions-item label="联系电话">{{
-          details.personnelPhone
-        }}</el-descriptions-item>
-        <el-descriptions-item label="维修时间"
-          >{{ details.startDate }} 至
-          {{ details.endDate }}</el-descriptions-item
-        >
-      </el-descriptions>
-    </div>
+    <template v-if="status === 2">
+      <!-- 维修信息卡片 -->
+      <div class="section-title">维修信息</div>
+      <div class="info-card">
+        <el-descriptions :column="2" border>
+          <el-descriptions-item label="维修班组">{{
+            details.teamName
+          }}</el-descriptions-item>
+          <el-descriptions-item label="工长电话">
+            {{ details.foreman ? details.foreman.phone : "" }} /
+            {{ details.foreman ? details.foreman.landline : "" }}
+          </el-descriptions-item>
+          <el-descriptions-item label="分配时间">{{
+            details.assignTime
+          }}</el-descriptions-item>
+          <el-descriptions-item label="维修人员">{{
+            details.personnelNames
+          }}</el-descriptions-item>
+          <el-descriptions-item label="联系电话">{{
+            details.personnelPhone
+          }}</el-descriptions-item>
+          <el-descriptions-item label="维修时间"
+            >{{ details.startDate }} 至
+            {{ details.endDate }}</el-descriptions-item
+          >
+        </el-descriptions>
+      </div>
+    </template>
 
-    <!-- 耗材表格 -->
-    <div class="section-title">维修耗材</div>
-    <div class="info-card">
-      <el-table :data="details.suppliesList || []" border>
-        <el-table-column prop="suppliesName" label="品名"></el-table-column>
-        <el-table-column prop="suppliesSpecs" label="规格"></el-table-column>
-        <el-table-column prop="suppliesUnit" label="单位"></el-table-column>
-        <el-table-column prop="amount" label="数量"></el-table-column>
-      </el-table>
-    </div>
+    <template v-if="status === 3">
+      <!-- 耗材表格 -->
+      <div class="section-title">维修耗材</div>
+      <div class="info-card">
+        <el-table :data="details.suppliesList || []" border>
+          <el-table-column prop="suppliesName" label="品名"></el-table-column>
+          <el-table-column prop="suppliesSpecs" label="规格"></el-table-column>
+          <el-table-column prop="suppliesUnit" label="单位"></el-table-column>
+          <el-table-column prop="amount" label="数量"></el-table-column>
+        </el-table>
+      </div>
+    </template>
 
-    <AssignmentTeam ref="assignmentTeamRef" @close="onDialogColose" />
-    <CancelOrder ref="cancelOrderRef" @close="onDialogColose" />
-    <TransferTeam ref="transferTeamRef" @close="onDialogColose" />
+    <AssignmentTeam ref="assignmentTeamRef" @close="onDialogInit" />
+    <CancelOrder ref="cancelOrderRef" @close="onDialogInit" />
+    <TransferTeam ref="transferTeamRef" @close="onDialogInit" />
+    <AcceptanceCheck ref="acceptanceCheckRef" @close="onDialogInit" />
 
     <!-- 时间轴信息 -->
-    <TimeLine :details="details" />
+    <div v-if="status !== 1">
+      <div style="margin-bottom: 20px" class="section-title">处理进度</div>
+
+      <TimeLine :details="details" />
+    </div>
 
     <!-- 底部操作按钮 -->
 
@@ -90,25 +101,29 @@
       <!-- 已完成  -->
       <div @click="onCancel" class="action-bg-white">返回</div>
       <!-- 待分配班组 -->
-      <template>
+      <template v-if="status === 1">
         <div @click="onAssignmentTeam" class="action-bg-blue">分配班组</div>
         <div @click="onCancelOrder" class="action-bg-white">取消工单</div>
       </template>
       <!-- 待分配人员 -->
-      <template>
+      <template v-if="status === 2">
         <div @click="onCancelOrder" class="action-bg-white">取消工单</div>
         <div @click="onTransferTeam" class="action-bg-blue">转派班组</div>
         <div @click="onAssignmentPerson" class="action-bg-blue">分配人员</div>
       </template>
 
       <!-- 处理中 -->
-      <template>
+      <template v-if="status === 3">
         <div @click="onAcceptanceSubmit" class="action-bg-blue">提交验收</div>
       </template>
 
       <!-- 待验收 - 报修人 -->
-      <template>
-        <div @click="onAcceptanceCheck" class="action-bg-blue">验收</div>
+      <template v-if="status === 4">
+        <div @click="onAcceptanceCheck(5)" class="action-bg-blue">验收</div>
+      </template>
+      <!-- 待验收 - 调度中心 -->
+      <template v-if="status === 5">
+        <div @click="onAcceptanceCheck(6)" class="action-bg-blue">验收</div>
       </template>
     </div>
   </div>
@@ -119,6 +134,7 @@ import TimeLine from "./components/timeLine.vue";
 import AssignmentTeam from "./components/assignmentTeam.vue";
 import CancelOrder from "./components/cancelOrder.vue";
 import TransferTeam from "./components/transferTeam.vue";
+import AcceptanceCheck from "./components/acceptanceCheck.vue";
 // 工单详情
 /**
  * 1:'待分配-班组',
@@ -134,7 +150,8 @@ export default {
     TimeLine,
     AssignmentTeam,
     CancelOrder,
-    TransferTeam
+    TransferTeam,
+    AcceptanceCheck,
   },
 
   data() {
@@ -167,7 +184,7 @@ export default {
     },
 
     status() {
-      return +this.$route.query.status;
+      return this.details.status;
     },
   },
   methods: {
@@ -223,11 +240,16 @@ export default {
       const component = this.$refs.cancelOrderRef;
       component.init({
         id: this.id,
-        operateDesc:this.details.operateDesc
+        operateDesc: this.details.operateDesc,
       });
     },
     // 分配人员
-    onAssignmentPerson() {},
+    onAssignmentPerson() {
+      this.$router.push({
+        name: "assignmentPerson",
+        query: { id: this.id },
+      });
+    },
     // 转派班组
     onTransferTeam() {
       const component = this.$refs.transferTeamRef;
@@ -237,11 +259,27 @@ export default {
       });
     },
     // 验收
-    onAcceptanceCheck() {},
+    onAcceptanceCheck(status) {
+      const component = this.$refs.acceptanceCheckRef;
+      component.init({
+        id: this.id,
+        orderNum: this.details.orderNum,
+        status,
+      });
+    },
 
     // 提交验收
-    onAcceptanceSubmit() {},
-    onDialogColose() {
+    onAcceptanceSubmit() {
+      this.$router.push({
+        name: "acceptanceSubmit",
+        query: { id: this.id },
+      });
+    },
+    onDialogClose() {
+      this.$tab.closePage();
+      this.$router.go(-1);
+    },
+    onDialogInit() {
       this.init();
     },
   },

@@ -116,7 +116,6 @@
       //关闭dialog回调
       handleDialogClose() {
         this.$refs.elform.resetFields();
-        thit.feedBackTypeOptions = [];
       },
     },
   };

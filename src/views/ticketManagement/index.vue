@@ -58,9 +58,72 @@
         >
           <!-- 自定义状态列 -->
           <template #column-status="scope">
-            <el-tag>
-              {{ workStatus[scope.row.status + ""] }}
-            </el-tag>
+            <svg-icon :icon-class="orderStatus[scope.row.status + '']" />
+            {{ workStatus[scope.row.status + ""] }}
+          </template>
+          <!-- 故障图片 -->
+          <template #column-faultFileUrl="scope">
+            <div style="display: flex; flex-wrap: wrap; gap: 10px">
+              <el-image
+                v-for="item in scope.row.faultFileUrl
+                  ? scope.row.faultFileUrl
+                      .split(',')
+                      .map((x) => `${baseUrl}${x}`)
+                  : []"
+                :src="item"
+                :preview-src-list="[item]"
+                style="width: 50px; height: 50px"
+              ></el-image>
+            </div>
+          </template>
+          <!-- 自定义操作列 -->
+          <template #column-action="scope" fixed="right">
+            <el-button type="text" @click="handleButton(scope.row, 'view')"
+              >查看</el-button
+            >
+            <el-button
+              v-if="[1].includes(scope.row.status)"
+              type="text"
+              @click="handleButton(scope.row, 'update')"
+              >修改</el-button
+            >
+            <el-button
+              v-if="[1].includes(scope.row.status)"
+              type="text"
+              @click="handleButton(scope.row, 'assignmentTeam')"
+              >分配</el-button
+            >
+            <el-button
+              v-if="[2].includes(scope.row.status)"
+              type="text"
+              @click="handleButton(scope.row, 'assignmentPerson')"
+              >分配</el-button
+            >
+            <el-button
+              v-if="[3].includes(scope.row.status)"
+              type="text"
+              @click="handleButton(scope.row, 'transferTeam')"
+              >转派</el-button
+            >
+            <el-button
+              v-if="[4, 5].includes(scope.row.status)"
+              type="text"
+              @click="handleButton(scope.row, 'acceptanceCheck')"
+              >验收</el-button
+            >
+
+            <el-button
+              v-if="[3].includes(scope.row.status)"
+              type="text"
+              @click="handleButton(scope.row, 'acceptanceSubmit')"
+              >提交验收</el-button
+            >
+            <el-button
+              v-if="[1, 2].includes(scope.row.status)"
+              type="text"
+              @click="handleButton(scope.row, 'cancel')"
+              >取消</el-button
+            >
           </template>
         </table-index>
         <!--分页器-->
@@ -76,6 +139,10 @@
     </el-row>
     <!--新建-->
     <create ref="create" @createSuccess="createSuccess"></create>
+    <AssignmentTeam ref="assignmentTeamRef" @close="onDialogInit" />
+    <CancelOrder ref="cancelOrderRef" @close="onDialogInit" />
+    <TransferTeam ref="transferTeamRef" @close="onDialogInit" />
+    <AcceptanceCheck ref="acceptanceCheckRef" @close="onDialogInit" />
   </div>
 </template>
 <script>
@@ -87,14 +154,37 @@ import { WorkOrderManagement } from "@/api/maintenance";
 import indexMixin from "@/views/mixins";
 import { workStatus } from "@/utils/enum";
 
+import AssignmentTeam from "@/views/ticketDetail/components/assignmentTeam.vue";
+import CancelOrder from "@/views/ticketDetail/components/cancelOrder.vue";
+import TransferTeam from "@/views/ticketDetail/components/transferTeam.vue";
+import AcceptanceCheck from "@/views/ticketDetail/components/acceptanceCheck.vue";
 export default {
   // 工单列表
   name: "ticketList",
   mixins: [indexMixin],
-  components: { buttonTop, formData, tableIndex, create },
+  components: {
+    buttonTop,
+    formData,
+    tableIndex,
+    create,
+    AssignmentTeam,
+    CancelOrder,
+    TransferTeam,
+    AcceptanceCheck,
+  },
 
   data() {
+    const orderStatus = {
+      1: "待分配",
+      2: "待分配",
+      3: "处理中",
+      4: "待验收",
+      5: "待验收",
+      6: "已完成",
+      7: "已取消",
+    };
     return {
+      orderStatus,
       workStatus,
       //遮罩层
       loading: false,
@@ -124,6 +214,16 @@ export default {
     this.menuProperty();
     this.getList();
   },
+  computed: {
+    baseUrl() {
+      return process.env.VUE_APP_BASE_API;
+    },
+  },
+
+  activated() {
+    // 每次进入页面时刷新数据列表
+    this.getList();
+  },
   methods: {
     numberChange(val) {
       this.numberShow = val;
@@ -135,6 +235,14 @@ export default {
         data.search.forEach((item) => {
           item.fieldFormat = JSON.parse(JSON.stringify(item.fieldFormat));
         });
+
+        // 修改action right
+        data.fields.forEach((item) => {
+          if (item.fieldCode === "action") {
+            item.fixed = "right";
+          }
+        });
+
         this.property = data;
       });
     },
@@ -154,31 +262,56 @@ export default {
           this.loading = false;
         });
     },
+    onDialogInit() {
+      this.getList();
+    },
     //顶部按钮点击
     newButton(buttonCode, row) {
       this.$refs.tableIndex.newButton(buttonCode, row);
     },
     //页面按钮点击事件
     handleButton(ids, buttonCode) {
+      console.log(ids, buttonCode, "ids, buttonCode");
       if (buttonCode === "create") {
         this.$refs.create.init();
       } else if (buttonCode === "update") {
         this.$refs.create.updateInit(ids);
-      } else if (buttonCode === "delete") {
-        this.$confirm("删除班组后无法重新恢复，请确认！", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }).then(() => {
-          WorkOrderManagement.deleteWorkOrder(ids).then(() => {
-            this.$message.success("删除成功！");
-            this.handleQuery();
-          });
+      } else if (buttonCode === "assignmentTeam") {
+        this.$refs.assignmentTeamRef.init({
+          id: ids["id"],
+          teamId: ids["teamId"],
+          teamName: ids["teamName"],
         });
-      } else if (buttonCode === 'view'){
+      } else if (buttonCode === "view") {
         this.$router.push({
-          name: 'ticketDetail',
-          query: { id: ids['id'] }
+          name: "ticketDetail",
+          query: { id: ids["id"] },
+        });
+      } else if (buttonCode === "assignmentPerson") {
+        this.$router.push({
+          name: "assignmentPerson",
+          query: { id: ids["id"] },
+        });
+      } else if (buttonCode === "transferTeam") {
+        this.$refs.transferTeamRef.init({
+          id: ids["id"],
+          teamName: ids["teamName"],
+        });
+      } else if (buttonCode === "acceptanceCheck") {
+        this.$refs.acceptanceCheckRef.init({
+          id: ids["id"],
+          orderNum: ids["orderNum"],
+          status: ids["status"],
+        });
+      } else if (buttonCode === "acceptanceSubmit") {
+        this.$router.push({
+          name: "acceptanceSubmit",
+          query: { id: ids["id"] },
+        });
+      } else if (buttonCode === "cancel") {
+        this.$refs.cancelOrderRef.init({
+          id: ids["id"],
+          operateDesc: ids["operateDesc"],
         });
       }
     },
