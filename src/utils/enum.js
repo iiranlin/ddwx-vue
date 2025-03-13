@@ -11,3 +11,5 @@ export const workStatus = {
 };
 // 取消工单原因
 export const cancelReason = ["提交错误", "重复提交", "协商取消", "其他"];
+// 班组类型
+export const teamType = ["综合维修班", "专修班"];

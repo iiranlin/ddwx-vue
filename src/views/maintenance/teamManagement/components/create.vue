@@ -19,11 +19,19 @@
       <el-row :span="24" :gutter="20">
         <el-col :span="24">
           <el-form-item :label="'班组类型'" prop="teamType">
-            <el-input
+            <el-select
+              style="width: 100%"
               v-model="form.teamType"
-              maxlength="240"
-              placeholder="请输入班组类型"
-            ></el-input>
+              placeholder="请选择班组类型"
+            >
+              <el-option
+                v-for="item in teamType"
+                :key="item"
+                :label="item"
+                :value="item"
+              >
+              </el-option>
+            </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="24">
@@ -37,7 +45,14 @@
         </el-col>
         <el-col :span="24">
           <el-form-item :label="'维修类型'" prop="equipmentTypeIds">
-            <el-select style="width: 100%;" v-model="form.equipmentTypeIds" multiple filterable placeholder="请选择维修类型" @change="handleSelectionChange">
+            <el-select
+              style="width: 100%"
+              v-model="form.equipmentTypeIds"
+              multiple
+              filterable
+              placeholder="请选择维修类型"
+              @change="handleSelectionChange"
+            >
               <el-option
                 v-for="item in equipmentTypeOptions"
                 :key="item.value"
@@ -58,9 +73,11 @@
 </template>
 <script>
 import { ResourceManagement } from "@/api/maintenance";
+import { teamType } from "@/utils/enum";
 export default {
   data() {
     return {
+      teamType,
       isEdit: false,
       //遮罩层
       loading: false,
@@ -112,7 +129,7 @@ export default {
         teamName: "",
         equipmentType: "",
         equipmentTypeIds: [],
-      }
+      };
       this.isEdit = false;
       this.openDataScope = true;
       this.$nextTick(() => {
@@ -163,10 +180,12 @@ export default {
     },
     handleSelectionChange(selectedValues) {
       // 获取选中的数据详情
-      const selectedItems = this.equipmentTypeOptions.filter(item =>
+      const selectedItems = this.equipmentTypeOptions.filter((item) =>
         selectedValues.includes(item.value)
       );
-      this.form.equipmentType = selectedItems.map(item => item.label).join(",");
+      this.form.equipmentType = selectedItems
+        .map((item) => item.label)
+        .join(",");
 
       console.log("选中的数据详情:", selectedItems);
     },
