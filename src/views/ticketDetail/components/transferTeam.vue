@@ -104,7 +104,7 @@ export default {
       this.isEdit = false;
       this.openDataScope = true;
       this.$nextTick(() => {
-        this.title = "分配";
+        this.title = "转派";
       });
       this.getTeamType();
     },

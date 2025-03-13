@@ -46,22 +46,21 @@
             class="table-row"
           >
             <div class="table-cell">
-              <el-select
-                style="width: 100%"
+              <csSelect
+              style="width: 100%"
+                :selectData="{
+                  data: materialOptions,
+                  label: 'suppliesName',
+                  value: 'suppliesName',
+                  isRight: false,
+                }"
                 v-model="item.suppliesName"
+                placeholder="请选择或输入品名"
                 filterable
                 allow-create
                 default-first-option
-                placeholder="请选择或输入品名"
                 @change="(val) => handleMaterialChange(val, index)"
-              >
-                <el-option
-                  v-for="option in materialOptions"
-                  :key="option.suppliesName"
-                  :label="option.suppliesName"
-                  :value="option.suppliesName"
-                ></el-option>
-              </el-select>
+              ></csSelect>
             </div>
             <div class="table-cell">
               <el-input
@@ -123,10 +122,14 @@
 </template>
 
 <script>
+import CsSelect from "@/views/maintenance/maintenanceTechnician/components/csSelect.vue";
 import { ResourceManagement, WorkOrderManagement } from "@/api/maintenance";
 export default {
   // 提交验收
   name: "AcceptanceSubmit",
+  components: {
+    CsSelect,
+  },
   data() {
     return {
       form: {
@@ -140,18 +143,13 @@ export default {
       materialList: [
         { suppliesName: "", suppliesSpecs: "", suppliesUnit: "", amount: 0 },
       ],
-      materialOptions: [
-        { suppliesName: "钢筋", suppliesSpecs: "Φ12", suppliesUnit: "吨" },
-        { suppliesName: "水泥", suppliesSpecs: "42.5级", suppliesUnit: "袋" },
-        { suppliesName: "砂浆", suppliesSpecs: "M10", suppliesUnit: "方" },
-        { suppliesName: "木板", suppliesSpecs: "18mm", suppliesUnit: "张" },
-      ],
+      materialOptions: [],
       isCustomInput: false,
     };
   },
   mounted() {
     ResourceManagement.getConsumableListAll().then((res) => {
-      this.materialOptions = res.data;
+      this.materialOptions = Object.freeze(res.data) ;
     });
   },
   methods: {

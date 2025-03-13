@@ -82,25 +82,30 @@
           ></div>
         </div>
 
-        <div class="schedule-grid">
-          <!-- 示例任务时间段 -->
-          <div
-            class="person-row"
-            v-for="(person, index) in persons"
-            :key="index"
-          >
-            <div class="person-name">{{ person.name }}</div>
-            <div class="time-slots">
-              <div
-                v-for="task in person.tasks"
-                :key="task.id"
-                class="task-slot"
-                :style="getTaskStyle(task)"
-                @click="showTaskDetail(person)"
-              ></div>
+        <template v-if="persons.length > 0">
+          <div class="schedule-grid">
+            <!-- 示例任务时间段 -->
+            <div
+              class="person-row"
+              v-for="(person, index) in persons"
+              :key="index"
+            >
+              <div class="person-name">{{ person.name }}</div>
+              <div class="time-slots">
+                <div
+                  v-for="task in person.tasks"
+                  :key="task.id"
+                  class="task-slot"
+                  :style="getTaskStyle(task)"
+                  @click="showTaskDetail(person)"
+                ></div>
+              </div>
             </div>
           </div>
-        </div>
+        </template>
+        <template v-else>
+          <el-empty></el-empty>
+        </template>
       </div>
     </div>
 
@@ -117,7 +122,10 @@
       >
         <div class="task-title">任务{{ idx + 1 }}</div>
         <div class="task-content">
-          <div class="detail-item " style="color:black !important;font-weight: bold;">
+          <div
+            class="detail-item"
+            style="color: black !important; font-weight: bold"
+          >
             <span class="detail-label">工单编号</span>
             <span class="detail-content">：{{ task.orderNum }}</span>
           </div>
@@ -157,6 +165,9 @@ import {
   WorkOrderPerson,
 } from "@/api/maintenance";
 import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
+
+dayjs.extend(isBetween);
 export default {
   name: "AssignmentPerson",
   data() {
@@ -171,56 +182,7 @@ export default {
       personOptions: [],
       dateTimeRange: [],
       dateList: [],
-      persons: [
-        {
-          name: "张三丰",
-          tasks: [
-            {
-              id: 1,
-              startTime: "02:30",
-              endTime: "18:50",
-              ticketNo: "WX2025028888",
-              location: "主楼",
-              position: "2楼202办公室",
-              description: "门把手了不开了",
-              showDetail: false,
-              day: 0, // 当天
-            },
-          ],
-        },
-        {
-          name: "段誉",
-          tasks: [
-            {
-              id: 2,
-              startTime: "12:00",
-              endTime: "18:00",
-              ticketNo: "WX2025028889",
-              location: "副楼",
-              position: "1楼101会议室",
-              description: "灯不亮了",
-              showDetail: false,
-              day: 0, // 当天
-            },
-          ],
-        },
-        {
-          name: "虚竹",
-          tasks: [
-            {
-              id: 3,
-              startTime: "14:00",
-              endTime: "18:00",
-              ticketNo: "WX2025028890",
-              location: "主楼",
-              position: "3楼305办公室",
-              description: "空调不制冷",
-              showDetail: false,
-              day: 0, // 当天
-            },
-          ],
-        },
-      ],
+      persons: [{}],
       taskDialogVisible: false,
       selectedTasks: [],
     };
@@ -241,6 +203,7 @@ export default {
       return Promise.resolve();
     },
     userChange(selectedValues) {
+      console.log('change')
       // 获取选中的所有人员的详细信息
       const selectedItems = this.userOptions.filter((item) =>
         selectedValues.includes(item.value)
@@ -259,11 +222,9 @@ export default {
     },
     // 获取所有用户人员信息
     async getUserList() {
-      console.log(this.details, "details 2");
       await ResourceManagement.getRepairListAll({
         teamId: this.details.teamId,
       }).then(({ data }) => {
-        console.log(data, "data  3");
         this.userOptions = data.map((item) => {
           return {
             ...item,
@@ -277,6 +238,11 @@ export default {
           this.form.personnelId = this.details.personnelList.map(
             (item) => item.personnelId
           );
+          this.form.selectedPersons = this.details.personnelList;
+
+          // 回显时间轴数据
+          this.updateTasksByDate();
+          console.log("数据回想爱你");
         }
         // 时间段回显
         if (this.details.startDate && this.details.endDate) {
@@ -315,7 +281,9 @@ export default {
     },
 
     async updateTasksByDate() {
+      console.log(this.form.selectedPersons, "this.form.selectedPersons");
       if (this.form.selectedPersons.length === 0) {
+        this.persons = []
         return;
       }
 
@@ -329,13 +297,12 @@ export default {
         ...person,
         tasks: person.tasks.map((task) => ({
           ...task,
-          startTime: dayjs(task.startTime).format("HH:mm"),
-          endTime: dayjs(task.endTime).format("HH:mm"),
+          // startTime: dayjs(task.startTime).format("HH:mm"),
+          // endTime: dayjs(task.endTime).format("HH:mm"),
         })),
       }));
 
       this.persons = formattedData;
-      console.log(res, "res");
     },
     formatDate(date) {
       const month = date.getMonth() + 1;
@@ -351,42 +318,57 @@ export default {
       // 获取当前选中日期
       const selectedDate = this.dateList.find((date) => date.isActive);
       const baseDate = selectedDate ? selectedDate.date : new Date();
+      const selectedDateStr = dayjs(baseDate).format("YYYY-MM-DD");
 
-      // 解析开始和结束时间
-      const [startHour, startMinute] = task.startTime.split(":").map(Number);
-      const [endHour, endMinute] = task.endTime.split(":").map(Number);
+      // 解析任务的开始和结束时间
+      const taskStartDate = dayjs(task.startTime).format("YYYY-MM-DD");
+      const taskEndDate = dayjs(task.endTime).format("YYYY-MM-DD");
+      const [startHour, startMinute] = dayjs(task.startTime)
+        .format("HH:mm")
+        .split(":")
+        .map(Number);
+      const [endHour, endMinute] = dayjs(task.endTime)
+        .format("HH:mm")
+        .split(":")
+        .map(Number);
 
-      // 创建完整的时间对象
-      const startDate = new Date(baseDate);
-      startDate.setHours(startHour, startMinute, 0);
+      let startTotalMinutes = 0;
+      let endTotalMinutes = 1440; // 24小时的总分钟数
 
-      const endDate = new Date(baseDate);
-      endDate.setHours(endHour, endMinute, 0);
-
-      // 如果结束时间小于开始时间，说明是跨天任务，结束时间加一天
-      if (endDate < startDate) {
-        endDate.setDate(endDate.getDate() + 1);
+      // 根据选中日期与任务时间范围的关系计算显示时间
+      if (selectedDateStr === taskStartDate) {
+        // 如果是任务开始日期，从开始时间到24点
+        startTotalMinutes = startHour * 60 + startMinute;
       }
 
-      // 计算开始时间和结束时间的分钟数（相对于当天0点）
-      const startTotalMinutes =
-        (startDate.getTime() - baseDate.setHours(0, 0, 0, 0)) / (60 * 1000);
-      const endTotalMinutes =
-        (endDate.getTime() - baseDate.setHours(0, 0, 0, 0)) / (60 * 1000);
+      if (selectedDateStr === taskEndDate) {
+        // 如果是任务结束日期，从0点到结束时间
+        endTotalMinutes = endHour * 60 + endMinute;
+      }
+
+      // 判断选中日期是否在任务时间范围内
+      const isInTaskRange = dayjs(selectedDateStr).isBetween(
+        taskStartDate,
+        taskEndDate,
+        "day",
+        "[]"
+      );
 
       // 计算任务在时间轴上的位置和宽度
       const left = `${(startTotalMinutes / 1440) * 100}%`;
-      const width = `${((endTotalMinutes - startTotalMinutes) / 1440) * 100}%`;
+      const width = isInTaskRange
+        ? `${((endTotalMinutes - startTotalMinutes) / 1440) * 100}%`
+        : "0%";
 
       return {
         left,
         width,
         position: "absolute",
-        height: "100%",
-        backgroundColor: "#CBD8FF",
+        height: "80%",
+        top: "10%",
+        backgroundColor: "#387EF7",
         borderRadius: "4px",
         cursor: "pointer",
-        zIndex: 2,
       };
     },
     showTaskDetail(person) {
@@ -559,11 +541,11 @@ export default {
           border: 1px solid #ddd;
 
           &.has-task {
-            background-color: #cbd8ff;
+            background-color: #387EF7;
           }
 
           &.no-task {
-            background-color: #d2efeb;
+            background-color: #E1E1E1;
           }
         }
       }
@@ -633,7 +615,7 @@ export default {
           position: absolute;
           top: 0;
           bottom: 0;
-          width: 1px;
+          width: 0px;
           background-color: #ebeef5; /* 使网格线颜色更淡，提高视觉层次感 */
           cursor: pointer; /* Add cursor pointer to indicate clickable */
         }
@@ -663,9 +645,9 @@ export default {
           .time-slots {
             flex: 1;
             position: relative;
-            background-color: #d2efeb;
+            background-color: #E1E1E1;
             border-radius: 4px;
-            border: 1px solid #d2efeb;
+            border: 1px solid #E1E1E1;
             z-index: 1;
 
             .task-slot {
@@ -698,17 +680,13 @@ export default {
     .detail-item {
       display: flex;
       margin-bottom: 10px;
-      color:#7C8491;
+      color: #7c8491;
       font-weight: 400;
-      .detail-label{
+      .detail-label {
         // 文件两端对齐
         text-align: justify;
         text-align-last: justify;
         width: 70px;
-       
-      }
-      .detail-content {
-        width: 200px;
       }
     }
   }

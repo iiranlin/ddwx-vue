@@ -112,7 +112,7 @@
       fixed="right"
       label="操作"
       align="center"
-      width="230"
+      :width="actionWidth"
       class-name="small-padding fixed-width"
       v-if="property.buttonRow && property.buttonRow.length > 0"
     >
@@ -169,6 +169,10 @@
       id: {
         type: String,
         default: 'id'
+      },
+      actionWidth:{
+        type:Number,
+        default:230
       },
       selectionWidth:{
         type: Number,
@@ -241,6 +245,10 @@
       menuName: {
         type: String,
         default: ''
+      },
+      moreButtonThreshold: {
+        type: Number,
+        default: 3
       }
     },
     computed:{
@@ -262,11 +270,12 @@
       'property.buttonRow': {
         handler: function (newButtonRow) {
           let newButtonRows = newButtonRow
-          if (newButtonRows.length <= 3) {
+          const threshold = this.moreButtonThreshold;
+          if (newButtonRows.length <= threshold) {
             this.buttonRow = newButtonRows
           } else {
-            this.buttonRow = newButtonRows.slice(0, 2)
-            this.buttonRows = newButtonRows.slice(2, newButtonRows.length)
+            this.buttonRow = newButtonRows.slice(0, threshold - 1)
+            this.buttonRows = newButtonRows.slice(threshold - 1, newButtonRows.length)
           }
         }
       },

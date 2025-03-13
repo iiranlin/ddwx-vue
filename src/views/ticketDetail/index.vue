@@ -114,6 +114,7 @@
 
       <!-- 处理中 -->
       <template v-if="status === 3">
+        <div @click="onAssignmentPerson" class="action-bg-blue">转派人员</div>
         <div @click="onAcceptanceSubmit" class="action-bg-blue">提交验收</div>
       </template>
 
@@ -247,7 +248,7 @@ export default {
     onAssignmentPerson() {
       this.$router.push({
         name: "assignmentPerson",
-        query: { id: this.id },
+        query: { id: this.id},
       });
     },
     // 转派班组

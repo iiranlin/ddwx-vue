@@ -102,7 +102,7 @@
             <el-button
               v-if="[3].includes(scope.row.status)"
               type="text"
-              @click="handleButton(scope.row, 'transferTeam')"
+              @click="handleButton(scope.row, 'assignmentPerson')"
               >转派</el-button
             >
             <el-button
@@ -275,7 +275,7 @@ export default {
       if (buttonCode === "create") {
         this.$refs.create.init();
       } else if (buttonCode === "update") {
-        this.$refs.create.updateInit(ids);
+        this.$refs.create.updateInit(ids["id"]);
       } else if (buttonCode === "assignmentTeam") {
         this.$refs.assignmentTeamRef.init({
           id: ids["id"],
@@ -301,7 +301,7 @@ export default {
         this.$refs.acceptanceCheckRef.init({
           id: ids["id"],
           orderNum: ids["orderNum"],
-          status: ids["status"],
+          status: ids["status"] + 1,
         });
       } else if (buttonCode === "acceptanceSubmit") {
         this.$router.push({
