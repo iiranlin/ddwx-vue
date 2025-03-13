@@ -57,9 +57,9 @@
           @emitAblFilter="emitAblFilter"
         >
           <!-- 自定义状态列 -->
-          <template #column-status="scope">
-            <svg-icon :icon-class="orderStatus[scope.row.status + '']" />
-            {{ workStatus[scope.row.status + ""] }}
+          <template #column-planningState="scope">
+            <svg-icon :icon-class="orderStatus[scope.row.planningState + '']" />
+            {{ workStatus[scope.row.planningState + ""] }}
           </template>
           <!-- 故障图片 -->
           <template #column-faultFileUrl="scope">
@@ -81,48 +81,8 @@
             <el-button type="text" @click="handleButton(scope.row, 'view')"
               >查看</el-button
             >
-            <el-button
-              v-if="[1].includes(scope.row.status)"
-              type="text"
-              @click="handleButton(scope.row, 'update')"
-              >修改</el-button
-            >
-            <el-button
-              v-if="[1].includes(scope.row.status)"
-              type="text"
-              @click="handleButton(scope.row, 'assignmentTeam')"
-              >分配</el-button
-            >
-            <el-button
-              v-if="[2].includes(scope.row.status)"
-              type="text"
-              @click="handleButton(scope.row, 'assignmentPerson')"
-              >分配</el-button
-            >
-            <el-button
-              v-if="[3].includes(scope.row.status)"
-              type="text"
-              @click="handleButton(scope.row, 'assignmentPerson')"
-              >转派</el-button
-            >
-            <el-button
-              v-if="[4, 5].includes(scope.row.status)"
-              type="text"
-              @click="handleButton(scope.row, 'acceptanceCheck')"
-              >验收</el-button
-            >
-
-            <el-button
-              v-if="[3].includes(scope.row.status)"
-              type="text"
-              @click="handleButton(scope.row, 'acceptanceSubmit')"
-              >提交验收</el-button
-            >
-            <el-button
-              v-if="[1, 2].includes(scope.row.status)"
-              type="text"
-              @click="handleButton(scope.row, 'cancel')"
-              >取消</el-button
+            <el-button type="text" @click="handleButton(scope.row, 'edit')"
+              >编辑</el-button
             >
           </template>
         </table-index>
@@ -137,27 +97,16 @@
         />
       </el-col>
     </el-row>
-    <!--新建-->
-    <create ref="create" @createSuccess="createSuccess"></create>
-    <AssignmentTeam ref="assignmentTeamRef" @close="onDialogInit" />
-    <CancelOrder ref="cancelOrderRef" @close="onDialogInit" />
-    <TransferTeam ref="transferTeamRef" @close="onDialogInit" />
-    <AcceptanceCheck ref="acceptanceCheckRef" @close="onDialogInit" />
   </div>
 </template>
 <script>
 import buttonTop from "@/components/buttonTop";
 import formData from "@/components/formData";
 import tableIndex from "@/components/tableIndex";
-import create from "./components/create";
 import { MaintenancePlan } from "@/api/maintenance";
 import indexMixin from "@/views/mixins";
 import { workStatus } from "@/utils/enum";
 
-import AssignmentTeam from "@/views/ticketDetail/components/assignmentTeam.vue";
-import CancelOrder from "@/views/ticketDetail/components/cancelOrder.vue";
-import TransferTeam from "@/views/ticketDetail/components/transferTeam.vue";
-import AcceptanceCheck from "@/views/ticketDetail/components/acceptanceCheck.vue";
 export default {
   // 维保计划列表
   name: "maintenancePlanList",
@@ -166,22 +115,14 @@ export default {
     buttonTop,
     formData,
     tableIndex,
-    create,
-    AssignmentTeam,
-    CancelOrder,
-    TransferTeam,
-    AcceptanceCheck,
   },
 
   data() {
     const orderStatus = {
-      1: "待分配",
-      2: "待分配",
-      3: "处理中",
-      4: "待验收",
-      5: "待验收",
-      6: "已完成",
-      7: "已取消",
+      1: "维保未开始",
+      2: "维保进行中",
+      3: "维保已结束",
+      4: "维保已终止",
     };
     return {
       orderStatus,
@@ -271,48 +212,28 @@ export default {
     },
     //页面按钮点击事件
     handleButton(ids, buttonCode) {
-      console.log(ids, buttonCode, "ids, buttonCode");
-      if (buttonCode === "create") {
-        this.$refs.create.init();
-      } else if (buttonCode === "update") {
-        this.$refs.create.updateInit(ids["id"]);
-      } else if (buttonCode === "assignmentTeam") {
-        this.$refs.assignmentTeamRef.init({
-          id: ids["id"],
-          teamId: ids["teamId"],
-          teamName: ids["teamName"],
-        });
-      } else if (buttonCode === "view") {
-        this.$router.push({
-          name: "ticketDetail",
-          query: { id: ids["id"] },
-        });
-      } else if (buttonCode === "assignmentPerson") {
-        this.$router.push({
-          name: "assignmentPerson",
-          query: { id: ids["id"] },
-        });
-      } else if (buttonCode === "transferTeam") {
-        this.$refs.transferTeamRef.init({
-          id: ids["id"],
-          teamName: ids["teamName"],
-        });
-      } else if (buttonCode === "acceptanceCheck") {
-        this.$refs.acceptanceCheckRef.init({
-          id: ids["id"],
-          orderNum: ids["orderNum"],
-          status: ids["status"] + 1,
-        });
-      } else if (buttonCode === "acceptanceSubmit") {
-        this.$router.push({
-          name: "acceptanceSubmit",
-          query: { id: ids["id"] },
-        });
-      } else if (buttonCode === "cancel") {
-        this.$refs.cancelOrderRef.init({
-          id: ids["id"],
-          operateDesc: ids["operateDesc"],
-        });
+      switch (buttonCode) {
+        case "create": {
+          this.$router.push({
+            name: "createPlan",
+          });
+          break;
+        }
+        case "view": {
+          console.log(ids, "ids");
+          this.$router.push({
+            name: "createPlan",
+            query: { id: ids["id"], isView: true },
+          });
+          break;
+        }
+        case "edit": {
+          this.$router.push({
+            name: "createPlan",
+            query: { id: ids["id"] },
+          });
+          break;
+        }
       }
     },
     //顶部列字段展示
@@ -344,10 +265,6 @@ export default {
       this.selectionData = selection;
     },
 
-    //新建成功回调
-    createSuccess() {
-      this.handleQuery();
-    },
     //刷新列表数据
     handleQuery(row = {}) {
       this.formData = Object.assign({}, this.formData, row);
