@@ -39,21 +39,19 @@
         </el-col>
         <el-col :span="24">
           <el-form-item :label="'姓名'" prop="userId">
-            <el-select
-              style="width: 100%"
+            <csSelect
+              :selectData="{
+                data: userOptions,
+                label: 'label',
+                value: 'value',
+                isRight: false,
+              }"
               v-model="form.userId"
-              filterable
               placeholder="请选择姓名"
+              clearable
               @change="userChange"
-            >
-              <el-option
-                v-for="item in userOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              >
-              </el-option>
-            </el-select>
+            ></csSelect>
+           
           </el-form-item>
         </el-col>
         <el-col :span="24">
@@ -112,9 +110,19 @@
 <script>
 import { ResourceManagement } from "@/api/maintenance";
 import { userPage } from "@/api/system/user";
+import VirtualScrollList from "vue-virtual-scroll-list";
+import Options from "./options.vue";
+import CsSelect from "./csSelect.vue";
 export default {
+  components: {
+    VirtualScrollList,
+    Options,
+    CsSelect,
+  },
   data() {
     return {
+      optionComponent: Options,
+      valueKey: "value",
       teamTypeOptions: [],
       userOptions: [],
       isEdit: false,
@@ -182,7 +190,7 @@ export default {
     getUserList() {
       userPage({
         pageNum: 1,
-        pageSize: 30,
+        pageSize: 99999,
         total: 0,
         status: 0,
       }).then(({ data: { list } }) => {
@@ -286,4 +294,14 @@ export default {
   },
 };
 </script>
-<style scoped></style>
+<style lang="scss" scoped>
+.virtualselect {
+  &-list {
+    max-height: 245px;
+    overflow-y: auto;
+  }
+  .el-scrollbar .el-scrollbar__bar.is-vertical {
+    width: 0;
+  }
+}
+</style>

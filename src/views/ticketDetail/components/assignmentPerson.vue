@@ -96,7 +96,7 @@
                 :key="task.id"
                 class="task-slot"
                 :style="getTaskStyle(task)"
-                @click="showTaskDetail(person, task)"
+                @click="showTaskDetail(person)"
               ></div>
             </div>
           </div>
@@ -110,13 +110,37 @@
     </div>
 
     <el-dialog :visible.sync="taskDialogVisible" title="任务详情">
-      <div v-for="task in selectedTasks" :key="task.id" class="task-detail">
-        <div>任务编号: {{ task.ticketNo }}</div>
-        <div>位置: {{ task.location }} - {{ task.position }}</div>
-        <div>描述: {{ task.description }}</div>
-        <div>时间: {{ task.startTime }} - {{ task.endTime }}</div>
+      <div
+        v-for="(task, idx) in selectedTasks"
+        :key="task.id"
+        class="task-detail"
+      >
+        <div class="task-title">任务{{ idx + 1 }}</div>
+        <div class="task-content">
+          <div class="detail-item " style="color:black !important;font-weight: bold;">
+            <span class="detail-label">工单编号</span>
+            <span class="detail-content">：{{ task.orderNum }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">场所</span>
+            <span class="detail-content">：{{ task.faultSiteName }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">位置</span>
+            <span class="detail-content">：{{ task.faultAddr }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">故障描述</span>
+            <span class="detail-content">：{{ task.remark }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">维修时间</span>
+            <span class="detail-content"
+              >：{{ task.startTime }} - {{ task.endTime }}</span
+            >
+          </div>
+        </div>
       </div>
-      <!-- footer -->
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="taskDialogVisible = false"
           >关闭</el-button
@@ -127,22 +151,24 @@
 </template>
 
 <script>
-import { ResourceManagement, WorkOrderManagement } from "@/api/maintenance";
+import {
+  ResourceManagement,
+  WorkOrderManagement,
+  WorkOrderPerson,
+} from "@/api/maintenance";
 import dayjs from "dayjs";
 export default {
   name: "AssignmentPerson",
   data() {
     return {
+      details: {},
+      currentDate: dayjs().format("YYYY-MM-DD"),
       userOptions: [],
       form: {
         personnelId: "",
         selectedPersons: [], // 存储选中人员的完整信息数组
       },
-      personOptions: [
-        { value: "1", label: "维修员1" },
-        { value: "2", label: "维修员2" },
-        { value: "3", label: "维修员3" },
-      ],
+      personOptions: [],
       dateTimeRange: [],
       dateList: [],
       persons: [
@@ -199,11 +225,21 @@ export default {
       selectedTasks: [],
     };
   },
-  created() {
+  async created() {
+    await this.getOrderDetail();
+
     this.initDateList();
-    this.getUserList();
+    await this.getUserList();
   },
   methods: {
+    async getOrderDetail() {
+      const { data = {} } = await WorkOrderManagement.getWorkOrderById(
+        this.$route.query.id
+      );
+      this.details = data;
+      console.log(data, "ressss  1");
+      return Promise.resolve();
+    },
     userChange(selectedValues) {
       // 获取选中的所有人员的详细信息
       const selectedItems = this.userOptions.filter((item) =>
@@ -218,11 +254,16 @@ export default {
       }));
       // 更新form中的信息
       this.form.selectedPersons = selectedPersons;
+
+      this.updateTasksByDate();
     },
     // 获取所有用户人员信息
-    getUserList() {
-      ResourceManagement.getRepairListAll().then(({ data }) => {
-        console.log(data, "data");
+    async getUserList() {
+      console.log(this.details, "details 2");
+      await ResourceManagement.getRepairListAll({
+        teamId: this.details.teamId,
+      }).then(({ data }) => {
+        console.log(data, "data  3");
         this.userOptions = data.map((item) => {
           return {
             ...item,
@@ -230,7 +271,20 @@ export default {
             value: item.id,
           };
         });
+
+        // 获取到用户信息后，查看details里面有没有选择用户，数据回显
+        if (this.details.personnelList) {
+          this.form.personnelId = this.details.personnelList.map(
+            (item) => item.personnelId
+          );
+        }
+        // 时间段回显
+        if (this.details.startDate && this.details.endDate) {
+          this.dateTimeRange = [this.details.startDate, this.details.endDate];
+        }
       });
+
+      return Promise.resolve();
     },
     initDateList() {
       const today = new Date();
@@ -256,17 +310,32 @@ export default {
 
       // 根据选中日期更新任务列表
       const selectedDate = this.dateList[index].date;
+      this.currentDate = dayjs(selectedDate).format("YYYY-MM-DD");
       this.updateTasksByDate(selectedDate);
     },
 
-    updateTasksByDate(date) {
-      // 更新每个人的任务列表，这里仅作示例
-      // 实际项目中应该根据后端接口获取数据
-      this.persons.forEach((person) => {
-        person.tasks = person.tasks.map((task) => ({
-          ...task,
-        }));
+    async updateTasksByDate() {
+      if (this.form.selectedPersons.length === 0) {
+        return;
+      }
+
+      const res = await WorkOrderPerson.getWorkOrderPersonByDate({
+        date: this.currentDate,
+        personnelIds: this.form.personnelId.join(),
       });
+
+      // 格式化时间数据
+      const formattedData = res.data.map((person) => ({
+        ...person,
+        tasks: person.tasks.map((task) => ({
+          ...task,
+          startTime: dayjs(task.startTime).format("HH:mm"),
+          endTime: dayjs(task.endTime).format("HH:mm"),
+        })),
+      }));
+
+      this.persons = formattedData;
+      console.log(res, "res");
     },
     formatDate(date) {
       const month = date.getMonth() + 1;
@@ -279,15 +348,33 @@ export default {
       return `${hour.toString().padStart(2, "0")}:00`;
     },
     getTaskStyle(task) {
-      // 解析开始和结束时间的小时和分钟
+      // 获取当前选中日期
+      const selectedDate = this.dateList.find((date) => date.isActive);
+      const baseDate = selectedDate ? selectedDate.date : new Date();
+
+      // 解析开始和结束时间
       const [startHour, startMinute] = task.startTime.split(":").map(Number);
       const [endHour, endMinute] = task.endTime.split(":").map(Number);
 
-      // 将时间转换为分钟数
-      const startTotalMinutes = startHour * 60 + startMinute;
-      const endTotalMinutes = endHour * 60 + endMinute;
+      // 创建完整的时间对象
+      const startDate = new Date(baseDate);
+      startDate.setHours(startHour, startMinute, 0);
 
-      // 计算任务在时间轴上的位置和宽度（基于1440分钟 = 24小时）
+      const endDate = new Date(baseDate);
+      endDate.setHours(endHour, endMinute, 0);
+
+      // 如果结束时间小于开始时间，说明是跨天任务，结束时间加一天
+      if (endDate < startDate) {
+        endDate.setDate(endDate.getDate() + 1);
+      }
+
+      // 计算开始时间和结束时间的分钟数（相对于当天0点）
+      const startTotalMinutes =
+        (startDate.getTime() - baseDate.setHours(0, 0, 0, 0)) / (60 * 1000);
+      const endTotalMinutes =
+        (endDate.getTime() - baseDate.setHours(0, 0, 0, 0)) / (60 * 1000);
+
+      // 计算任务在时间轴上的位置和宽度
       const left = `${(startTotalMinutes / 1440) * 100}%`;
       const width = `${((endTotalMinutes - startTotalMinutes) / 1440) * 100}%`;
 
@@ -302,8 +389,8 @@ export default {
         zIndex: 2,
       };
     },
-    showTaskDetail(person, task) {
-      this.selectedTasks = [task];
+    showTaskDetail(person) {
+      this.selectedTasks = person.tasks;
       this.taskDialogVisible = true;
     },
     handleTimeGridClick(hour) {
@@ -325,7 +412,7 @@ export default {
       this.$tab.closePage();
       this.$router.go(-1);
     },
-    confirm() {
+    async confirm() {
       // 处理确认逻辑
       console.log(
         this.form,
@@ -343,11 +430,37 @@ export default {
         return;
       }
 
+      // 提交前检查时间内是否有任务，如果有给出提示，让用户确认是否继续提交
+      const { data = false } = await WorkOrderPerson.checkTask({
+        startDate: dayjs(this.dateTimeRange[0]).format("YYYY-MM-DD HH:mm:ss"),
+        endDate: dayjs(this.dateTimeRange[1]).format("YYYY-MM-DD HH:mm:ss"),
+        personnelIds: this.form.personnelId.join(),
+      });
+      console.log(data, "res");
+      if (data) {
+        this.$confirm(
+          "维修时间和现有任务的维修时间分配有重叠，请确认",
+          "提示",
+          {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
+          }
+        ).then(() => {
+          this.submit();
+        });
+      } else {
+        this.submit();
+      }
+    },
+
+    submit() {
       WorkOrderManagement.executeWorkOrder(
         Object.assign(
           {},
           {
-            status: 3,
+            // 有人则为转派，没人则是分配
+            status: this.details.status ? 10 : 3,
             id: this.$route.query.id,
             personnelList: this.form.selectedPersons,
             startDate: dayjs(this.dateTimeRange[0]).format(
@@ -378,7 +491,8 @@ export default {
     margin-bottom: 20px;
 
     h2 {
-      font-size: 18px;
+      text-align: center;
+      font-size: 30px;
       font-weight: bold;
       margin-bottom: 15px;
     }
@@ -420,7 +534,7 @@ export default {
     margin-bottom: 20px;
 
     h3 {
-      font-size: 16px;
+      font-size: 18px;
       font-weight: bold;
       margin-bottom: 15px;
     }
@@ -560,22 +674,41 @@ export default {
                 box-shadow: 0 2px 8px rgba(74, 122, 254, 0.3);
                 z-index: 5; /* 悬停时提高层级 */
               }
-
-              .task-detail {
-                background-color: #fff;
-                border-radius: 4px;
-                padding: 10px;
-                width: 250px;
-                box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-
-                div {
-                  margin-bottom: 5px;
-                  font-size: 12px;
-                }
-              }
             }
           }
         }
+      }
+    }
+  }
+}
+
+.task-detail {
+  .task-title {
+    font-size: 16px;
+    font-weight: 400;
+    color: #0c7bfe;
+  }
+
+  .task-content {
+    padding: 10px;
+    background: #f4f5f7;
+    border-radius: 5px;
+    margin-block: 10px;
+
+    .detail-item {
+      display: flex;
+      margin-bottom: 10px;
+      color:#7C8491;
+      font-weight: 400;
+      .detail-label{
+        // 文件两端对齐
+        text-align: justify;
+        text-align-last: justify;
+        width: 70px;
+       
+      }
+      .detail-content {
+        width: 200px;
       }
     }
   }
