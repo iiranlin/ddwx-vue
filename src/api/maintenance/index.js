@@ -448,6 +448,7 @@ export class MaintenancePlan {
   // 维保计划-根据id获取详情
   static getMaintenancePlanById(id) {
     return request({
+      url: `${VUE_APP_BASE_prefix}/repairMaintenancePlan/getById`,
       method: "get",
       params: { id },
     });
@@ -461,3 +462,59 @@ export class MaintenancePlan {
     });
   }
 }
+
+// 资源管理
+export class ProgressConfig {
+  // 流程管理-分页查询
+  static getProgressConfigList(params) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/sysResourceConfig/listPage`,
+      method: "get",
+      params,
+    });
+  }
+  // 流程管理-新增
+  static addProgressConfig(data) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/sysResourceConfig/create`,
+      method: "post",
+      data,
+    });
+  }
+  // 流程管理-修改
+  static updateProgressConfig(data) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/sysResourceConfig/modify`,
+      method: "post",
+      data,
+    });
+  }
+  // 流程管理-根据id获取详情
+  static getProgressConfigById(id) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/sysResourceConfig/getById`,
+      method: "get",
+      params: { id },
+    });
+  }
+  // 流程管理-删除
+  static deleteProgressConfig(ids) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/sysResourceConfig/deleteBatch`,
+      method: "post",
+      data: ids,
+    });
+  }
+}
+// 消息管理
+export class MessageManagement {
+  // 消息管理-分页查询
+  static getMessageList(params) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/repairMessage/listPage`,
+      method: "get",
+      params,
+    });
+  }
+}
+
