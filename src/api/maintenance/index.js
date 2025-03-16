@@ -508,13 +508,20 @@ export class ProgressConfig {
 }
 // 消息管理
 export class MessageManagement {
-  // 消息管理-分页查询
-  static getMessageList(params) {
+  // 消息管理-根据id获取详情
+  static getMessageById(id) {
     return request({
-      url: `${VUE_APP_BASE_prefix}/repairMessage/listPage`,
+      url: `${VUE_APP_BASE_prefix}/identity/listUserIdentity`,
       method: "get",
-      params,
+      params: { userIdentity:id },
+    });
+  }
+  // 消息管理-修改身份配置的用户
+  static updateUserIdentity(data) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/identity/modify`,
+      method: "post",
+      data,
     });
   }
 }
-
