@@ -46,9 +46,9 @@ export default {
       },
     }, //父组件传的值
     defaultValue: {
-      type: String,
+      type: [String, Array],
       default: "",
-    }, // 绑定的默认值
+    }, // 绑定的默认值，支持字符串（单选）或数组（多选）
   },
   mounted() {
     this.init();
@@ -66,27 +66,60 @@ export default {
   },
   methods: {
     init() {
+      // 检查数据有效性
+      if (!this.selectData?.data || !Array.isArray(this.selectData.data)) {
+        this.selectArr = [];
+        return;
+      }
+
+      // 如果没有默认值，直接使用原始数据
       if (!this.defaultValue) {
         this.selectArr = this.selectData.data;
-      } else {
-        // 回显问题
-        // 由于只渲染20条数据,当默认数据处于20条之外,在回显的时候会显示异常
-        // 解决方法:遍历所有数据,将对应回显的那一条数据放在第一条即可
-        this.selectArr = JSON.parse(JSON.stringify(this.selectData.data));
-        let obj = {};
+        return;
+      }
+      
+      this.selectArr = JSON.parse(JSON.stringify(this.selectData.data));
+      
+      // 处理多选情况
+      if (Array.isArray(this.defaultValue)) {
+        const selectedItems = [];
+        const remainingItems = [];
+        
+        this.selectArr.forEach(item => {
+          const itemValue = item[this.selectData.value];
+          if (!itemValue) return;
+          
+          if (this.defaultValue.some(val => {
+            return val && itemValue && val.toString().toLowerCase() === itemValue.toString().toLowerCase();
+          })) {
+            selectedItems.push(item);
+          } else {
+            remainingItems.push(item);
+          }
+        });
+        
+        this.selectArr = [...selectedItems, ...remainingItems];
+        return;
+      }
+      
+      // 处理单选情况
+      let obj = {};
+      const defaultValueStr = this.defaultValue?.toString().toLowerCase();
+      
+      if (defaultValueStr) {
         for (let i = 0; i < this.selectArr.length; i++) {
           const element = this.selectArr[i];
-          if (
-            element[this.selectData.value].toLowerCase() ===
-            this.defaultValue.toLowerCase()
-          ) {
+          const elementValue = element[this.selectData.value];
+          
+          if (elementValue && elementValue.toString().toLowerCase() === defaultValueStr) {
             obj = element;
             this.selectArr.splice(i, 1);
             break;
           }
         }
-        this.selectArr.unshift(obj);
       }
+      
+      this.selectArr.unshift(obj);
     },
     // 搜索
     filterMethod(query) {
