@@ -155,6 +155,7 @@ export default {
           };
           this.form = Object.assign(
             {
+              userIdentityName: datas.userIdentityName,
               userIdentity: datas.userIdentity,
               userIds: data.map((x) => x.userId),
             },
