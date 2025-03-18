@@ -442,7 +442,7 @@ export default {
           {},
           {
             // 有人则为转派，没人则是分配
-            status: this.details.status ? 10 : 3,
+            status: this.details.personnelNames ? 10 : 3,
             id: this.$route.query.id,
             personnelList: this.form.selectedPersons,
             startDate: dayjs(this.dateTimeRange[0]).format(

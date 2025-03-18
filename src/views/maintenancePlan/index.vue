@@ -82,7 +82,16 @@
               >查看</el-button
             >
             <el-button type="text" @click="handleButton(scope.row, 'edit')"
-              >编辑</el-button
+              >修改</el-button
+            >
+            <el-button type="text" @click="handleButton(scope.row, 'delete')"
+              >删除</el-button
+            >
+            <el-button type="text" @click="handleButton(scope.row, 'terminate')"
+              >终止</el-button
+            >
+            <el-button type="text" @click="handleButton(scope.row, 'stop')"
+              >结束</el-button
             >
           </template>
         </table-index>
@@ -232,6 +241,32 @@ export default {
             name: "createPlan",
             query: { id: ids["id"] },
           });
+          break;
+        }
+        case "delete": {
+          this.$confirm("确定删除该维保计划吗？", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+          })
+            .then(() => MaintenancePlan.deleteMaintenancePlan([ids["id"]]))
+            .then((data) => {
+              this.$message.success(data.message);
+              this.getList();
+            });
+          break;
+        }
+        case "terminate": {
+          this.$confirm("确定终止该维保计划吗？", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+          }).then(() => {});
+          break
+        }
+        case "stop": {
+          this.$confirm("确定结束该维保计划吗？", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+          }).then(() => {});
           break;
         }
       }
