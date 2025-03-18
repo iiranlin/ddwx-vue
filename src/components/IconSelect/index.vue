@@ -30,6 +30,7 @@ export default {
       }
     },
     selectedIcon(name) {
+      this.$emit('getTableIndex')
       this.$emit('selected', name)
       document.body.click()
     },
