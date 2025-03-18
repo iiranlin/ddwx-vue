@@ -508,12 +508,21 @@ export class ProgressConfig {
 }
 // 消息管理
 export class MessageManagement {
+  // 消息管理-分页查询
+  static getMessageList(params) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/repairMessage/listPage`,
+      method: "get",
+      params,
+    });
+  }
+  
   // 消息管理-根据id获取详情
   static getMessageById(id) {
     return request({
       url: `${VUE_APP_BASE_prefix}/identity/listUserIdentity`,
       method: "get",
-      params: { userIdentity:id },
+      params: { userIdentity: id },
     });
   }
   // 消息管理-修改身份配置的用户
@@ -522,6 +531,42 @@ export class MessageManagement {
       url: `${VUE_APP_BASE_prefix}/identity/modify`,
       method: "post",
       data,
+    });
+  }
+}
+
+// 数据统计
+export class DataStatistics {
+  // 班组统计 - 暂不分页
+  static getTeamStatistics(params) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/repairOrder/teamRepairStatistics`,
+      method: "get",
+      params,
+    });
+  }
+  // 场所统计 - 暂不分页
+  static getPlaceStatistics(params) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/repairOrder/statisticsByPlace`,
+      method: "get",
+      params,
+    });
+  }
+  // 维修人员统计 - 暂不分页
+  static getPersonStatistics(params) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/repairOrder/repairPersonnelStatistics`,
+      method: "get",
+      params,
+    });
+  }
+  // 耗材统计 - 暂不分页
+  static getMaterialStatistics(params) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/repairOrder/materialStatistics`,
+      method: "get",
+      params,
     });
   }
 }
