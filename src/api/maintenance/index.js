@@ -570,3 +570,39 @@ export class DataStatistics {
     });
   }
 }
+
+// 工单统计
+export class WorkOrderStatistics {
+  // 工单统计-分页查询
+  static getWorkOrderStatisticsList(params) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/repairOrderStatistics/groupByOrderStatus`,
+      method: "get",
+      params,
+    });
+  }
+  // 各个场所维修统计
+  static getPlaceStatistics(params) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/repairOrderStatistics/groupBySite`,
+      method: "get",
+      params,
+    });
+  }
+  // 维修工单优先级
+  static getPriorityStatistics(params) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/repairOrderStatistics/groupByUrgency`,
+      method: "get",
+      params,
+    });
+  }
+  // 设备类型维修工单
+  static getDeviceTypeStatistics(params) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/repairOrderStatistics/groupByEquipmentType`,
+      method: "get",
+      params,
+    });
+  }
+}

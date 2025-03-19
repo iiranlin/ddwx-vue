@@ -82,7 +82,7 @@ export default {
   },
   data() {
     return {
-      baseUrl: process.env.VUE_APP_FILE_API,
+      baseUrl: process.env.VUE_APP_BASE_API,
       colors: {
         1: "#387EF7", // Color for 2 stars
         2: "#387EF7", // Color for 4 stars
