@@ -31,7 +31,7 @@
       <!-- <el-tooltip content="消息通知" placement="bottom">
               <i class="el-icon-chat-dot-round"></i>
       </el-tooltip> -->
-      <i class="el-icon-chat-dot-round"></i>
+      <i class="el-icon-chat-dot-round" ></i>
       </div>
     <update-password ref="updatePassword"></update-password>
   </div>
@@ -117,10 +117,7 @@ export default {
     },
     handleNoticeClick(){
       this.$router.push({
-        name: 'myMessage',
-        params: {
-          
-        },
+        name: 'message',
       })
     },
   }
