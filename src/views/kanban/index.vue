@@ -1,5 +1,5 @@
 <template>
-  <el-card style="margin: 20px; height: calc(100% - 40px); overflow-y: scroll;">
+  <el-card v-loading="loading" style="margin: 20px; height: calc(100% - 40px); overflow-y: scroll">
     <el-form :model="formData" ref="formData" label-width="80px" :inline="true">
       <el-form-item label="统计时间">
         <el-date-picker
@@ -116,10 +116,10 @@
 
     <!-- 底部环形图 -->
     <el-row :gutter="20" style="margin-top: 20px">
-      <el-col :xs="24" :sm="24" :md="12" :lg="12">
+      <el-col :xs="24" :sm="24" :md="24" :lg="12">
         <div class="box-card">
           <div slot="header" class="clearfix">
-            <h2>维修工单先后</h2>
+            <h2>维修工单优先级</h2>
           </div>
           <div class="chart-wrapper">
             <div ref="pieChart1" class="chart" style="height: 300px"></div>
@@ -137,6 +137,8 @@
         </div>
       </el-col>
     </el-row>
+    <!-- 时间轴 -->
+    <TimeLine></TimeLine>
   </el-card>
 </template>
 
@@ -145,12 +147,13 @@ import echarts from "echarts";
 // require("echarts/theme/macarons"); // echarts主题
 import resize from "@/views/dashboard/mixins/resize";
 import formData from "@/components/formData";
-import { ResourceManagement } from "@/api/maintenance";
+import { ResourceManagement, WorkOrderStatistics } from "@/api/maintenance";
 import dayjs from "dayjs";
+import TimeLine from "./components/timeLine.vue";
 export default {
   name: "Kanban",
   mixins: [resize],
-  components: { formData },
+  components: { formData, TimeLine },
   data() {
     return {
       teamTypeOptions: [],
@@ -166,40 +169,40 @@ export default {
       },
       cardPanelData: [
         {
+          status: "8",
           title: "总工单",
-          count: 88,
+          count: 0,
           icon: require("@/assets/images/ddwx/总工单.png"),
-          color: "blue",
         },
         {
+          status: "1",
           title: "待分配",
-          count: 12,
+          count: 0,
           icon: require("@/assets/images/ddwx/待分配.png"),
-          color: "blue-light",
         },
         {
+          status: "3",
           title: "处理中",
-          count: 12,
+          count: 0,
           icon: require("@/assets/images/ddwx/处理中.png"),
-          color: "orange",
         },
         {
+          status: "4",
           title: "待验收",
-          count: 12,
+          count: 0,
           icon: require("@/assets/images/ddwx/待验收.png"),
-          color: "blue-light",
         },
         {
+          status: "6",
           title: "已完成",
-          count: 12,
+          count: 0,
           icon: require("@/assets/images/ddwx/已完成.png"),
-          color: "green",
         },
         {
+          status: "7",
           title: "已取消",
-          count: 12,
+          count: 0,
           icon: require("@/assets/images/ddwx/已取消.png"),
-          color: "gray",
         },
       ],
       barChart: null,
@@ -219,11 +222,12 @@ export default {
   },
   created() {
     this.getTeamType();
+    this.getAllWorkOrderStatistics();
   },
   mounted() {
     this.$nextTick(() => {
-      this.initBarChart();
-      this.initPieChart1();
+      this.initBarChart({});
+      this.initPieChart1([]);
       this.initPieChart2();
     });
   },
@@ -242,6 +246,41 @@ export default {
     }
   },
   methods: {
+    // 获取所有工单统计数据
+    async getAllWorkOrderStatistics() {
+      this.loading = true;
+      const [total, wait, processing, completed, canceled] =
+        await Promise.allSettled([
+          WorkOrderStatistics.getWorkOrderStatisticsList(this.formData),
+          WorkOrderStatistics.getPlaceStatistics(this.formData),
+          WorkOrderStatistics.getPriorityStatistics(this.formData),
+          WorkOrderStatistics.getDeviceTypeStatistics(this.formData),
+        ]).finally(() => {
+          this.loading = false;
+        });
+      // 总工单
+      if (total.status === "fulfilled") {
+        this.cardPanelData = this.cardPanelData.map((x) => {
+          const item = total.value.data.find((y) => y.name == x.status);
+          return {
+            ...x,
+            count: item?.count || 0,
+          };
+        });
+      }
+      // 各场所维修工单
+      if (wait.status === "fulfilled") {
+        this.initBarChart(wait.value.data);
+      }
+      //   维修工单优先级
+      if (processing.status === "fulfilled") {
+        this.initPieChart1(processing.value.data);
+      }
+      //   设备类型维修工单
+      if (completed.status === "fulfilled") {
+        this.initPieChart2(completed.value.data);
+      }
+    },
     // 获取班组枚举不分页
     getTeamType() {
       ResourceManagement.getTeamListAll().then(({ data }) => {
@@ -258,41 +297,30 @@ export default {
       for (let key in this.formData) {
         this.formData[key] = "";
       }
-      this.handleQuery();
+      this.formData.year = [
+        this.getCurrentMonthRange().start,
+        this.getCurrentMonthRange().end,
+      ];
+      this.formData.startTime = this.getCurrentMonthRange().start;
+      this.formData.endTime = this.getCurrentMonthRange().end;
+
+      this.getAllWorkOrderStatistics();
     },
     //刷新列表数据
     handleQuery(row = {}) {
-      if (!row.year) {
-        row.startTime = this.getCurrentMonthRange().start;
-        row.endTime = this.getCurrentMonthRange().end;
-        row.year = [
-          this.getCurrentMonthRange().start,
-          this.getCurrentMonthRange().end,
-        ];
-      }
+      
       this.formData = Object.assign({}, this.formData, row);
-      //   this.getList();
+      this.getAllWorkOrderStatistics();
     },
-    initBarChart() {
+    initBarChart(data = {}) {
       this.barChart = echarts.init(this.$refs.barChart, "macarons");
-
-      const locations = [
-        "土区",
-        "东南区",
-        "西南区",
-        "东北区",
-        "综合区",
-        "变电",
-        "车辆段",
-        "驱动段",
-        "综合楼",
-        "变电所",
-        "东车段",
-        "车道区",
-      ];
-      const firstData = [42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42];
-      const secondData = [37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37];
-      const thirdData = [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9];
+      const locations = data?.abscissas || [];
+      const firstData =
+        data?.list?.find((x) => x.ordinate === "一般")?.numberList || [];
+      const secondData =
+        data?.list?.find((x) => x.ordinate === "非常紧急")?.numberList || [];
+      const thirdData =
+        data?.list?.find((x) => x.ordinate === "紧急")?.numberList || [];
 
       this.barChart.setOption({
         tooltip: {
@@ -404,8 +432,22 @@ export default {
         ],
       });
     },
-    initPieChart1() {
+    initPieChart1(data = []) {
       this.pieChart1 = echarts.init(this.$refs.pieChart1, "macarons");
+
+      const pieData = [
+        { value: 0, name: "一般" },
+        { value: 0, name: "紧急" },
+        { value: 0, name: "非常紧急" },
+      ].map((x) => {
+        const item = data?.find((y) => y.name === x.name);
+        console.log(item, "item");
+        return {
+          ...x,
+          value: item?.count || 0,
+        };
+      });
+      const total = pieData.reduce((sum, item) => sum + item.value, 0);
 
       this.pieChart1.setOption({
         tooltip: {
@@ -414,7 +456,8 @@ export default {
         },
         legend: {
           orient: "horizontal",
-          bottom: "bottom",
+          bottom: 0,
+          left: "center",
           data: ["一般", "紧急", "非常紧急"],
         },
         series: [
@@ -424,8 +467,9 @@ export default {
             radius: ["50%", "70%"],
             avoidLabelOverlap: false,
             label: {
-              show: false,
-              position: "center",
+              show: true,
+              formatter: "{b}\n{c}个",
+              position: "outside",
             },
             emphasis: {
               label: {
@@ -435,25 +479,50 @@ export default {
               },
             },
             labelLine: {
-              show: false,
+              show: true,
+              length: 10,
+              length2: 10,
+              smooth: true,
             },
-            data: [
-              { value: 32, name: "一般" },
-              { value: 32, name: "紧急" },
-              { value: 24, name: "非常紧急" },
-            ],
+            data: pieData,
             itemStyle: {
               color: function (params) {
-                const colorList = ["#91c7ae", "#c23531", "#d48265"];
+                const colorList = ["#1978E5", "#FFD02E", "#FF4E4E"];
                 return colorList[params.dataIndex];
               },
+            },
+            center: ["50%", "50%"],
+          },
+          {
+            name: "总计",
+            type: "pie",
+            radius: ["0", "0"],
+            center: ["50%", "50%"],
+            label: {
+              show: true,
+              position: "center",
+              formatter: `总计\n{c}个`,
+              fontSize: 20,
+              color: "#333",
+              fontWeight: "bold",
+              backgroundColor: "transparent",
+            },
+            data: [{ value: total }],
+            itemStyle: {
+              color: "transparent",
             },
           },
         ],
       });
     },
-    initPieChart2() {
+    initPieChart2(data = []) {
       this.pieChart2 = echarts.init(this.$refs.pieChart2, "macarons");
+
+      const pieData = data.map((x) => ({
+        value: x.count,
+        name: x.name,
+      }));
+      const total = pieData.reduce((sum, item) => sum + item.value, 0);
 
       this.pieChart2.setOption({
         tooltip: {
@@ -462,15 +531,9 @@ export default {
         },
         legend: {
           orient: "horizontal",
-          bottom: "bottom",
-          data: [
-            "供排水设备",
-            "弱电设备",
-            "强电设备",
-            "电梯设备",
-            "空调系统设备",
-            "照明设备",
-          ],
+          bottom: 0,
+          left: "center",
+          data: pieData.map((x) => x.name),
         },
         series: [
           {
@@ -479,8 +542,9 @@ export default {
             radius: ["50%", "70%"],
             avoidLabelOverlap: false,
             label: {
-              show: false,
-              position: "center",
+              show: true,
+              formatter: "{b}\n{c}个",
+              position: "outside",
             },
             emphasis: {
               label: {
@@ -490,16 +554,32 @@ export default {
               },
             },
             labelLine: {
-              show: false,
+              show: true,
+              length: 10,
+              length2: 10,
+              smooth: true,
             },
-            data: [
-              { value: 12, name: "供排水设备" },
-              { value: 12, name: "弱电设备" },
-              { value: 12, name: "强电设备" },
-              { value: 12, name: "电梯设备" },
-              { value: 12, name: "空调系统设备" },
-              { value: 12, name: "照明设备" },
-            ],
+            data: pieData,
+            center: ["50%", "50%"],
+          },
+          {
+            name: "总计",
+            type: "pie",
+            radius: ["0", "0"],
+            center: ["50%", "50%"],
+            label: {
+              show: true,
+              position: "center",
+              formatter: `总计\n{c}个`,
+              fontSize: 20,
+              color: "#333",
+              fontWeight: "bold",
+              backgroundColor: "transparent",
+            },
+            data: [{ value: total }],
+            itemStyle: {
+              color: "transparent",
+            },
           },
         ],
       });
