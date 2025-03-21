@@ -55,6 +55,7 @@
   </el-row>
     <operate ref="operate" @operateSuccess="operateSuccess"/>
     <menuDrawer ref="menuDrawer" />
+    <personDrawer ref="personDrawer" @userBindRoleSuccess="handleQuery" />
   </div>
 </template>
 
@@ -62,6 +63,7 @@
 import {rolePage, roleDeleteBatch} from '@/api/system/role';
 import operate from "./components/operate";
 import menuDrawer from "./components/menuDrawer.vue";
+import personDrawer from "./components/personDrawer.vue";
 import indexMixin from '@/views/mixins';
 import tableIndex from "@/components/tableIndex";
 import formData from "@/components/formData";
@@ -69,7 +71,7 @@ import buttonTop from "@/components/buttonTop";
 export default {
   name: "role",
   mixins: [indexMixin],
-  components: { operate, menuDrawer ,tableIndex, formData, buttonTop },
+  components: { operate, menuDrawer ,tableIndex, formData, buttonTop, personDrawer },
   data() {
     return {
       // 遮罩层
@@ -137,6 +139,8 @@ export default {
         this.handleCreate()
       } else if (buttonCode === 'assignUser') {
         this.bindMenu(id)
+      } else if (buttonCode ==='assignPerson'){
+        this.bindPerson(id)
       }
 
     },
@@ -214,6 +218,9 @@ export default {
     },
     bindMenu (row) {
       this.$refs.menuDrawer.init(row, 'role');
+    },
+    bindPerson (row) {
+      this.$refs.personDrawer.init(row);
     }
   }
 };

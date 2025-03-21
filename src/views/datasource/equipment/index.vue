@@ -191,7 +191,7 @@ export default {
     async getList() {
       this.loading = true;
 
-      await DataStatistics.getPlaceStatistics(
+      await DataStatistics.getDeviceTypeStatistics(
         Object.assign({}, this.listQuery, this.formData)
       )
         .then(({ data }) => {

@@ -516,7 +516,7 @@ export class MessageManagement {
       params,
     });
   }
-  
+
   // 消息管理-根据id获取详情
   static getMessageById(id) {
     return request({
@@ -531,6 +531,15 @@ export class MessageManagement {
       url: `${VUE_APP_BASE_prefix}/identity/modify`,
       method: "post",
       data,
+    });
+  }
+
+  // 消息反馈
+  static getMessageFeedbackList(params) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/repairFeedback/listPage`,
+      method: "get",
+      params,
     });
   }
 }
@@ -565,6 +574,14 @@ export class DataStatistics {
   static getMaterialStatistics(params) {
     return request({
       url: `${VUE_APP_BASE_prefix}/repairOrder/materialStatistics`,
+      method: "get",
+      params,
+    });
+  }
+  // 设备维修类型统计 - 暂不分页
+  static getDeviceTypeStatistics(params) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/repairOrder/equipmentRepairStatistics`,
       method: "get",
       params,
     });

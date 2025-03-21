@@ -100,3 +100,12 @@ export function userModifys(data) {
     data
   })
 }
+
+// 角色分配多用户
+export function userBindRoleBatch(data) {
+  return request({
+    url: `${VUE_APP_BASE_PREFIX}/user/bindUser`,
+    method: 'post',
+    data
+  })
+}
