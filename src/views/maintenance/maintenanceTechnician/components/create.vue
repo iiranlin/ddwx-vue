@@ -198,7 +198,7 @@ export default {
         this.userOptions = list.map((item) => {
           return {
             ...item,
-            label: item.nickName,
+            label: item.realName,
             value: item.id,
           };
         });
