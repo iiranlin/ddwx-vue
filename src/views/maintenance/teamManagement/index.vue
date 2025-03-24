@@ -53,6 +53,8 @@
           @handleButton="handleButton"
           @selectChange="selectChange"
           @emitAblFilter="emitAblFilter"
+          numberShow
+          :selectShow="false"
         >
         </table-index>
         <!--分页器-->
@@ -159,13 +161,12 @@ export default {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning",
-        })
-          .then(() => {
-            ResourceManagement.deleteTeam(ids).then(() => {
-              this.$message.success("删除成功！");
-              this.handleQuery();
-            });
-          })
+        }).then(() => {
+          ResourceManagement.deleteTeam(ids).then(() => {
+            this.$message.success("删除成功！");
+            this.handleQuery();
+          });
+        });
       }
     },
     //顶部列字段展示

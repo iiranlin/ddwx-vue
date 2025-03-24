@@ -47,7 +47,6 @@
           :moreButtonThreshold="4"
           style="margin-top: -8px"
           :tableIndexs="tableIndex"
-          :numberShow="numberShow"
           :loading="loading"
           :tableData="dataList"
           :property="property"
@@ -55,6 +54,8 @@
           @handleButton="handleButton"
           @selectChange="selectChange"
           @emitAblFilter="emitAblFilter"
+          numberShow
+          :selectShow="false"
         >
           <!-- 自定义状态列 -->
           <template #column-planningState="scope">
