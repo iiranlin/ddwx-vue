@@ -12,6 +12,7 @@ let downloadLoadingInstance;
 let isReloginShow;
 
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
+axios.defaults.headers['User-Identity'] = 'DISPATCH'
 // 创建axios实例
 const service = axios.create({
   // axios中请求配置有baseURL选项，表示请求URL公共部分
@@ -32,6 +33,8 @@ service.interceptors.request.use(config => {
   // get请求映射params参数
   if (config.method === 'get' && config.params) {
     let url = config.url + '?' + tansParams(config.params) + "t=" + new Date().getTime();
+    // 暂时移除时间戳
+    // let url = config.url + '?' + tansParams(config.params) 
     url = url.slice(0, -1);
     config.params = {};
     config.url = url;
