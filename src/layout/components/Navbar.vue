@@ -1,21 +1,47 @@
 <template>
   <div class="navbar">
-    <div class="test-title">{{testTitle}}</div>
-    <hamburger v-if="sideTheme == 'theme-dark' || sideTheme == 'theme-dark-top'" id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    <div class="test-title">{{ testTitle }}</div>
+    <hamburger
+      v-if="sideTheme == 'theme-dark' || sideTheme == 'theme-dark-top'"
+      id="hamburger-container"
+      :is-active="sidebar.opened"
+      class="hamburger-container"
+      @toggleClick="toggleSideBar"
+    />
 
-    <breadcrumb id="breadcrumb-container" class="breadcrumb-container" v-if="!topNav && (sideTheme == 'theme-dark' || sideTheme == 'theme-dark-top')"/>
-    <top-nav id="topmenu-container" class="topmenu-container" v-if="topNav && (sideTheme == 'theme-dark' || sideTheme == 'theme-dark-top')"/>
-    <Sidebara class="topmenu-containera" v-if="sideTheme != 'theme-dark' && sideTheme != 'theme-dark-top'"/>
+    <breadcrumb
+      id="breadcrumb-container"
+      class="breadcrumb-container"
+      v-if="
+        !topNav && (sideTheme == 'theme-dark' || sideTheme == 'theme-dark-top')
+      "
+    />
+    <top-nav
+      id="topmenu-container"
+      class="topmenu-container"
+      v-if="
+        topNav && (sideTheme == 'theme-dark' || sideTheme == 'theme-dark-top')
+      "
+    />
+    <Sidebara
+      class="topmenu-containera"
+      v-if="sideTheme != 'theme-dark' && sideTheme != 'theme-dark-top'"
+    />
     <!-- <div style="position:absolute;top:10px;color:red;z-index: 10;left: 50%;font-weight: bold;font-size: 22px;">本系统为测试系统，均为测试数据</div> -->
     <div class="right-menu">
-      <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
+      <el-dropdown
+        class="avatar-container right-menu-item hover-effect"
+        trigger="click"
+      >
         <div class="avatar-wrapper">
-          <span style="margin-right:10px;font-size:14px;">{{unitName}}</span>
-          <span>{{realName}}</span>
+          <span style="margin-right: 10px; font-size: 14px">{{
+            unitName
+          }}</span>
+          <span>{{ realName }}</span>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item @click.native="setting=true">
+          <el-dropdown-item @click.native="setting = true">
             <span>布局设置</span>
           </el-dropdown-item>
           <el-dropdown-item divided @click.native="updatePwd">
@@ -27,26 +53,31 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
-    <div class="notice-button" @click="handleNoticeClick()">
+    
+    <div class="notice-button" style="margin-right: 10px; font-size: 14px;">
       <!-- <el-tooltip content="消息通知" placement="bottom">
               <i class="el-icon-chat-dot-round"></i>
       </el-tooltip> -->
-      <i class="el-icon-chat-dot-round" ></i>
-      </div>
+      <a href="/机关维修调度系统操作手册.doc" target="_blank" style="margin-right: 10px;">
+        <i class="el-icon-download"></i>
+        操作手册
+      </a>
+      <i class="el-icon-chat-dot-round" @click="handleNoticeClick()"></i>
+    </div>
     <update-password ref="updatePassword"></update-password>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
-import Breadcrumb from '@/components/Breadcrumb'
-import TopNav from '@/components/TopNav'
-import Hamburger from '@/components/Hamburger'
-import Screenfull from '@/components/Screenfull'
-import SizeSelect from '@/components/SizeSelect'
-import Search from '@/components/HeaderSearch'
-import Sidebara from './Sidebara'
-import UpdatePassword from '@/components/UpdatePassword'
+import { mapGetters, mapState } from "vuex";
+import Breadcrumb from "@/components/Breadcrumb";
+import TopNav from "@/components/TopNav";
+import Hamburger from "@/components/Hamburger";
+import Screenfull from "@/components/Screenfull";
+import SizeSelect from "@/components/SizeSelect";
+import Search from "@/components/HeaderSearch";
+import Sidebara from "./Sidebara";
+import UpdatePassword from "@/components/UpdatePassword";
 
 export default {
   components: {
@@ -61,76 +92,77 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'sidebar',
-      'avatar',
-      'device',
-      'name',
-      'unitName',
-      'realName',
+      "sidebar",
+      "avatar",
+      "device",
+      "name",
+      "unitName",
+      "realName",
     ]),
     ...mapState({
-      sideTheme: state => state.settings.sideTheme,
+      sideTheme: (state) => state.settings.sideTheme,
     }),
     setting: {
       get() {
-        return this.$store.state.settings.showSettings
+        return this.$store.state.settings.showSettings;
       },
       set(val) {
-        this.$store.dispatch('settings/changeSetting', {
-          key: 'showSettings',
-          value: val
-        })
-      }
+        this.$store.dispatch("settings/changeSetting", {
+          key: "showSettings",
+          value: val,
+        });
+      },
     },
     topNav: {
       get() {
-        return this.$store.state.settings.topNav
-      }
-    }
+        return this.$store.state.settings.topNav;
+      },
+    },
   },
   data() {
     return {
-      testTitle: ''
-    }
+      testTitle: "",
+    };
   },
   mounted() {
-    this.testTitle = process.env.VUE_APP_TITLE
+    this.testTitle = process.env.VUE_APP_TITLE;
   },
   methods: {
     toggleSideBar() {
-      this.$store.dispatch('app/toggleSideBar')
+      this.$store.dispatch("app/toggleSideBar");
     },
     async logout() {
-      this.$confirm('确定注销并退出系统吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$store.dispatch('LogOut').then(() => {
-          location.href = '/index';
+      this.$confirm("确定注销并退出系统吗？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$store.dispatch("LogOut").then(() => {
+            location.href = "/index";
+          });
         })
-      }).catch(() => {});
+        .catch(() => {});
     },
     /**修改密码*/
     updatePwd() {
-      this.$refs.updatePassword.initUpdatePassword(true, false)
+      this.$refs.updatePassword.initUpdatePassword(true, false);
     },
-    handleNoticeClick(){
+    handleNoticeClick() {
       this.$router.push({
-        name: 'message',
-      })
+        name: "message",
+      });
     },
-  }
-}
+  },
+};
 </script>
 
 <style lang="scss" scoped>
-
 .test-title {
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);;
+  transform: translate(-50%, -50%);
   font-size: 30px;
   color: red;
   z-index: 999;
@@ -141,18 +173,18 @@ export default {
   overflow: hidden;
   position: relative;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
 
   .hamburger-container {
     line-height: 46px;
     height: 100%;
     float: left;
     cursor: pointer;
-    transition: background .3s;
-    -webkit-tap-highlight-color:transparent;
+    transition: background 0.3s;
+    -webkit-tap-highlight-color: transparent;
 
     &:hover {
-      background: rgba(0, 0, 0, .025)
+      background: rgba(0, 0, 0, 0.025);
     }
   }
 
@@ -164,7 +196,7 @@ export default {
     position: absolute;
     left: 50px;
   }
-  .topmenu-containera{
+  .topmenu-containera {
     position: absolute;
     height: 50px;
     left: 22px;
@@ -173,11 +205,11 @@ export default {
     display: inline-block;
     vertical-align: top;
   }
-  .notice-button{
+  .notice-button {
     float: right;
     height: 100%;
-       line-height: 60px;
-    color: #409EFF;
+    line-height: 60px;
+    color: #409eff;
 
     & :hover {
       cursor: pointer;
@@ -202,10 +234,10 @@ export default {
 
       &.hover-effect {
         cursor: pointer;
-        transition: background .3s;
+        transition: background 0.3s;
 
         &:hover {
-          background: rgba(0, 0, 0, .025)
+          background: rgba(0, 0, 0, 0.025);
         }
       }
     }

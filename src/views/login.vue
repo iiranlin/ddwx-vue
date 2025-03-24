@@ -7,21 +7,16 @@
 		</div> -->
     <div class="test-title">{{ testTitle }}</div>
     <div id="loginBg">
-      <video
-        src="../assets/video/Login.mp4"
-        width="2560"
-        height="1440"
-        autoplay
-        loop
-        muted
-      ></video>
+      <!-- <img
+        src="../assets/images/bg.png"
+      ></img> -->
     </div>
     <!-- <div style="position:absolute;top:30px;color:red;z-index: 10;right: 110px;font-weight: bold;font-size: 24px;">本系统为测试系统，均为测试数据</div> -->
     <div class="login-right-box">
       <div class="login-right-box-title">
         <img src="../assets/logo/StationLogo.svg" alt="" class="logo">
         <div class="right-title">
-          <h2 class="title-h2">公务用车管理系统</h2>
+          <h2 class="title-h2">机关维修调度系统</h2>
           <!-- <p class="title-p">中国铁路广州局集团有限公司</p> -->
         </div>
       </div>
@@ -253,9 +248,9 @@ export default {
   mounted() {
     let vdo_w = 2560
     let vdo_h = 1440
-    var box_h = document.getElementById('loginBg').clientHeight
-    let box_w = (vdo_w / vdo_h) * box_h
-    document.getElementById('loginBg').style.width = box_w + 'px'
+    // var box_h = document.getElementById('loginBg').clientHeight
+    // let box_w = (vdo_w / vdo_h) * box_h
+    // document.getElementById('loginBg').style.width = box_w + 'px'
 
     // 	this.loginW = document.getElementById('loginBg').clientWidth;
     // let lottieBgLottie = document.getElementById('lottieBg-lottie');
@@ -381,6 +376,7 @@ export default {
   width: 100%;
   height: 100%;
   transform: translate(-50%, -50%);
+  background: url('../assets/images/bg.png') center/cover no-repeat fixed;
 }
 
 #loginBg::after {
