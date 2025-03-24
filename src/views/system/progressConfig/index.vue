@@ -2,44 +2,8 @@
   <div class="app-container_list">
     <el-row :gutter="20" class="container_h">
       <el-col :span="24" :xs="24" class="container_flex">
-        <!--顶部按钮-->
-        <el-row :gutter="24" class="container_flex-right_list">
-          <el-col
-            :span="1.5"
-            v-for="item in property.buttonTop"
-            :key="item.id"
-            style="margin-top: 2px; padding: 0px"
-          >
-            <button-top
-              :item="item"
-              :multiple="multiple"
-              :single="single"
-              @newButton="newButton"
-              class="cume-button"
-            >
-            </button-top>
-          </el-col>
-          <right-toolbar
-            ref="rightToolbar"
-            style="margin-top: 4px; padding-right: 20px"
-            :showSearch.sync="showSearch"
-            :columns="property.fields"
-            @queryTable="handleQuery"
-            @handleCheckAllChange="handleCheckAllChange"
-            @numberChange="numberChange"
-            @clickReset="clickReset"
-          >
-          </right-toolbar>
-        </el-row>
-        <!--搜索条件按钮-->
-        <form-data
-          :formDta="formData"
-          :showSearch="showSearch"
-          :searchArr="property.search || []"
-          @handleQuery="handleQuery"
-          style="margin-top: -12px; margin-bottom: 6px"
-        >
-        </form-data>
+       
+      
         <!--表格数据-->
         <table-index
           ref="tableIndex"
@@ -53,6 +17,8 @@
           @handleButton="handleButton"
           @selectChange="selectChange"
           @emitAblFilter="emitAblFilter"
+          numberShow
+          :selectShow="false"
         >
           <!-- <template #column-status="scoped">
             <svg-icon

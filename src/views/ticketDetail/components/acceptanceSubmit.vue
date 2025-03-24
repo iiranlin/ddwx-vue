@@ -40,68 +40,78 @@
           </div>
 
           <!-- 表格内容 -->
-          <div
-            v-for="(item, index) in materialList"
-            :key="index"
-            class="table-row"
-          >
-            <div class="table-cell">
-              <csSelect
-              style="width: 100%"
-                :selectData="{
-                  data: materialOptions,
-                  label: 'suppliesName',
-                  value: 'suppliesName',
-                  isRight: false,
-                }"
-                v-model="item.suppliesName"
-                placeholder="请选择或输入品名"
-                filterable
-                allow-create
-                default-first-option
-                @change="(val) => handleMaterialChange(val, index)"
-              ></csSelect>
-            </div>
-            <div class="table-cell">
-              <el-input
-                v-model="item.suppliesSpecs"
-                placeholder="规格"
-              ></el-input>
-            </div>
-            <div class="table-cell">
-              <el-input
-                v-model="item.suppliesUnit"
-                placeholder="单位"
-              ></el-input>
-            </div>
-            <div class="table-cell">
-              <el-input-number
-                v-model="item.amount"
-                :min="0"
-                placeholder="数量"
-              ></el-input-number>
-            </div>
-            <div class="table-cell operation">
-              <div
-                v-if="index === materialList.length - 1"
-                @click="addMaterial"
-                style="
-                  color: #3481f9;
-                  font-weight: bold;
-                  margin-right: 4px;
-                  cursor: pointer;
-                "
-              >
-                增加 |
+          <template v-if="materialList.length > 0">
+            <div
+              v-for="(item, index) in materialList"
+              :key="index"
+              class="table-row"
+            >
+              <div class="table-cell">
+                <csSelect
+                  style="width: 100%"
+                  :selectData="{
+                    data: materialOptions,
+                    label: 'suppliesName',
+                    value: 'suppliesName',
+                    isRight: false,
+                  }"
+                  v-model="item.suppliesName"
+                  placeholder="请选择或输入品名"
+                  filterable
+                  allow-create
+                  default-first-option
+                  @change="(val) => handleMaterialChange(val, index)"
+                ></csSelect>
               </div>
-              <div
-                style="color: #f34d39; font-weight: bold; cursor: pointer"
-                @click="removeMaterial(index)"
-              >
-                删除
+              <div class="table-cell">
+                <el-input
+                  v-model="item.suppliesSpecs"
+                  placeholder="规格"
+                ></el-input>
+              </div>
+              <div class="table-cell">
+                <el-input
+                  v-model="item.suppliesUnit"
+                  placeholder="单位"
+                ></el-input>
+              </div>
+              <div class="table-cell">
+                <el-input-number
+                  v-model="item.amount"
+                  :min="0"
+                  placeholder="数量"
+                ></el-input-number>
+              </div>
+              <div class="table-cell operation">
+                <div
+                  v-if="index === materialList.length - 1"
+                  @click="addMaterial"
+                  style="
+                    color: #3481f9;
+                    font-weight: bold;
+                    margin-right: 4px;
+                    cursor: pointer;
+                  "
+                >
+                  增加 |
+                </div>
+                <div
+                  style="color: #f34d39; font-weight: bold; cursor: pointer"
+                  @click="removeMaterial(index)"
+                >
+                  删除
+                </div>
               </div>
             </div>
-          </div>
+          </template>
+          <template v-else>
+            <el-empty >
+              <template slot="description">
+                <el-button type="text" @click="addMaterial">添加耗材</el-button>
+                <div style="color: #606266">当前暂无消耗耗材</div>
+              </template>
+            </el-empty>
+          </template>
         </div>
       </div>
     </div>
@@ -149,7 +159,7 @@ export default {
   },
   mounted() {
     ResourceManagement.getConsumableListAll().then((res) => {
-      this.materialOptions = Object.freeze(res.data) ;
+      this.materialOptions = Object.freeze(res.data);
     });
   },
   methods: {
@@ -207,10 +217,10 @@ export default {
         return;
       }
 
-      if (!this.form.operateDesc || !this.form.operateDesc.trim()) {
-        this.$message.error("请填写维修说明");
-        return;
-      }
+      // if (!this.form.operateDesc || !this.form.operateDesc.trim()) {
+      //   this.$message.error("请填写维修说明");
+      //   return;
+      // }
 
       // 验证材料列表
       if (this.materialList.length > 0) {

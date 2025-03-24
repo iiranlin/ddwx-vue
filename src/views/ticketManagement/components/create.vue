@@ -107,11 +107,11 @@
             ></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="12" prop="remark">
-          <el-form-item label="故障描述">
+        <el-col :span="12" >
+          <el-form-item label="故障描述" prop="remark">
             <el-input
               v-model="form.remark"
-              placeholder="请详细描述故障现象"
+              placeholder="请详细描述故障问题"
             ></el-input>
           </el-form-item>
         </el-col>
@@ -188,11 +188,20 @@ export default {
             trigger: "blur",
           },
         ],
+        faultEquipmentId: [
+          { required: true, message: "故障设备不能为空", trigger: "blur" },
+        ],
+        urgency: [
+          { required: true, message: "紧急程度不能为空", trigger: "blur" },
+        ],
+        contactName: [
+          { required: true, message: "报修人不能为空", trigger: "blur" },
+        ],
         faultAddr: [
           { required: true, message: "具体位置不能为空", trigger: "blur" },
         ],
         contactPhone: [
-          { required: true, message: "联系电话不能为空", trigger: "blur" },
+          { required: false, message: "联系电话不能为空", trigger: "blur" },
           {
             pattern: /^1[3-9]\d{9}$/,
             message: "请输入正确的手机号码格式",
@@ -200,11 +209,15 @@ export default {
           },
         ],
         landline: [
+          { required: true, message: "座机不能为空", trigger: "blur" },
           {
             pattern: /^(?:\d{3,4}-)?\d{7,8}(?:-\d{1,4})?$/,
             message: "请输入正确的座机号码格式",
             trigger: "blur",
           },
+        ],
+        remark: [
+          { required: true, message: "故障描述不能为空", trigger: "blur" },
         ],
       },
     };
@@ -261,7 +274,7 @@ export default {
       this.isEdit = false;
       this.openDataScope = true;
       this.$nextTick(() => {
-        this.title = "新建工单";
+        this.title = "新增维修工单";
       });
       this.getInitOptions();
     },
@@ -276,7 +289,7 @@ export default {
           faultSiteName: data.faultSiteName,
         });
         this.$nextTick(() => {
-          this.title = "修改工单";
+          this.title = "修改维修工单";
         });
       });
     },

@@ -469,7 +469,13 @@ export default {
         // 文件两端对齐
         text-align: justify;
         text-align-last: justify;
-        width: 70px;
+        width: 80px;
+      }
+      .detail-content{
+        width: calc(100% - 120px);
+        &::before{
+          content: " : ";
+        }
       }
     }
   }

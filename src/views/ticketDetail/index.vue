@@ -3,21 +3,42 @@
     <!-- 头部标题 -->
     <h2 class="page-title">维修工单</h2>
 
+    <div class="section-title" style="margin-bottom: 20px">
+      <el-descriptions
+        :column="3"
+        border
+        :labelStyle="{ width: '200px' }"
+        :contentStyle="{ width: '300px' }"
+      >
+        <!-- 左侧信息 -->
+        <el-descriptions-item label="工单编号">{{
+          details.orderNum
+        }}</el-descriptions-item>
+        <el-descriptions-item label="工单状态"
+          ><svg-icon :icon-class="orderStatus[details.status + '']" />
+          {{ workStatus[details.status + ""] }}</el-descriptions-item
+        >
+        <el-descriptions-item label="优先级">
+          <svg-icon :icon-class="details.urgency" /> {{ details.urgency }}
+        </el-descriptions-item>
+      </el-descriptions>
+    </div>
+
     <template>
       <!-- 工单信息卡片 -->
       <div>
         <span class="section-title">工单信息</span>
       </div>
       <div class="info-card">
-        <el-descriptions :column="2" border>
+        <el-descriptions
+          :column="3"
+          border
+          :labelStyle="{ width: '200px' }"
+          :contentStyle="{ width: '300px' }"
+        >
           <!-- 左侧信息 -->
-          <el-descriptions-item label="工单编号">{{
-            details.orderNum
-          }}</el-descriptions-item>
-          <el-descriptions-item label="优先级">
-            <el-tag type="info" size="small">{{ details.urgency }}</el-tag>
-          </el-descriptions-item>
-          <el-descriptions-item label="联系人">{{
+
+          <el-descriptions-item label="报修人">{{
             details.contactName
           }}</el-descriptions-item>
           <el-descriptions-item label="联系电话">{{
@@ -45,7 +66,12 @@
       <!-- 维修信息卡片 -->
       <div class="section-title">维修信息</div>
       <div class="info-card">
-        <el-descriptions :column="2" border>
+        <el-descriptions
+          :column="3"
+          border
+          :labelStyle="{ width: '200px' }"
+          :contentStyle="{ width: '300px' }"
+        >
           <el-descriptions-item label="维修班组">{{
             details.teamName
           }}</el-descriptions-item>
@@ -136,6 +162,7 @@ import AssignmentTeam from "./components/assignmentTeam.vue";
 import CancelOrder from "./components/cancelOrder.vue";
 import TransferTeam from "./components/transferTeam.vue";
 import AcceptanceCheck from "./components/acceptanceCheck.vue";
+import { workStatus } from "@/utils/enum";
 // 工单详情
 /**
  * 1:'待分配-班组',
@@ -156,8 +183,19 @@ export default {
   },
 
   data() {
+    const orderStatus = {
+      1: "待分配",
+      2: "待分配",
+      3: "处理中",
+      4: "待验收",
+      5: "待验收",
+      6: "已完成",
+      7: "已取消",
+    };
     return {
       details: {},
+      orderStatus,
+      workStatus,
       // 图片数据示例
     };
   },
@@ -169,7 +207,7 @@ export default {
       return this.$route.query.id;
     },
     baseUrl() {
-      return process.env.VUE_APP_FILE_API;
+      return process.env.VUE_APP_BASE_API;
     },
     images() {
       if (!this.details.faultFileUrl) return [];
@@ -248,7 +286,7 @@ export default {
     onAssignmentPerson() {
       this.$router.push({
         name: "assignmentPerson",
-        query: { id: this.id},
+        query: { id: this.id },
       });
     },
     // 转派班组
@@ -266,6 +304,7 @@ export default {
         id: this.id,
         orderNum: this.details.orderNum,
         status,
+        title: status === 5 ? "用户验收" : "调度中心验收",
       });
     },
 

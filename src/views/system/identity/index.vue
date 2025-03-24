@@ -10,6 +10,12 @@
           :row-class-name="tableRowClassName"
         >
           <el-table-column
+            type="index"
+            width="50"
+            align="center"
+            label="序号"
+          />
+          <el-table-column
             label="身份编号"
             align="center"
             prop="userIdentity"

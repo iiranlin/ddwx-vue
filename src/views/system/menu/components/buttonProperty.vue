@@ -48,7 +48,7 @@
             slot="reference"
             v-model="scope.row.buttonIcon"
             placeholder="点击选择图标"
-            readonly
+            clearable
           >
             <svg-icon
               v-if="scope.row.buttonIcon"

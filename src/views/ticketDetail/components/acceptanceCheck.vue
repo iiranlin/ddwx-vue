@@ -105,10 +105,11 @@ export default {
         operateDesc: "",
         status: data.status,
       };
+     
       this.isEdit = false;
       this.openDataScope = true;
       this.$nextTick(() => {
-        this.title = "维修工单验收";
+        this.title = data.title || '维修工单验收';
       });
     },
     // 编辑初始化

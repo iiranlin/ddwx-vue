@@ -143,7 +143,7 @@
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
                   class="w-full"
-                  style=" display: inline"
+                  style="display: inline"
                   v-model="formData.year"
                   placeholder="请选择提交日期"
                 ></el-date-picker> </el-form-item
@@ -182,11 +182,21 @@
           @handleButton="handleButton"
           @selectChange="selectChange"
           @emitAblFilter="emitAblFilter"
+          numberShow
+          :selectShow="false"
         >
+          <template #column-urgency="scope">
+            <div style="text-align: left">
+              <svg-icon :icon-class="scope.row.urgency" />
+              {{ scope.row.urgency }}
+            </div>
+          </template>
           <!-- 自定义状态列 -->
-          <template #column-status="scope">
-            <svg-icon :icon-class="orderStatus[scope.row.status + '']" />
-            {{ workStatus[scope.row.status + ""] }}
+          <template #column-status="scope" >
+            <div style="text-align: left">
+              <svg-icon :icon-class="orderStatus[scope.row.status + '']" />
+              {{ workStatus[scope.row.status + ""] }}
+            </div>
           </template>
           <!-- 故障图片 -->
           <template #column-faultFileUrl="scope">
@@ -284,7 +294,6 @@ import {
 } from "@/api/maintenance";
 import indexMixin from "@/views/mixins";
 import { workStatus, priorityLevel } from "@/utils/enum";
-
 import AssignmentTeam from "@/views/ticketDetail/components/assignmentTeam.vue";
 import CancelOrder from "@/views/ticketDetail/components/cancelOrder.vue";
 import TransferTeam from "@/views/ticketDetail/components/transferTeam.vue";
@@ -315,6 +324,7 @@ export default {
       6: "已完成",
       7: "已取消",
     };
+
     return {
       priorityLevel,
       orderStatus,
@@ -428,6 +438,10 @@ export default {
     //获取分页数据
     async getList() {
       this.loading = true;
+      if(this.formData.year.length === 0){
+        this.formData.startDate = "";
+        this.formData.endDate = "";
+      }
 
       await WorkOrderManagement.getWorkOrderList(
         Object.assign({}, this.listQuery, this.formData)
@@ -481,6 +495,7 @@ export default {
           id: ids["id"],
           orderNum: ids["orderNum"],
           status: ids["status"] + 1,
+          title: ids["status"] + 1 === 5 ? "用户验收" : "调度中心验收",
         });
       } else if (buttonCode === "acceptanceSubmit") {
         this.$router.push({
@@ -539,9 +554,9 @@ export default {
     },
     resetQuery() {
       for (let key in this.formData) {
-        this.formData[key] = ''
+        this.formData[key] = "";
       }
-      this.handleQuery()
+      this.handleQuery();
     },
     tableRowClassName({ row, rowIndex }) {
       row.index = rowIndex + 1;
@@ -560,6 +575,6 @@ export default {
   background-color: #b8d9fd !important;
 }
 .w-full {
-  width: calc(100% - 120px) ;
+  width: calc(100% - 120px);
 }
 </style>
