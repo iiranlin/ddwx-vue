@@ -91,7 +91,7 @@
           @selectChange="selectChange"
           @emitAblFilter="emitAblFilter"
         >
-        <template #column-date>
+          <template #column-date>
             <span>{{ formData.startTime }} - {{ formData.endTime }}</span>
           </template>
         </table-index>
@@ -226,22 +226,23 @@ export default {
       this.$refs.tableIndex.newButton(buttonCode, row);
     },
     //页面按钮点击事件
-    handleButton(ids, buttonCode) {
-      if (buttonCode === "create") {
-        this.$refs.create.init();
-      } else if (buttonCode === "update") {
-        this.$refs.create.updateInit(ids);
-      } else if (buttonCode === "delete") {
-        this.$confirm("是否删除该条数据？", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }).then(() => {
-          ResourceManagement.deleteDeviceType(ids).then(() => {
-            this.$message.success("删除成功！");
-            this.handleQuery();
+    async handleButton(ids, buttonCode) {
+      if (buttonCode === "export") {
+        try {
+          this.loading = true;
+          const res = await DataStatistics.exportPersonStatistics(
+            this.formData
+          );
+          const blob = new Blob([res.data], {
+            type: "application/vnd.ms-excel",
           });
-        });
+          saveAs(blob, `维修人员统计.xlsx`);
+        } catch (error) {
+          console.error("导出失败:", error);
+          this.$message.error("导出失败：" + (error.message || "未知错误"));
+        } finally {
+          this.loading = false;
+        }
       }
     },
     //顶部列字段展示

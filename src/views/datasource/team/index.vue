@@ -90,6 +90,8 @@ import create from "./components/create";
 import { DataStatistics } from "@/api/maintenance";
 import indexMixin from "@/views/mixins";
 import dayjs from "dayjs";
+import { saveAs } from "file-saver";
+import service from "../../../utils/request";
 
 export default {
   // 班组维修数据
@@ -154,7 +156,7 @@ export default {
           const { pageNum, pageSize } = this.listQuery;
           const startIndex = (pageNum - 1) * pageSize;
           const endIndex = startIndex + pageSize;
-          
+
           this.total = data.length;
           this.dataList = data.slice(startIndex, endIndex);
           this.loading = false;
@@ -168,22 +170,21 @@ export default {
       this.$refs.tableIndex.newButton(buttonCode, row);
     },
     //页面按钮点击事件
-    handleButton(ids, buttonCode) {
-      if (buttonCode === "create") {
-        this.$refs.create.init();
-      } else if (buttonCode === "update") {
-        this.$refs.create.updateInit(ids);
-      } else if (buttonCode === "delete") {
-        this.$confirm("是否删除该条数据？", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }).then(() => {
-          ResourceManagement.deleteDeviceType(ids).then(() => {
-            this.$message.success("删除成功！");
-            this.handleQuery();
+    async handleButton(ids, buttonCode) {
+      if (buttonCode === "export") {
+        try {
+          this.loading = true;
+          const res = await DataStatistics.exportTeamStatistics(this.formData)
+          const blob = new Blob([res.data], {
+            type: "application/vnd.ms-excel",
           });
-        });
+          saveAs(blob, `班组维修统计_${this.formData.year}.xlsx`);
+        } catch (error) {
+          console.error("导出失败:", error);
+          this.$message.error("导出失败：" + (error.message || "未知错误"));
+        } finally {
+          this.loading = false;
+        }
       }
     },
     //顶部列字段展示

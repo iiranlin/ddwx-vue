@@ -554,6 +554,15 @@ export class DataStatistics {
       params,
     });
   }
+  // 班组维修统计导出
+  static exportTeamStatistics(params) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/repairOrder/teamRepairStatisticsExport`,
+      method: "get",
+      params,
+      responseType: "blob",
+    });
+  }
   // 场所统计 - 暂不分页
   static getPlaceStatistics(params) {
     return request({
@@ -562,12 +571,31 @@ export class DataStatistics {
       params,
     });
   }
+  // 场所统计 - 导出
+  static exportPlaceStatistics(params) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/repairOrder/statisticsByPlaceExport`,
+      method: "get",
+      params,
+      responseType: "blob",
+    });
+  }
+
   // 维修人员统计 - 暂不分页
   static getPersonStatistics(params) {
     return request({
       url: `${VUE_APP_BASE_prefix}/repairOrder/repairPersonnelStatistics`,
       method: "get",
       params,
+    });
+  }
+  // 维修人员统计 - 导出
+  static exportPersonStatistics(params) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/repairOrder/repairPersonnelStatisticsExport`,
+      method: "get",
+      params,
+      responseType: "blob",
     });
   }
   // 耗材统计 - 暂不分页
@@ -578,12 +606,30 @@ export class DataStatistics {
       params,
     });
   }
+  // 耗材统计 - 导出
+  static exportMaterialStatistics(params) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/repairOrder/materialStatisticsExport`,
+      method: "get",
+      params,
+      responseType: "blob",
+    });
+  }
   // 设备维修类型统计 - 暂不分页
   static getDeviceTypeStatistics(params) {
     return request({
       url: `${VUE_APP_BASE_prefix}/repairOrder/equipmentRepairStatistics`,
       method: "get",
       params,
+    });
+    }
+  // 设备维修类型统计 - 导出
+  static exportDeviceTypeStatistics(params) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/repairOrder/equipmentRepairStatisticsExport`,
+      method: "get",
+      params,
+      responseType: "blob",
     });
   }
 }

@@ -4,10 +4,20 @@
       <el-col :span="24" :xs="24" class="container_flex">
         <!--顶部按钮-->
         <el-row :gutter="24" class="container_flex-right_list">
-          <el-col :span="1.5" style="margin-top: 2px; padding: 0px">
-            <el-button type="primary" plain size="mini" class="custom_button">
-              <svg-icon icon-class="mb-download" class="icon"></svg-icon>下载
-            </el-button>
+          <el-col
+            :span="1.5"
+            v-for="item in property.buttonTop"
+            :key="item.id"
+            style="margin-top: 2px; padding: 0px"
+          >
+            <button-top
+              :item="item"
+              :multiple="multiple"
+              :single="single"
+              @newButton="newButton"
+              class="cume-button"
+            >
+            </button-top>
           </el-col>
           <right-toolbar
             ref="rightToolbar"
@@ -194,22 +204,24 @@ export default {
       this.$refs.tableIndex.newButton(buttonCode, row);
     },
     //页面按钮点击事件
-    handleButton(ids, buttonCode) {
-      if (buttonCode === "create") {
-        this.$refs.create.init();
-      } else if (buttonCode === "update") {
-        this.$refs.create.updateInit(ids);
-      } else if (buttonCode === "delete") {
-        this.$confirm("是否删除该条数据？", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }).then(() => {
-          ResourceManagement.deleteDeviceType(ids).then(() => {
-            this.$message.success("删除成功！");
-            this.handleQuery();
+    async handleButton(ids, buttonCode) {
+      if (buttonCode === "export") {
+        console.log("export");
+        try {
+          this.loading = true;
+          const res = await DataStatistics.exportMaterialStatistics(
+            this.formData
+          );
+          const blob = new Blob([res.data], {
+            type: "application/vnd.ms-excel",
           });
-        });
+          saveAs(blob, `耗材统计.xlsx`);
+        } catch (error) {
+          console.error("导出失败:", error);
+          this.$message.error("导出失败：" + (error.message || "未知错误"));
+        } finally {
+          this.loading = false;
+        }
       }
     },
     //顶部列字段展示
