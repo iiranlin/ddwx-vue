@@ -192,7 +192,7 @@
             </div>
           </template>
           <!-- 自定义状态列 -->
-          <template #column-status="scope" >
+          <template #column-status="scope">
             <div style="text-align: left">
               <svg-icon :icon-class="orderStatus[scope.row.status + '']" />
               {{ workStatus[scope.row.status + ""] }}
@@ -299,6 +299,7 @@ import CancelOrder from "@/views/ticketDetail/components/cancelOrder.vue";
 import TransferTeam from "@/views/ticketDetail/components/transferTeam.vue";
 import AcceptanceCheck from "@/views/ticketDetail/components/acceptanceCheck.vue";
 import dayjs from "dayjs";
+import { saveAs } from "file-saver";
 export default {
   // 工单列表
   name: "ticketList",
@@ -438,7 +439,7 @@ export default {
     //获取分页数据
     async getList() {
       this.loading = true;
-      if(this.formData.year.length === 0){
+      if (this.formData.year.length === 0) {
         this.formData.startDate = "";
         this.formData.endDate = "";
       }
@@ -463,8 +464,7 @@ export default {
       this.$refs.tableIndex.newButton(buttonCode, row);
     },
     //页面按钮点击事件
-    handleButton(ids, buttonCode) {
-      console.log(ids, buttonCode, "ids, buttonCode");
+    async handleButton(ids, buttonCode) {
       if (buttonCode === "create") {
         this.$refs.create.init();
       } else if (buttonCode === "update") {
@@ -507,6 +507,22 @@ export default {
           id: ids["id"],
           operateDesc: ids["operateDesc"],
         });
+      } else if (buttonCode === "export") {
+        try {
+          this.loading = true;
+          const res = await WorkOrderManagement.exportWorkOrderList(
+            this.formData
+          );
+          const blob = new Blob([res.data], {
+            type: "application/vnd.ms-excel",
+          });
+          saveAs(blob, `工单列表.xlsx`);
+        } catch (error) {
+          console.error("导出失败:", error);
+          this.$message.error("导出失败：" + (error.message || "未知错误"));
+        } finally {
+          this.loading = false;
+        }
       }
     },
     //顶部列字段展示
