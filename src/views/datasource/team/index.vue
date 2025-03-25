@@ -57,7 +57,6 @@
           ref="tableIndex"
           style="margin-top: -8px"
           :tableIndexs="tableIndex"
-          :numberShow="numberShow"
           :loading="loading"
           :tableData="dataList"
           :property="property"
@@ -65,6 +64,8 @@
           @handleButton="handleButton"
           @selectChange="selectChange"
           @emitAblFilter="emitAblFilter"
+           numberShow
+          :selectShow="false"
         >
         </table-index>
         <!--分页器-->
