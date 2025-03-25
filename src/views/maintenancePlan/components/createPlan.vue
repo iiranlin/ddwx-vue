@@ -223,7 +223,6 @@ export default {
   },
   methods: {
     download() {
-      console.log(this.xs.getData(), "data");
       const data = this.xs.getData(); // 获取当前表格的数据
       const worksheet = xtos(Object.values(data)); // 将数据转换为适当的格式
       XLSX.writeFile(worksheet, `${this.form.planningYear}-${this.form.planName}维保计划.xlsx`); // 写入文件

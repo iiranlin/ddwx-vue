@@ -65,7 +65,8 @@
     "vue-virtual-scroll-list": "^2.3.4",
     "vuedraggable": "2.24.3",
     "vuex": "3.6.0",
-    "x-data-spreadsheet": "^1.1.9"
+    "x-data-spreadsheet": "^1.1.9",
+    "xlsx-js-style": "^1.2.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "4.4.6",
