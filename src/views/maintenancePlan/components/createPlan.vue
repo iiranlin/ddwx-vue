@@ -102,7 +102,8 @@
     <div id="xss-demo"></div>
     <div class="btn-box">
       <div class="close" @click="close">关闭</div>
-      <div class="save" @click="save">保存</div>
+      <div v-if="!isView" class="save" @click="save">保存</div>
+      <div v-if="isView" class="save" @click="download">下载</div>
     </div>
   </el-card>
 </template>
@@ -111,6 +112,8 @@ import Spreadsheet from "x-data-spreadsheet";
 import zhCN from "x-data-spreadsheet/src/locale/zh-cn";
 import { ResourceManagement, MaintenancePlan } from "@/api/maintenance";
 import dayjs from "dayjs";
+import XLSX from "xlsx-js-style";
+import { xtos } from "./util";
 export default {
   name: "createPlan",
   data() {
@@ -219,6 +222,12 @@ export default {
     },
   },
   methods: {
+    download() {
+      console.log(this.xs.getData(), "data");
+      const data = this.xs.getData(); // 获取当前表格的数据
+      const worksheet = xtos(Object.values(data)); // 将数据转换为适当的格式
+      XLSX.writeFile(worksheet, `${this.form.planningYear}-${this.form.planName}维保计划.xlsx`); // 写入文件
+    },
     async getPlanById(id) {
       await MaintenancePlan.getMaintenancePlanById(id)
         .then(({ data }) => {
