@@ -39,6 +39,26 @@
           @handleQuery="handleQuery"
           style="margin-top: -12px; margin-bottom: 6px"
         >
+          <template #customItem>
+            <el-form-item label="负责班组" prop="teamId">
+              <el-select
+                size="small"
+                style="width: 240px"
+                v-model="formData.teamId"
+                clearable
+                filterable
+                placeholder="请选择负责班组"
+              >
+                <el-option
+                  v-for="item in teamTypeOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </template>
         </form-data>
         <!--表格数据-->
         <table-index
@@ -60,40 +80,41 @@
           <!-- 自定义状态列 -->
           <template #column-planningState="scope">
             <svg-icon :icon-class="orderStatus[scope.row.planningState + '']" />
-            {{ workStatus[scope.row.planningState + ""] }}
+            {{ workStatus[scope.row.planningState - 1 + ""] }}
           </template>
-          <!-- 故障图片 -->
-          <template #column-faultFileUrl="scope">
-            <div style="display: flex; flex-wrap: wrap; gap: 10px">
-              <el-image
-                v-for="item in scope.row.faultFileUrl
-                  ? scope.row.faultFileUrl
-                      .split(',')
-                      .map((x) => `${baseUrl}${x}`)
-                  : []"
-                :src="item"
-                :preview-src-list="[item]"
-                style="width: 50px; height: 50px"
-              ></el-image>
-            </div>
-          </template>
+
           <!-- 自定义操作列 -->
           <template #column-action="scope" fixed="right">
-            <el-button type="text" @click="handleButton(scope.row, 'view')"
-              >查看</el-button
-            >
-            <el-button type="text" @click="handleButton(scope.row, 'edit')"
-              >修改</el-button
-            >
-            <el-button type="text" @click="handleButton(scope.row, 'delete')"
-              >删除</el-button
-            >
-            <el-button type="text" @click="handleButton(scope.row, 'terminate')"
-              >终止</el-button
-            >
-            <el-button type="text" @click="handleButton(scope.row, 'stop')"
-              >结束</el-button
-            >
+            <template v-if="scope.row.planningState === '1'">
+              <el-button type="text" @click="handleButton(scope.row, 'edit')"
+                >修改</el-button
+              >
+              <el-button type="text" @click="handleButton(scope.row, 'delete')"
+                >删除</el-button
+              >
+            </template>
+            <template v-if="scope.row.planningState === '2'">
+              <el-button type="text" @click="handleButton(scope.row, 'edit')"
+                >修改</el-button
+              >
+              <el-button
+                v-if="dayjs().isBefore(dayjs(scope.row.planningYear))"
+                type="text"
+                @click="handleButton(scope.row, 'stop')"
+                >结束</el-button
+              >
+              <el-button
+                v-else
+                type="text"
+                @click="handleButton(scope.row, 'terminate')"
+                >终止</el-button
+              >
+            </template>
+            <template v-if="['3', '4'].includes(scope.row.planningState)">
+              <el-button type="text" @click="handleButton(scope.row, 'view')"
+                >查看</el-button
+              >
+            </template>
           </template>
         </table-index>
         <!--分页器-->
@@ -115,7 +136,8 @@ import formData from "@/components/formData";
 import tableIndex from "@/components/tableIndex";
 import { MaintenancePlan } from "@/api/maintenance";
 import indexMixin from "@/views/mixins";
-import { workStatus } from "@/utils/enum";
+import dayjs from "dayjs";
+import { ResourceManagement } from "@/api/maintenance";
 
 export default {
   // 维保计划列表
@@ -134,6 +156,7 @@ export default {
       3: "维保已结束",
       4: "维保已终止",
     };
+    const workStatus = ["未开始", "进行中", "已结束", "已终止"];
     return {
       orderStatus,
       workStatus,
@@ -159,16 +182,13 @@ export default {
       selectionData: [],
       //数据总数
       total: 0,
+      teamTypeOptions: [],
     };
   },
   created() {
     this.menuProperty();
     this.getList();
-  },
-  computed: {
-    baseUrl() {
-      return process.env.VUE_APP_BASE_API;
-    },
+    this.getTeamType();
   },
 
   activated() {
@@ -176,6 +196,17 @@ export default {
     this.getList();
   },
   methods: {
+    // 获取班组枚举不分页
+    getTeamType() {
+      ResourceManagement.getTeamListAll().then(({ data }) => {
+        this.teamTypeOptions = data.map((item) => {
+          return {
+            label: item.teamName,
+            value: item.id,
+          };
+        });
+      });
+    },
     numberChange(val) {
       this.numberShow = val;
     },
@@ -260,14 +291,30 @@ export default {
           this.$confirm("确定终止该维保计划吗？", "提示", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
-          }).then(() => {});
-          break
+          }).then(() => {
+            MaintenancePlan.updateMaintenancePlanState({
+              id: ids["id"],
+              planningState: 4,
+            }).then((data) => {
+              this.$message.success(data.message);
+              this.getList();
+            });
+          });
+          break;
         }
         case "stop": {
           this.$confirm("确定结束该维保计划吗？", "提示", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
-          }).then(() => {});
+          }).then(() => {
+            MaintenancePlan.updateMaintenancePlanState({
+              id: ids["id"],
+              planningState: 3,
+            }).then((data) => {
+              this.$message.success(data.message);
+              this.getList();
+            });
+          });
           break;
         }
       }

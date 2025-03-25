@@ -461,6 +461,14 @@ export class MaintenancePlan {
       data: ids,
     });
   }
+  // 维保计划-更新状态
+  static updateMaintenancePlanState(data) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/repairMaintenancePlan/modify`,
+      method: "post",
+      data,
+    });
+  }
 }
 
 // 资源管理
@@ -622,7 +630,7 @@ export class DataStatistics {
       method: "get",
       params,
     });
-    }
+  }
   // 设备维修类型统计 - 导出
   static exportDeviceTypeStatistics(params) {
     return request({
