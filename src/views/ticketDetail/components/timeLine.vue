@@ -1,5 +1,5 @@
 <template>
-  <el-card style="height: 500px; overflow-y: scroll;">
+  <el-card style="height: 500px; overflow-y: scroll">
     <div class="info-card">
       <div class="timeline">
         <div
@@ -9,7 +9,10 @@
           :class="{ 'first-item': index === 0 }"
         >
           <div class="timeline-time">
-            <div class="time">{{ formatDate(item.createTime) }}</div>
+            <div class="time">
+              <div style="width: 70px;">{{ dayjs(item.createTime).format("MM月DD日") }}</div>
+              <div style="width: 70px;"> {{ dayjs(item.createTime).format("HH:mm") }}</div>
+            </div>
           </div>
           <div class="timeline-content">
             <div
@@ -73,6 +76,8 @@
   <!-- 时间轴信息 -->
 </template>
 <script>
+import dayjs from "dayjs";
+
 export default {
   props: {
     details: {
@@ -122,15 +127,8 @@ export default {
     // 格式化日期
     formatDate(dateStr) {
       if (!dateStr) return "";
-      const date = new Date(dateStr);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      const hours = String(date.getHours()).padStart(2, "0");
-      const minutes = String(date.getMinutes()).padStart(2, "0");
-      const seconds = String(date.getSeconds()).padStart(2, "0");
 
-      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      return dayjs(dateStr).format("YYYY-MM-DD HH:mm:ss");
     },
   },
 };
@@ -190,7 +188,6 @@ export default {
 
     .timeline-time {
       width: 150px;
-      text-align: right;
       padding-right: 20px;
       flex-shrink: 0;
 
@@ -198,6 +195,9 @@ export default {
         color: #909399;
         font-size: 14px;
         line-height: 1.5;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
       }
     }
 
@@ -238,11 +238,13 @@ export default {
         margin-left: 20px;
         border-radius: 4px;
         padding: 15px;
+        padding-top: 0;
 
         .timeline-header {
           display: flex;
           gap: 15px;
           margin-bottom: 10px;
+          margin-left: -8px;
 
           .timeline-title {
             font-weight: bold;

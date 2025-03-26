@@ -467,7 +467,6 @@ export default {
   padding: 20px;
   background-color: #fff;
   border-radius: 4px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 
   .header {
     margin-bottom: 20px;
@@ -569,7 +568,8 @@ export default {
         cursor: pointer;
 
         &.active {
-          background-color: #e6efff;
+          background-color: #387EF7;
+          color: #fff;
         }
 
         .week-day {
