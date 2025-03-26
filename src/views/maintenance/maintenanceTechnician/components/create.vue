@@ -19,22 +19,32 @@
       <el-row :span="24" :gutter="20">
         <el-col :span="24">
           <el-form-item :label="'归属班组'" prop="teamId">
-            <el-select
-              style="width: 60%"
-              v-model="form.teamId"
-              filterable
-              placeholder="请选择归属班组"
-              @change="handleSelectionChange"
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+              "
             >
-              <el-option
-                v-for="item in teamTypeOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+              <el-select
+                style="flex: 1"
+                v-model="form.teamId"
+                filterable
+                placeholder="请选择归属班组"
+                @change="handleSelectionChange"
               >
-              </el-option>
-            </el-select>
-            <span style="margin-left: 10px">班工长：{{ currentForeman }}</span>
+                <el-option
+                  v-for="item in teamTypeOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+              <span v-if="currentForeman" style="margin-left: 10px"
+                >班工长：{{ currentForeman }}</span
+              >
+            </div>
           </el-form-item>
         </el-col>
         <el-col :span="24">
@@ -51,7 +61,6 @@
               clearable
               @change="userChange"
             ></csSelect>
-           
           </el-form-item>
         </el-col>
         <el-col :span="24">
