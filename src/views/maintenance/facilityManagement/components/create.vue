@@ -44,6 +44,7 @@
         <el-col :span="24">
           <el-form-item label="建成年代" prop="houseEra">
             <el-date-picker
+            style="width: 100%;"
               v-model="form.houseEra"
               type="year"
               placeholder="请选择年份"
