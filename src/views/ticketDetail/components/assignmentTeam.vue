@@ -18,12 +18,12 @@
     >
       <el-row :span="24" :gutter="20">
         <el-col :span="24">
-          <el-form-item :label="'分配班组'" prop="teamId">
+          <el-form-item :label="'选择班组'" prop="teamId">
             <el-select
               style="width: 100%"
               v-model="form.teamId"
               filterable
-              placeholder="请选择归属班组"
+              placeholder="请选择维修班组"
               @change="handleSelectionChange"
             >
               <el-option
@@ -99,7 +99,7 @@ export default {
       this.isEdit = false;
       this.openDataScope = true;
       this.$nextTick(() => {
-        this.title = "分配";
+        this.title = "分配班组";
       });
       this.getTeamType();
     },
