@@ -34,6 +34,7 @@
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
+                :disabled="item.disabled"
               >
               </el-option>
             </el-select>
@@ -89,6 +90,7 @@ export default {
           return {
             label: item.teamName,
             value: item.id,
+            disabled: item.teamName === this.form.teamName,
           };
         });
       });
@@ -97,14 +99,13 @@ export default {
     init(data) {
       this.form = {
         id: data.id,
-        teamId: data.teamId || "",
         teamName: data.teamName || "",
       };
       this.currentTeamName = JSON.parse(JSON.stringify(data.teamName));
       this.isEdit = false;
       this.openDataScope = true;
       this.$nextTick(() => {
-        this.title = "转派";
+        this.title = "转派班组";
       });
       this.getTeamType();
     },
@@ -114,7 +115,7 @@ export default {
         if (valid) {
           this.loading = true;
           await WorkOrderManagement.executeWorkOrder(
-            Object.assign({}, this.form, { status: 2 })
+            Object.assign({}, this.form, { status: 9 })
           )
             .then(({ message }) => {
               this.loading = false;

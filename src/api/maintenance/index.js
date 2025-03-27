@@ -338,6 +338,15 @@ export class ResourceManagement {
  * 工单管理
  */
 export class WorkOrderManagement {
+  // 工单管理 - 导出
+  static exportWorkOrderList(params) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/repairOrder/export`,
+      method: "get",
+      params,
+      responseType: "blob",
+    });
+  }
   // 工单管理-分页查询
   static getWorkOrderList(params) {
     return request({
@@ -652,6 +661,7 @@ export class WorkOrderStatistics {
       params,
     });
   }
+
   // 各个场所维修统计
   static getPlaceStatistics(params) {
     return request({

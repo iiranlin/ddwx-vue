@@ -237,6 +237,12 @@
               >分配</el-button
             >
             <el-button
+              v-if="[2].includes(scope.row.status)"
+              type="text"
+              @click="handleButton(scope.row, 'transferTeam')"
+              >转派</el-button
+            >
+            <el-button
               v-if="[3].includes(scope.row.status)"
               type="text"
               @click="handleButton(scope.row, 'assignmentPerson')"

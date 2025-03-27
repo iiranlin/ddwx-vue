@@ -39,6 +39,25 @@
           @handleQuery="handleQuery"
           style="margin-top: -12px; margin-bottom: 6px"
         >
+          <template #customItem>
+            <el-form-item label="归属班组" prop="teamId">
+              <el-select
+                style="width: 100%"
+                v-model="formData.teamId"
+                clearable
+                filterable
+                placeholder="请选择归属班组"
+              >
+                <el-option
+                  v-for="item in teamTypeOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </template>
         </form-data>
         <!--表格数据-->
         <table-index
@@ -110,15 +129,31 @@ export default {
       selectionData: [],
       //数据总数
       total: 0,
+      teamTypeOptions: [],
     };
+  },
+  activated() {
+    this.getTeamType();
   },
   created() {
     this.menuProperty();
     this.getList();
+    this.getTeamType();
   },
   methods: {
     numberChange(val) {
       this.numberShow = val;
+    },
+    // 获取班组枚举不分页
+    getTeamType() {
+      ResourceManagement.getTeamListAll().then(({ data }) => {
+        this.teamTypeOptions = data.map((item) => {
+          return {
+            label: item.teamName,
+            value: item.id,
+          };
+        });
+      });
     },
     //获取菜单数据
     menuProperty() {

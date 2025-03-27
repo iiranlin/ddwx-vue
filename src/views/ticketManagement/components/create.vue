@@ -3,7 +3,7 @@
     :close-on-click-modal="false"
     :title="title"
     :visible.sync="openDataScope"
-    width="1280px"
+    width="800px"
     append-to-body
     center
     @close="handleDialogClose()"
