@@ -75,6 +75,17 @@
           numberShow
           :selectShow="false"
         >
+          <template #column-action="scope" fixed="right">
+            <el-button type="text" @click="handleButton(scope.row, 'update')"
+              >编辑</el-button
+            >
+            <el-button type="text" @click="handleButton(scope.row, 'stop')"
+              >{{ scope.row.status == 0 ? "启用" : "停用" }}</el-button
+            >
+            <el-button type="text" @click="handleButton(scope.row, 'delete')"
+              >删除</el-button
+            >
+          </template>
         </table-index>
         <!--分页器-->
         <pagination
@@ -170,7 +181,7 @@ export default {
       this.loading = true;
 
       await ResourceManagement.getRepairList(
-        Object.assign({}, this.listQuery, this.formData)
+        Object.assign({status:-1}, this.listQuery, this.formData)
       )
         .then(({ data }) => {
           this.dataList = data.list;
@@ -190,15 +201,29 @@ export default {
       if (buttonCode === "create") {
         this.$refs.create.init();
       } else if (buttonCode === "update") {
-        this.$refs.create.updateInit(ids);
+        this.$refs.create.updateInit(ids["id"]);
       } else if (buttonCode === "delete") {
         this.$confirm("删除人员后无法重新恢复，请确认！", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning",
         }).then(() => {
-          ResourceManagement.deleteRepair(ids).then(() => {
+          ResourceManagement.deleteRepair([ids["id"]]).then(() => {
             this.$message.success("删除成功！");
+            this.handleQuery();
+          });
+        });
+      } else if (buttonCode === "stop") {
+        this.$confirm("确定停用当前维修人员？", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }).then(() => {
+          ResourceManagement.updateRepairState({
+            id: ids["id"],
+            status: ids["status"] == 0 ? 1 : 0,
+          }).then(() => {
+            this.$message.success("操作成功");
             this.handleQuery();
           });
         });

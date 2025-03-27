@@ -114,6 +114,14 @@ export class ResourceManagement {
       data,
     });
   }
+  // 维修人员管理- 停用状态修改
+  static updateRepairState(data) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/repairPersonnel/updateStatus`,
+      method: "post",
+      data,
+    });
+  }
   // 维修人员管理-根据id获取详情
   static getRepairById(id) {
     return request({
