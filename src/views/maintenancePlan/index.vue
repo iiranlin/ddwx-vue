@@ -288,7 +288,7 @@ export default {
           break;
         }
         case "terminate": {
-          this.$confirm("确定终止该维保计划吗？", "提示", {
+          this.$confirm("终止后该计划作废，不能再进行任务操作，请确认操作！", "提示", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
           }).then(() => {
@@ -303,7 +303,7 @@ export default {
           break;
         }
         case "stop": {
-          this.$confirm("确定结束该维保计划吗？", "提示", {
+          this.$confirm("结束后该计划不能再修改跟进，请确认操作！", "提示", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
           }).then(() => {
