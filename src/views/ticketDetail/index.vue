@@ -62,7 +62,7 @@
       </div>
     </template>
 
-    <template v-if="status === 2">
+    <template v-if="status >= 2">
       <!-- 维修信息卡片 -->
       <div class="section-title">维修信息</div>
       <div class="info-card">
@@ -82,21 +82,23 @@
           <el-descriptions-item label="分配时间">{{
             details.assignTime
           }}</el-descriptions-item>
-          <el-descriptions-item label="维修人员">{{
-            details.personnelNames
-          }}</el-descriptions-item>
-          <el-descriptions-item label="联系电话">{{
-            details.personnelPhone
-          }}</el-descriptions-item>
-          <el-descriptions-item label="维修时间"
-            >{{ details.startDate }} 至
-            {{ details.endDate }}</el-descriptions-item
-          >
+          <template v-if="status >= 3">
+            <el-descriptions-item label="维修人员">{{
+              details.personnelNames
+            }}</el-descriptions-item>
+            <el-descriptions-item label="联系电话">{{
+              details.personnelPhone
+            }}</el-descriptions-item>
+            <el-descriptions-item label="维修时间"
+              >{{ details.startDate }} 至
+              {{ details.endDate }}</el-descriptions-item
+            >
+          </template>
         </el-descriptions>
       </div>
     </template>
 
-    <template v-if="status === 3">
+    <template v-if="status >= 4">
       <!-- 耗材表格 -->
       <div class="section-title">维修耗材</div>
       <div class="info-card">
