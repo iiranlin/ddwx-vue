@@ -79,6 +79,7 @@
                 <el-input-number
                   v-model="item.amount"
                   :min="0"
+                  :precision="2"
                   placeholder="数量"
                 ></el-input-number>
               </div>
