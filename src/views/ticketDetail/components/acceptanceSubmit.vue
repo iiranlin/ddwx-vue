@@ -5,7 +5,9 @@
 
       <!-- 完工图片上传区域 -->
       <div class="section">
-        <div class="section-title">完工图片</div>
+        <div class="section-title">
+          <span style="color: #f34d39">*</span>完工图片
+        </div>
         <ImageUpload
           v-model="form.operateFileUrl"
           @input="handleFileChange"
@@ -106,7 +108,7 @@
             </div>
           </template>
           <template v-else>
-            <el-empty >
+            <el-empty>
               <template slot="description">
                 <el-button type="text" @click="addMaterial">添加耗材</el-button>
                 <div style="color: #606266">当前暂无消耗耗材</div>
@@ -285,6 +287,9 @@ export default {
 .section-title {
   font-weight: bold;
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap:4px;
 }
 
 .material-table {
