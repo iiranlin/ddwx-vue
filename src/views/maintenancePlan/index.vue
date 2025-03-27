@@ -98,7 +98,7 @@
                 >修改</el-button
               >
               <el-button
-                v-if="dayjs().isBefore(dayjs(scope.row.planningYear))"
+                v-if="dayjs(scope.row.planningYear).year() < dayjs().year()  "
                 type="text"
                 @click="handleButton(scope.row, 'stop')"
                 >结束</el-button
