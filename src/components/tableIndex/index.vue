@@ -121,7 +121,6 @@
           <el-button
             :disabled="isButtonObjFilters(item, scope)"
             :key="item.id"
-            size="mini"
             type="text"
             @click="newButton(item.buttonCode, scope.row)"
           >
@@ -131,7 +130,6 @@
           >
         </template>
         <el-dropdown
-          size="mini"
           @command="(command) => handleCommand(command, scope.row)"
           v-if="buttonRows.length > 0"
         >
