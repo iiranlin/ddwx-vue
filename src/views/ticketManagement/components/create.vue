@@ -117,8 +117,8 @@
         </el-col>
 
         <!-- 第五行 -->
-        <el-col :span="12">
-          <el-form-item label="故障图片">
+        <el-col :span="24">
+          <el-form-item label="故障图片" prop="faultFileUrl">
             <!-- <el-upload
               action="your-upload-url"
               list-type="picture-card"
@@ -218,6 +218,9 @@ export default {
         ],
         remark: [
           { required: true, message: "故障描述不能为空", trigger: "blur" },
+        ],
+        faultFileUrl: [
+          { required: true, message: "故障图片不能为空", trigger: "blur" },
         ],
       },
     };
