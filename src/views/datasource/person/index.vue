@@ -93,7 +93,7 @@
           :selectShow="false"
         >
           <template #column-date>
-            <span>{{ formData.startTime }} - {{ formData.endTime }}</span>
+            <span>{{ formData.startTime }} 至 {{ formData.endTime }}</span>
           </template>
         </table-index>
         <!--分页器-->
