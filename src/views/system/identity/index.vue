@@ -41,16 +41,18 @@
     </el-row>
     <!--新建-->
     <create ref="create" @createSuccess="createSuccess"></create>
+    <personDrawer ref="personDrawer" @userBindRoleSuccess="createSuccess" />
   </div>
 </template>
 
 <script>
 import create from "./components/create";
 import { ProgressConfig } from "@/api/maintenance";
+import personDrawer from "./components/personDrawer.vue";
 
 export default {
   name: "identity",
-  components: { create },
+  components: { create, personDrawer },
   data() {
     return {
       // 遮罩层
@@ -86,7 +88,8 @@ export default {
     // 分配人员按钮
     handleAssign(row) {
       // TODO: 实现分配人员功能
-      this.$refs.create.updateInit(row);
+      this.$refs.personDrawer.init(row);
+      // this.$refs.create.updateInit(row);
     },
     // 表格行样式
     tableRowClassName({ row, rowIndex }) {
