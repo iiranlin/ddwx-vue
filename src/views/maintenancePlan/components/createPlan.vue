@@ -93,7 +93,7 @@
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6" v-if="isView">
             <el-form-item :label="'制定时间'">
-              {{ dayjs(form.createTime).format("YYYY-MM-DD") }}
+              {{ dayjs(form.createTime).format("YYYY-MM-DD HH:mm:ss") }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -251,10 +251,138 @@ export default {
     },
   },
   methods: {
+    completeMergedCellsData(sheetsData) {
+      return sheetsData.map((sheet) => {
+        const updatedSheet = JSON.parse(JSON.stringify(sheet));
+
+        // 确保存在merges数组
+        updatedSheet.merges = updatedSheet.merges || [];
+
+        // 解析合并单元格
+        const parsedMerges = updatedSheet.merges.map((merge) => {
+          const [start, end] = merge.split(":");
+          const startCol = start.charCodeAt(0) - 65; // A = 0, B = 1, etc.
+          const startRow = parseInt(start.slice(1)) - 1;
+          const endCol = end.charCodeAt(0) - 65;
+          const endRow = parseInt(end.slice(1)) - 1;
+
+          return { startRow, startCol, endRow, endCol };
+        });
+
+        // 处理每个合并区域
+        parsedMerges.forEach((merge) => {
+          for (let row = merge.startRow; row <= merge.endRow; row++) {
+            for (let col = merge.startCol; col <= merge.endCol; col++) {
+              // 确保行和单元格存在
+              if (!updatedSheet.rows[row]) {
+                updatedSheet.rows[row] = { cells: {} };
+              }
+
+              // 主合并单元格
+              const mainCell =
+                updatedSheet.rows[merge.startRow].cells[merge.startCol];
+
+              // 处理当前单元格
+              const currentCell = updatedSheet.rows[row].cells[col] || {};
+
+              // 合并单元格的第一个单元格不需要处理
+              if (row === merge.startRow && col === merge.startCol) continue;
+
+              // 修改这里：正确设置merge属性，包含行和列的合并信息
+              updatedSheet.rows[row].cells[col] = {
+                ...currentCell,
+                style: mainCell.style !== undefined ? mainCell.style : 0,
+                merge: [
+                  merge.startRow - row,
+                  merge.startCol - col,
+                  merge.endRow - row,
+                  merge.endCol - col,
+                ],
+                text: mainCell.text || currentCell.text,
+              };
+            }
+          }
+        });
+
+        return updatedSheet;
+      });
+    },
     download() {
-      const data = this.xs.getData(); // 获取当前表格的数据
-      const worksheet = xtos(Object.values(data)); // 将数据转换为适当的格式
-      XLSX.writeFile(worksheet, `${this.form.planName}维保计划.xlsx`); // 写入文件
+      // 获取当前表格的数据
+      const data = this.completeMergedCellsData(this.xs.getData());
+      console.log(data, "data");
+      // 克隆原始数据，不直接修改它
+      const clonedData = JSON.parse(JSON.stringify(data));
+
+      // 获取第一个sheet（通常只有一个）
+      const sheet = clonedData[0];
+
+      // 确保rows存在
+      if (!sheet.rows) {
+        sheet.rows = { len: 0 };
+      }
+
+      // 插入标题行，移动现有数据行向下
+      // 首先把所有行向下移动5行（原来是3行，现在增加到5行）
+      const oldRows = { ...sheet.rows };
+      sheet.rows = { len: (oldRows.len || 0) + 5 }; // 增加到5行标题信息
+
+      // 移动现有行数据和样式
+      Object.keys(oldRows).forEach((key) => {
+        if (key !== "len") {
+          const rowNum = parseInt(key);
+          sheet.rows[rowNum + 6] = oldRows[key]; // 从第6行开始放原始数据，前5行放标题信息
+        }
+      });
+
+      // 添加标题行并设置边框
+      if (!sheet.rows[0]) sheet.rows[0] = { cells: {} };
+      if (!sheet.rows[1]) sheet.rows[1] = { cells: {} };
+      if (!sheet.rows[2]) sheet.rows[2] = { cells: {} };
+      if (!sheet.rows[3]) sheet.rows[3] = { cells: {} };
+      if (!sheet.rows[4]) sheet.rows[4] = { cells: {} };
+
+      // 设置计划名称
+      sheet.rows[0].cells = {
+        0: {
+          text: `计划名称：${this.form.planName}`,
+        },
+      };
+
+      // 设置计划年份
+      sheet.rows[1].cells = {
+        0: {
+          text: `计划年份：${this.form.planningYear}`,
+        },
+      };
+
+      // 设置负责班组
+      sheet.rows[2].cells = {
+        0: {
+          text: `负责班组：${this.form.teamName || ""}`,
+        },
+      };
+
+      // 设置实施负责人
+      sheet.rows[3].cells = {
+        0: {
+          text: `实施负责人：${this.form.implementPersonName || ""}`,
+        },
+      };
+
+      // 设置制定时间
+      const formattedDate = dayjs(this.form.createTime).format("YYYY-MM-DD HH:mm:ss");
+      sheet.rows[4].cells = {
+        0: {
+          text: `制定时间：${formattedDate}`,
+        },
+      };
+
+      // 转换为工作表
+      const worksheet = xtos(Object.values(clonedData));
+
+      // 写入文件并下载
+      XLSX.writeFile(worksheet, `${this.form.planName}维保计划.xlsx`);
     },
     async getPlanById(id) {
       await MaintenancePlan.getMaintenancePlanById(id)

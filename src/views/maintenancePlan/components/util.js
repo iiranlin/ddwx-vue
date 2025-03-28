@@ -157,7 +157,8 @@ export function xtos(sdata, keepMerges = true, keepFormulas = true) {
             cellText = 0;
             type = "n";
           }
-        } else if (!isNaN(parseFloat(cellText))) {
+          // 仅纯数字才转换为数字，否则都展示文本
+        } else if (!isNaN(parseFloat(cellText)) && /^[\d.]+$/.test(cellText)) {
           cellText = parseFloat(cellText);
           type = "n";
         } else if (cellText === "true" || cellText === "false") {
