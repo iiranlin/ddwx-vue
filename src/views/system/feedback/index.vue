@@ -40,7 +40,7 @@
           style="margin-top: -12px; margin-bottom: 6px"
         >
           <template #customItem>
-            <el-form-item label="提交日期">
+            <el-form-item label="提交日期" prop="year">
               <el-date-picker
                 type="datetimerange"
                 start-placeholder="开始日期"
@@ -74,6 +74,8 @@
           @handleButton="handleButton"
           @selectChange="selectChange"
           @emitAblFilter="emitAblFilter"
+          showNumber
+          :selectable="false"
         >
         </table-index>
         <!--分页器-->
@@ -176,7 +178,7 @@ export default {
       this.loading = true;
 
       await MessageManagement.getMessageFeedbackList(
-        Object.assign({}, this.listQuery, this.formData)
+        Object.assign({queryStatus: -1}, this.listQuery, this.formData)
       )
         .then(({ data }) => {
           this.dataList = data.list;
@@ -241,7 +243,7 @@ export default {
     },
     //刷新列表数据
     handleQuery(row = {}) {
-        if (!row.year) {
+        if (row.year.length === 0) {
         row.startTime = "";
         row.endTime = "";
         row.year = [];
