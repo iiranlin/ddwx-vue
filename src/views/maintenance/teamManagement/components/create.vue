@@ -44,6 +44,22 @@
           </el-form-item>
         </el-col>
         <el-col :span="24">
+          <el-form-item :label="'班组工长'" prop="leader.userId">
+            <csSelect
+              :selectData="{
+                data: userOptions,
+                label: 'label',
+                value: 'value',
+                isRight: false,
+              }"
+              v-model="form.leader.userId"
+              placeholder="请选择班组工长"
+              clearable
+              @change="userChange"
+            ></csSelect>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
           <el-form-item :label="'维修类型'" prop="equipmentTypeIds">
             <el-select
               style="width: 100%"
@@ -74,10 +90,17 @@
 <script>
 import { ResourceManagement } from "@/api/maintenance";
 import { teamType } from "@/utils/enum";
+import csSelect from "../../maintenanceTechnician/components/csSelect.vue";
+import { userPage } from "@/api/system/user";
+
 export default {
+  components: {
+    csSelect,
+  },
   data() {
     return {
       teamType,
+      userOptions: [],
       isEdit: false,
       //遮罩层
       loading: false,
@@ -91,6 +114,13 @@ export default {
         teamName: "",
         equipmentType: "",
         equipmentTypeIds: [],
+        leader: {
+          userId: "",
+          name: "",
+          phone: "",
+          landline: "",
+          jobNum: "",
+        },
       },
       equipmentTypeOptions: [],
       //表单校验
@@ -105,11 +135,45 @@ export default {
             trigger: "blur",
           },
         ],
+        "leader.userId": [
+          {
+            required: true,
+            message: "班组工长不能为空",
+            trigger: "blur",
+          },
+        ],
       },
     };
   },
-
   methods: {
+    // 获取所有用户人员信息
+    getUserList() {
+      userPage({
+        pageNum: 1,
+        pageSize: 99999,
+        total: 0,
+        status: 0,
+      }).then(({ data: { list } }) => {
+        this.userOptions = list.map((item) => {
+          return {
+            ...item,
+            label: item.realName,
+            value: item.id,
+          };
+        });
+      });
+    },
+    userChange(selectedValues) {
+      // 获取选中的数据详情
+      const selectedItems = this.userOptions.find((item) =>
+        selectedValues.includes(item.value)
+      );
+
+      this.form.leader.name = selectedItems.label;
+      this.form.leader.phone = selectedItems.phone;
+      this.form.leader.landline = selectedItems.landline;
+      this.form.leader.jobNum = selectedItems.userCode;
+    },
     // 获取设备枚举不分页
     getEquipmentType() {
       ResourceManagement.getDeviceTypeListAll().then(({ data }) => {
@@ -129,6 +193,13 @@ export default {
         teamName: "",
         equipmentType: "",
         equipmentTypeIds: [],
+        leader: {
+          userId: "",
+          name: "",
+          phone: "",
+          landline: "",
+          jobNum: "",
+        },
       };
       this.isEdit = false;
       this.openDataScope = true;
@@ -136,14 +207,30 @@ export default {
         this.title = "新建班组";
       });
       this.getEquipmentType();
+      this.getUserList();
     },
     // 编辑初始化
     async updateInit(id) {
       this.isEdit = true;
       this.openDataScope = true;
       this.getEquipmentType();
+      this.getUserList();
       await ResourceManagement.getTeamById(id).then(({ data }) => {
-        this.form = Object.assign({}, data);
+        this.form = Object.assign(
+          {},
+          data,
+          data.leader
+            ? { leader: data.leader }
+            : {
+                leader: {
+                  userId: "",
+                  name: "",
+                  phone: "",
+                  landline: "",
+                  jobNum: "",
+                },
+              }
+        );
         this.$nextTick(() => {
           this.title = "编辑班组";
         });
@@ -177,6 +264,13 @@ export default {
     //关闭dialog回调
     handleDialogClose() {
       this.$refs.elform.resetFields();
+      this.form.leader = {
+        userId: null,
+        name: "",
+        phone: "",
+        landline: "",
+        jobNum: "",
+      };
     },
     handleSelectionChange(selectedValues) {
       // 获取选中的数据详情
