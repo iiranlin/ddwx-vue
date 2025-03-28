@@ -117,7 +117,24 @@ import { xtos } from "./util";
 export default {
   name: "createPlan",
   data() {
+    const initTableData = [
+      {
+        name: "sheet1",
+        freeze: "A1",
+        styles: [],
+        merges: [],
+        rows: {
+          len: 6,
+        },
+        cols: {
+          len: 16,
+        },
+        validations: [],
+        autofilter: {},
+      },
+    ];
     return {
+      initTableData,
       loading: false,
       xs: null,
       userOptions: [],
@@ -213,6 +230,18 @@ export default {
       return this.$route.query.isView;
     },
   },
+  activated() {
+    // 如果是新增，则默认初始
+    if (!this.id) {
+      this.form.planningYear = "";
+      this.form.planName = "";
+      this.form.teamId = "";
+      this.form.implementPersonId = "";
+      this.form.implementPersonName = "";
+
+      this.xs.loadData(this.initTableData);
+    }
+  },
   watch: {
     "form.teamId": {
       handler() {
@@ -225,7 +254,7 @@ export default {
     download() {
       const data = this.xs.getData(); // 获取当前表格的数据
       const worksheet = xtos(Object.values(data)); // 将数据转换为适当的格式
-      XLSX.writeFile(worksheet, `${this.form.planningYear}-${this.form.planName}维保计划.xlsx`); // 写入文件
+      XLSX.writeFile(worksheet, `${this.form.planName}维保计划.xlsx`); // 写入文件
     },
     async getPlanById(id) {
       await MaintenancePlan.getMaintenancePlanById(id)
