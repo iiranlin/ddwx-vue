@@ -58,13 +58,17 @@
                 <el-input
                   v-model.number="form.aboveGround"
                   placeholder="地上"
-                ></el-input>
+                >
+                <template slot="prepend">地上</template>
+              </el-input>
               </el-col>
               <el-col :span="10">
                 <el-input
                   v-model.number="form.underground"
                   placeholder="地下"
-                ></el-input>
+                >
+                <template slot="prepend">地下</template>
+              </el-input>
               </el-col>
             </el-row>
           </el-form-item>
