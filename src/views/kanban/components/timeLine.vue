@@ -1,59 +1,94 @@
 <template>
   <div class="assignment-person">
     <div class="task-distribution">
-      <h3>今日维修人员维修任务分布</h3>
-      <div class="legend">
-        <div class="legend-item">
-          <div class="legend-color has-task"></div>
-          <span>有任务</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-color no-task"></div>
-          <span>无任务</span>
-        </div>
-      </div>
+      <h2>今日维修人员维修任务分布</h2>
 
-      <div class="time-scale">
-        <div class="time-labels">
-          <div v-for="hour in 25" :key="hour - 1" class="time-label">
-            {{ formatHour(hour - 1) }}
-          </div>
-        </div>
-        <div class="time-grid-lines">
-          <div
-            v-for="hour in 25"
-            :key="hour - 1"
-            class="time-grid-line"
-            :style="{ left: `${(hour - 1) * (100 / 24)}%` }"
-            @click="handleTimeGridClick(hour - 1)"
-          ></div>
-        </div>
-
-        <template v-if="persons.length > 0">
-          <div class="schedule-grid">
-            <!-- 示例任务时间段 -->
-            <div
-              class="person-row"
-              v-for="(person, index) in persons"
-              :key="index"
-            >
-              <div class="person-name">{{ person.name }}</div>
-              <div class="time-slots">
-                <div
-                  v-for="task in person.tasks"
-                  :key="task.id"
-                  class="task-slot"
-                  :style="getTaskStyle(task)"
-                  @click="showTaskDetail(person)"
-                ></div>
+      <!-- 使用卡片式tabs组件 -->
+      <el-tabs
+        v-model="activeTab"
+        class="person-tabs"
+        type="border-card"
+        @tab-click="handleTabChange"
+      >
+        <!-- 有任务人员标签页 -->
+        <el-tab-pane label="有任务人员" name="hasTasks">
+          <div class="has-task-container">
+            <div class="legend">
+              <div class="legend-item">
+                <div class="legend-color has-task"></div>
+                <span>有任务</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color no-task"></div>
+                <span>无任务</span>
               </div>
             </div>
+
+            <div class="time-scale">
+              <div class="time-labels">
+                <div v-for="hour in 25" :key="hour - 1" class="time-label">
+                  {{ formatHour(hour - 1) }}
+                </div>
+              </div>
+              <div class="time-grid-lines">
+                <div
+                  v-for="hour in 25"
+                  :key="hour - 1"
+                  class="time-grid-line"
+                  :style="{ left: `${(hour - 1) * (100 / 24)}%` }"
+                  @click="handleTimeGridClick(hour - 1)"
+                ></div>
+              </div>
+
+              <template v-if="persons.length > 0">
+                <div class="schedule-grid">
+                  <!-- 示例任务时间段 -->
+                  <div
+                    class="person-row"
+                    v-for="(person, index) in persons"
+                    :key="index"
+                  >
+                    <div class="person-name">{{ person.name }}</div>
+                    <div class="time-slots">
+                      <div
+                        v-for="task in person.tasks"
+                        :key="task.id"
+                        class="task-slot"
+                        :style="getTaskStyle(task)"
+                        @click="showTaskDetail(person)"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+              <template v-else>
+                <el-empty></el-empty>
+              </template>
+            </div>
           </div>
-        </template>
-        <template v-else>
-          <el-empty></el-empty>
-        </template>
-      </div>
+        </el-tab-pane>
+
+        <!-- 无任务人员标签页 -->
+        <el-tab-pane label="无任务人员" name="noTasks">
+          <div class="no-task-persons">
+            <div class="person-tags">
+              <el-tag
+                v-for="(person, index) in emptyPersons"
+                :key="index"
+                type="info"
+                effect="light"
+                class="person-tag"
+              >
+                <i class="el-icon-user"></i> {{ person.name }}
+              </el-tag>
+            </div>
+            <el-empty
+              v-if="emptyPersons.length === 0"
+              description="暂无无任务人员"
+            ></el-empty>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
     </div>
 
     <!-- <div class="action-buttons">
@@ -132,27 +167,42 @@ export default {
       persons: [{}],
       taskDialogVisible: false,
       selectedTasks: [],
+      emptyPersons: [],
+      activeTab: "hasTasks", // 默认选中有任务的tab
     };
+  },
+  activated() {
+    this.updateTasksByDate();
   },
   async created() {
     await this.updateTasksByDate();
   },
   methods: {
+    // 处理tab切换
+    handleTabChange() {
+      // Tab变化后不需要特殊处理，视图会根据activeTab自动切换
+    },
     async updateTasksByDate() {
-      console.log("updateTasksByDate");
       const res = await WorkOrderPerson.getWorkOrderPersonByDate({
         date: this.currentDate,
+        status: 1,
       });
 
+      this.emptyPersons = res.data.filter(
+        (person) => person.tasks.length === 0
+      );
+
       // 格式化时间数据
-      const formattedData = res.data.map((person) => ({
-        ...person,
-        tasks: person.tasks.map((task) => ({
-          ...task,
-          // startTime: dayjs(task.startTime).format("HH:mm"),
-          // endTime: dayjs(task.endTime).format("HH:mm"),
-        })),
-      }));
+      const formattedData = res.data
+        .filter((person) => person.tasks.length > 0)
+        .map((person) => ({
+          ...person,
+          tasks: person.tasks.map((task) => ({
+            ...task,
+            // startTime: dayjs(task.startTime).format("HH:mm"),
+            // endTime: dayjs(task.endTime).format("HH:mm"),
+          })),
+        }));
 
       this.persons = formattedData;
     },
@@ -298,10 +348,37 @@ export default {
   .task-distribution {
     margin-bottom: 20px;
 
-    h3 {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 15px;
+    /* 有任务人员容器样式 */
+    .has-task-container {
+      min-height: 300px;
+    }
+
+    /* 无任务人员展示样式 */
+    .no-task-persons {
+      min-height: 200px;
+
+      .person-tags {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        gap: 12px;
+        padding: 10px;
+
+        .person-tag {
+          cursor: default;
+          border-radius: 4px;
+          transition: all 0.3s;
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+          }
+
+          i {
+            margin-right: 5px;
+          }
+        }
+      }
     }
 
     .legend {
@@ -471,9 +548,9 @@ export default {
         text-align-last: justify;
         width: 80px;
       }
-      .detail-content{
+      .detail-content {
         width: calc(100% - 120px);
-        &::before{
+        &::before {
           content: " : ";
         }
       }
