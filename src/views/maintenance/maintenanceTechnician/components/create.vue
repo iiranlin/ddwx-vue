@@ -166,9 +166,19 @@ export default {
         name: [{ required: true, message: "姓名不能为空", trigger: "blur" }],
         phone: [
           { required: true, message: "联系电话不能为空", trigger: "blur" },
+          {
+            pattern: /^1[3-9]\d{9}$/,
+            message: "请输入正确的手机号码",
+            trigger: "blur",
+          },
         ],
         landline: [
           { required: true, message: "座机不能为空", trigger: "blur" },
+          {
+            pattern: /^(?:(?:\d{3}-)?\d{8}|^(?:\d{4}-)?\d{7,8})(?:-\d+)?$/,
+            message: "请输入正确的座机号码",
+            trigger: "blur",
+          },
         ],
         foreman: [
           { required: true, message: "是否班工长不能为空", trigger: "blur" },

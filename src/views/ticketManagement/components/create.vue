@@ -211,7 +211,7 @@ export default {
         landline: [
           { required: true, message: "座机不能为空", trigger: "blur" },
           {
-            pattern: /^(?:\d{3,4}-)?\d{7,8}(?:-\d{1,4})?$/,
+            pattern: /^(?:(?:\d{3}-)?\d{8}|^(?:\d{4}-)?\d{7,8})(?:-\d+)?$/,
             message: "请输入正确的座机号码格式",
             trigger: "blur",
           },
