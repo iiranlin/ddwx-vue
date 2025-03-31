@@ -32,8 +32,9 @@
           </right-toolbar>
         </el-row>
         <!--搜索条件按钮-->
-        <el-form class="form_data" ref="queryForm" :model="formData">
+        <el-form class="form_data" ref="queryForm" :model="formData" label-width="80px">
           <el-row :gutter="24">
+            <!-- 第一行始终显示 -->
             <el-col :sm="8" :xl="6">
               <el-form-item label="工单编号" prop="orderNum">
                 <el-input
@@ -41,8 +42,9 @@
                   clearable
                   v-model="formData.orderNum"
                   placeholder="请输入工单编号"
-                ></el-input> </el-form-item
-            ></el-col>
+                ></el-input>
+              </el-form-item>
+            </el-col>
             <el-col :sm="8" :xl="6">
               <el-form-item label="故障场所" prop="faultSiteId">
                 <el-select
@@ -60,8 +62,9 @@
                     :value="item.value"
                   >
                   </el-option>
-                </el-select> </el-form-item
-            ></el-col>
+                </el-select>
+              </el-form-item>
+            </el-col>
             <el-col :sm="8" :xl="6">
               <el-form-item label="报修人" prop="contactName">
                 <el-input
@@ -69,9 +72,11 @@
                   clearable
                   v-model="formData.contactName"
                   placeholder="请输入报修人"
-                ></el-input> </el-form-item
-            ></el-col>
-            <el-col :sm="8" :xl="6">
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <!-- 需要判断响应式 -->
+            <el-col :sm="8" :xl="6" v-if="currentBreakpoint === 'xl'">
               <el-form-item label="维修班组" prop="teamId">
                 <el-select
                   class="w-full"
@@ -87,8 +92,32 @@
                     :value="item.value"
                   >
                   </el-option>
-                </el-select> </el-form-item
-            ></el-col>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <!-- 高级搜索选项 - 根据isAdvancedSearchVisible控制显示/隐藏 -->
+          <el-row :gutter="24" v-show="isAdvancedSearchVisible">
+            <el-col v-if="currentBreakpoint !== 'xl'" :sm="8" :xl="6">
+              <el-form-item  label="维修班组" prop="teamId">
+                <el-select
+                  class="w-full"
+                  v-model="formData.teamId"
+                  clearable
+                  filterable
+                  placeholder="请选择维修班组"
+                >
+                  <el-option
+                    v-for="item in teamTypeOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
 
             <el-col :sm="8" :xl="6">
               <el-form-item label="维修人员" prop="personnelNames">
@@ -97,8 +126,9 @@
                   clearable
                   v-model="formData.personnelNames"
                   placeholder="请输入维修人员"
-                ></el-input> </el-form-item
-            ></el-col>
+                ></el-input>
+              </el-form-item>
+            </el-col>
             <el-col :sm="8" :xl="6">
               <el-form-item label="工单状态" prop="status">
                 <el-select
@@ -117,8 +147,9 @@
                     :label="item.label"
                     :value="item.value"
                   ></el-option>
-                </el-select> </el-form-item
-            ></el-col>
+                </el-select>
+              </el-form-item>
+            </el-col>
             <el-col :sm="8" :xl="6">
               <el-form-item label="优先级" prop="urgency">
                 <el-select
@@ -134,8 +165,9 @@
                     :label="item"
                     :value="item"
                   ></el-option>
-                </el-select> </el-form-item
-            ></el-col>
+                </el-select>
+              </el-form-item>
+            </el-col>
             <el-col :sm="8" :xl="6">
               <el-form-item label="提交日期" prop="year">
                 <el-date-picker
@@ -146,10 +178,15 @@
                   style="display: inline"
                   v-model="formData.year"
                   placeholder="请选择提交日期"
-                ></el-date-picker> </el-form-item
-            ></el-col>
-            <el-col :sm="8" :xl="6">
-              <el-form-item>
+                ></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <!-- 将按钮移到底部单独一行 -->
+          <el-row>
+            <el-col :span="24">
+              <div class="button-group">
                 <el-button
                   type="primary"
                   icon="el-icon-search"
@@ -163,7 +200,21 @@
                   @click="resetQuery"
                   >重置
                 </el-button>
-              </el-form-item>
+                <el-button
+                  type="text"
+                  @click="toggleAdvancedSearch"
+                  size="mini"
+                >
+                  {{ isAdvancedSearchVisible ? "收起" : "展开" }}
+                  <i
+                    :class="
+                      isAdvancedSearchVisible
+                        ? 'el-icon-arrow-up'
+                        : 'el-icon-arrow-down'
+                    "
+                  ></i>
+                </el-button>
+              </div>
             </el-col>
           </el-row>
         </el-form>
@@ -371,6 +422,8 @@ export default {
       total: 0,
       placeOptions: [],
       teamTypeOptions: [],
+      isAdvancedSearchVisible: false,
+      currentBreakpoint: "",
     };
   },
   created() {
@@ -378,6 +431,13 @@ export default {
     this.getPlaceList();
     this.getTeamType();
     this.getList();
+  },
+  mounted() {
+    this.updateBreakpoint();
+    window.addEventListener("resize", this.updateBreakpoint);
+  },
+  beforeDestroy() {
+    window.removeEventListener("resize", this.updateBreakpoint);
   },
   computed: {
     baseUrl() {
@@ -399,6 +459,14 @@ export default {
     this.getList();
   },
   methods: {
+    updateBreakpoint() {
+      const width = window.innerWidth;
+      if (width >= 1920) {
+        this.currentBreakpoint = "xl";
+      } else {
+        this.currentBreakpoint = "sm";
+      }
+    },
     // 获取班组枚举不分页
     getTeamType() {
       ResourceManagement.getTeamListAll().then(({ data }) => {
@@ -589,6 +657,9 @@ export default {
         selectedValues.includes(item.value)
       );
     },
+    toggleAdvancedSearch() {
+      this.isAdvancedSearchVisible = !this.isAdvancedSearchVisible;
+    },
   },
 };
 </script>
@@ -597,6 +668,27 @@ export default {
   background-color: #b8d9fd !important;
 }
 .w-full {
-  width: calc(100% - 120px);
+  width: calc(100% - 80px);
+}
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 25px;
+  padding-right: 20px;
+}
+.search-button-row {
+  border-top: 1px solid #ebeef5;
+  padding-top: 10px;
+}
+
+/* 响应式调整 */
+@media screen and (max-width: 768px) {
+  .w-full {
+    width: 100%;
+  }
+  .button-group {
+    justify-content: center;
+    padding-right: 0;
+  }
 }
 </style>
