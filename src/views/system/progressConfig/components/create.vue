@@ -32,6 +32,9 @@
             </el-input>
           </el-form-item>
         </el-col>
+        <el-col :span="24">
+          <el-alert :closable="false" show-icon title="说明：启用后，设定的时间内报修人未验收，系统会默认验收通过。" type="warning"> </el-alert>
+        </el-col>
       </el-row>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -101,10 +104,15 @@ export default {
     handleCreate() {
       this.$refs.elform.validate(async (valid) => {
         if (valid) {
+          console.log(this.form.resourceValue);
           this.loading = true;
           await ProgressConfig[
             this.isEdit ? `updateProgressConfig` : `addConsumable`
-          ](Object.assign({}, this.form))
+          ](
+            Object.assign({}, this.form, {
+              resourceName: `报修人${this.form.resourceValue}小时自动验收`,
+            })
+          )
             .then(({ message }) => {
               this.loading = false;
               this.$modal.msgSuccess(message);
