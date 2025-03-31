@@ -102,8 +102,8 @@
     <div id="xss-demo"></div>
     <div class="btn-box">
       <div class="close" @click="close">关闭</div>
+      <div  class="save" @click="download">下载</div>
       <div v-if="!isView" class="save" @click="save">保存</div>
-      <div v-if="isView" class="save" @click="download">下载</div>
     </div>
   </el-card>
 </template>
