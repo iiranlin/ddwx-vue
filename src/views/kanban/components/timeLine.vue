@@ -109,24 +109,24 @@
             style="color: black !important; font-weight: bold"
           >
             <span class="detail-label">工单编号</span>
-            <span class="detail-content">：{{ task.orderNum }}</span>
+            <span class="detail-content">{{ task.orderNum }}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">场所</span>
-            <span class="detail-content">：{{ task.faultSiteName }}</span>
+            <span class="detail-content">{{ task.faultSiteName }}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">位置</span>
-            <span class="detail-content">：{{ task.faultAddr }}</span>
+            <span class="detail-content">{{ task.faultAddr }}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">故障描述</span>
-            <span class="detail-content">：{{ task.remark }}</span>
+            <span class="detail-content">{{ task.remark }}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">维修时间</span>
             <span class="detail-content"
-              >：{{ task.startTime }} - {{ task.endTime }}</span
+              >{{ task.startTime }} 至 {{ task.endTime }}</span
             >
           </div>
         </div>

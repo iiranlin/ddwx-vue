@@ -144,7 +144,7 @@
           <div class="detail-item">
             <span class="detail-label">维修时间</span>
             <span class="detail-content"
-              >{{ task.startTime }} - {{ task.endTime }}</span
+              >{{ task.startTime }} 至 {{ task.endTime }}</span
             >
           </div>
         </div>
