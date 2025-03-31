@@ -23,7 +23,7 @@
               style="width: 100%"
               v-model="form.operateDesc"
               filterable
-              placeholder="请选择归属班组"
+              placeholder="请选择取消原因"
             >
               <el-option
                 v-for="item in cancelReason.map((x) => ({
