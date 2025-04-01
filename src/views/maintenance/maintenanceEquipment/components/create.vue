@@ -72,7 +72,7 @@
             ></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="24">
+        <!-- <el-col :span="24">
           <el-form-item label="安装日期" prop="installationDate">
             <el-date-picker
               v-model="form.installationDate"
@@ -80,7 +80,7 @@
               placeholder="yyyy/mm/dd"
             ></el-date-picker>
           </el-form-item>
-        </el-col>
+        </el-col> -->
         <el-col :span="24">
           <el-form-item label="生产厂家" prop="equipmentFactory">
             <el-input
