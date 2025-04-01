@@ -103,10 +103,10 @@
       <div class="section-title">维修耗材</div>
       <div class="info-card">
         <el-table :data="details.suppliesList || []" border>
-          <el-table-column prop="suppliesName" label="品名"></el-table-column>
-          <el-table-column prop="suppliesSpecs" label="规格"></el-table-column>
-          <el-table-column prop="suppliesUnit" label="单位"></el-table-column>
-          <el-table-column prop="amount" label="数量"></el-table-column>
+          <el-table-column prop="suppliesName" label="品名" align="center"></el-table-column>
+          <el-table-column prop="suppliesSpecs" label="规格" align="center"></el-table-column>
+          <el-table-column prop="suppliesUnit" label="单位" align="center"></el-table-column>
+          <el-table-column prop="amount" label="数量" align="center"></el-table-column>
         </el-table>
       </div>
     </template>
