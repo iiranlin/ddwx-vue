@@ -176,6 +176,7 @@ export default {
         {code: "date_{y}",label: '日期(年)'},
         {code: "date_{y}-{m}",label: '日期(年-月)'},
         {code: 'date_{y}-{m}-{d}',label: '日期(年-月-日)'},
+        {code: 'date_{y}-{m}-{d} {h}:{i}',label: '日期(年-月-日 时-分)'},
         {code: 'date_{y}-{m}-{d} {h}:{i}:{s}',label: '日期(年-月-日 时-分-秒)'},
         {code: "enum",label: '枚举'},
         {code: "dict",label: '字典'},
