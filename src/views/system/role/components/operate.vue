@@ -2,9 +2,9 @@
     <!-- 分配角色数据权限对话框 -->
     <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="openDataScope" width="500px" append-to-body v-loading="loading">
       <el-form ref="elForm" :model="form" :rules="rules" label-width="85px">
-        <el-form-item label="角色编号:" prop="roleCode">
+        <!-- <el-form-item label="角色编号:" prop="roleCode">
           <el-input v-model="form.roleCode" maxlength="50" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="角色名称:" prop="roleName">
           <el-input v-model="form.roleName" maxlength="20" />
         </el-form-item>
@@ -51,7 +51,7 @@ export default {
       // 表单校验
       rules: {
         roleCode: [
-          { required: true, message: "角色编号不能为空", trigger: "blur" }
+          { required: false, message: "角色编号不能为空", trigger: "blur" }
         ],
         roleName: [
           { required: true, message: "角色名称不能为空", trigger: "blur" }
