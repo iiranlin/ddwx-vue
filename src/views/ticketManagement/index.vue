@@ -251,7 +251,7 @@
           </template>
           <!-- 故障图片 -->
           <template #column-faultFileUrl="scope">
-            <div style="display: flex; flex-wrap: wrap; gap: 10px">
+            <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 10px">
               <el-image
                 v-for="item in scope.row.faultFileUrl
                   ? scope.row.faultFileUrl
