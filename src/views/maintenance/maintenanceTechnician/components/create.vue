@@ -259,7 +259,7 @@ export default {
         this.form = Object.assign({}, data);
 
         this.$nextTick(() => {
-          this.title = "编辑班组";
+          this.title = "编辑维修人员";
         });
       });
     },
