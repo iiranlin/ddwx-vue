@@ -82,7 +82,7 @@
             <!-- <el-button type="text" @click="handleButton(scope.row, 'stop')"
               >{{ scope.row.status == 0 ? "启用" : "停用" }}</el-button
             > -->
-            <el-button type="text" @click="handleButton(scope.row, 'delete')"
+            <el-button type="text" class="dangerColor" @click="handleButton(scope.row, 'delete')"
               >删除</el-button
             >
           </template>

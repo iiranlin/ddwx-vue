@@ -89,7 +89,7 @@
               <el-button type="text" @click="handleButton(scope.row, 'edit')"
                 >修改</el-button
               >
-              <el-button type="text" @click="handleButton(scope.row, 'delete')"
+              <el-button type="text" class="dangerColor" @click="handleButton(scope.row, 'delete')"
                 >删除</el-button
               >
             </template>

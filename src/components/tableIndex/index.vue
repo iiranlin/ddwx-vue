@@ -123,6 +123,7 @@
             :key="item.id"
             type="text"
             @click="newButton(item.buttonCode, scope.row)"
+            :class="{dangerColor:item.buttonName === '删除'}"
           >
             <svg-icon :icon-class="item.buttonIcon ? item.buttonIcon : ''"/>
             {{ item.buttonName }}
@@ -538,4 +539,5 @@
   .highlight-red {
     color: #ed4646;
   }
+
 </style>
