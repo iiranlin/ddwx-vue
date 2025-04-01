@@ -1,5 +1,5 @@
 <template>
-  <el-card style="height: 500px; overflow-y: scroll">
+  <el-card style="height: 500px; overflow-y: scroll" shadow="never">
     <div class="info-card">
       <div class="timeline">
         <div
