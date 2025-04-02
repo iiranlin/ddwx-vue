@@ -10,8 +10,12 @@
         >
           <div class="timeline-time">
             <div class="time">
-              <div style="width: 70px;">{{ dayjs(item.createTime).format("MM月DD日") }}</div>
-              <div style="width: 70px;"> {{ dayjs(item.createTime).format("HH:mm") }}</div>
+              <div style="width: 70px">
+                {{ dayjs(item.createTime).format("MM月DD日") }}
+              </div>
+              <div style="width: 70px">
+                {{ dayjs(item.createTime).format("HH:mm") }}
+              </div>
             </div>
           </div>
           <div class="timeline-content">
@@ -43,15 +47,27 @@
               >
                 <span style="display: flex">
                   响应速度：
-                  <el-rate :colors="colors" disabled :value="3"></el-rate>
+                  <el-rate
+                    :colors="colors"
+                    disabled
+                    :value="JSON.parse(item.evaluateLevel).speedRate"
+                  ></el-rate>
                 </span>
                 <span style="display: flex">
                   服务态度：
-                  <el-rate :colors="colors" disabled :value="5"></el-rate>
+                  <el-rate
+                    :colors="colors"
+                    disabled
+                    :value="JSON.parse(item.evaluateLevel).serviceRate"
+                  ></el-rate>
                 </span>
                 <span style="display: flex">
                   维修评价：
-                  <el-rate :colors="colors" disabled :value="5"></el-rate>
+                  <el-rate
+                    :colors="colors"
+                    disabled
+                    :value="JSON.parse(item.evaluateLevel).schedulingRate"
+                  ></el-rate>
                 </span>
               </div>
               <div class="timeline-desc" :class="{ 'first-desc': index === 0 }">
