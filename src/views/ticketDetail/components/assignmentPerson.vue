@@ -667,8 +667,9 @@ export default {
 }
 
 .task-detail {
+  font-size: 16px;
   .task-title {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 400;
     color: #0c7bfe;
   }
