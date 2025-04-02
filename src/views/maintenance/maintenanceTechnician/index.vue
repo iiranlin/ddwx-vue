@@ -207,6 +207,8 @@ export default {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning",
+          cancelButtonClass:'cancel-button el-button--text',
+          confirmButtonClass:' el-button--text',
         }).then(() => {
           ResourceManagement.deleteRepair([ids["id"]]).then(() => {
             this.$message.success("删除成功！");
@@ -218,6 +220,8 @@ export default {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning",
+          cancelButtonClass:'cancel-button el-button--text',
+          confirmButtonClass:' el-button--text',
         }).then(() => {
           ResourceManagement.updateRepairState({
             id: ids["id"],

@@ -241,12 +241,12 @@
       </div>
     </el-form>
     <div slot="footer" class="dialog-footer">
+      <el-button class="cancel-button" type="text" @click="openDataScope = false">取 消</el-button>
       <el-button
-        type="primary"
+        type="text"
         @click="type == 'create' ? submitDataScope() : menuModify()"
         >确 定</el-button
       >
-      <el-button @click="openDataScope = false">取 消</el-button>
     </div>
   </el-dialog>
 </template>

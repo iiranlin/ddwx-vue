@@ -85,8 +85,8 @@
       </el-row>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="type == 'create'?submitDataScope():userModify()">确 定</el-button>
-      <el-button @click="openDataScope = false">取 消</el-button>
+      <el-button class="cancel-button" type="text" @click="openDataScope = false">取 消</el-button>
+      <el-button type="text" @click="type == 'create'?submitDataScope():userModify()">确 定</el-button>
     </div>
   </el-dialog>
 </template>

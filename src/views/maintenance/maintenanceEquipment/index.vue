@@ -193,7 +193,11 @@ export default {
         this.$confirm("确定删除该维修设备？", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
+          cancelButtonClass:'cancel-button el-button--text',
+          confirmButtonClass:' el-button--text',
           type: "warning",
+          cancelButtonClass:'cancel-button el-button--text',
+          confirmButtonClass:' el-button--text',
         }).then(() => {
           ResourceManagement.deleteDevice(ids).then(() => {
             this.$message.success("删除成功！");

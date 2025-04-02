@@ -365,7 +365,9 @@ export default {
       this.$confirm(confirmMessage, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
+        type: 'warning',
+        cancelButtonClass:'cancel-button el-button--text',
+        confirmButtonClass:' el-button--text',
       }).then(() => {
         resetPwd({id: row.id}).then(res => {
           this.$modal.msgSuccess(res.message);

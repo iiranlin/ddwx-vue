@@ -103,10 +103,26 @@
       <div class="section-title">维修耗材</div>
       <div class="info-card">
         <el-table :data="details.suppliesList || []" border>
-          <el-table-column prop="suppliesName" label="品名" align="center"></el-table-column>
-          <el-table-column prop="suppliesSpecs" label="规格" align="center"></el-table-column>
-          <el-table-column prop="suppliesUnit" label="单位" align="center"></el-table-column>
-          <el-table-column prop="amount" label="数量" align="center"></el-table-column>
+          <el-table-column
+            prop="suppliesName"
+            label="品名"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="suppliesSpecs"
+            label="规格"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="suppliesUnit"
+            label="单位"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="amount"
+            label="数量"
+            align="center"
+          ></el-table-column>
         </el-table>
       </div>
     </template>
@@ -244,24 +260,7 @@ export default {
       this.$tab.closePage();
       this.$router.go(-1);
     },
-    handleAccept() {
-      // 验收逻辑
-      this.$confirm("确认完成验收吗？", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-      }).then(() => {
-        // 提交验收
-      });
-    },
-    handleAccept() {
-      // 验收逻辑
-      this.$confirm("确认完成验收吗？", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-      }).then(() => {
-        // 提交验收
-      });
-    },
+
     // 取消
     onCancel() {
       this.$router.go(-1);

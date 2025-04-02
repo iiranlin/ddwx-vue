@@ -150,7 +150,7 @@
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="taskDialogVisible = false"
+        <el-button class="cancel-button" type="text" @click="taskDialogVisible = false"
           >关闭</el-button
         >
       </div>
@@ -427,6 +427,8 @@ export default {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
             type: "warning",
+            cancelButtonClass:'cancel-button el-button--text',
+            confirmButtonClass:' el-button--text',
           }
         ).then(() => {
           this.submit();

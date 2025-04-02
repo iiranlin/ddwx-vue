@@ -279,6 +279,9 @@ export default {
           this.$confirm("确定删除该维保计划吗？", "提示", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
+            type: "warning",
+            cancelButtonClass:'cancel-button el-button--text',
+            confirmButtonClass:' el-button--text',
           })
             .then(() => MaintenancePlan.deleteMaintenancePlan([ids["id"]]))
             .then((data) => {
@@ -291,6 +294,9 @@ export default {
           this.$confirm("终止后该计划作废，不能再进行任务操作，请确认操作！", "提示", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
+            type: "warning",
+            cancelButtonClass:'cancel-button el-button--text',
+            confirmButtonClass:' el-button--text',
           }).then(() => {
             MaintenancePlan.updateMaintenancePlanState({
               id: ids["id"],
@@ -306,6 +312,9 @@ export default {
           this.$confirm("结束后该计划不能再修改跟进，请确认操作！", "提示", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
+            type: "warning",
+            cancelButtonClass:'cancel-button el-button--text',
+            confirmButtonClass:' el-button--text',
           }).then(() => {
             MaintenancePlan.updateMaintenancePlanState({
               id: ids["id"],

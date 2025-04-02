@@ -161,6 +161,8 @@ export default {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning",
+          cancelButtonClass:'cancel-button el-button--text',
+          confirmButtonClass:' el-button--text',
         }).then(() => {
           ResourceManagement.deleteTeam(ids).then(() => {
             this.$message.success("删除成功！");
