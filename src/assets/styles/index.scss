@@ -121,22 +121,25 @@ aside {
 }
 
 //main-container全局样式
-.app-container_tree{
+.app-container_tree {
   padding: 20px;
   padding-right: 4px;
   padding-bottom: 0px;
   height: 100%;
 }
-.app-container{
+
+.app-container {
   padding: 2px 4px 20px 10px;
   padding-bottom: 0px;
   height: 100%;
 }
-.app-container_list{
+
+.app-container_list {
   padding: 20px;
   padding-bottom: 0px;
   height: 100%;
 }
+
 .components-container {
   margin: 30px 50px;
   position: relative;
@@ -202,72 +205,88 @@ aside {
 .multiselect--active {
   z-index: 1000 !important;
 }
-.container_flex{
+
+.container_flex {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding-left:0px !important;
-  .container_flex-right{
-    height:37px;
+  padding-left: 0px !important;
+
+  .container_flex-right {
+    height: 37px;
     background: #fbfbfb;
     position: relative;
-    top: -18px; border-bottom:1px solid #ccc
+    top: -18px;
+    border-bottom: 1px solid #ccc
   }
-  .container_flex-right_tree{
-    height:37px;
+
+  .container_flex-right_tree {
+    height: 37px;
     background: #fbfbfb;
     position: relative;
     margin: -2px -20px 0px 0px !important;
-    top: -18px; border-bottom:1px solid #ccc
+    top: -18px;
+    border-bottom: 1px solid #ccc
   }
-  .container_flex-right_list{
-    height:37px;
+
+  .container_flex-right_list {
+    height: 37px;
     background: #fbfbfb;
     position: relative;
     margin: -2px -24px 0px -12px !important;
-    top: -18px; border-bottom:1px solid #ccc
+    top: -18px;
+    border-bottom: 1px solid #ccc
   }
-  .container_flex_button{
+
+  .container_flex_button {
     background-color: #fbfbfb;
     border-bottom: 1px solid #ccc;
     padding-top: 4px;
     padding-bottom: 4px;
     margin-left: 0px !important;
   }
-  .container_table{
-    th {
-			color: #495060;
-			background-color: #ecedf0;
-			padding:0;
-			border-color: #dcddde;
 
-		}
-    tr:hover{
+  .container_table {
+    th {
+      color: #495060;
+      background-color: #ecedf0;
+      padding: 0;
+      border-color: #dcddde;
+
+    }
+
+    tr:hover {
       // background-color: transparent !important;
     }
-    td{
-      padding:4px;
-      .el-form-item{
-        margin-bottom:0px;
+
+    td {
+      padding: 4px;
+
+      .el-form-item {
+        margin-bottom: 0px;
       }
     }
+
     flex: 1;
   }
-  .form_data{
+
+  .form_data {
     margin-left: 10px;
   }
 }
-.container_flex_overflow{
+
+.container_flex_overflow {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding-left:0px !important;
+  padding-left: 0px !important;
   margin-left: -14px !important;
   overflow-y: auto;
   border-right: 1px solid #ccc;
-    margin-top: -18px;
+  margin-top: -18px;
 }
-.container_h{
+
+.container_h {
   height: 100%;
 }
 
@@ -279,7 +298,7 @@ aside {
   padding: 20px;
 }
 
-.title-right{
+.title-right {
   display: inline-block;
   font-weight: 600;
   font-size: 15px;
@@ -289,4 +308,19 @@ aside {
 // 危险色
 .dangerColor {
   color: #ed4646;
+}
+
+// 弹窗footer 按钮右对齐
+.dialog-footer,
+.el-message-box__btns {
+  text-align: right;
+
+  .cancel-button {
+    color: #C9C9C9;
+    margin-right: 10px;
+  }
+
+  button {
+    font-size: 16px;
+  }
 }
