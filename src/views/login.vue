@@ -357,7 +357,7 @@ export default {
   background-size: 1220px 800px;
   // background-position-y: 108px;
   // background-position-x: 104px;
-  background-color: #185ec1;
+  // background-color: #185ec1;
 }
 
 #loginLogo {
@@ -371,7 +371,7 @@ export default {
 
 #loginBg {
   position: absolute;
-  left: 40%;
+  left: 50%;
   top: 50%;
   width: 100%;
   height: 100%;
@@ -379,15 +379,15 @@ export default {
   background: url('../assets/images/bg.png') center/cover no-repeat fixed;
 }
 
-#loginBg::after {
-  content: "";
-  position: absolute;
-  right: -1px;
-  top: 0;
-  height: 100%;
-  width: 10%;
-  background-image: linear-gradient(90deg, #185ec100 0%, #185ec1 100%);
-}
+// #loginBg::after {
+//   content: "";
+//   position: absolute;
+//   right: -1px;
+//   top: 0;
+//   height: 100%;
+//   width: 10%;
+//   background-image: linear-gradient(90deg, #185ec100 0%, #185ec1 100%);
+// }
 
 #loginBg video {
   position: absolute;
@@ -563,21 +563,21 @@ export default {
   }
   #loginBg {
     position: absolute;
-    left: 40%;
+    left: 50%;
     top: 50%;
     width: 100%;
     height: 100%;
     transform: translate(-50%, -50%);
   }
-  #loginBg::after {
-    content: "";
-    position: absolute;
-    right: -1px;
-    top: 0;
-    height: 100%;
-    width: 10%;
-    background-image: linear-gradient(90deg, #185ec100 0%, #185ec1 100%);
-  }
+  // #loginBg::after {
+  //   content: "";
+  //   position: absolute;
+  //   right: -1px;
+  //   top: 0;
+  //   height: 100%;
+  //   width: 10%;
+  //   background-image: linear-gradient(90deg, #185ec100 0%, #185ec1 100%);
+  // }
   #loginBg video {
     position: absolute;
     left: 0;
