@@ -54,6 +54,7 @@
               v-model="form.faultEquipmentId"
               placeholder="请选择故障设备"
               @change="handleEquipmentChange"
+              allow-create
               style="width: 100%"
             >
               <el-option
