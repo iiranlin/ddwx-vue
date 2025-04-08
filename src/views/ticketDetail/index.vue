@@ -58,6 +58,23 @@
           <el-descriptions-item label="故障描述">
             <div class="description-text">{{ details.remark }}</div>
           </el-descriptions-item>
+          <el-descriptions-item label="维修设备">
+            <div class="description-text">{{ details.faultEquipmentName }}</div>
+          </el-descriptions-item>
+          <el-descriptions-item label="故障图片">
+            <div style="display: flex; flex-wrap: wrap; gap: 10px">
+              <el-image
+                v-for="item in details.faultFileUrl
+                  ? details.faultFileUrl
+                      .split(',')
+                      .map((x) => `${baseUrl}${x}`)
+                  : []"
+                :src="item"
+                :preview-src-list="[item]"
+                style="width: 100px; height: 100px"
+              ></el-image>
+            </div>
+          </el-descriptions-item>
         </el-descriptions>
       </div>
     </template>
