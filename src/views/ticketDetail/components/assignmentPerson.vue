@@ -652,13 +652,13 @@ export default {
             border: 1px solid #E1E1E1;
             z-index: 1;
 
-            .task-slot {
-              &:hover {
-                background-color: #4a7afe9e !important;
-                box-shadow: 0 2px 8px rgba(74, 122, 254, 0.3);
-                z-index: 5; /* 悬停时提高层级 */
-              }
-            }
+            // .task-slot {
+            //   &:hover {
+            //     background-color: #4a7afe9e !important;
+            //     box-shadow: 0 2px 8px rgba(74, 122, 254, 0.3);
+            //     z-index: 5; /* 悬停时提高层级 */
+            //   }
+            // }
           }
         }
       }
