@@ -2,8 +2,6 @@
   <div class="app-container_list">
     <el-row :gutter="20" class="container_h">
       <el-col :span="24" :xs="24" class="container_flex">
-       
-      
         <!--表格数据-->
         <table-index
           ref="tableIndex"
@@ -141,17 +139,21 @@ export default {
     //页面按钮点击事件
     handleButton(ids, buttonCode) {
       if (buttonCode === "open") {
-        this.$confirm(
-          `${ids.status === 1 ? "停用后，必须调度中心手动验收。" : "启用后，调度中心环节系统自动验收通过。"}`,
-          "提示",
-          {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            type: "warning",
-            cancelButtonClass:'cancel-button el-button--text',
-            confirmButtonClass:' el-button--text',
-          }
-        )
+        const text =
+          ids["resourceKey"] === "DISPATCH_CENTER_ACCEPTANCE"
+            ? ids.status === 1
+              ? "停用后，必须调度中心手动验收。"
+              : "启用后，调度中心环节系统自动验收通过。"
+            : ids.status === 1
+            ? "停用后，必须报修人手动验收。"
+            : "启用后，报修人超时未验收时系统自动通过。";
+        this.$confirm(`${text}`, "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+          cancelButtonClass: "cancel-button el-button--text",
+          confirmButtonClass: " el-button--text",
+        })
           .then(() =>
             ProgressConfig.updateProgressConfig({
               id: ids.id,
