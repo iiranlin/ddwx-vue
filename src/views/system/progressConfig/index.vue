@@ -142,7 +142,7 @@ export default {
     handleButton(ids, buttonCode) {
       if (buttonCode === "open") {
         this.$confirm(
-          `确定${ids.status === 1 ? "停用" : "开启"}该流程管理吗？`,
+          `${ids.status === 1 ? "停用后，必须调度中心手动验收。" : "启用后，调度中心环节系统自动验收通过。"}`,
           "提示",
           {
             confirmButtonText: "确定",
