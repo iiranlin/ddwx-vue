@@ -33,7 +33,7 @@
       <el-button class="cancel-button" type="text" @click="handleCancel"
         >取消</el-button
       >
-      <el-button type="text" @click="handleCreate()">确定</el-button>
+      <el-button type="text" @click="handleCreate()">保存</el-button>
     </div>
   </el-dialog>
 </template>
