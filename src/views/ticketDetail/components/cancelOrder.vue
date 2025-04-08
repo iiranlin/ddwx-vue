@@ -80,7 +80,7 @@ export default {
         operateDesc: [
           {
             required: true,
-            message: "归属班组不能为空",
+            message: "取消原因不能为空",
             trigger: "blur",
           },
         ],
