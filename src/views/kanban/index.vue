@@ -102,7 +102,7 @@
     </el-row>
 
     <!-- 各场所维修工单柱状图 -->
-    <h2>各场所维修工单</h2>
+    <h2>各场所维修完成工单</h2>
     <el-row :gutter="20">
       <el-col :span="24">
         <div slot="header" class="clearfix">
@@ -119,7 +119,7 @@
       <el-col :xs="24" :sm="24" :md="24" :lg="12">
         <div class="box-card">
           <div slot="header" class="clearfix">
-            <h2>维修工单优先级</h2>
+            <h2>已完成工单优先级</h2>
           </div>
           <div class="chart-wrapper">
             <div ref="pieChart1" class="chart" style="height: 300px"></div>
