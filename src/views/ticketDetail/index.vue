@@ -322,7 +322,7 @@ export default {
         id: this.id,
         orderNum: this.details.orderNum,
         status,
-        title: status === 5 ? "用户验收" : "调度中心验收",
+        title: status === 5 ? "报修人验收" : "调度中心验收",
       });
     },
 

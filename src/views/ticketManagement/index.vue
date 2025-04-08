@@ -569,7 +569,7 @@ export default {
           id: ids["id"],
           orderNum: ids["orderNum"],
           status: ids["status"] + 1,
-          title: ids["status"] + 1 === 5 ? "用户验收" : "调度中心验收",
+          title: ids["status"] + 1 === 5 ? "报修人验收" : "调度中心验收",
         });
       } else if (buttonCode === "acceptanceSubmit") {
         this.$router.push({
