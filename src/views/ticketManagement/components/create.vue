@@ -345,7 +345,7 @@ export default {
       const selectedItems = this.equipmentOptions.find((item) =>
         selectedValues.includes(item.value)
       );
-      this.form.faultEquipmentName = selectedItems.label;
+      this.form.faultEquipmentName = selectedItems?.label || selectedValues;
     },
     uploadChange(e) {
       console.log(e, "e");
