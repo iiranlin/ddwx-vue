@@ -182,7 +182,7 @@ export default {
       personOptions: [],
       dateTimeRange: [],
       dateList: [],
-      persons: [{}],
+      persons: [],
       taskDialogVisible: false,
       selectedTasks: [],
     };
@@ -242,11 +242,12 @@ export default {
 
           // 回显时间轴数据
           this.updateTasksByDate();
-          console.log("数据回想爱你");
         }
         // 时间段回显
         if (this.details.startDate && this.details.endDate) {
-          this.dateTimeRange = [this.details.startDate, this.details.endDate];
+          
+            this.dateTimeRange = [];
+          
         }
       });
 
@@ -301,6 +302,14 @@ export default {
           // endTime: dayjs(task.endTime).format("HH:mm"),
         })),
       }));
+
+      // 判断选择的人数是否都在格式化后的数据里面，如果选中的人没有在格式化后的数据里面，则将增加name 和 tasks 为空
+      this.form.selectedPersons.forEach((person) => {
+        const selectedPerson = formattedData.find((item) => item.name === person.name);
+        if (!selectedPerson) {
+          formattedData.push({ name: person.name, tasks: [] });
+        }
+      });
 
       this.persons = formattedData;
     },
