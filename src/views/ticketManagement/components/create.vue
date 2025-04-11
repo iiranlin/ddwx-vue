@@ -84,10 +84,11 @@
         <!-- 第三行 -->
         <el-col :span="12">
           <el-form-item label="报修人" prop="contactName">
-            <el-input
+            {{ form.contactName }}
+            <!-- <el-input
               v-model="form.contactName"
               placeholder="请输入报修人姓名"
-            ></el-input>
+            ></el-input> -->
           </el-form-item>
         </el-col>
         <el-col :span="12">
