@@ -270,7 +270,7 @@ export default {
         contactName: "",
         contactPhone: "",
         landline: "",
-        urgency: "",
+        urgency: priorityLevel[0],
       };
       if (this.currentUser) {
         this.form.contactName = this.currentUser.realName || "";
