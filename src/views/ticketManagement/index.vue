@@ -270,7 +270,7 @@
               >查看</el-button
             >
             <el-button
-              v-if="[1].includes(scope.row.status)"
+              v-if="[1,2].includes(scope.row.status)"
               type="text"
               @click="handleButton(scope.row, 'update')"
               >修改</el-button
