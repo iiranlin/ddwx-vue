@@ -315,12 +315,13 @@ export default {
     initBarChart(data = {}) {
       this.barChart = echarts.init(this.$refs.barChart, "macarons");
       const locations = data?.abscissas || [];
-      const firstData =
-        data?.list?.find((x) => x.ordinate === "一般")?.numberList || [];
-      const secondData =
-        data?.list?.find((x) => x.ordinate === "非常紧急")?.numberList || [];
-      const thirdData =
-        data?.list?.find((x) => x.ordinate === "紧急")?.numberList || [];
+      // 保证每个类别都存在，缺失补0
+      const categoryNames = ["一般", "非常紧急", "紧急"];
+      const categoryData = {};
+      categoryNames.forEach(name => {
+        const found = data?.list?.find(x => x.ordinate === name);
+        categoryData[name] = found ? found.numberList : Array(locations.length).fill(0);
+      });
 
       this.barChart.setOption({
         tooltip: {
@@ -330,7 +331,7 @@ export default {
           },
         },
         legend: {
-          data: ["一般", "非常紧急", "紧急"],
+          data: categoryNames,
           left: 0,
           top: 0,
         },
@@ -374,7 +375,7 @@ export default {
             type: "bar",
             barWidth: 30,
             barGap: 0,
-            data: firstData,
+            data: categoryData["一般"],
             itemStyle: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 { offset: 0, color: "rgba(25,120,229,0.10)" }, // 顶部颜色（浅）
@@ -394,7 +395,7 @@ export default {
             type: "bar",
             barGap: 0,
             barWidth: 30,
-            data: secondData,
+            data: categoryData["非常紧急"],
             itemStyle: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 { offset: 0, color: "rgba(232,32,45,0.15)" }, // 顶部颜色（浅）
@@ -414,7 +415,7 @@ export default {
             type: "bar",
             barGap: 0,
             barWidth: 30,
-            data: thirdData,
+            data: categoryData["紧急"],
             itemStyle: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 { offset: 0, color: "rgba(255,208,46,0.15)" }, // 顶部颜色（浅）
