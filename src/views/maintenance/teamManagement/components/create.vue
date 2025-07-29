@@ -47,10 +47,10 @@
           <el-form-item :label="'班组工长'" prop="leader.userId">
             <csSelect
               :selectData="{
-                data: userOptions,
-                label: 'label',
-                value: 'value',
-                isRight: false,
+              data: userOptions,
+              label: 'label',
+              value: 'value',
+              isRight: false,
               }"
               v-model="form.leader.userId"
               placeholder="请选择班组工长"
@@ -135,44 +135,47 @@ export default {
             trigger: "blur",
           },
         ],
-        "leader.userId": [
-          {
-            required: true,
-            message: "班组工长不能为空",
-            trigger: "blur",
-          },
-        ],
+        // "leader.userId": [
+        //   {
+        //     required: false,
+        //     message: "班组工长不能为空",
+        //     trigger: "blur",
+        //   },
+        // ],
       },
     };
   },
   methods: {
     // 获取所有用户人员信息
     getUserList() {
-      userPage({
+
+      ResourceManagement.getRepairList({
         pageNum: 1,
         pageSize: 99999,
-        total: 0,
-        status: 0,
+        status: -1,
+        teamId: this.form.id,
       }).then(({ data: { list } }) => {
         this.userOptions = list.map((item) => {
           return {
             ...item,
-            label: item.realName,
-            value: item.id,
+            label: item.name,
+            value: item.userId,
           };
         });
       });
     },
     userChange(selectedValues) {
+      // 确保form.leader对象存在 - 现在由计算属性处理
+      
       // 获取选中的数据详情
       const selectedItems = this.userOptions.find((item) =>
         selectedValues.includes(item.value)
       );
 
-      this.form.leader.name = selectedItems.label;
-      this.form.leader.phone = selectedItems.phone;
-      this.form.leader.landline = selectedItems.landline;
-      this.form.leader.jobNum = selectedItems.userCode;
+        this.form.leader.name = selectedItems.label;
+        this.form.leader.phone = selectedItems.phone;
+        this.form.leader.landline = selectedItems.landline;
+        this.form.leader.jobNum = selectedItems.userCode;
     },
     // 获取设备枚举不分页
     getEquipmentType() {
@@ -214,7 +217,6 @@ export default {
       this.isEdit = true;
       this.openDataScope = true;
       this.getEquipmentType();
-      this.getUserList();
       await ResourceManagement.getTeamById(id).then(({ data }) => {
         this.form = Object.assign(
           {},
@@ -222,17 +224,19 @@ export default {
           data.leader
             ? { leader: data.leader }
             : {
-                leader: {
-                  userId: "",
-                  name: "",
-                  phone: "",
-                  landline: "",
-                  jobNum: "",
-                },
-              }
+              leader: {
+                userId: "",
+                name: "",
+                phone: "",
+                landline: "",
+                jobNum: "",
+              },
+            }
         );
         this.$nextTick(() => {
           this.title = "编辑班组";
+          this.getUserList();
+
         });
       });
     },
@@ -242,9 +246,15 @@ export default {
       this.$refs.elform.validate(async (valid) => {
         if (valid) {
           this.loading = true;
-          await ResourceManagement[this.isEdit ? `updateTeam` : `addTeam`](
-            Object.assign({}, this.form)
-          )
+          // 创建一个新的表单数据对象，避免直接修改原始表单
+          const formData = Object.assign({}, this.form);
+          
+          // 如果leader不存在或userId为空，则从提交数据中移除leader
+          if(!formData.leader || !formData.leader.userId) {
+            Reflect.deleteProperty(formData, "leader");
+          }
+          
+          await ResourceManagement[this.isEdit ? `updateTeam` : `addTeam`](formData)
             .then(({ message }) => {
               this.loading = false;
               this.$modal.msgSuccess(message);
