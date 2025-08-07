@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import logoImg from '@/assets/logo/Logo@2x.jpg'
+import logoImg from '@/assets/logo/Logo@2x.png'
 import variables from '@/assets/styles/variables.scss'
 
 export default {
