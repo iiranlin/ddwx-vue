@@ -58,9 +58,9 @@
       <!-- <el-tooltip content="消息通知" placement="bottom">
               <i class="el-icon-chat-dot-round"></i>
       </el-tooltip> -->
-      <a href="/机关维修调度系统操作手册.doc" target="_blank" style="margin-right: 10px;">
+      <a href="/机关维修系统产品使用说明书.doc" target="_blank" style="margin-right: 10px;">
         <i class="el-icon-download"></i>
-        操作手册
+        产品使用说明书
       </a>
       <i class="el-icon-chat-dot-round" @click="handleNoticeClick()"></i>
     </div>

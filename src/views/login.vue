@@ -16,7 +16,7 @@
       <div class="login-right-box-title">
         <img src="../assets/logo/StationLogo.svg" alt="" class="logo">
         <div class="right-title">
-          <h2 class="title-h2">机关维修调度系统</h2>
+          <h2 class="title-h2">机关维修系统</h2>
           <!-- <p class="title-p">中国铁路广州局集团有限公司</p> -->
         </div>
       </div>
