@@ -101,7 +101,7 @@
           }}</el-descriptions-item>
           <template v-if="status >= 3">
             <el-descriptions-item label="维修人员">{{
-              details.personnelName
+              details.personnelNames
             }}</el-descriptions-item>
             <el-descriptions-item label="联系电话">{{
               details.personnelPhone
