@@ -93,7 +93,7 @@
             details.teamName
           }}</el-descriptions-item>
           <el-descriptions-item label="工长电话">
-            {{ details.foreman ? details.foreman.phone : "" }} /
+            {{ details.foreman ? details.foreman.phone : "" }},
             {{ details.foreman ? details.foreman.landline : "" }}
           </el-descriptions-item>
           <el-descriptions-item label="分配时间">{{
