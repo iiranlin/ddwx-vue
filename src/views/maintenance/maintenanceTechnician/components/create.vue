@@ -167,16 +167,16 @@ export default {
         phone: [
           { required: true, message: "联系电话不能为空", trigger: "blur" },
           {
-            pattern: /^1[3-9]\d{9}$/,
-            message: "请输入正确的手机号码",
+            pattern: /^[^\u4e00-\u9fa5]+$/, // 允许任意非中文字符
+            message: "联系电话不能包含中文字符",
             trigger: "blur",
           },
         ],
         landline: [
           { required: true, message: "座机不能为空", trigger: "blur" },
           {
-            pattern: /^(?:(?:\d{3}-)?\d{8}|^(?:\d{4}-)?\d{7,8})(?:-\d+)?$/,
-            message: "请输入正确的座机号码",
+            pattern: /^[^\u4e00-\u9fa5]+$/, // 允许任意非中文字符
+            message: "座机号码不能包含中文字符",
             trigger: "blur",
           },
         ],
