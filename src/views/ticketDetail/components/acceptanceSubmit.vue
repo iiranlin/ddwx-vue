@@ -12,7 +12,6 @@
           v-model="form.operateFileUrl"
           @input="handleFileChange"
           :limit="3"
-          :fileSize="10"
           :fileType="['jpg', 'jpeg', 'png']"
         />
       </div>

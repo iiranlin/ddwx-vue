@@ -68,10 +68,10 @@ export default {
           userIdentity: "REPAIR",
           userIdentityName: "维修人员",
         },
-        {
-          userIdentity: "USER",
-          userIdentityName: "用户",
-        },
+        // {
+        //   userIdentity: "USER",
+        //   userIdentityName: "用户",
+        // },
       ],
     };
   },

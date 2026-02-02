@@ -133,7 +133,6 @@
               v-model="form.faultFileUrl"
               @input="uploadChange"
               :limit="3"
-              :fileSize="10"
               :fileType="['png', 'jpg', 'jpeg']"
             />
           </el-form-item>
