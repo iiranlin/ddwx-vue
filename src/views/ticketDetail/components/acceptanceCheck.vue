@@ -36,7 +36,6 @@
               v-model="form.operateFileUrl"
               :limit="3"
               :file-type="['jpg', 'png', 'PNG']"
-              :file-size="10"
             />
           </el-form-item>
         </el-col>
