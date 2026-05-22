@@ -303,12 +303,12 @@ export default {
     userChange(selectedValues) {
       // 获取选中的数据详情
       const selectedItems = this.userOptions.find((item) =>
-        selectedValues.includes(item.value)
+        selectedValues == item.value
       );
-      this.form.name = selectedItems.label;
-      this.form.userCode = selectedItems.userCode;
-      this.form.phone = this.form.phone || selectedItems.phone;
-      this.form.landline = this.form.landline || selectedItems.landline;
+      this.form.name = selectedItems?.label;
+      this.form.userCode = selectedItems?.userCode;
+      this.form.phone =  selectedItems?.phone  ;
+      this.form.landline =  selectedItems?.landline;
     },
   },
 };

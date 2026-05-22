@@ -43,7 +43,7 @@
             ></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="24">
+        <!-- <el-col :span="24">
           <el-form-item :label="'班组工长'" prop="leader.userId">
             <csSelect
               :selectData="{
@@ -58,7 +58,7 @@
               @change="userChange"
             ></csSelect>
           </el-form-item>
-        </el-col>
+        </el-col> -->
         <el-col :span="24">
           <el-form-item :label="'维修类型'" prop="equipmentTypeIds">
             <el-select
