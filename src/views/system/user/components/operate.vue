@@ -158,8 +158,6 @@ export default {
       },
       userTypeList: [
         { code: '0', label: '员工' },
-        { code: '1', label: '司机' },
-        { code: '2', label: '司机兼员工' }
       ]
     }
   },
