@@ -47,6 +47,11 @@ export const constantRoutes = [
     component: () => import('@/views/login'),
     hidden: true
   },
+  {
+    path: '/sso',
+    component: () => import('@/views/sso'),
+    hidden: true
+  },
 
   {
     path: '/404',
