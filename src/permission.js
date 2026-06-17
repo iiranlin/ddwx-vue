@@ -11,13 +11,13 @@ NProgress.configure({ showSpinner: false })
 const whiteList = ['/login', '/sso']
 
 function getSsoToken(to) {
-  return to.query.id_token || to.query.sso
+  return to.query.id_token || to.query.username
 }
 
 function removeSsoTokenQuery(to) {
   const query = { ...to.query }
   delete query.id_token
-  delete query.sso
+  delete query.username
 
   return {
     path: to.path,
@@ -42,7 +42,7 @@ function loginAuth(snapTicket) {
 router.beforeEach(async(to, from, next) => {
   NProgress.start()
 
-  // 如果url参数中包含id_token或sso参数时，强制切换登录身份（排除 /sso 路径，由专门的过渡页进行处理）
+  // 如果url参数中包含id_token或username参数时，强制切换登录身份（排除 /sso 路径，由专门的过渡页进行处理）
   const ssoToken = getSsoToken(to)
   if (ssoToken && to.path !== '/sso') {
     try {

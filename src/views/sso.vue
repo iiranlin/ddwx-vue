@@ -94,7 +94,7 @@ export default {
   created() {
     // 提取并保存重定向目标
     this.redirect = this.$route.query.redirect || '/'
-    this.idToken = this.$route.query.id_token || this.$route.query.sso
+    this.idToken = this.$route.query.id_token || this.$route.query.username
   },
   mounted() {
     this.initSSOLogin()
