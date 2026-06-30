@@ -151,8 +151,11 @@ export default {
   watch: {
     "formData.year": {
       handler(newVal) {
-        console.log(newVal,'newVal')
-        if (!newVal) return;
+        if (!Array.isArray(newVal) || newVal.length !== 2) {
+          this.formData.startTime = "";
+          this.formData.endTime = "";
+          return;
+        }
         this.formData.startTime = dayjs(newVal[0]).format("YYYY-MM-DD HH:mm:ss");
         this.formData.endTime = dayjs(newVal[1]).format("YYYY-MM-DD HH:mm:ss");
       },
@@ -243,12 +246,13 @@ export default {
     },
     //刷新列表数据
     handleQuery(row = {}) {
-        if (row.year.length === 0) {
-        row.startTime = "";
-        row.endTime = "";
-        row.year = [];
+      const formData = Object.assign({}, this.formData, row);
+      if (!Array.isArray(formData.year) || formData.year.length !== 2) {
+        formData.startTime = "";
+        formData.endTime = "";
+        formData.year = [];
       }
-      this.formData = Object.assign({}, this.formData, row);
+      this.formData = formData;
       this.getList();
     },
     tableRowClassName({ row, rowIndex }) {
