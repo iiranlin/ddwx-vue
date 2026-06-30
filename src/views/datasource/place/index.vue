@@ -86,7 +86,7 @@
           :selectShow="false"
         >
           <template #column-date>
-            <span>{{ formData.startTime }} 至 {{ formData.endTime }}</span>
+            <span>{{ queriedTimeRange.startTime }} 至 {{ queriedTimeRange.endTime }}</span>
           </template>
         </table-index>
         <!--分页器-->
@@ -147,6 +147,15 @@ export default {
         ],
         siteId: "",
       },
+      // 最近一次搜索确认的统计时间
+      queriedTimeRange: {
+        startTime: dayjs().format("YYYY") + "-01-01",
+        endTime: dayjs().format("YYYY") + "-12-31",
+        year: [
+          dayjs().format("YYYY") + "-01-01",
+          dayjs().format("YYYY") + "-12-31",
+        ],
+      },
       placeOptions: [],
       //已选中条目
       selectionData: [],
@@ -157,6 +166,7 @@ export default {
   watch: {
     "formData.year": {
       handler(newVal) {
+        if (!Array.isArray(newVal) || newVal.length < 2) return;
         this.formData.startTime = dayjs(newVal[0]).format("YYYY-MM-DD");
         this.formData.endTime = dayjs(newVal[1]).format("YYYY-MM-DD");
       },
@@ -198,7 +208,12 @@ export default {
       this.loading = true;
 
       await DataStatistics.getPlaceStatistics(
-        Object.assign({}, this.listQuery, this.formData)
+        Object.assign(
+          {},
+          this.listQuery,
+          this.formData,
+          this.queriedTimeRange
+        )
       )
         .then(({ data }) => {
           const { pageNum, pageSize } = this.listQuery;
@@ -223,7 +238,9 @@ export default {
         console.log("export");
         try {
           this.loading = true;
-          const res = await DataStatistics.exportPlaceStatistics(this.formData);
+          const res = await DataStatistics.exportPlaceStatistics(
+            Object.assign({}, this.formData, this.queriedTimeRange)
+          );
           const blob = new Blob([res.data], {
             type: "application/vnd.ms-excel",
           });
@@ -286,6 +303,15 @@ export default {
         ];
       }
       this.formData = Object.assign({}, this.formData, row);
+      this.formData.startTime = dayjs(this.formData.year[0]).format(
+        "YYYY-MM-DD"
+      );
+      this.formData.endTime = dayjs(this.formData.year[1]).format("YYYY-MM-DD");
+      this.queriedTimeRange = {
+        startTime: this.formData.startTime,
+        endTime: this.formData.endTime,
+        year: this.formData.year.slice(),
+      };
       this.getList();
     },
     tableRowClassName({ row, rowIndex }) {
