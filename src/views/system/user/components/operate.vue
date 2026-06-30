@@ -150,7 +150,8 @@ export default {
           { required: true, message: '用户类型不能为空', trigger: 'blur' }
         ],
         phone: [
-          { required: true, message: '用户电话不能为空', trigger: 'blur' }
+          { required: true, message: '用户电话不能为空', trigger: 'blur' },
+          { pattern: /^\d{11}$/, message: '用户电话须为11位数字', trigger: 'blur' }
         ],
         rank: [
           { required: true, message: '用户级别不能为空', trigger: 'change' }
