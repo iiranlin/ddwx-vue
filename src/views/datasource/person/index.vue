@@ -43,6 +43,7 @@
             <el-form-item label="统计时间">
               <el-date-picker
                 type="daterange"
+                :clearable="false"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
                 style="width: 100%"
