@@ -77,7 +77,7 @@
           <el-form-item :label="'联系电话'" prop="phone">
             <el-input
               v-model="form.phone"
-              maxlength="240"
+              maxlength="11"
               placeholder="请输入联系电话"
             ></el-input>
           </el-form-item>
@@ -86,7 +86,7 @@
           <el-form-item :label="'座机'" prop="landline">
             <el-input
               v-model="form.landline"
-              maxlength="240"
+              maxlength="12"
               placeholder="请输入座机号码"
             ></el-input>
           </el-form-item>
@@ -167,16 +167,16 @@ export default {
         phone: [
           { required: true, message: "联系电话不能为空", trigger: "blur" },
           {
-            pattern: /^[^\u4e00-\u9fa5]+$/, // 允许任意非中文字符
-            message: "联系电话不能包含中文字符",
+            pattern: /^\d{11}$/,
+            message: "联系电话须为11位数字",
             trigger: "blur",
           },
         ],
         landline: [
           { required: true, message: "座机不能为空", trigger: "blur" },
           {
-            pattern: /^[^\u4e00-\u9fa5]+$/, // 允许任意非中文字符
-            message: "座机号码不能包含中文字符",
+            pattern: /^(?=(?:\D*\d){4,11}\D*$)\d+(?:-\d+)?$/,
+            message: "座机号码格式不正确",
             trigger: "blur",
           },
         ],
