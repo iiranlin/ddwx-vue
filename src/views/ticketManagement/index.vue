@@ -447,7 +447,16 @@ export default {
   watch: {
     "formData.year": {
       handler(newVal) {
-        if (!newVal) return;
+        if (
+          !Array.isArray(newVal) ||
+          newVal.length !== 2 ||
+          !newVal[0] ||
+          !newVal[1]
+        ) {
+          this.formData.startDate = "";
+          this.formData.endDate = "";
+          return;
+        }
         this.formData.startDate = dayjs(newVal[0]).format("YYYY-MM-DD");
         this.formData.endDate = dayjs(newVal[1]).format("YYYY-MM-DD");
       },
