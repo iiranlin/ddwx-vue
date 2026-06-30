@@ -95,6 +95,7 @@
           <el-form-item label="联系电话" prop="contactPhone">
             <el-input
               v-model="form.contactPhone"
+              maxlength="11"
               placeholder="请输入联系电话"
             ></el-input>
           </el-form-item>
@@ -105,6 +106,7 @@
           <el-form-item label="座机" prop="landline">
             <el-input
               v-model="form.landline"
+              maxlength="11"
               placeholder="请输入座机号码"
             ></el-input>
           </el-form-item>
@@ -204,16 +206,16 @@ export default {
         contactPhone: [
           { required: false, message: "联系电话不能为空", trigger: "blur" },
           {
-            pattern: /^1[3-9]\d{9}$/,
-            message: "请输入正确的手机号码格式",
+            pattern: /^\d{11}$/,
+            message: "联系电话须为11位数字",
             trigger: "blur",
           },
         ],
         landline: [
           { required: true, message: "座机不能为空", trigger: "blur" },
           {
-            pattern: /^(?:(?:\d{3}-)?\d{8}|^(?:\d{4}-)?\d{7,8})(?:-\d+)?$/,
-            message: "请输入正确的座机号码格式",
+            pattern: /^(?=(?:\D*\d){4,11}\D*$)\d+(?:-\d+)?$/,
+            message: "座机号码须为不超过11位数字",
             trigger: "blur",
           },
         ],
@@ -334,7 +336,7 @@ export default {
     handlePlaceChange(selectedValues) {
       // 获取选中的数据详情
       const selectedItems = this.placeOptions.find((item) =>
-        selectedValues.includes(item.value)
+        selectedValues == item.value
       );
       console.log("selectedItems", selectedItems);
       this.form.faultSiteName = selectedItems.label;
