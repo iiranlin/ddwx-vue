@@ -169,7 +169,7 @@ export default {
       
       // 获取选中的数据详情
       const selectedItems = this.userOptions.find((item) =>
-        selectedValues.includes(item.value)
+        selectedValues == item.value
       );
 
         this.form.leader.name = selectedItems.label;
@@ -285,7 +285,7 @@ export default {
     handleSelectionChange(selectedValues) {
       // 获取选中的数据详情
       const selectedItems = this.equipmentTypeOptions.filter((item) =>
-        selectedValues.includes(item.value)
+        selectedValues == item.value
       );
       this.form.equipmentType = selectedItems
         .map((item) => item.label)

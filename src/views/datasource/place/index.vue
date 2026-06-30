@@ -284,7 +284,7 @@ export default {
     handlePlaceChange(selectedValues) {
       // 获取选中的数据详情
       const selectedItems = this.placeOptions.find((item) =>
-        selectedValues.includes(item.value)
+        selectedValues == item.value
       );
     },
 

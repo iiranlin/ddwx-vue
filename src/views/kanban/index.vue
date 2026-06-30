@@ -588,7 +588,7 @@ export default {
     handleTeamChange(selectedValues) {
       // 获取选中的数据详情
       const selectedItems = this.teamTypeOptions.find((item) =>
-        selectedValues.includes(item.value)
+        selectedValues == item.value
       );
       // this.formData.teamName = selectedItems?.label;
     },

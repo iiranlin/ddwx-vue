@@ -295,7 +295,7 @@ export default {
     handleSelectionChange(selectedValues) {
       // 获取选中的数据详情
       const selectedItems = this.teamTypeOptions.find((item) =>
-        selectedValues.includes(item.value)
+        selectedValues == item.value
       );
       this.currentForeman = selectedItems.leaderName;
       this.form.teamName = selectedItems.label;

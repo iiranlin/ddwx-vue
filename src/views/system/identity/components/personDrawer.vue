@@ -117,7 +117,7 @@ export default {
     handleCheckChange(data, checked, indeterminate) {
       // 获取选中的数据详情
       const selectedItems = this.userOptions.filter((item) =>
-        this.$refs.veTree.getCheckedKeys().includes(item.value)
+        this.$refs.veTree.getCheckedKeys() == item.value
       );
 
       // 将选中人员的信息存储为对象数组

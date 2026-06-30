@@ -454,7 +454,7 @@ export default {
     userChange(selectedValues) {
       // 获取选中的所有人员的详细信息
       const selectedItems = this.userOptions.find((item) =>
-        selectedValues.includes(item.value)
+        selectedValues == item.value
       );
 
       // 更新form中的信息
@@ -470,7 +470,7 @@ export default {
       }
       // 获取选中的数据详情
       const selectedItems = this.teamTypeOptions.find((item) =>
-        selectedValues.includes(item.value)
+        selectedValues == item.value
       );
       this.form.teamName = selectedItems.label;
     },

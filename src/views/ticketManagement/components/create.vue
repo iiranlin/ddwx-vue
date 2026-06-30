@@ -344,7 +344,7 @@ export default {
     handleEquipmentChange(selectedValues) {
       // 获取选中的数据详情
       const selectedItems = this.equipmentOptions.find((item) =>
-        selectedValues.includes(item.value)
+        selectedValues == item.value
       );
       this.form.faultEquipmentName = selectedItems?.label || selectedValues;
     },

@@ -206,7 +206,7 @@ export default {
       console.log('change')
       // 获取选中的所有人员的详细信息
       const selectedItems = this.userOptions.filter((item) =>
-        selectedValues.includes(item.value)
+        selectedValues == item.value
       );
       // 将选中人员的信息存储为对象数组
       const selectedPersons = selectedItems.map((item) => ({

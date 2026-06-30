@@ -200,7 +200,7 @@ export default {
     handleSelectionChange(selectedValues) {
       // 获取选中的数据详情
       const selectedItems = this.teamTypeOptions.find((item) =>
-        selectedValues.includes(item.value)
+        selectedValues == item.value
       );
       this.currentForeman = selectedItems.leaderName;
       this.form.teamName = selectedItems.label;
@@ -208,7 +208,7 @@ export default {
     userChange(selectedValues) {
       // 获取选中的数据详情
       const selectedItems = this.userOptions.filter((item) =>
-        selectedValues.includes(item.value)
+        selectedValues == item.value
       );
 
       // 将选中人员的信息存储为对象数组
