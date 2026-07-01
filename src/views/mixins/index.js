@@ -1,4 +1,26 @@
 export default {
+  beforeCreate() {
+    // 全局query参数拦截
+    const methods = this.$options.methods
+    const originalHandleQuery = methods && methods.handleQuery
+
+    if (typeof originalHandleQuery !== 'function' || originalHandleQuery.resetsPageBeforeQuery) {
+      return
+    }
+
+    const handleQuery = function(...args) {
+      if (this.listQuery && Object.prototype.hasOwnProperty.call(this.listQuery, 'pageNum')) {
+        this.listQuery.pageNum = 1
+      }
+      if (this.pageInfo && Object.prototype.hasOwnProperty.call(this.pageInfo, 'pageNum')) {
+        this.pageInfo.pageNum = 1
+      }
+      return originalHandleQuery.apply(this, args)
+    }
+
+    handleQuery.resetsPageBeforeQuery = true
+    methods.handleQuery = handleQuery
+  },
   data() {
     return {
       listQuery: {
