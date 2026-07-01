@@ -21,7 +21,7 @@
           <el-form-item label="设备名称" prop="equipmentName">
             <el-input
               v-model="form.equipmentName"
-              maxlength="240"
+              maxlength="200"
               placeholder="请输入设备名称"
             ></el-input>
           </el-form-item>
@@ -49,7 +49,7 @@
           <el-form-item label="型号" prop="equipmentModel">
             <el-input
               v-model="form.equipmentModel"
-              maxlength="240"
+              maxlength="200"
               placeholder="请输入设备型号"
             ></el-input>
           </el-form-item>
@@ -58,7 +58,7 @@
           <el-form-item label="规格" prop="equipmentSpecs">
             <el-input
               v-model="form.equipmentSpecs"
-              maxlength="240"
+              maxlength="200"
               placeholder="请输入设备规格"
             ></el-input>
           </el-form-item>
@@ -67,7 +67,7 @@
           <el-form-item label="技术参数" prop="equipmentPara">
             <el-input
               v-model="form.equipmentPara"
-              maxlength="240"
+              maxlength="200"
               placeholder="请输入技术参数"
             ></el-input>
           </el-form-item>
@@ -85,7 +85,7 @@
           <el-form-item label="生产厂家" prop="equipmentFactory">
             <el-input
               v-model="form.equipmentFactory"
-              maxlength="240"
+              maxlength="200"
               placeholder="请输入生产厂家"
             ></el-input>
           </el-form-item>
@@ -95,6 +95,7 @@
             <el-input
               v-model="form.remark"
               type="textarea"
+              maxlength="200"
               placeholder="备注说明"
             ></el-input>
           </el-form-item>

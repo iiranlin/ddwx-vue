@@ -19,12 +19,12 @@
       <el-row :span="24" :gutter="20">
         <el-col :span="24">
           <el-form-item :label="'类型名称'" prop="typeName">
-            <el-input v-model="form.typeName" maxlength="240"></el-input>
+            <el-input v-model="form.typeName" maxlength="200"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="24">
           <el-form-item :label="'备注'" prop="remarks">
-            <el-input v-model="form.remarks" maxlength="240"></el-input>
+            <el-input v-model="form.remarks" maxlength="200"></el-input>
           </el-form-item>
         </el-col>
       </el-row>

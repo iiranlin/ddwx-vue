@@ -21,6 +21,7 @@
           <el-form-item label="房屋名称" prop="houseName">
             <el-input
               v-model="form.houseName"
+              maxlength="200"
               placeholder="请输入房屋名称"
             ></el-input>
           </el-form-item>
@@ -29,6 +30,7 @@
           <el-form-item label="房屋类型" prop="houseType">
             <el-input
               v-model="form.houseType"
+              maxlength="200"
               placeholder="请输入房屋类型"
             ></el-input>
           </el-form-item>
@@ -37,6 +39,7 @@
           <el-form-item label="结构类型" prop="houseStructure">
             <el-input
               v-model="form.houseStructure"
+              maxlength="200"
               placeholder="请输入结构类型"
             ></el-input>
           </el-form-item>
@@ -84,6 +87,7 @@
           <el-form-item label="综合评定" prop="remark">
             <el-input
               v-model="form.remark"
+              maxlength="200"
               placeholder="请输入房屋综合评定"
             ></el-input>
           </el-form-item>

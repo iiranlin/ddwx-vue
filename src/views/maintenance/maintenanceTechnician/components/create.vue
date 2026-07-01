@@ -68,7 +68,7 @@
             <el-input
               :disabled="true"
               v-model="form.userCode"
-              maxlength="240"
+              maxlength="200"
               placeholder="请输入员工工号"
             ></el-input>
           </el-form-item>
@@ -95,7 +95,7 @@
           <el-form-item :label="'工种'" prop="job">
             <el-input
               v-model="form.job"
-              maxlength="240"
+              maxlength="200"
               placeholder="请输入工种名称"
             ></el-input>
           </el-form-item>

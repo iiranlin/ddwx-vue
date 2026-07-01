@@ -19,22 +19,22 @@
         <el-row :span="24" :gutter="20">
           <el-col :span="24">
             <el-form-item :label="'耗材名称'" prop="suppliesName">
-              <el-input v-model="form.suppliesName" maxlength="240" placeholder="请输入耗材名称"></el-input>
+              <el-input v-model="form.suppliesName" maxlength="200" placeholder="请输入耗材名称"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item :label="'型号'" prop="suppliesModel">
-              <el-input v-model="form.suppliesModel" maxlength="240" placeholder="请输入耗材型号"></el-input>
+              <el-input v-model="form.suppliesModel" maxlength="200" placeholder="请输入耗材型号"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item :label="'规格'" prop="suppliesSpecs">
-              <el-input v-model="form.suppliesSpecs" maxlength="240" placeholder="请输入耗材规格"></el-input>
+              <el-input v-model="form.suppliesSpecs" maxlength="200" placeholder="请输入耗材规格"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item :label="'单位'" prop="suppliesUnit">
-              <el-input v-model="form.suppliesUnit" maxlength="240" placeholder="米/个/根/等其它"></el-input>
+              <el-input v-model="form.suppliesUnit" maxlength="200" placeholder="米/个/根/等其它"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -133,4 +133,3 @@
   };
   </script>
   <style scoped></style>
-  
