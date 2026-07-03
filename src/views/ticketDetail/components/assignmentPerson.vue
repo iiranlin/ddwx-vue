@@ -176,7 +176,7 @@ export default {
       currentDate: dayjs().format("YYYY-MM-DD"),
       userOptions: [],
       form: {
-        personnelId: "",
+        personnelId: [],
         selectedPersons: [], // 存储选中人员的完整信息数组
       },
       personOptions: [],
@@ -202,19 +202,82 @@ export default {
       console.log(data, "ressss  1");
       return Promise.resolve();
     },
-    userChange(selectedValues) {
-      console.log('change')
-      // 获取选中的所有人员的详细信息
-      const selectedItems = this.userOptions.filter((item) =>
-        selectedValues == item.value
-      );
-      // 将选中人员的信息存储为对象数组
-      const selectedPersons = selectedItems.map((item) => ({
+    normalizeSelectedValues(selectedValues) {
+      if (Array.isArray(selectedValues)) {
+        return selectedValues;
+      }
+
+      if (selectedValues || selectedValues === 0) {
+        return [selectedValues];
+      }
+
+      return [];
+    },
+    getPersonnelId(person) {
+      if (!person) {
+        return "";
+      }
+
+      if (person.personnelId || person.personnelId === 0) {
+        return person.personnelId;
+      }
+
+      return person.id;
+    },
+    getPersonName(person) {
+      if (!person) {
+        return "";
+      }
+
+      return person.name || person.personnelName || person.label || "";
+    },
+    isSamePerson(sourcePerson, targetPerson) {
+      const sourceId = this.getPersonnelId(sourcePerson);
+      const targetId = this.getPersonnelId(targetPerson);
+
+      if (
+        (sourceId || sourceId === 0) &&
+        (targetId || targetId === 0) &&
+        String(sourceId) === String(targetId)
+      ) {
+        return true;
+      }
+
+      const sourceName = this.getPersonName(sourcePerson);
+      const targetName = this.getPersonName(targetPerson);
+
+      return !!sourceName && !!targetName && sourceName === targetName;
+    },
+    buildSelectedPerson(item) {
+      return {
+        ...item,
+        personnelId: this.getPersonnelId(item),
+        name: this.getPersonName(item),
+      };
+    },
+    buildSelectedPersonByOption(item) {
+      return {
         personnelId: item.value,
         name: item.label,
         phone: item.phone,
         landline: item.landline,
-      }));
+      };
+    },
+    userChange(selectedValues) {
+      const selectedValueList = this.normalizeSelectedValues(selectedValues);
+      // 获取选中的所有人员的详细信息
+      const selectedItems = selectedValueList
+        .map((value) =>
+          this.userOptions.find(
+            (item) => String(item.value) === String(value)
+          )
+        )
+        .filter(Boolean);
+      this.form.personnelId = selectedValueList;
+      // 将选中人员的信息存储为对象数组
+      const selectedPersons = selectedItems.map((item) =>
+        this.buildSelectedPersonByOption(item)
+      );
       // 更新form中的信息
       this.form.selectedPersons = selectedPersons;
 
@@ -234,11 +297,17 @@ export default {
         });
 
         // 获取到用户信息后，查看details里面有没有选择用户，数据回显
-        if (this.details.personnelList) {
-          this.form.personnelId = this.details.personnelList.map(
-            (item) => item.personnelId
+        const personnelList = Array.isArray(this.details.personnelList)
+          ? this.details.personnelList
+          : [];
+
+        if (personnelList.length > 0) {
+          this.form.personnelId = personnelList.map((item) =>
+            this.getPersonnelId(item)
           );
-          this.form.selectedPersons = this.details.personnelList;
+          this.form.selectedPersons = personnelList.map((item) =>
+            this.buildSelectedPerson(item)
+          );
 
           // 回显时间轴数据
           this.updateTasksByDate();
@@ -282,36 +351,50 @@ export default {
     },
 
     async updateTasksByDate() {
-      console.log(this.form.selectedPersons, "this.form.selectedPersons");
-      if (this.form.selectedPersons.length === 0) {
-        this.persons = []
+      const selectedPersons = Array.isArray(this.form.selectedPersons)
+        ? this.form.selectedPersons
+        : [];
+      const selectedValueList = this.normalizeSelectedValues(
+        this.form.personnelId
+      );
+
+      if (selectedPersons.length === 0 || selectedValueList.length === 0) {
+        this.persons = [];
         return;
       }
 
       const res = await WorkOrderPerson.getWorkOrderPersonByDate({
         date: this.currentDate,
-        personnelIds: this.form.personnelId.join(),
+        personnelIds: selectedValueList.join(),
       });
 
-      // 格式化时间数据
-      const formattedData = res.data.map((person) => ({
-        ...person,
-        tasks: person.tasks.map((task) => ({
-          ...task,
-          // startTime: dayjs(task.startTime).format("HH:mm"),
-          // endTime: dayjs(task.endTime).format("HH:mm"),
-        })),
-      }));
-
-      // 判断选择的人数是否都在格式化后的数据里面，如果选中的人没有在格式化后的数据里面，则将增加name 和 tasks 为空
-      this.form.selectedPersons.forEach((person) => {
-        const selectedPerson = formattedData.find((item) => item.name === person.name);
-        if (!selectedPerson) {
-          formattedData.push({ name: person.name, tasks: [] });
-        }
+      const responsePersons = (res.data || []).map((person) => {
+        return {
+          ...person,
+          personnelId: this.getPersonnelId(person),
+          tasks: (person.tasks || []).map((task) => ({
+            ...task,
+            // startTime: dayjs(task.startTime).format("HH:mm"),
+            // endTime: dayjs(task.endTime).format("HH:mm"),
+          })),
+        };
       });
 
-      this.persons = formattedData;
+      this.persons = selectedPersons.map((person) => {
+        const matchedPersons = responsePersons.filter((responsePerson) =>
+          this.isSamePerson(responsePerson, person)
+        );
+        const tasks = matchedPersons.reduce((taskList, matchedPerson) => {
+          return taskList.concat(matchedPerson.tasks || []);
+        }, []);
+
+        return {
+          ...person,
+          personnelId: this.getPersonnelId(person),
+          name: this.getPersonName(person),
+          tasks,
+        };
+      });
     },
     formatDate(date) {
       const month = date.getMonth() + 1;
