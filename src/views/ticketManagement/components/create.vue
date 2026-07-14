@@ -223,7 +223,7 @@ export default {
           { required: true, message: "故障描述不能为空", trigger: "blur" },
         ],
         faultFileUrl: [
-          { required: true, message: "故障图片不能为空", trigger: "blur" },
+          { required: false, message: "故障图片不能为空", trigger: "blur" },
         ],
       },
     };
