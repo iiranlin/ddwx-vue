@@ -163,18 +163,36 @@
       <div @click="onCancel" class="action-bg-white">返回</div>
       <!-- 待分配班组 -->
       <template v-if="status === 1">
-        <div @click="onAssignmentTeam" class="action-bg-blue">分配班组</div>
+        <div
+          v-if="!isOnlyUserIdentity"
+          @click="onAssignmentTeam"
+          class="action-bg-blue"
+        >
+          分配班组
+        </div>
         <div @click="onCancelOrder" class="action-bg-white">取消工单</div>
       </template>
       <!-- 待分配人员 -->
       <template v-if="status === 2">
         <div @click="onCancelOrder" class="action-bg-white">取消工单</div>
-        <div @click="onTransferTeam" class="action-bg-blue">转派班组</div>
-        <div @click="onAssignmentPerson" class="action-bg-blue">分配人员</div>
+        <div
+          v-if="!isOnlyUserIdentity"
+          @click="onTransferTeam"
+          class="action-bg-blue"
+        >
+          转派班组
+        </div>
+        <div
+          v-if="!isOnlyUserIdentity"
+          @click="onAssignmentPerson"
+          class="action-bg-blue"
+        >
+          分配人员
+        </div>
       </template>
 
       <!-- 处理中 -->
-      <template v-if="status === 3">
+      <template v-if="status === 3 && !isOnlyUserIdentity">
         <div @click="onAssignmentPerson" class="action-bg-blue">转派人员</div>
         <div @click="onAcceptanceSubmit" class="action-bg-blue">提交验收</div>
       </template>
@@ -184,7 +202,7 @@
         <div @click="onAcceptanceCheck(5)" class="action-bg-blue">验收</div>
       </template>
       <!-- 待验收 - 调度中心 -->
-      <template v-if="status === 5">
+      <template v-if="status === 5 && !isOnlyUserIdentity">
         <div @click="onAcceptanceCheck(6)" class="action-bg-blue">验收</div>
       </template>
     </div>
@@ -238,6 +256,17 @@ export default {
     this.init();
   },
   computed: {
+    isOnlyUserIdentity() {
+      const identities = this.$store.getters.sysUserIdentitys || [];
+      return (
+        identities.length === 0 ||
+        identities.every((item) => {
+          const identity =
+            typeof item === "string" ? item : item && item.userIdentity;
+          return identity === "USER";
+        })
+      );
+    },
     id() {
       return this.$route.query.id;
     },
