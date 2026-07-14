@@ -115,11 +115,14 @@ export default {
       this.getUserList();
     },
     handleCheckChange(data, checked, indeterminate) {
+
+      const checkedKeys = (this.$refs.veTree.getCheckedKeys() || []).map(
+        (key) => String(key)
+      );
       // 获取选中的数据详情
       const selectedItems = this.userOptions.filter((item) =>
-        this.$refs.veTree.getCheckedKeys() == item.value
+        checkedKeys.some((key) => key === String(item.value))
       );
-
       // 将选中人员的信息存储为对象数组
       const selectedPersons = selectedItems.map((item) => ({
         id: item.value,
@@ -127,6 +130,7 @@ export default {
       }));
       // 更新form中的信息
       this.form.sysUsers = selectedPersons;
+      console.log(this.form, "form.sysUsers");
     },
     // 获取当前选中人员信息
     async getCheckUser(datas) {

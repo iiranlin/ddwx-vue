@@ -276,38 +276,42 @@
               >修改</el-button
             >
             <el-button
-              v-if="[1].includes(scope.row.status)"
+              v-if="!isOnlyUserIdentity && [1].includes(scope.row.status)"
               type="text"
               @click="handleButton(scope.row, 'assignmentTeam')"
               >分配</el-button
             >
             <el-button
-              v-if="[2].includes(scope.row.status)"
+              v-if="!isOnlyUserIdentity && [2].includes(scope.row.status)"
               type="text"
               @click="handleButton(scope.row, 'assignmentPerson')"
               >分配</el-button
             >
             <el-button
-              v-if="[2].includes(scope.row.status)"
+              v-if="!isOnlyUserIdentity && [2].includes(scope.row.status)"
               type="text"
               @click="handleButton(scope.row, 'transferTeam')"
               >转派</el-button
             >
             <el-button
-              v-if="[3].includes(scope.row.status)"
+              v-if="!isOnlyUserIdentity && [3].includes(scope.row.status)"
               type="text"
               @click="handleButton(scope.row, 'assignmentPerson')"
               >转派</el-button
             >
             <el-button
-              v-if="[4, 5].includes(scope.row.status)"
+              v-if="
+                isOnlyUserIdentity
+                  ? scope.row.status === 4
+                  : [4, 5].includes(scope.row.status)
+              "
               type="text"
               @click="handleButton(scope.row, 'acceptanceCheck')"
               >验收</el-button
             >
 
             <el-button
-              v-if="[3].includes(scope.row.status)"
+              v-if="!isOnlyUserIdentity && [3].includes(scope.row.status)"
               type="text"
               @click="handleButton(scope.row, 'acceptanceSubmit')"
               >提交验收</el-button
@@ -440,6 +444,17 @@ export default {
     window.removeEventListener("resize", this.updateBreakpoint);
   },
   computed: {
+    isOnlyUserIdentity() {
+      const identities = this.$store.getters.sysUserIdentitys || [];
+      return (
+        identities.length === 0 ||
+        identities.every((item) => {
+          const identity =
+            typeof item === "string" ? item : item && item.userIdentity;
+          return identity === "USER";
+        })
+      );
+    },
     baseUrl() {
       return process.env.VUE_APP_BASE_API;
     },

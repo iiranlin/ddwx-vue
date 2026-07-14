@@ -20,6 +20,7 @@ const user = {
         rank:'',
         userCode:'',
         phone:'',
+        sysUserIdentitys: [],
         permissions: []
     },
 
@@ -65,6 +66,9 @@ const user = {
         },
         SET_USER_PHONE: (state, userPhone) => {
             state.phone = userPhone
+        },
+        SET_SYS_USER_IDENTITYS: (state, sysUserIdentitys) => {
+            state.sysUserIdentitys = Array.isArray(sysUserIdentitys) ? sysUserIdentitys : []
         },
         SET_PERMISSIONS: (state, permissions) => {
             state.permissions = permissions
@@ -125,6 +129,7 @@ const user = {
                         commit('SET_RANK', user.rank)
                         commit('SET_USER_CODE', user.userCode)
                         commit('SET_USER_PHONE', user.phone)
+                        commit('SET_SYS_USER_IDENTITYS', user.sysUserIdentitys)
                         
                         setCookie("unitCode", user.unitCode);
                         setCookie("phone", user.phone || '');
@@ -157,6 +162,7 @@ const user = {
                 commit('SET_TOKEN', '')
                 commit('SET_ROLES', null)
                 commit('SET_PERMISSIONS', [])
+                commit('SET_SYS_USER_IDENTITYS', [])
                 removeToken()
                 resolve()
             })
@@ -166,6 +172,7 @@ const user = {
         FedLogOut({ commit }) {
             return new Promise(resolve => {
                 commit('SET_TOKEN', '')
+                commit('SET_SYS_USER_IDENTITYS', [])
                 removeToken()
                 resolve()
             })

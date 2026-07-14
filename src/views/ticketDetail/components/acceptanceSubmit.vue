@@ -6,7 +6,7 @@
       <!-- 完工图片上传区域 -->
       <div class="section">
         <div class="section-title">
-          <span style="color: #f34d39">*</span>完工图片
+          <!-- <span style="color: #f34d39">*</span>完工图片 -->
         </div>
         <ImageUpload
           v-model="form.operateFileUrl"
@@ -214,10 +214,10 @@ export default {
     // 提交表单
     submitForm() {
       // 表单验证
-      if (!this.form.operateFileUrl) {
-        this.$message.error("请上传完工图片");
-        return;
-      }
+      // if (!this.form.operateFileUrl) {
+      //   this.$message.error("请上传完工图片");
+      //   return;
+      // }
 
       // if (!this.form.operateDesc || !this.form.operateDesc.trim()) {
       //   this.$message.error("请填写维修说明");
