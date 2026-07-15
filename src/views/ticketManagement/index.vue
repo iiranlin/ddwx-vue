@@ -429,6 +429,8 @@ export default {
       teamTypeOptions: [],
       isAdvancedSearchVisible: false,
       currentBreakpoint: "",
+      refreshTimer: null,
+      isRefreshPolling: false,
     };
   },
   created() {
@@ -440,11 +442,21 @@ export default {
   mounted() {
     this.updateBreakpoint();
     window.addEventListener("resize", this.updateBreakpoint);
+    this.startRefreshPolling();
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.updateBreakpoint);
+    this.stopRefreshPolling();
   },
   computed: {
+    shouldRefreshPolling() {
+      const identities = this.$store.getters.sysUserIdentitys || [];
+      return identities.some((item) => {
+        const identity =
+          typeof item === "string" ? item : item && item.userIdentity;
+        return ["REPAIR", "DISPATCH"].includes(identity);
+      });
+    },
     isOnlyUserIdentity() {
       const identities = this.$store.getters.sysUserIdentitys || [];
       return (
@@ -461,6 +473,13 @@ export default {
     },
   },
   watch: {
+    shouldRefreshPolling(shouldPolling) {
+      if (shouldPolling) {
+        this.startRefreshPolling();
+      } else {
+        this.stopRefreshPolling();
+      }
+    },
     "formData.year": {
       handler(newVal) {
         if (
@@ -482,8 +501,48 @@ export default {
   activated() {
     // 每次进入页面时刷新数据列表
     this.getList();
+    this.startRefreshPolling();
+  },
+  deactivated() {
+    this.stopRefreshPolling();
   },
   methods: {
+    startRefreshPolling() {
+      if (!this.shouldRefreshPolling || this.isRefreshPolling) {
+        return;
+      }
+      this.isRefreshPolling = true;
+      this.scheduleRefreshPolling();
+    },
+    stopRefreshPolling() {
+      this.isRefreshPolling = false;
+      if (this.refreshTimer) {
+        clearTimeout(this.refreshTimer);
+        this.refreshTimer = null;
+      }
+    },
+    scheduleRefreshPolling() {
+      if (!this.isRefreshPolling) {
+        return;
+      }
+      this.refreshTimer = setTimeout(this.pollWorkOrderRefresh, 5000);
+    },
+    async pollWorkOrderRefresh() {
+      this.refreshTimer = null;
+      if (!this.isRefreshPolling) {
+        return;
+      }
+      try {
+        const { data } = await WorkOrderManagement.decideRefresh();
+        if (data === true && this.isRefreshPolling) {
+          await this.getList();
+        }
+      } catch (error) {
+        // 单次轮询失败不影响当前列表，下一周期继续检查
+      } finally {
+        this.scheduleRefreshPolling();
+      }
+    },
     workOrderRowClassName({ row }) {
       if (row.status === 1) {
         return "work-order-waiting-team";

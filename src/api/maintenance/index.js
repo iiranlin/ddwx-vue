@@ -363,6 +363,13 @@ export class WorkOrderManagement {
       params,
     });
   }
+  // 工单管理-判断是否需要刷新列表
+  static decideRefresh() {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/repairOrder/decideRefresh`,
+      method: "get",
+    });
+  }
   // 工单管理-新增
   static addWorkOrder(data) {
     return request({
