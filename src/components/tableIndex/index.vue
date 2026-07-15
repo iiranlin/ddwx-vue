@@ -10,6 +10,7 @@
     highlight-current-row
     stripe
     :row-key="id"
+    :row-class-name="rowClassName"
     :show-summary='showSummary'
     :summary-method="getSummaries"
     @row-click="handleRowClick"
@@ -172,6 +173,10 @@
       id: {
         type: String,
         default: 'id'
+      },
+      rowClassName: {
+        type: [Function, String],
+        default: ''
       },
       actionWidth:{
         type:Number,

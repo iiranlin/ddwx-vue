@@ -229,6 +229,7 @@
           :loading="loading"
           :tableData="dataList"
           :property="property"
+          :rowClassName="workOrderRowClassName"
           @handleSelectionChange="handleSelectionChange"
           @handleButton="handleButton"
           @selectChange="selectChange"
@@ -483,6 +484,15 @@ export default {
     this.getList();
   },
   methods: {
+    workOrderRowClassName({ row }) {
+      if (row.status === 1) {
+        return "work-order-waiting-team";
+      }
+      if (row.status === 5) {
+        return "work-order-waiting-dispatch-acceptance";
+      }
+      return "";
+    },
     updateBreakpoint() {
       const width = window.innerWidth;
       if (width >= 1920) {
@@ -690,6 +700,18 @@ export default {
 <style lang="css" scoped>
 ::v-deep.el-table tbody tr.current-row > td {
   background-color: #b8d9fd !important;
+}
+::v-deep .el-table .work-order-waiting-team > td {
+  background-color: #fff2a8 !important;
+}
+::v-deep .el-table .work-order-waiting-team:hover > td {
+  background-color: #ffe875 !important;
+}
+::v-deep .el-table .work-order-waiting-dispatch-acceptance > td {
+  background-color: #a8edff !important;
+}
+::v-deep .el-table .work-order-waiting-dispatch-acceptance:hover > td {
+  background-color: #72ddf7 !important;
 }
 .w-full {
   width: calc(100% - 80px);
