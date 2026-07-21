@@ -365,17 +365,25 @@ export default {
      * 使用方式：在模板按钮的 v-if 中调用 canShowWorkOrderAction("操作编码")。
      */
     canShowWorkOrderAction(action) {
+      const canCancelOwnOrder =
+        [1, 2].includes(this.status) &&
+        this.isCreatedByCurrentUser(this.details.createBy);
       if (this.workOrderPermissionType === "foreman") {
         const foremanActions = {
           assignmentTeam: this.status === 1,
           transferTeam: this.status === 2,
           assignmentPerson: this.status === 2,
           transferPerson: this.status === 3,
+          cancel: canCancelOwnOrder,
         };
         return foremanActions[action] === true;
       }
       if (this.workOrderPermissionType === "repair") {
-        return action === "acceptanceSubmit" && this.status === 3;
+        return (
+          action === "acceptanceSubmit" &&
+          this.status === 3 &&
+          this.isAssignedRepairPersonnel(this.details.personnelIds)
+        ) || (action === "cancel" && canCancelOwnOrder);
       }
       const defaultActions = {
         assignmentTeam: !this.isOnlyUserIdentity && this.status === 1,
@@ -388,6 +396,34 @@ export default {
         acceptanceDispatch: !this.isOnlyUserIdentity && this.status === 5,
       };
       return defaultActions[action] === true;
+    },
+    /**
+     * 功能：判断当前维修人员是否属于工单已分配的维修人员。
+     * 参数：personnelIds 为工单维修人员 ID 字符串，多个 ID 使用英文逗号分隔。
+     * 返回值：当前 repairPersonnel.id 与任一完整人员 ID 使用 == 相等时返回 true。
+     * 使用方式：普通维修人员显示“提交验收”按钮前调用本方法校验工单归属。
+     */
+    isAssignedRepairPersonnel(personnelIds) {
+      const repairPersonnel = this.$store.getters.repairPersonnel;
+      const repairPersonnelId = repairPersonnel && repairPersonnel.id;
+      if (!repairPersonnelId || typeof personnelIds !== "string") {
+        return false;
+      }
+      return personnelIds
+        .split(",")
+        .map((id) => id.trim())
+        .filter(Boolean)
+        .some((id) => id == repairPersonnelId);
+    },
+    /**
+     * 功能：判断工单是否由当前登录用户创建。
+     * 参数：createBy 为工单创建人用户 ID。
+     * 返回值：createBy 与当前登录用户 ID 使用 == 相等时返回 true。
+     * 使用方式：判断任意身份是否可以取消本人创建的待分配工单。
+     */
+    isCreatedByCurrentUser(createBy) {
+      const currentUserId = this.$store.getters.id;
+      return Boolean(currentUserId) && createBy == currentUserId;
     },
     async init() {
       const { data = {} } = await WorkOrderManagement.getWorkOrderById(this.id);

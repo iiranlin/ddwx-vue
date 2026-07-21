@@ -543,18 +543,30 @@ export default {
      */
     canShowWorkOrderAction(action, row) {
       const status = row.status;
+      const canModifyOwnOrder =
+        [1, 2].includes(status) && this.isCreatedByCurrentUser(row.createBy);
+      const canCancelOwnOrder = canModifyOwnOrder;
       if (this.workOrderPermissionType === "foreman") {
         const foremanActions = {
           view: true,
+          update: canModifyOwnOrder,
           assignmentTeam: status === 1,
           assignmentPerson: status === 2,
           transferTeam: status === 2,
           transferPerson: status === 3,
+          cancel: canCancelOwnOrder,
         };
         return foremanActions[action] === true;
       }
       if (this.workOrderPermissionType === "repair") {
-        return action === "view" || (action === "acceptanceSubmit" && status === 3);
+        return (
+          action === "view" ||
+          (action === "update" && canModifyOwnOrder) ||
+          (action === "acceptanceSubmit" &&
+            status === 3 &&
+            this.isAssignedRepairPersonnel(row.personnelIds)) ||
+          (action === "cancel" && canCancelOwnOrder)
+        );
       }
       const defaultActions = {
         view: true,
@@ -570,6 +582,34 @@ export default {
         cancel: [1, 2].includes(status),
       };
       return defaultActions[action] === true;
+    },
+    /**
+     * 判断当前维修人员是否属于工单已分配的维修人员。
+     * @param {string} personnelIds 工单维修人员 ID 字符串，多个 ID 使用英文逗号分隔。
+     * @returns {boolean} 当前 repairPersonnel.id 与任一完整人员 ID 使用 == 相等时返回 true。
+     * @example isAssignedRepairPersonnel("1001,1002")
+     */
+    isAssignedRepairPersonnel(personnelIds) {
+      const repairPersonnel = this.$store.getters.repairPersonnel;
+      const repairPersonnelId = repairPersonnel && repairPersonnel.id;
+      if (!repairPersonnelId || typeof personnelIds !== "string") {
+        return false;
+      }
+      return personnelIds
+        .split(",")
+        .map((id) => id.trim())
+        .filter(Boolean)
+        .some((id) => id == repairPersonnelId);
+    },
+    /**
+     * 判断工单是否由当前登录用户创建。
+     * @param {string|number} createBy 工单创建人用户 ID。
+     * @returns {boolean} createBy 与当前登录用户 ID 使用 == 相等时返回 true。
+     * @example isCreatedByCurrentUser(row.createBy)
+     */
+    isCreatedByCurrentUser(createBy) {
+      const currentUserId = this.$store.getters.id;
+      return Boolean(currentUserId) && createBy == currentUserId;
     },
     /**
      * 接收全局新工单事件并重新查询列表，使页面及时展示最新数据。

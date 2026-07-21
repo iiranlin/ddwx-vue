@@ -1,6 +1,7 @@
 import { getToken } from "@/utils/auth";
 
 const RECONNECT_DELAYS = [1000, 3000, 5000, 10000, 30000];
+const HEARTBEAT_TIMEOUT = 75000;
 
 /**
  * 拼接基础地址和接口路径，并清理连接处重复或缺失的斜杠。
@@ -69,6 +70,7 @@ export default class RepairOrderSse {
     this.onStatus = onStatus;
     this.controller = null;
     this.reconnectTimer = null;
+    this.heartbeatTimer = null;
     this.reconnectCount = 0;
     this.closed = true;
   }
@@ -91,6 +93,7 @@ export default class RepairOrderSse {
     this.closed = true;
     clearTimeout(this.reconnectTimer);
     this.reconnectTimer = null;
+    this.clearHeartbeatTimer();
     if (this.controller) this.controller.abort();
     this.controller = null;
   }
@@ -125,9 +128,13 @@ export default class RepairOrderSse {
 
       this.reconnectCount = 0;
       if (this.onStatus) this.onStatus("connected");
+      this.resetHeartbeatTimer();
       const reader = response.body.getReader();
       const decoder = new TextDecoder("utf-8");
-      const parse = createSseParser((event) => this.handleEvent(event));
+      const parse = createSseParser((event) => {
+        this.resetHeartbeatTimer();
+        this.handleEvent(event);
+      });
 
       while (!this.closed) {
         const { done, value } = await reader.read();
@@ -137,9 +144,49 @@ export default class RepairOrderSse {
       if (!this.closed) throw new Error("SSE connection closed");
     } catch (error) {
       if (this.closed || error.name === "AbortError") return;
+      this.clearHeartbeatTimer();
+      this.controller = null;
       if (this.onStatus) this.onStatus("disconnected", error);
       this.scheduleReconnect();
     }
+  }
+
+  /**
+   * 重置服务端活动超时计时器；连接成功或收到任意完整 SSE 事件时调用。
+   * 超过 75 秒未收到事件时，将当前连接判定为失活并触发重连。
+   * @returns {void}
+   */
+  resetHeartbeatTimer() {
+    this.clearHeartbeatTimer();
+    if (this.closed) return;
+    this.heartbeatTimer = setTimeout(
+      () => this.handleHeartbeatTimeout(),
+      HEARTBEAT_TIMEOUT
+    );
+  }
+
+  /**
+   * 清除当前心跳超时计时器；停止连接、断线或重新计时时调用。
+   * @returns {void}
+   */
+  clearHeartbeatTimer() {
+    clearTimeout(this.heartbeatTimer);
+    this.heartbeatTimer = null;
+  }
+
+  /**
+   * 处理服务端活动超时：中止失活请求、通知连接状态并安排重新连接。
+   * 该方法由心跳超时计时器自动调用，不需要业务页面主动调用。
+   * @returns {void}
+   */
+  handleHeartbeatTimeout() {
+    if (this.closed) return;
+    this.clearHeartbeatTimer();
+    const error = new Error("SSE heartbeat timeout");
+    if (this.controller) this.controller.abort();
+    this.controller = null;
+    if (this.onStatus) this.onStatus("disconnected", error);
+    this.scheduleReconnect();
   }
 
   /**
@@ -149,7 +196,7 @@ export default class RepairOrderSse {
    */
   handleEvent(event) {
     if (["heartbeat", "connected"].includes(event.event)) return;
-    if (!["message", "new-repair-order"].includes(event.event)) return;
+    if (!["message", "new-repair-order", "todo"].includes(event.event)) return;
 
     let data = event.data;
     try {
