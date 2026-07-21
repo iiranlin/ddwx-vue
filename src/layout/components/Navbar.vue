@@ -58,12 +58,30 @@
       <!-- <el-tooltip content="消息通知" placement="bottom">
               <i class="el-icon-chat-dot-round"></i>
       </el-tooltip> -->
-      <a href="/机关维修系统产品使用说明书.doc" target="_blank" style="margin-right: 10px;">
+      <a href="#" style="margin-right: 10px;" @click.prevent="openManualDownloadDialog">
         <i class="el-icon-download"></i>
         产品使用说明书
       </a>
       <i class="el-icon-chat-dot-round" @click="handleNoticeClick()"></i>
     </div>
+    <el-dialog
+      title="下载产品使用说明书"
+      :visible.sync="manualDownloadVisible"
+      width="420px"
+      append-to-body
+    >
+      <div class="manual-download-list">
+        <el-button
+          v-for="manual in manualList"
+          :key="manual.path"
+          type="primary"
+          icon="el-icon-download"
+          @click="downloadManual(manual)"
+        >
+          {{ manual.name }}
+        </el-button>
+      </div>
+    </el-dialog>
     <update-password ref="updatePassword"></update-password>
   </div>
 </template>
@@ -122,12 +140,47 @@ export default {
   data() {
     return {
       testTitle: "",
+      manualDownloadVisible: false,
+      manualList: [
+        {
+          name: "用户版下载",
+          path: "/机关维修调度模块使用说明书-用户版.docx",
+        },
+        {
+          name: "综合版下载",
+          path: "/机关维修调度模块使用说明书-综合版.docx",
+        },
+      ],
     };
   },
   mounted() {
     this.testTitle = process.env.VUE_APP_TITLE;
   },
   methods: {
+    /**
+     * 打开产品使用说明书下载弹框。
+     * 参数：无。
+     * 功能：展示用户版和综合版两个下载选项。
+     * 使用方法：点击导航栏“产品使用说明书”入口时调用。
+     */
+    openManualDownloadDialog() {
+      this.manualDownloadVisible = true;
+    },
+    /**
+     * 下载指定版本的产品使用说明书。
+     * @param {Object} manual 说明书配置，包含展示名称 name 和文件地址 path。
+     * 功能：创建临时下载链接并触发浏览器下载，随后关闭下载弹框。
+     * 使用方法：点击弹框中的版本下载按钮时传入对应说明书配置。
+     */
+    downloadManual(manual) {
+      const downloadLink = document.createElement("a");
+      downloadLink.href = manual.path;
+      downloadLink.download = manual.path.substring(manual.path.lastIndexOf("/") + 1);
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      this.manualDownloadVisible = false;
+    },
     toggleSideBar() {
       this.$store.dispatch("app/toggleSideBar");
     },
@@ -216,6 +269,10 @@ export default {
     & :hover {
       cursor: pointer;
     }
+  }
+  .manual-download-list {
+    display: flex;
+    justify-content: center;
   }
   .right-menu {
     float: right;

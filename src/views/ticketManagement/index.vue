@@ -6,7 +6,7 @@
         <el-row :gutter="24" class="container_flex-right_list">
           <el-col
             :span="1.5"
-            v-for="item in property.buttonTop"
+            v-for="item in visibleButtonTop"
             :key="item.id"
             style="margin-top: 2px; padding: 0px"
           >
@@ -271,54 +271,50 @@
               >查看</el-button
             >
             <el-button
-              v-if="[1,2].includes(scope.row.status)"
+              v-if="canShowWorkOrderAction('update', scope.row)"
               type="text"
               @click="handleButton(scope.row, 'update')"
               >修改</el-button
             >
             <el-button
-              v-if="!isOnlyUserIdentity && [1].includes(scope.row.status)"
+              v-if="canShowWorkOrderAction('assignmentTeam', scope.row)"
               type="text"
               @click="handleButton(scope.row, 'assignmentTeam')"
               >分配</el-button
             >
             <el-button
-              v-if="!isOnlyUserIdentity && [2].includes(scope.row.status)"
+              v-if="canShowWorkOrderAction('assignmentPerson', scope.row)"
               type="text"
               @click="handleButton(scope.row, 'assignmentPerson')"
               >分配</el-button
             >
             <el-button
-              v-if="!isOnlyUserIdentity && [2].includes(scope.row.status)"
+              v-if="canShowWorkOrderAction('transferTeam', scope.row)"
               type="text"
               @click="handleButton(scope.row, 'transferTeam')"
               >转派</el-button
             >
             <el-button
-              v-if="!isOnlyUserIdentity && [3].includes(scope.row.status)"
+              v-if="canShowWorkOrderAction('transferPerson', scope.row)"
               type="text"
               @click="handleButton(scope.row, 'assignmentPerson')"
               >转派</el-button
             >
             <el-button
-              v-if="
-                isOnlyUserIdentity
-                  ? scope.row.status === 4
-                  : [4, 5].includes(scope.row.status)
-              "
+              v-if="canShowWorkOrderAction('acceptanceCheck', scope.row)"
               type="text"
               @click="handleButton(scope.row, 'acceptanceCheck')"
               >验收</el-button
             >
 
             <el-button
-              v-if="!isOnlyUserIdentity && [3].includes(scope.row.status)"
+              v-if="canShowWorkOrderAction('acceptanceSubmit', scope.row)"
               type="text"
               @click="handleButton(scope.row, 'acceptanceSubmit')"
               >提交验收</el-button
             >
             <el-button
-              v-if="[1, 2].includes(scope.row.status)"
+              v-if="canShowWorkOrderAction('cancel', scope.row)"
               type="text"
               @click="handleButton(scope.row, 'cancel')"
               >取消</el-button
@@ -429,8 +425,6 @@ export default {
       teamTypeOptions: [],
       isAdvancedSearchVisible: false,
       currentBreakpoint: "",
-      refreshTimer: null,
-      isRefreshPolling: false,
     };
   },
   created() {
@@ -439,23 +433,64 @@ export default {
     this.getTeamType();
     this.getList();
   },
+  /**
+   * 组件挂载后初始化响应式断点监听，并订阅全局新维修工单事件。
+   * @returns {void}
+   */
   mounted() {
     this.updateBreakpoint();
     window.addEventListener("resize", this.updateBreakpoint);
-    this.startRefreshPolling();
+    this.$root.$on("repair-order-created", this.handleRepairOrderCreated);
   },
+  /**
+   * 组件销毁前移除窗口和全局事件监听，避免重复订阅及内存泄漏。
+   * @returns {void}
+   */
   beforeDestroy() {
     window.removeEventListener("resize", this.updateBreakpoint);
-    this.stopRefreshPolling();
+    this.$root.$off("repair-order-created", this.handleRepairOrderCreated);
   },
   computed: {
-    shouldRefreshPolling() {
-      const identities = this.$store.getters.sysUserIdentitys || [];
-      return identities.some((item) => {
-        const identity =
-          typeof item === "string" ? item : item && item.userIdentity;
-        return ["REPAIR", "DISPATCH"].includes(identity);
-      });
+    /**
+     * 将当前用户的身份信息统一转换为非空身份编码数组。
+     * 同时兼容后端返回字符串数组和身份对象数组两种数据结构。
+     * @returns {Array<string>} 当前用户拥有的有效身份编码集合。
+     */
+    identityCodes() {
+      return (this.$store.getters.sysUserIdentitys || [])
+        .map((item) =>
+          typeof item === "string" ? item : item && item.userIdentity
+        )
+        .filter(Boolean);
+    },
+    /**
+     * 根据调度、维修及班组长信息确定当前工单操作权限类型。
+     * 调度身份优先；维修身份再根据 foreman 标识区分班组长和普通维修人员。
+     * @returns {'default'|'foreman'|'repair'} 当前工单页面使用的权限类型。
+     */
+    workOrderPermissionType() {
+      if (this.identityCodes.includes("DISPATCH")) {
+        return "default";
+      }
+      if (this.identityCodes.includes("REPAIR")) {
+        const repairPersonnel = this.$store.getters.repairPersonnel;
+        return repairPersonnel && Number(repairPersonnel.foreman) === 1
+          ? "foreman"
+          : "repair";
+      }
+      return "default";
+    },
+    /**
+     * 根据当前权限类型过滤页面顶部操作按钮。
+     * 班组长和普通维修人员仅保留新建按钮，其他身份沿用菜单配置中的全部按钮。
+     * @returns {Array<Object>} 当前用户可见的顶部按钮配置集合。
+     */
+    visibleButtonTop() {
+      const buttons = (this.property && this.property.buttonTop) || [];
+      if (["foreman", "repair"].includes(this.workOrderPermissionType)) {
+        return buttons.filter((item) => item.buttonCode === "create");
+      }
+      return buttons;
     },
     isOnlyUserIdentity() {
       const identities = this.$store.getters.sysUserIdentitys || [];
@@ -473,13 +508,6 @@ export default {
     },
   },
   watch: {
-    shouldRefreshPolling(shouldPolling) {
-      if (shouldPolling) {
-        this.startRefreshPolling();
-      } else {
-        this.stopRefreshPolling();
-      }
-    },
     "formData.year": {
       handler(newVal) {
         if (
@@ -498,50 +526,57 @@ export default {
       deep: true,
     },
   },
+  /**
+   * 缓存页面重新激活时刷新工单列表，确保展示最新数据。
+   * @returns {void}
+   */
   activated() {
     // 每次进入页面时刷新数据列表
     this.getList();
-    this.startRefreshPolling();
-  },
-  deactivated() {
-    this.stopRefreshPolling();
   },
   methods: {
-    startRefreshPolling() {
-      if (!this.shouldRefreshPolling || this.isRefreshPolling) {
-        return;
+    /**
+     * 根据当前用户身份类型和工单状态判断指定行操作是否可见。
+     * @param {string} action 待判断的操作编码。
+     * @param {Object} row 当前工单行数据。
+     * @returns {boolean} 当前用户允许执行该操作时返回 true。
+     */
+    canShowWorkOrderAction(action, row) {
+      const status = row.status;
+      if (this.workOrderPermissionType === "foreman") {
+        const foremanActions = {
+          view: true,
+          assignmentTeam: status === 1,
+          assignmentPerson: status === 2,
+          transferTeam: status === 2,
+          transferPerson: status === 3,
+        };
+        return foremanActions[action] === true;
       }
-      this.isRefreshPolling = true;
-      this.scheduleRefreshPolling();
+      if (this.workOrderPermissionType === "repair") {
+        return action === "view" || (action === "acceptanceSubmit" && status === 3);
+      }
+      const defaultActions = {
+        view: true,
+        update: [1, 2].includes(status),
+        assignmentTeam: !this.isOnlyUserIdentity && status === 1,
+        assignmentPerson: !this.isOnlyUserIdentity && status === 2,
+        transferTeam: !this.isOnlyUserIdentity && status === 2,
+        transferPerson: !this.isOnlyUserIdentity && status === 3,
+        acceptanceCheck: this.isOnlyUserIdentity
+          ? status === 4
+          : [4, 5].includes(status),
+        acceptanceSubmit: !this.isOnlyUserIdentity && status === 3,
+        cancel: [1, 2].includes(status),
+      };
+      return defaultActions[action] === true;
     },
-    stopRefreshPolling() {
-      this.isRefreshPolling = false;
-      if (this.refreshTimer) {
-        clearTimeout(this.refreshTimer);
-        this.refreshTimer = null;
-      }
-    },
-    scheduleRefreshPolling() {
-      if (!this.isRefreshPolling) {
-        return;
-      }
-      this.refreshTimer = setTimeout(this.pollWorkOrderRefresh, 5000);
-    },
-    async pollWorkOrderRefresh() {
-      this.refreshTimer = null;
-      if (!this.isRefreshPolling) {
-        return;
-      }
-      try {
-        const { data } = await WorkOrderManagement.decideRefresh();
-        if (data === true && this.isRefreshPolling) {
-          await this.getList();
-        }
-      } catch (error) {
-        // 单次轮询失败不影响当前列表，下一周期继续检查
-      } finally {
-        this.scheduleRefreshPolling();
-      }
+    /**
+     * 接收全局新工单事件并重新查询列表，使页面及时展示最新数据。
+     * @returns {void}
+     */
+    handleRepairOrderCreated() {
+      this.getList();
     },
     workOrderRowClassName({ row }) {
       if (row.status === 1) {

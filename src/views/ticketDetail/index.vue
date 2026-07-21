@@ -164,26 +164,38 @@
       <!-- 待分配班组 -->
       <template v-if="status === 1">
         <div
-          v-if="!isOnlyUserIdentity"
+          v-if="canShowWorkOrderAction('assignmentTeam')"
           @click="onAssignmentTeam"
           class="action-bg-blue"
         >
           分配班组
         </div>
-        <div @click="onCancelOrder" class="action-bg-white">取消工单</div>
+        <div
+          v-if="canShowWorkOrderAction('cancel')"
+          @click="onCancelOrder"
+          class="action-bg-white"
+        >
+          取消工单
+        </div>
       </template>
       <!-- 待分配人员 -->
       <template v-if="status === 2">
-        <div @click="onCancelOrder" class="action-bg-white">取消工单</div>
         <div
-          v-if="!isOnlyUserIdentity"
+          v-if="canShowWorkOrderAction('cancel')"
+          @click="onCancelOrder"
+          class="action-bg-white"
+        >
+          取消工单
+        </div>
+        <div
+          v-if="canShowWorkOrderAction('transferTeam')"
           @click="onTransferTeam"
           class="action-bg-blue"
         >
           转派班组
         </div>
         <div
-          v-if="!isOnlyUserIdentity"
+          v-if="canShowWorkOrderAction('assignmentPerson')"
           @click="onAssignmentPerson"
           class="action-bg-blue"
         >
@@ -192,18 +204,42 @@
       </template>
 
       <!-- 处理中 -->
-      <template v-if="status === 3 && !isOnlyUserIdentity">
-        <div @click="onAssignmentPerson" class="action-bg-blue">转派人员</div>
-        <div @click="onAcceptanceSubmit" class="action-bg-blue">提交验收</div>
+      <template v-if="status === 3">
+        <div
+          v-if="canShowWorkOrderAction('transferPerson')"
+          @click="onAssignmentPerson"
+          class="action-bg-blue"
+        >
+          转派人员
+        </div>
+        <div
+          v-if="canShowWorkOrderAction('acceptanceSubmit')"
+          @click="onAcceptanceSubmit"
+          class="action-bg-blue"
+        >
+          提交验收
+        </div>
       </template>
 
       <!-- 待验收 - 报修人 -->
       <template v-if="status === 4">
-        <div @click="onAcceptanceCheck(5)" class="action-bg-blue">验收</div>
+        <div
+          v-if="canShowWorkOrderAction('acceptanceUser')"
+          @click="onAcceptanceCheck(5)"
+          class="action-bg-blue"
+        >
+          验收
+        </div>
       </template>
       <!-- 待验收 - 调度中心 -->
-      <template v-if="status === 5 && !isOnlyUserIdentity">
-        <div @click="onAcceptanceCheck(6)" class="action-bg-blue">验收</div>
+      <template v-if="status === 5">
+        <div
+          v-if="canShowWorkOrderAction('acceptanceDispatch')"
+          @click="onAcceptanceCheck(6)"
+          class="action-bg-blue"
+        >
+          验收
+        </div>
       </template>
     </div>
   </div>
@@ -256,6 +292,35 @@ export default {
     this.init();
   },
   computed: {
+    /**
+     * 功能：提取当前登录用户的身份编码列表。
+     * 返回值：身份编码数组，例如 ["REPAIR", "DISPATCH"]。
+     * 使用方式：供 workOrderPermissionType 计算详情页按钮权限类型。
+     */
+    identityCodes() {
+      return (this.$store.getters.sysUserIdentitys || [])
+        .map((item) =>
+          typeof item === "string" ? item : item && item.userIdentity
+        )
+        .filter(Boolean);
+    },
+    /**
+     * 功能：按照“调度优先”规则计算当前工单详情按钮权限类型。
+     * 返回值：default 表示原权限，foreman 表示班组工长，repair 表示维修人员。
+     * 使用方式：供 canShowWorkOrderAction 判断具体按钮是否展示。
+     */
+    workOrderPermissionType() {
+      if (this.identityCodes.includes("DISPATCH")) {
+        return "default";
+      }
+      if (this.identityCodes.includes("REPAIR")) {
+        const repairPersonnel = this.$store.getters.repairPersonnel;
+        return repairPersonnel && Number(repairPersonnel.foreman) === 1
+          ? "foreman"
+          : "repair";
+      }
+      return "default";
+    },
     isOnlyUserIdentity() {
       const identities = this.$store.getters.sysUserIdentitys || [];
       return (
@@ -291,6 +356,39 @@ export default {
     },
   },
   methods: {
+    /**
+     * 功能：根据当前身份类型和工单状态判断详情页操作按钮是否展示。
+     * 参数：action 为操作编码；当前支持 assignmentTeam、cancel、transferTeam、
+     * assignmentPerson、transferPerson、acceptanceSubmit、acceptanceUser、
+     * acceptanceDispatch。
+     * 返回值：true 表示展示按钮，false 表示隐藏按钮。
+     * 使用方式：在模板按钮的 v-if 中调用 canShowWorkOrderAction("操作编码")。
+     */
+    canShowWorkOrderAction(action) {
+      if (this.workOrderPermissionType === "foreman") {
+        const foremanActions = {
+          assignmentTeam: this.status === 1,
+          transferTeam: this.status === 2,
+          assignmentPerson: this.status === 2,
+          transferPerson: this.status === 3,
+        };
+        return foremanActions[action] === true;
+      }
+      if (this.workOrderPermissionType === "repair") {
+        return action === "acceptanceSubmit" && this.status === 3;
+      }
+      const defaultActions = {
+        assignmentTeam: !this.isOnlyUserIdentity && this.status === 1,
+        cancel: [1, 2].includes(this.status),
+        transferTeam: !this.isOnlyUserIdentity && this.status === 2,
+        assignmentPerson: !this.isOnlyUserIdentity && this.status === 2,
+        transferPerson: !this.isOnlyUserIdentity && this.status === 3,
+        acceptanceSubmit: !this.isOnlyUserIdentity && this.status === 3,
+        acceptanceUser: this.status === 4,
+        acceptanceDispatch: !this.isOnlyUserIdentity && this.status === 5,
+      };
+      return defaultActions[action] === true;
+    },
     async init() {
       const { data = {} } = await WorkOrderManagement.getWorkOrderById(this.id);
       console.log(data);

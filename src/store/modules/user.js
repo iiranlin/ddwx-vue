@@ -21,6 +21,7 @@ const user = {
         userCode:'',
         phone:'',
         sysUserIdentitys: [],
+        repairPersonnel: null,
         permissions: []
     },
 
@@ -69,6 +70,9 @@ const user = {
         },
         SET_SYS_USER_IDENTITYS: (state, sysUserIdentitys) => {
             state.sysUserIdentitys = Array.isArray(sysUserIdentitys) ? sysUserIdentitys : []
+        },
+        SET_REPAIR_PERSONNEL: (state, repairPersonnel) => {
+            state.repairPersonnel = repairPersonnel || null
         },
         SET_PERMISSIONS: (state, permissions) => {
             state.permissions = permissions
@@ -130,6 +134,7 @@ const user = {
                         commit('SET_USER_CODE', user.userCode)
                         commit('SET_USER_PHONE', user.phone)
                         commit('SET_SYS_USER_IDENTITYS', user.sysUserIdentitys)
+                        commit('SET_REPAIR_PERSONNEL', user.repairPersonnel)
                         
                         setCookie("unitCode", user.unitCode);
                         setCookie("phone", user.phone || '');
@@ -163,6 +168,7 @@ const user = {
                 commit('SET_ROLES', null)
                 commit('SET_PERMISSIONS', [])
                 commit('SET_SYS_USER_IDENTITYS', [])
+                commit('SET_REPAIR_PERSONNEL', null)
                 removeToken()
                 resolve()
             })
@@ -173,6 +179,7 @@ const user = {
             return new Promise(resolve => {
                 commit('SET_TOKEN', '')
                 commit('SET_SYS_USER_IDENTITYS', [])
+                commit('SET_REPAIR_PERSONNEL', null)
                 removeToken()
                 resolve()
             })

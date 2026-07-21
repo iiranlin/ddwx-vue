@@ -342,6 +342,63 @@ export class ResourceManagement {
     });
   }
 }
+
+/**
+ * 调度中心
+ */
+export class IdentityManagement {
+  /**
+   * 分页查询调度中心人员列表。
+   * @param {Object} params 查询参数，包含分页信息及页面筛选条件。
+   * @returns {Promise} 返回调度中心人员分页数据的请求 Promise。
+   */
+  static getDispatchList(params) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/identity/dispatchList`,
+      method: "get",
+      params,
+    });
+  }
+
+  /**
+   * 新增调度中心人员身份信息。
+   * @param {Object} data 待新增的人员身份及备注信息。
+   * @returns {Promise} 返回新增操作结果的请求 Promise。
+   */
+  static create(data) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/identity/create`,
+      method: "post",
+      data,
+    });
+  }
+
+  /**
+   * 修改已有的调度中心人员身份信息。
+   * @param {Object} data 包含记录主键及最新字段值的人员信息。
+   * @returns {Promise} 返回修改操作结果的请求 Promise。
+   */
+  static update(data) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/identity/update`,
+      method: "post",
+      data,
+    });
+  }
+
+  /**
+   * 批量删除指定的调度中心人员身份记录。
+   * @param {Array<string|number>} ids 待删除记录的主键集合。
+   * @returns {Promise} 返回批量删除结果的请求 Promise。
+   */
+  static deleteBatch(ids) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/identity/deleteBatch`,
+      method: "post",
+      data: ids,
+    });
+  }
+}
 /**
  * 工单管理
  */
@@ -361,13 +418,6 @@ export class WorkOrderManagement {
       url: `${VUE_APP_BASE_prefix}/repairOrder/listPage`,
       method: "get",
       params,
-    });
-  }
-  // 工单管理-判断是否需要刷新列表
-  static decideRefresh() {
-    return request({
-      url: `${VUE_APP_BASE_prefix}/repairOrder/decideRefresh`,
-      method: "get",
     });
   }
   // 工单管理-新增

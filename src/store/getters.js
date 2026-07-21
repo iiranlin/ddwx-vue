@@ -18,6 +18,7 @@ const getters = {
   userCode: state => state.user.userCode,
   phone: state => state.user.phone,
   sysUserIdentitys: state => state.user.sysUserIdentitys,
+  repairPersonnel: state => state.user.repairPersonnel,
   introduction: state => state.user.introduction,
   roles: state => state.user.roles,
   permissions: state => state.user.permissions,
