@@ -63,9 +63,7 @@ export default {
     },
     async getMessageList() {
       this.loading = true;
-      await MessageManagement.getMessageList(
-        Object.assign({ messageType: "DISPATCH" }, this.listQuery)
-      )
+      await MessageManagement.getMessageList(this.listQuery)
         .then(({ data }) => {
           this.messages = data.list;
           this.total = data.total;

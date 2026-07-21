@@ -593,7 +593,7 @@ export class MessageManagement {
   // 消息管理-分页查询
   static getMessageList(params) {
     return request({
-      url: `${VUE_APP_BASE_prefix}/repairMessage/listPage`,
+      url: `${VUE_APP_BASE_prefix}/repairMessage/listPagePc`,
       method: "get",
       params,
     });
