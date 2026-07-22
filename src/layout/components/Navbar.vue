@@ -144,11 +144,11 @@ export default {
       manualList: [
         {
           name: "用户版下载",
-          path: "/机关维修调度模块使用说明书-用户版.docx",
+          path: "/维修服务模块操作说明书-用户版.docx",
         },
         {
           name: "综合版下载",
-          path: "/机关维修调度模块使用说明书-综合版.docx",
+          path: "/维修服务模块操作说明书-综合版.docx",
         },
       ],
     };
