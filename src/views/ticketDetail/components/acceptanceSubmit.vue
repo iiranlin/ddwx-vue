@@ -18,7 +18,9 @@
 
       <!-- 维修说明 -->
       <div class="section">
-        <div class="section-title">维修说明</div>
+        <div class="section-title">
+          <span style="color: #f34d39">*</span>维修说明
+        </div>
         <el-input
           style="width: 50%"
           v-model="form.operateDesc"
@@ -219,10 +221,10 @@ export default {
       //   return;
       // }
 
-      // if (!this.form.operateDesc || !this.form.operateDesc.trim()) {
-      //   this.$message.error("请填写维修说明");
-      //   return;
-      // }
+      if (!this.form.operateDesc || !this.form.operateDesc.trim()) {
+        this.$message.error("请填写维修说明");
+        return;
+      }
 
       // 验证材料列表
       if (this.materialList.length > 0) {
