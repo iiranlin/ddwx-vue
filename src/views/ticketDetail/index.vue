@@ -115,6 +115,58 @@
       </div>
     </template>
 
+    <template v-if="status >= 3">
+      <!-- 维修过程表格 -->
+      <div class="section-title">维修过程</div>
+      <div class="info-card">
+        <el-table :data="repairProcessLogs" border>
+          <el-table-column
+            prop="createByName"
+            label="维修人员"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="createTime"
+            label="提交时间"
+            align="center"
+          >
+            <template slot-scope="scope">
+              {{ formatRepairProcessTime(scope.row.createTime) }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="operateDesc"
+            label="维修说明"
+            align="center"
+          >
+            <template slot-scope="scope">
+              <div class="repair-process-desc">
+                {{ scope.row.operateDesc || "-" }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="图片" align="center">
+            <template slot-scope="scope">
+              <div
+                v-if="getOperateFileImages(scope.row).length"
+                class="repair-process-images"
+              >
+                <el-image
+                  v-for="(image, index) in getOperateFileImages(scope.row)"
+                  :key="`${scope.$index}-${index}`"
+                  :src="image"
+                  :preview-src-list="getOperateFileImages(scope.row)"
+                  class="repair-process-image"
+                  fit="cover"
+                ></el-image>
+              </div>
+              <span v-else>-</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </template>
+
     <template v-if="status >= 4">
       <!-- 耗材表格 -->
       <div class="section-title">维修耗材</div>
@@ -252,6 +304,7 @@ import CancelOrder from "./components/cancelOrder.vue";
 import TransferTeam from "./components/transferTeam.vue";
 import AcceptanceCheck from "./components/acceptanceCheck.vue";
 import { workStatus } from "@/utils/enum";
+import dayjs from "dayjs";
 // 工单详情
 /**
  * 1:'待分配-班组',
@@ -345,9 +398,11 @@ export default {
       );
     },
 
-    operateLogs() {
-      return this.details.operateLogs
-        ? this.details.operateLogs.filter((x) => x.operateType === "SUBMIT")
+    repairProcessLogs() {
+      return Array.isArray(this.details.operateLogs)
+        ? this.details.operateLogs.filter(
+            (item) => item && item.operateType === "SUBMIT"
+          )
         : [];
     },
 
@@ -431,9 +486,33 @@ export default {
       this.details = data;
       this.$forceUpdate();
     },
-    operateFileImg(data) {
-      console.log(data, "data");
-      return data.operateFile.split(",").map((x) => this.baseUrl + x);
+    /**
+     * 功能：将维修过程记录中的逗号分隔图片路径转换为可访问的完整地址。
+     * 参数：data 为单条维修过程记录，operateFile 字段保存图片相对路径。
+     * 返回值：图片完整地址数组；无图片时返回空数组。
+     * 使用方式：维修过程表格通过本方法渲染缩略图和图片预览列表。
+     */
+    getOperateFileImages(data) {
+      if (!data || !data.operateFile) {
+        return [];
+      }
+      return data.operateFile
+        .split(",")
+        .map((path) => path.trim())
+        .filter(Boolean)
+        .map((path) => this.baseUrl + path);
+    },
+    /**
+     * 功能：将维修过程的提交时间格式化为“年-月-日 时:分”。
+     * 参数：time 为接口返回的提交时间字符串。
+     * 返回值：格式化后的时间；时间为空或无效时返回“-”。
+     * 使用方式：维修过程表格的“提交时间”列调用本方法展示时间。
+     */
+    formatRepairProcessTime(time) {
+      if (!time || !dayjs(time).isValid()) {
+        return "-";
+      }
+      return dayjs(time).format("YYYY-MM-DD HH:mm");
     },
     handleBack() {
       // 关闭当前菜单Tab
@@ -558,6 +637,27 @@ export default {
       height: 150px;
       margin-right: 10px;
       border: 1px solid #eee;
+    }
+  }
+
+  .repair-process-desc {
+    line-height: 22px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    text-align: left;
+  }
+
+  .repair-process-images {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding: 6px 0;
+
+    .repair-process-image {
+      width: 80px;
+      height: 80px;
+      border-radius: 4px;
     }
   }
 
