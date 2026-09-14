@@ -308,6 +308,12 @@
             >
 
             <el-button
+              v-if="canShowWorkOrderAction('checkIn', scope.row)"
+              type="text"
+              @click="handleButton(scope.row, 'checkIn')"
+              >现场打卡</el-button
+            >
+            <el-button
               v-if="canShowWorkOrderAction('acceptanceSubmit', scope.row)"
               type="text"
               @click="handleButton(scope.row, 'acceptanceSubmit')"
@@ -382,6 +388,7 @@ export default {
       5: "待验收",
       6: "已完成",
       7: "已取消",
+      11: "处理中",
     };
 
     return {
@@ -542,7 +549,7 @@ export default {
      * @returns {boolean} 当前用户允许执行该操作时返回 true。
      */
     canShowWorkOrderAction(action, row) {
-      const status = row.status;
+      const status = Number(row.status);
       const canModifyOwnOrder =
         [1, 2].includes(status) && this.isCreatedByCurrentUser(row.createBy);
       const canCancelOwnOrder = canModifyOwnOrder;
@@ -554,6 +561,11 @@ export default {
           assignmentPerson: status === 2,
           transferTeam: status === 2,
           transferPerson: status === 3,
+          checkIn:
+            status === 3 && this.isAssignedRepairPersonnel(row.personnelIds),
+          acceptanceSubmit:
+            status === 11 &&
+            this.isAssignedRepairPersonnel(row.personnelIds),
           cancel: canCancelOwnOrder,
         };
         return foremanActions[action] === true;
@@ -563,6 +575,9 @@ export default {
           action === "view" ||
           (action === "update" && canModifyOwnOrder) ||
           (action === "acceptanceSubmit" &&
+            status === 11 &&
+            this.isAssignedRepairPersonnel(row.personnelIds)) ||
+          (action === "checkIn" &&
             status === 3 &&
             this.isAssignedRepairPersonnel(row.personnelIds)) ||
           (action === "cancel" && canCancelOwnOrder)
@@ -578,28 +593,40 @@ export default {
         acceptanceCheck: this.isOnlyUserIdentity
           ? status === 4
           : [4, 5].includes(status),
-        acceptanceSubmit: !this.isOnlyUserIdentity && status === 3,
+        checkIn:
+          !this.isOnlyUserIdentity &&
+          status === 3 &&
+          (this.identityCodes.includes("DISPATCH") ||
+            this.isAssignedRepairPersonnel(row.personnelIds)),
+        acceptanceSubmit:
+          !this.isOnlyUserIdentity &&
+          status === 11 &&
+          (this.identityCodes.includes("DISPATCH") ||
+            this.isAssignedRepairPersonnel(row.personnelIds)),
         cancel: [1, 2].includes(status),
       };
       return defaultActions[action] === true;
     },
     /**
      * 判断当前维修人员是否属于工单已分配的维修人员。
-     * @param {string} personnelIds 工单维修人员 ID 字符串，多个 ID 使用英文逗号分隔。
-     * @returns {boolean} 当前 repairPersonnel.id 与任一完整人员 ID 使用 == 相等时返回 true。
+     * @param {string|Array<string|number>} personnelIds 工单维修人员 ID，支持单个 ID、逗号分隔字符串或 ID 数组。
+     * @returns {boolean} 当前 repairPersonnel.id 与任一完整人员 ID 完全相等时返回 true。
      * @example isAssignedRepairPersonnel("1001,1002")
      */
     isAssignedRepairPersonnel(personnelIds) {
       const repairPersonnel = this.$store.getters.repairPersonnel;
       const repairPersonnelId = repairPersonnel && repairPersonnel.id;
-      if (!repairPersonnelId || typeof personnelIds !== "string") {
+      if (!repairPersonnelId || personnelIds === null || personnelIds === undefined) {
         return false;
       }
-      return personnelIds
-        .split(",")
-        .map((id) => id.trim())
+      const currentPersonnelId = String(repairPersonnelId).trim();
+      const personnelIdList = Array.isArray(personnelIds)
+        ? personnelIds
+        : String(personnelIds).split(",");
+      return personnelIdList
+        .map((id) => String(id).trim())
         .filter(Boolean)
-        .some((id) => id == repairPersonnelId);
+        .some((id) => id === currentPersonnelId);
     },
     /**
      * 判断工单是否由当前登录用户创建。
@@ -742,6 +769,11 @@ export default {
       } else if (buttonCode === "acceptanceSubmit") {
         this.$router.push({
           name: "acceptanceSubmit",
+          query: { id: ids["id"] },
+        });
+      } else if (buttonCode === "checkIn") {
+        this.$router.push({
+          name: "checkIn",
           query: { id: ids["id"] },
         });
       } else if (buttonCode === "cancel") {

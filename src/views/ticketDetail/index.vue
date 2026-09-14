@@ -120,6 +120,11 @@
       <div class="section-title">维修过程</div>
       <div class="info-card">
         <el-table :data="repairProcessLogs" border>
+          <el-table-column label="事件类型" align="center">
+            <template slot-scope="scope">
+              {{ getRepairProcessEventType(scope.row) }}
+            </template>
+          </el-table-column>
           <el-table-column
             prop="createByName"
             label="维修人员"
@@ -167,7 +172,7 @@
       </div>
     </template>
 
-    <template v-if="status >= 4">
+    <template v-if="[4, 5, 6].includes(status)">
       <!-- 耗材表格 -->
       <div class="section-title">维修耗材</div>
       <div class="info-card">
@@ -265,6 +270,17 @@
           转派人员
         </div>
         <div
+          v-if="canShowWorkOrderAction('checkIn')"
+          @click="onCheckIn"
+          class="action-bg-blue"
+        >
+          现场打卡
+        </div>
+      </template>
+
+      <!-- 已现场打卡 -->
+      <template v-if="status === 11">
+        <div
           v-if="canShowWorkOrderAction('acceptanceSubmit')"
           @click="onAcceptanceSubmit"
           class="action-bg-blue"
@@ -314,6 +330,7 @@ import dayjs from "dayjs";
  * 5:'待验收-调度中心',
  * 6:'已完成',
  * 7:'已取消'
+ * 11:'已现场打卡'
  */
 export default {
   components: {
@@ -333,6 +350,7 @@ export default {
       5: "待验收",
       6: "已完成",
       7: "已取消",
+      11: "处理中",
     };
     return {
       details: {},
@@ -401,20 +419,25 @@ export default {
     repairProcessLogs() {
       return Array.isArray(this.details.operateLogs)
         ? this.details.operateLogs.filter(
-            (item) => item && item.operateType === "SUBMIT"
+            (item) =>
+              item && ["SUBMIT", "SIGNIN"].includes(
+                String(item.operateType || "")
+                  .replace(/_/g, "")
+                  .toUpperCase()
+              )
           )
         : [];
     },
 
     status() {
-      return this.details.status;
+      return Number(this.details.status);
     },
   },
   methods: {
     /**
      * 功能：根据当前身份类型和工单状态判断详情页操作按钮是否展示。
      * 参数：action 为操作编码；当前支持 assignmentTeam、cancel、transferTeam、
-     * assignmentPerson、transferPerson、acceptanceSubmit、acceptanceUser、
+     * assignmentPerson、transferPerson、checkIn、acceptanceSubmit、acceptanceUser、
      * acceptanceDispatch。
      * 返回值：true 表示展示按钮，false 表示隐藏按钮。
      * 使用方式：在模板按钮的 v-if 中调用 canShowWorkOrderAction("操作编码")。
@@ -429,6 +452,12 @@ export default {
           transferTeam: this.status === 2,
           assignmentPerson: this.status === 2,
           transferPerson: this.status === 3,
+          checkIn:
+            this.status === 3 &&
+            this.isAssignedRepairPersonnel(this.details.personnelIds),
+          acceptanceSubmit:
+            this.status === 11 &&
+            this.isAssignedRepairPersonnel(this.details.personnelIds),
           cancel: canCancelOwnOrder,
         };
         return foremanActions[action] === true;
@@ -436,6 +465,10 @@ export default {
       if (this.workOrderPermissionType === "repair") {
         return (
           action === "acceptanceSubmit" &&
+          this.status === 11 &&
+          this.isAssignedRepairPersonnel(this.details.personnelIds)
+        ) || (
+          action === "checkIn" &&
           this.status === 3 &&
           this.isAssignedRepairPersonnel(this.details.personnelIds)
         ) || (action === "cancel" && canCancelOwnOrder);
@@ -446,7 +479,16 @@ export default {
         transferTeam: !this.isOnlyUserIdentity && this.status === 2,
         assignmentPerson: !this.isOnlyUserIdentity && this.status === 2,
         transferPerson: !this.isOnlyUserIdentity && this.status === 3,
-        acceptanceSubmit: !this.isOnlyUserIdentity && this.status === 3,
+        checkIn:
+          !this.isOnlyUserIdentity &&
+          this.status === 3 &&
+          (this.identityCodes.includes("DISPATCH") ||
+            this.isAssignedRepairPersonnel(this.details.personnelIds)),
+        acceptanceSubmit:
+          !this.isOnlyUserIdentity &&
+          this.status === 11 &&
+          (this.identityCodes.includes("DISPATCH") ||
+            this.isAssignedRepairPersonnel(this.details.personnelIds)),
         acceptanceUser: this.status === 4,
         acceptanceDispatch: !this.isOnlyUserIdentity && this.status === 5,
       };
@@ -454,21 +496,24 @@ export default {
     },
     /**
      * 功能：判断当前维修人员是否属于工单已分配的维修人员。
-     * 参数：personnelIds 为工单维修人员 ID 字符串，多个 ID 使用英文逗号分隔。
-     * 返回值：当前 repairPersonnel.id 与任一完整人员 ID 使用 == 相等时返回 true。
+     * 参数：personnelIds 为工单维修人员 ID，支持单个 ID、逗号分隔字符串或 ID 数组。
+     * 返回值：当前 repairPersonnel.id 与任一完整人员 ID 完全相等时返回 true。
      * 使用方式：普通维修人员显示“提交验收”按钮前调用本方法校验工单归属。
      */
     isAssignedRepairPersonnel(personnelIds) {
       const repairPersonnel = this.$store.getters.repairPersonnel;
       const repairPersonnelId = repairPersonnel && repairPersonnel.id;
-      if (!repairPersonnelId || typeof personnelIds !== "string") {
+      if (!repairPersonnelId || personnelIds === null || personnelIds === undefined) {
         return false;
       }
-      return personnelIds
-        .split(",")
-        .map((id) => id.trim())
+      const currentPersonnelId = String(repairPersonnelId).trim();
+      const personnelIdList = Array.isArray(personnelIds)
+        ? personnelIds
+        : String(personnelIds).split(",");
+      return personnelIdList
+        .map((id) => String(id).trim())
         .filter(Boolean)
-        .some((id) => id == repairPersonnelId);
+        .some((id) => id === currentPersonnelId);
     },
     /**
      * 功能：判断工单是否由当前登录用户创建。
@@ -513,6 +558,18 @@ export default {
         return "-";
       }
       return dayjs(time).format("YYYY-MM-DD HH:mm");
+    },
+    /**
+     * 功能：根据维修过程操作类型返回便于识别的事件名称。
+     * 参数：data 为单条维修过程记录，operateType 表示操作类型。
+     * 返回值：现场打卡记录返回“现场打卡”，提交验收记录返回“提交验收”。
+     * 使用方式：维修过程表格的“事件类型”列调用本方法展示事件名称。
+     */
+    getRepairProcessEventType(data) {
+      const operateType = String((data && data.operateType) || "")
+        .replace(/_/g, "")
+        .toUpperCase();
+      return operateType === "SIGNIN" ? "现场打卡" : "提交验收";
     },
     handleBack() {
       // 关闭当前菜单Tab
@@ -572,6 +629,18 @@ export default {
     onAcceptanceSubmit() {
       this.$router.push({
         name: "acceptanceSubmit",
+        query: { id: this.id },
+      });
+    },
+    /**
+     * 功能：从工单详情进入现场打卡页面。
+     * 参数：无，工单 ID 取自当前详情页路由。
+     * 返回值：无。
+     * 使用方式：点击详情页“现场打卡”按钮时调用。
+     */
+    onCheckIn() {
+      this.$router.push({
+        name: "checkIn",
         query: { id: this.id },
       });
     },

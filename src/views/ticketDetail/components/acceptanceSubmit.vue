@@ -6,7 +6,8 @@
       <!-- 完工图片上传区域 -->
       <div class="section">
         <div class="section-title">
-          <!-- <span style="color: #f34d39">*</span>完工图片 -->
+          <!-- <span style="color: #f34d39">*</span> -->
+          完工图片
         </div>
         <ImageUpload
           v-model="form.operateFileUrl"

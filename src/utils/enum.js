@@ -8,6 +8,7 @@ export const workStatus = {
   5: "待验收-调度中心",
   6: "已完成",
   7: "已取消",
+  11: "处理中",
 };
 // 取消工单原因
 export const cancelReason = ["提交错误", "重复提交", "协商取消", "其他"];
