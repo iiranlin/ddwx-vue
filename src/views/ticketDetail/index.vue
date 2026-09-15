@@ -452,6 +452,9 @@ export default {
           transferTeam: this.status === 2,
           assignmentPerson: this.status === 2,
           transferPerson: this.status === 3,
+          acceptanceCheck:
+            this.status === 4 &&
+            this.isCreatedByCurrentUser(this.details.createBy),
           checkIn:
             this.status === 3 &&
             this.isAssignedRepairPersonnel(this.details.personnelIds),
@@ -464,6 +467,9 @@ export default {
       }
       if (this.workOrderPermissionType === "repair") {
         return (
+          (action === "acceptanceCheck" &&
+            this.status === 4 &&
+            this.isCreatedByCurrentUser(this.details.createBy)) ||
           action === "acceptanceSubmit" &&
           this.status === 11 &&
           this.isAssignedRepairPersonnel(this.details.personnelIds)

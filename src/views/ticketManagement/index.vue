@@ -561,6 +561,8 @@ export default {
           assignmentPerson: status === 2,
           transferTeam: status === 2,
           transferPerson: status === 3,
+          acceptanceCheck:
+            status === 4 && this.isCreatedByCurrentUser(row.createBy),
           checkIn:
             status === 3 && this.isAssignedRepairPersonnel(row.personnelIds),
           acceptanceSubmit:
@@ -572,6 +574,9 @@ export default {
       }
       if (this.workOrderPermissionType === "repair") {
         return (
+          (action === "acceptanceCheck" &&
+            status === 4 &&
+            this.isCreatedByCurrentUser(row.createBy)) ||
           action === "view" ||
           (action === "update" && canModifyOwnOrder) ||
           (action === "acceptanceSubmit" &&
