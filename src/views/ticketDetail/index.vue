@@ -260,7 +260,7 @@
         </div>
       </template>
 
-      <!-- 处理中 -->
+      <!-- 待处理 -->
       <template v-if="status === 3">
         <div
           v-if="canShowWorkOrderAction('transferPerson')"
@@ -325,7 +325,7 @@ import dayjs from "dayjs";
 /**
  * 1:'待分配-班组',
  * 2:'待分配-维修人员',
- * 3:'处理中',
+ * 3:'待处理',
  * 4:'待验收-创建人',
  * 5:'待验收-调度中心',
  * 6:'已完成',

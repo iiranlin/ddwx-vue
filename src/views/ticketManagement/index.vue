@@ -139,10 +139,7 @@
                   placeholder="请选择工单状态"
                 >
                   <el-option
-                    v-for="item in Object.keys(workStatus).map((key) => ({
-                      label: workStatus[key],
-                      value: key,
-                    }))"
+                    v-for="item in workStatusOptions"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
@@ -383,18 +380,28 @@ export default {
     const orderStatus = {
       1: "待分配",
       2: "待分配",
-      3: "处理中",
+      3: "待处理",
+      11: "处理中",
       4: "待验收",
       5: "待验收",
       6: "已完成",
       7: "已取消",
-      11: "处理中",
     };
 
     return {
       priorityLevel,
       orderStatus,
       workStatus,
+      /**
+       * 工单状态筛选项，按业务流程顺序展示。
+       * value 保持原状态值字符串，选择后继续按原参数查询工单列表。
+       */
+      workStatusOptions: ["1", "2", "3", "11", "4", "5", "6", "7"].map(
+        (value) => ({
+          label: workStatus[value],
+          value,
+        })
+      ),
       //遮罩层
       loading: false,
       //非单个禁用
