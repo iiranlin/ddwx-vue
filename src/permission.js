@@ -5,6 +5,7 @@ import NProgress, { remove } from 'nprogress'
 import 'nprogress/nprogress.css'
 import { setToken,getToken,getCookie,removeCookie } from '@/utils/auth'
 import { loginByTicket } from '@/api/login'
+import { isSsoRoute } from '@/utils/permissionRoute'
 
 NProgress.configure({ showSpinner: false })
 
@@ -42,9 +43,15 @@ function loginAuth(snapTicket) {
 router.beforeEach(async(to, from, next) => {
   NProgress.start()
 
-  // 如果url参数中包含id_token或username参数时，强制切换登录身份（排除 /sso 路径，由专门的过渡页进行处理）
+  // /sso 的 URL 凭证必须优先于共享 Cookie，避免 Cookie 登录后重定向造成参数丢失
   const ssoToken = getSsoToken(to)
-  if (ssoToken && to.path !== '/sso') {
+  if (ssoToken && isSsoRoute(to.path)) {
+    next()
+    return
+  }
+
+  // 非 /sso 页面携带 URL 凭证时，强制切换登录身份
+  if (ssoToken) {
     try {
       await store.dispatch('LogOut')
       await store.dispatch('UrlLogin', ssoToken)
@@ -75,16 +82,14 @@ router.beforeEach(async(to, from, next) => {
   const iPlanetDirectoryPro = getCookie('iPlanetDirectoryPro');
 
   if(!!iPlanetDirectoryPro){
-
     const hasToken = getToken()
 
     if(!hasToken){
-      await store.dispatch('GetInfoByAmlbcookie',iPlanetDirectoryPro).then((res) => {
-        next(to.path)
-        return;
-      }).catch((err) => {
-  
-      })
+      try {
+        await store.dispatch('GetInfoByAmlbcookie',iPlanetDirectoryPro)
+      } catch (err) {
+        // Cookie 登录失败时继续执行正常鉴权，由后续逻辑决定放行或跳转登录页
+      }
     }
   }
 
