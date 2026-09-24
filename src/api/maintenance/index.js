@@ -599,6 +599,20 @@ export class MessageManagement {
     });
   }
 
+  /**
+   * 将指定维修工单消息标记为已读。
+   * @param {{id: string|number}} data 包含当前工单消息 ID 的请求数据。
+   * @returns {Promise} 已读接口请求结果。
+   * @example MessageManagement.markMessageAsRead({ id: 1001 })
+   */
+  static markMessageAsRead(data) {
+    return request({
+      url: `${VUE_APP_BASE_prefix}/repairMessage/modify`,
+      method: "post",
+      data,
+    });
+  }
+
   // 消息管理-根据id获取详情
   static getMessageById(id) {
     return request({
