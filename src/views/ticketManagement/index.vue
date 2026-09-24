@@ -564,7 +564,6 @@ export default {
         const foremanActions = {
           view: true,
           update: canModifyOwnOrder,
-          assignmentTeam: status === 1,
           assignmentPerson: status === 2,
           transferTeam: status === 2,
           transferPerson: status === 3,

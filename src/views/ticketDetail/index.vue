@@ -448,7 +448,6 @@ export default {
         this.isCreatedByCurrentUser(this.details.createBy);
       if (this.workOrderPermissionType === "foreman") {
         const foremanActions = {
-          assignmentTeam: this.status === 1,
           transferTeam: this.status === 2,
           assignmentPerson: this.status === 2,
           transferPerson: this.status === 3,
