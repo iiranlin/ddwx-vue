@@ -102,7 +102,10 @@ export default {
   methods: {
     filterNode(value, data) {
       if (!value) return true;
-      return data.label.indexOf(value) !== -1;
+      return (
+        data.label.indexOf(value) !== -1 ||
+        String(data.userCode == null ? "" : data.userCode).indexOf(value) !== -1
+      );
     },
     init(row) {
       console.log(row, "row");
@@ -168,7 +171,10 @@ export default {
           const child = list.map((item) => {
             return {
               ...item,
-              label: item.realName,
+              label:
+                item.userCode == null || item.userCode === ""
+                  ? item.realName
+                  : `${item.realName}(${item.userCode})`,
               value: item.id,
               children: [],
             };
