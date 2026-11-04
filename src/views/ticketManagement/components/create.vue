@@ -204,7 +204,7 @@ export default {
           { required: true, message: "具体位置不能为空", trigger: "blur" },
         ],
         contactPhone: [
-          { required: false, message: "联系电话不能为空", trigger: "blur" },
+          { required: true, message: "联系电话不能为空", trigger: "blur" },
           {
             pattern: /^\d{11}$/,
             message: "联系电话须为11位数字",
@@ -212,7 +212,7 @@ export default {
           },
         ],
         landline: [
-          { required: true, message: "座机不能为空", trigger: "blur" },
+          { required: false, message: "座机不能为空", trigger: "blur" },
           {
             pattern: /^(?=(?:\D*\d){4,11}\D*$)\d+(?:-\d+)?$/,
             message: "座机号码须为不超过11位数字",
